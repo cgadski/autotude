@@ -1,0 +1,21 @@
+-lib protohx
+-lib format
+-lib hxmustache
+-cp hx_src
+--macro nullSafety("autotude", Loose)
+--macro nullSafety("autotude.proto", Off)
+
+--each
+
+-main autotude.ReplayTool
+-neko tools/replay_tool.n
+
+--next
+
+-main autotude.WritePolys
+-neko tools/write_polys.n
+
+# --next
+
+# -main autotude.ReplayIndexer
+# -cpp tools/replay_indexer

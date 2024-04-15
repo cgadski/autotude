@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="450">
+      <poly hull="!-1,15.0,3.0,5.0,4.0,4.0,8.0,1.0,8.0,1.0,4.0,-10.0,4.0,-10.0,6.0,-13.0,6.0,-15.0,2.0,-15.0,-3.0,-13.0,-4.0,-13.0,-6.0,-10.0,-6.0,-10.0,-4.0,1.0,-4.0,2.0,-9.0,4.0,-8.0,5.0,-4.0,13.0,-4.0,17.0,-1.0,">
+        <texture>
+          <image path="render/planes/explodet/rocket_spin/171_5_13_0450.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-16.0" y="-9.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="550">
+      <poly hull="!-1,15.0,3.0,6.0,3.0,4.0,8.0,1.0,8.0,0.0,3.0,-9.0,3.0,-10.0,6.0,-13.0,6.0,-15.0,2.0,-15.0,-3.0,-13.0,-4.0,-13.0,-6.0,-10.0,-6.0,-10.0,-4.0,1.0,-4.0,1.0,-8.0,4.0,-8.0,5.0,-4.0,13.0,-4.0,17.0,-1.0,">
+        <texture>
+          <image path="render/planes/explodet/rocket_spin/171_5_13_0550.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-16.0" y="-9.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="650">
+      <poly hull="!-1,15.0,3.0,5.0,4.0,4.0,8.0,1.0,8.0,1.0,4.0,-10.0,4.0,-10.0,6.0,-13.0,6.0,-15.0,2.0,-15.0,-3.0,-13.0,-4.0,-13.0,-6.0,-10.0,-6.0,-10.0,-4.0,1.0,-4.0,1.0,-8.0,4.0,-8.0,5.0,-4.0,13.0,-4.0,17.0,-1.0,">
+        <texture>
+          <image path="render/planes/explodet/rocket_spin/171_5_13_0650.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-16.0" y="-9.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="750">
+      <poly hull="!-1,15.0,3.0,6.0,3.0,4.0,7.0,1.0,7.0,0.0,3.0,-9.0,3.0,-10.0,5.0,-13.0,5.0,-15.0,2.0,-15.0,-3.0,-13.0,-4.0,-13.0,-6.0,-11.0,-6.0,-10.0,-4.0,1.0,-4.0,1.0,-8.0,3.0,-8.0,5.0,-4.0,13.0,-4.0,17.0,-1.0,">
+        <texture>
+          <image path="render/planes/explodet/rocket_spin/171_5_13_0750.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-16.0" y="-9.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="850">
+      <poly hull="!-1,15.0,3.0,5.0,4.0,4.0,6.0,1.0,6.0,1.0,4.0,-13.0,5.0,-15.0,3.0,-15.0,-3.0,-13.0,-5.0,1.0,-4.0,1.0,-7.0,4.0,-7.0,5.0,-4.0,13.0,-4.0,17.0,-1.0,">
+        <texture>
+          <image path="render/planes/explodet/rocket_spin/171_5_13_0850.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-16.0" y="-8.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="950">
+      <poly hull="!-1,15.0,3.0,5.0,4.0,4.0,7.0,1.0,7.0,1.0,4.0,-13.0,5.0,-15.0,2.0,-15.0,-3.0,-13.0,-5.0,1.0,-4.0,2.0,-7.0,5.0,-4.0,13.0,-4.0,17.0,-1.0,">
+        <texture>
+          <image path="render/planes/explodet/rocket_spin/171_5_13_0950.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-16.0" y="-8.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1050">
+      <poly hull="!-1,15.0,3.0,6.0,3.0,4.0,7.0,1.0,7.0,1.0,4.0,-10.0,4.0,-12.0,6.0,-15.0,2.0,-15.0,-3.0,-12.0,-6.0,-10.0,-4.0,1.0,-4.0,1.0,-7.0,4.0,-7.0,5.0,-4.0,13.0,-4.0,17.0,-1.0,">
+        <texture>
+          <image path="render/planes/explodet/rocket_spin/171_5_13_1050.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-16.0" y="-8.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1150">
+      <poly hull="!-1,15.0,3.0,5.0,4.0,4.0,8.0,1.0,8.0,1.0,4.0,-10.0,4.0,-11.0,6.0,-13.0,6.0,-15.0,2.0,-15.0,-3.0,-13.0,-4.0,-13.0,-6.0,-10.0,-6.0,-10.0,-4.0,1.0,-4.0,1.0,-8.0,4.0,-8.0,5.0,-4.0,13.0,-4.0,17.0,-1.0,">
+        <texture>
+          <image path="render/planes/explodet/rocket_spin/171_5_13_1150.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-16.0" y="-9.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1250">
+      <poly hull="!-1,15.0,3.0,6.0,3.0,4.0,8.0,1.0,8.0,0.0,3.0,-9.0,3.0,-10.0,6.0,-13.0,6.0,-15.0,2.0,-15.0,-3.0,-13.0,-4.0,-13.0,-6.0,-10.0,-6.0,-10.0,-4.0,1.0,-4.0,1.0,-8.0,4.0,-8.0,5.0,-4.0,13.0,-4.0,17.0,-1.0,">
+        <texture>
+          <image path="render/planes/explodet/rocket_spin/171_5_13_1250.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-16.0" y="-9.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

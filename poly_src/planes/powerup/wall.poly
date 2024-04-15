@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,6.160001,40.72,-6.120001,40.72,-6.120001,-40.680004,6.160001,-40.680004,">
+  <texture>
+    <image path="planes/powerup/wall2.png" />
+    <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-16.0" y="-40.0" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

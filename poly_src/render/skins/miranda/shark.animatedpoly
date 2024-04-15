@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,16.0,6.0,21.0,1.0,28.0,1.0,27.0,3.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="50">
+      <poly hull="!-1,16.0,6.0,22.0,1.0,28.0,2.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0050.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="100">
+      <poly hull="!-1,17.0,6.0,22.0,1.0,19.0,1.0,16.0,-2.0,16.0,-4.0,21.0,-4.0,23.0,-6.0,25.0,-3.0,23.0,2.0,26.0,1.0,27.0,3.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0100.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="150">
+      <poly hull="!-1,17.0,6.0,22.0,2.0,18.0,1.0,16.0,-1.0,16.0,-4.0,24.0,-5.0,25.0,0.0,23.0,2.0,27.0,3.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0150.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-14.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="200">
+      <poly hull="!-1,18.0,6.0,22.0,2.0,17.0,1.0,16.0,-3.0,24.0,-5.0,24.0,2.0,27.0,3.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0200.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-15.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="250">
+      <poly hull="!-1,18.0,6.0,21.0,3.0,19.0,3.0,16.0,0.0,16.0,-3.0,24.0,-4.0,25.0,1.0,23.0,3.0,26.0,4.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0250.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="300">
+      <poly hull="!-1,-4.0,-18.0,-4.0,7.0,27.0,7.0,27.0,-18.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0300.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-18.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="450">
+      <poly hull="!-1,0.0,9.0,-3.0,6.0,5.0,6.0,9.0,8.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0450.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="600">
+      <poly hull="!-1,-4.0,9.0,5.0,10.0,7.0,13.0,9.0,13.0,9.0,15.0,2.0,15.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0600.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-23.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="750">
+      <poly hull="!-1,-4.0,12.0,4.0,13.0,9.0,18.0,2.0,19.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0750.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-24.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="900">
+      <poly hull="!-1,1.0,21.0,-4.0,14.0,4.0,15.0,9.0,20.0,9.0,22.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_0900.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-23.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1050">
+      <poly hull="!-1,1.0,22.0,-3.0,15.0,5.0,16.0,9.0,23.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1050.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-20.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1200">
+      <poly hull="!-1,-3.0,15.0,4.0,15.0,5.0,18.0,8.0,20.0,8.0,22.0,2.0,22.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1200.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-16.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1350">
+      <poly hull="!-1,1.0,20.0,-3.0,13.0,4.0,14.0,8.0,20.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1350.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1500">
+      <poly hull="!-1,1.0,17.0,-3.0,13.0,-3.0,11.0,4.0,12.0,8.0,17.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1500.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1550">
+      <poly hull="!-1,0.0,15.0,-3.0,12.0,-3.0,10.0,4.0,11.0,8.0,16.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1550.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1600">
+      <poly hull="!-1,1.0,14.0,-3.0,10.0,4.0,10.0,6.0,13.0,8.0,13.0,8.0,15.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1600.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1650">
+      <poly hull="!-1,1.0,13.0,-1.0,10.0,-3.0,10.0,-3.0,8.0,4.0,9.0,8.0,13.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1650.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1700">
+      <poly hull="!-1,0.0,11.0,-2.0,8.0,5.0,8.0,8.0,12.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1700.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1750">
+      <poly hull="!-1,1.0,10.0,0.0,8.0,-2.0,8.0,-2.0,6.0,9.0,7.0,3.0,8.0,3.0,10.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1750.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-4.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1800">
+      <poly hull="!-1,-2.0,7.0,5.0,6.0,9.0,9.0,5.0,11.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1800.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1850">
+      <poly hull="!-1,2.0,13.0,-2.0,9.0,6.0,9.0,9.0,11.0,9.0,13.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1850.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1900">
+      <poly hull="!-1,1.0,14.0,-2.0,10.0,6.0,10.0,9.0,14.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1900.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1950">
+      <poly hull="!-1,2.0,16.0,-2.0,12.0,5.0,11.0,10.0,16.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_1950.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2000">
+      <poly hull="!-1,2.0,18.0,-2.0,13.0,6.0,13.0,9.0,16.0,9.0,18.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_2000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2050">
+      <poly hull="!-1,2.0,19.0,-2.0,14.0,6.0,14.0,10.0,19.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_2050.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-5.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2100">
+      <poly hull="!-1,2.0,20.0,-2.0,15.0,6.0,15.0,9.0,18.0,9.0,20.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_2100.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-5.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2250">
+      <poly hull="!-1,2.0,23.0,-2.0,17.0,6.0,17.0,9.0,23.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_2250.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-8.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2400">
+      <poly hull="!-1,2.0,24.0,-1.0,18.0,6.0,18.0,9.0,22.0,6.0,24.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_2400.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-13.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2550">
+      <poly hull="!-1,2.0,23.0,-1.0,19.0,1.0,17.0,6.0,17.0,6.0,19.0,9.0,21.0,8.0,23.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_2550.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-18.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2700">
+      <poly hull="!-1,1.0,20.0,-1.0,16.0,6.0,16.0,8.0,20.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_2700.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2850">
+      <poly hull="!-1,2.0,17.0,1.0,15.0,-1.0,15.0,-1.0,13.0,6.0,13.0,8.0,17.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_2850.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-23.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3000">
+      <poly hull="!-1,2.0,13.0,-1.0,10.0,6.0,10.0,8.0,11.0,8.0,13.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_3000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-24.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3150">
+      <poly hull="!-1,1.0,8.0,0.0,6.0,8.0,8.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_3150.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-24.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3300">
+      <poly hull="!-1,16.0,4.0,20.0,-2.0,25.0,-3.0,29.0,-1.0,28.0,1.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_3300.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3350">
+      <poly hull="!-1,16.0,4.0,21.0,-2.0,26.0,-2.0,28.0,0.0,20.0,4.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_3350.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-20.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3400">
+      <poly hull="!-1,16.0,5.0,20.0,-1.0,25.0,-2.0,28.0,0.0,27.0,2.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_3400.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-18.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3450">
+      <poly hull="!-1,16.0,5.0,21.0,-1.0,28.0,0.0,28.0,2.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_3450.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3500">
+      <poly hull="!-1,16.0,5.0,21.0,0.0,26.0,-1.0,28.0,1.0,20.0,5.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_3500.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-15.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3550">
+      <poly hull="!-1,16.0,6.0,22.0,0.0,28.0,1.0,">
+        <texture>
+          <image path="render/skins/miranda/shark_3550.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-13.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

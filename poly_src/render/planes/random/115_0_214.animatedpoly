@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,14.0,19.0,7.0,26.0,-7.0,27.0,-15.0,22.0,-17.0,18.0,-16.0,11.0,-10.0,11.0,-9.0,15.0,-7.0,16.0,-7.0,-25.0,-5.0,-27.0,0.0,-28.0,3.0,-26.0,3.0,-6.0,12.0,2.0,15.0,9.0,">
+        <texture>
+          <image path="render/planes/random/115_0_214_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-18.0" y="-29.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1800">
+      <poly hull="!-1,14.0,-6.0,11.0,-3.0,11.0,-1.0,7.0,1.0,3.0,6.0,3.0,25.0,1.0,27.0,-6.0,26.0,-7.0,-16.0,-11.0,-10.0,-15.0,-10.0,-17.0,-12.0,-17.0,-17.0,-11.0,-25.0,-5.0,-27.0,6.0,-26.0,14.0,-18.0,">
+        <texture>
+          <image path="render/planes/random/115_0_214_1800.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-18.0" y="-28.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

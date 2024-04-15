@@ -1,0 +1,12 @@
+java_gen/
+hx_src/autotude/proto/
+.direnv
+result
+build/
+.DS_STORE
+tools/
+out/
+poly_out/polys
+recordings/
+bin
+site_gen

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,5.5,2.75,2.75,5.5,-2.75,5.5,-5.5,2.75,-5.5,-2.75,-2.75,-5.5,2.75,-5.5,5.5,-2.75,">
+  <texture>
+    <image path="render/planes/explodet/mine/0_128_5_0000.png" />
+    <xform scale="0.55" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-8.25" y="-8.8" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

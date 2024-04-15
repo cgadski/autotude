@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-3355444,14.0,0.0,-9.0,15.0,-9.0,-15.0,">
+  <texture>
+    <image path="planes/explodet/link.png" />
+    <xform scale="1.0" rotate="-90.0" flipX="false" flipY="false">
+      <translate x="-6.9999995" y="10.0" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

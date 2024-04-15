@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,-7.0,2.0,-7.0,4.0,-9.0,4.0,-9.0,-1.0,11.0,0.0,">
+        <texture>
+          <image path="render/planes/loopy/missile/98_38_0_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-11.0" y="-3.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="133">
+      <poly hull="!-1,-7.0,2.0,-7.0,4.0,-9.0,4.0,-10.0,-1.0,-7.0,-2.0,11.0,0.0,">
+        <texture>
+          <image path="render/planes/loopy/missile/98_38_0_0133.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-11.0" y="-3.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="267">
+      <poly hull="!-1,-9.0,3.0,-9.0,-2.0,11.0,0.0,">
+        <texture>
+          <image path="render/planes/loopy/missile/98_38_0_0267.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-11.0" y="-4.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="400">
+      <poly hull="!-1,-9.0,3.0,-9.0,-3.0,-7.0,-3.0,-7.0,-1.0,11.0,0.0,">
+        <texture>
+          <image path="render/planes/loopy/missile/98_38_0_0400.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-11.0" y="-4.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="533">
+      <poly hull="!-1,-10.0,2.0,-9.0,-3.0,-7.0,-3.0,-7.0,-1.0,11.0,0.0,">
+        <texture>
+          <image path="render/planes/loopy/missile/98_38_0_0533.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-11.0" y="-4.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="667">
+      <poly hull="!-1,-10.0,3.0,-9.0,-3.0,-7.0,-3.0,-7.0,-1.0,11.0,0.0,">
+        <texture>
+          <image path="render/planes/loopy/missile/98_38_0_0667.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-11.0" y="-4.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="800">
+      <poly hull="!-1,-9.0,3.0,-9.0,-3.0,-7.0,-3.0,-7.0,-1.0,11.0,0.0,">
+        <texture>
+          <image path="render/planes/loopy/missile/98_38_0_0800.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-11.0" y="-4.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="933">
+      <poly hull="!-1,-7.0,2.0,-9.0,4.0,-9.0,-2.0,11.0,0.0,">
+        <texture>
+          <image path="render/planes/loopy/missile/98_38_0_0933.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-11.0" y="-4.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1067">
+      <poly hull="!-1,-7.0,2.0,-7.0,4.0,-9.0,4.0,-10.0,-2.0,11.0,0.0,">
+        <texture>
+          <image path="render/planes/loopy/missile/98_38_0_1067.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-11.0" y="-3.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

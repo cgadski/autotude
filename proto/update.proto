@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+option java_multiple_files = true;
+option java_package = "em.altitude.game.protos";
+
+import "game_object.proto";
+import "game_event.proto";
+
+message Update {
+    optional int64 time = 1; // ticks
+
+    repeated GameObject objects = 2;
+    repeated GameEvent events = 3; 
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,10.0,4.0,-4.0,4.0,-5.0,2.0,-7.0,2.0,-7.0,4.0,-11.0,4.0,-11.0,-4.0,-7.0,-4.0,-7.0,-2.0,-5.0,-2.0,-4.0,-4.0,10.0,-4.0,12.0,-1.0,">
+        <texture>
+          <image path="render/planes/bomber/bomb/30_58_206_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-13.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="150">
+      <poly hull="!-1,10.0,4.0,-4.0,4.0,-5.0,2.0,-7.0,2.0,-7.0,4.0,-11.0,4.0,-11.0,-4.0,-7.0,-4.0,-7.0,-2.0,-5.0,-2.0,-4.0,-4.0,10.0,-4.0,12.0,-1.0,">
+        <texture>
+          <image path="render/planes/bomber/bomb/30_58_206_0150.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-13.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="300">
+      <poly hull="!-1,12.0,1.0,9.0,4.0,-4.0,4.0,-5.0,2.0,-7.0,2.0,-7.0,4.0,-11.0,4.0,-11.0,-4.0,-7.0,-4.0,-7.0,-2.0,-5.0,-2.0,-4.0,-4.0,10.0,-4.0,">
+        <texture>
+          <image path="render/planes/bomber/bomb/30_58_206_0300.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-13.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="450">
+      <poly hull="!-1,10.0,4.0,-4.0,4.0,-5.0,2.0,-11.0,3.0,-11.0,-3.0,-5.0,-2.0,-4.0,-4.0,10.0,-4.0,12.0,-1.0,">
+        <texture>
+          <image path="render/planes/bomber/bomb/30_58_206_0450.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-13.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="600">
+      <poly hull="!-1,10.0,4.0,-4.0,4.0,-5.0,2.0,-7.0,2.0,-7.0,4.0,-11.0,4.0,-11.0,-4.0,-7.0,-4.0,-7.0,-2.0,-5.0,-2.0,-4.0,-4.0,10.0,-4.0,12.0,-1.0,">
+        <texture>
+          <image path="render/planes/bomber/bomb/30_58_206_0600.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-13.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="750">
+      <poly hull="!-1,12.0,1.0,9.0,4.0,-4.0,4.0,-5.0,2.0,-7.0,2.0,-7.0,4.0,-11.0,4.0,-11.0,-4.0,-7.0,-4.0,-7.0,-2.0,-5.0,-2.0,-4.0,-4.0,10.0,-4.0,">
+        <texture>
+          <image path="render/planes/bomber/bomb/30_58_206_0750.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-13.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

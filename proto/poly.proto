@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+import "game_object.proto";
+
+message Poly {
+    optional ObjectType type = 1; 
+    
+    repeated float vertices_x = 2 [packed = true];
+    repeated float vertices_y = 3 [packed = true];
+    
+    optional sint32 spin = 4; // spin in degrees, for planes
+}

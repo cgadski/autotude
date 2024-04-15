@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,9.0,7.0,8.0,11.0,4.0,10.0,4.0,12.0,-4.0,12.0,-4.0,10.0,-8.0,11.0,-9.0,7.0,-12.0,7.0,-11.0,-8.0,-9.0,-7.0,-7.0,-12.0,7.0,-12.0,7.0,-9.0,9.0,-9.0,9.0,-7.0,11.0,-6.0,12.0,6.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-13.0" y="-13.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1">
+      <poly hull="!-1,11.0,12.0,8.0,11.0,8.0,13.0,5.0,12.0,5.0,14.0,-3.0,14.0,-3.0,12.0,-9.0,12.0,-11.0,-5.0,-9.0,-9.0,-7.0,-8.0,-7.0,-10.0,8.0,-10.0,11.0,-9.0,13.0,-2.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0001.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-12.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2">
+      <poly hull="!-1,12.0,13.0,8.0,12.0,8.0,14.0,5.0,13.0,5.0,15.0,-2.0,15.0,-2.0,13.0,-7.0,14.0,-7.0,12.0,-9.0,13.0,-9.0,9.0,-12.0,9.0,-12.0,-4.0,-10.0,-7.0,-8.0,-6.0,-8.0,-9.0,8.0,-9.0,9.0,-6.0,11.0,-6.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0002.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-13.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3">
+      <poly hull="!-1,11.0,12.0,8.0,12.0,8.0,14.0,6.0,13.0,6.0,15.0,-2.0,15.0,-6.0,13.0,-8.0,14.0,-9.0,12.0,-11.0,12.0,-12.0,7.0,-10.0,-7.0,-7.0,-6.0,-7.0,-9.0,7.0,-9.0,7.0,-6.0,11.0,-6.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0003.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-13.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="4">
+      <poly hull="!-1,8.0,11.0,7.0,14.0,-7.0,14.0,-8.0,11.0,-12.0,11.0,-12.0,-7.0,-8.0,-6.0,-8.0,-9.0,8.0,-9.0,8.0,-7.0,11.0,-8.0,13.0,11.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0004.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-14.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="5">
+      <poly hull="!-1,12.0,11.0,8.0,10.0,7.0,13.0,-7.0,13.0,-7.0,10.0,-10.0,11.0,-11.0,9.0,-11.0,4.0,-13.0,5.0,-13.0,-3.0,-11.0,-2.0,-11.0,-7.0,-9.0,-7.0,-7.0,-11.0,7.0,-11.0,8.0,-8.0,11.0,-9.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0005.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-14.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="6">
+      <poly hull="!-1,13.0,9.0,11.0,8.0,11.0,10.0,8.0,10.0,7.0,12.0,-7.0,12.0,-8.0,9.0,-11.0,10.0,-12.0,-10.0,-8.0,-9.0,-7.0,-12.0,7.0,-12.0,7.0,-9.0,13.0,-9.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0006.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-14.0" y="-13.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="7">
+      <poly hull="!-1,13.0,3.0,11.0,2.0,11.0,7.0,9.0,7.0,8.0,10.0,6.0,9.0,6.0,11.0,1.0,9.0,-7.0,11.0,-7.0,8.0,-9.0,9.0,-9.0,7.0,-12.0,7.0,-12.0,-10.0,-7.0,-10.0,-7.0,-13.0,8.0,-13.0,8.0,-10.0,12.0,-11.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0007.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-14.0" y="-14.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="8">
+      <poly hull="!-1,12.0,7.0,8.0,6.0,8.0,9.0,-8.0,9.0,-10.0,8.0,-10.0,6.0,-12.0,6.0,-13.0,-12.0,-8.0,-11.0,-7.0,-14.0,8.0,-14.0,8.0,-11.0,11.0,-12.0,11.0,-5.0,13.0,-6.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0008.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-14.0" y="-16.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="9">
+      <poly hull="!-1,12.0,4.0,10.0,3.0,10.0,7.0,7.0,6.0,7.0,9.0,-6.0,9.0,-6.0,7.0,-8.0,8.0,-8.0,6.0,-11.0,6.0,-11.0,0.0,-13.0,1.0,-12.0,-13.0,-8.0,-12.0,-8.0,-14.0,-6.0,-13.0,-6.0,-15.0,7.0,-15.0,9.0,-11.0,11.0,-12.0,13.0,-6.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0009.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-14.0" y="-16.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="10">
+      <poly hull="!-1,12.0,5.0,10.0,7.0,8.0,6.0,8.0,9.0,-8.0,9.0,-9.0,6.0,-11.0,6.0,-12.0,-13.0,-8.0,-12.0,-8.0,-14.0,8.0,-14.0,12.0,-10.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0010.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-14.0" y="-16.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="11">
+      <poly hull="!-1,11.0,5.0,9.0,9.0,7.0,8.0,1.0,10.0,-8.0,10.0,-10.0,7.0,-10.0,2.0,-13.0,2.0,-12.0,-6.0,-10.0,-5.0,-10.0,-11.0,-8.0,-11.0,-8.0,-13.0,-5.0,-12.0,-5.0,-14.0,3.0,-14.0,3.0,-12.0,10.0,-12.0,10.0,-8.0,12.0,-9.0,">
+        <texture>
+          <image path="planes/powerup/health/healthpack_0011.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-14.0" y="-15.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

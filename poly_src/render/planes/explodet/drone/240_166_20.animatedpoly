@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,15.0,-8.0,13.0,-8.0,13.0,4.0,11.0,4.0,8.0,1.0,1.0,2.0,1.0,14.0,-1.0,14.0,-1.0,2.0,-8.0,1.0,-11.0,4.0,-13.0,4.0,-13.0,-8.0,-15.0,-8.0,-15.0,-10.0,-13.0,-8.0,-8.0,-8.0,-5.0,-10.0,-2.0,-8.0,-1.0,-4.0,3.0,-5.0,3.0,-8.0,5.0,-10.0,8.0,-8.0,13.0,-8.0,15.0,-10.0,">
+        <texture>
+          <image path="render/planes/explodet/drone/240_166_20_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-20.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

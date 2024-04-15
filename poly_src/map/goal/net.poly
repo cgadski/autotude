@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,16.0,-55.0,-10.0,-41.0,-18.0,0.0,-9.499998,41.0,16.0,55.0,">
+  <texture>
+    <image path="render/map/goal/0_128_5.png" />
+    <xform scale="1.0" rotate="-90.0" flipX="false" flipY="false">
+      <translate x="-38.0" y="77.0" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

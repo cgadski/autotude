@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,2.0,10.0,1.0,8.0,4.0,8.0,4.0,2.0,1.0,2.0,1.0,-1.0,-1.0,-1.0,-1.0,-4.0,1.0,-4.0,1.0,-8.0,8.0,-9.0,9.0,-11.0,15.0,-11.0,10.0,-7.0,10.0,-3.0,8.0,-3.0,9.0,1.0,8.0,4.0,6.0,4.0,6.0,7.0,9.0,10.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="70">
+      <poly hull="!-1,2.0,10.0,1.0,8.0,4.0,9.0,4.0,2.0,1.0,3.0,1.0,1.0,-1.0,0.0,2.0,-8.0,8.0,-9.0,10.0,-11.0,15.0,-11.0,15.0,-9.0,13.0,-9.0,10.0,-6.0,10.0,-3.0,7.0,-3.0,8.0,-1.0,10.0,-1.0,10.0,1.0,6.0,5.0,7.0,9.0,9.0,10.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_0070.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="140">
+      <poly hull="!-1,2.0,10.0,1.0,8.0,4.0,9.0,4.0,6.0,1.0,6.0,-1.0,4.0,-1.0,1.0,1.0,0.0,1.0,-6.0,4.0,-6.0,4.0,-8.0,1.0,-8.0,1.0,-10.0,5.0,-9.0,9.0,-11.0,16.0,-11.0,15.0,-8.0,11.0,-6.0,10.0,-2.0,7.0,-1.0,7.0,2.0,10.0,3.0,9.0,6.0,6.0,6.0,8.0,10.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_0140.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="210">
+      <poly hull="!-1,-28.0,10.0,-26.0,1.0,-24.0,0.0,-27.0,-3.0,-26.0,-5.0,-23.0,-5.0,-24.0,-8.0,-23.0,-10.0,-21.0,-10.0,-18.0,-7.0,-19.0,-3.0,-21.0,-2.0,-22.0,8.0,-24.0,10.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_0210.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-13.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="280">
+      <poly hull="!-1,1.0,14.0,-1.0,12.0,-1.0,6.0,1.0,4.0,1.0,-3.0,4.0,-4.0,5.0,-7.0,-1.0,-11.0,0.0,-15.0,7.0,-15.0,6.0,-11.0,16.0,-11.0,15.0,-6.0,10.0,-2.0,10.0,1.0,7.0,4.0,7.0,9.0,10.0,10.0,9.0,14.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_0280.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-16.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="350">
+      <poly hull="!-1,1.0,18.0,-1.0,16.0,-1.0,8.0,1.0,7.0,1.0,-2.0,4.0,-3.0,5.0,-7.0,-1.0,-13.0,0.0,-18.0,7.0,-18.0,7.0,-11.0,13.0,-12.0,16.0,-10.0,14.0,-3.0,10.0,0.0,9.0,4.0,7.0,5.0,7.0,12.0,10.0,14.0,9.0,18.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_0350.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-19.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="420">
+      <poly hull="!-1,0.0,21.0,0.0,4.0,2.0,2.0,1.0,-1.0,3.0,-1.0,5.0,-4.0,4.0,-8.0,1.0,-10.0,1.0,-13.0,-1.0,-15.0,1.0,-21.0,8.0,-20.0,6.0,-18.0,7.0,-12.0,13.0,-12.0,16.0,-10.0,15.0,-3.0,10.0,1.0,10.0,4.0,7.0,7.0,7.0,15.0,10.0,17.0,9.0,21.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_0420.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="580">
+      <poly hull="!-1,-1.0,25.0,-1.0,15.0,1.0,12.0,1.0,2.0,4.0,1.0,5.0,-6.0,0.0,-12.0,1.0,-15.0,-1.0,-17.0,-1.0,-23.0,0.0,-26.0,7.0,-26.0,8.0,-23.0,6.0,-22.0,6.0,-15.0,9.0,-11.0,14.0,-11.0,16.0,-9.0,16.0,-2.0,14.0,2.0,11.0,3.0,6.0,13.0,7.0,21.0,10.0,23.0,10.0,25.0,7.0,28.0,3.0,28.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_0580.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-27.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="740">
+      <poly hull="!-1,1.0,31.0,-1.0,28.0,-1.0,17.0,1.0,15.0,0.0,9.0,1.0,5.0,6.0,1.0,5.0,-8.0,3.0,-7.0,0.0,-11.0,1.0,-17.0,-1.0,-19.0,-1.0,-28.0,1.0,-30.0,8.0,-29.0,8.0,-26.0,6.0,-24.0,6.0,-16.0,9.0,-11.0,14.0,-10.0,16.0,-7.0,16.0,2.0,13.0,6.0,10.0,7.0,6.0,16.0,7.0,25.0,9.0,26.0,9.0,30.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_0740.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-30.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="900">
+      <poly hull="!-1,0.0,31.0,0.0,11.0,1.0,7.0,3.0,5.0,6.0,5.0,7.0,1.0,6.0,-5.0,3.0,-5.0,0.0,-11.0,0.0,-31.0,9.0,-30.0,9.0,-27.0,6.0,-24.0,6.0,-17.0,8.0,-15.0,9.0,-10.0,14.0,-8.0,16.0,-5.0,16.0,5.0,14.0,6.0,14.0,8.0,9.0,10.0,6.0,17.0,6.0,24.0,9.0,27.0,8.0,31.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_0900.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-32.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1060">
+      <poly hull="!-1,-1.0,28.0,-1.0,19.0,1.0,16.0,0.0,11.0,3.0,7.0,6.0,7.0,6.0,-1.0,1.0,-5.0,2.0,-8.0,0.0,-9.0,1.0,-15.0,-1.0,-18.0,-1.0,-28.0,1.0,-31.0,8.0,-31.0,9.0,-26.0,7.0,-25.0,6.0,-16.0,10.0,-7.0,12.0,-7.0,16.0,-2.0,16.0,7.0,14.0,10.0,8.0,12.0,6.0,16.0,6.0,24.0,8.0,25.0,8.0,29.0,3.0,30.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1060.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-32.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1220">
+      <poly hull="!-1,1.0,26.0,-1.0,22.0,-1.0,17.0,1.0,15.0,0.0,11.0,5.0,6.0,5.0,1.0,3.0,-2.0,1.0,-2.0,2.0,-5.0,0.0,-7.0,1.0,-13.0,-1.0,-15.0,-1.0,-25.0,1.0,-28.0,8.0,-28.0,10.0,-26.0,10.0,-23.0,7.0,-21.0,6.0,-13.0,10.0,-5.0,16.0,1.0,16.0,8.0,14.0,11.0,9.0,11.0,7.0,13.0,7.0,26.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1220.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-28.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1380">
+      <poly hull="!-1,0.0,20.0,-1.0,14.0,5.0,6.0,4.0,2.0,1.0,0.0,1.0,-9.0,-1.0,-10.0,-1.0,-19.0,2.0,-22.0,8.0,-22.0,10.0,-20.0,10.0,-17.0,8.0,-17.0,7.0,-15.0,7.0,-8.0,11.0,0.0,16.0,5.0,15.0,11.0,7.0,11.0,6.0,18.0,8.0,20.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1380.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-22.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1450">
+      <poly hull="!-1,0.0,18.0,-1.0,13.0,5.0,5.0,3.0,2.0,1.0,2.0,2.0,-1.0,0.0,-3.0,1.0,-7.0,-1.0,-8.0,-1.0,-16.0,1.0,-18.0,9.0,-18.0,10.0,-14.0,7.0,-12.0,7.0,-6.0,10.0,-3.0,10.0,0.0,15.0,4.0,16.0,10.0,6.0,11.0,6.0,16.0,8.0,16.0,7.0,18.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1450.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-19.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1520">
+      <poly hull="!-1,0.0,15.0,-1.0,11.0,2.0,8.0,4.0,8.0,5.0,5.0,1.0,3.0,2.0,1.0,0.0,-1.0,1.0,-4.0,-1.0,-6.0,-1.0,-12.0,1.0,-14.0,10.0,-14.0,10.0,-11.0,7.0,-9.0,7.0,-4.0,9.0,-3.0,11.0,3.0,15.0,6.0,16.0,10.0,6.0,11.0,7.0,15.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1520.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-15.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1590">
+      <poly hull="!-1,0.0,12.0,-1.0,10.0,5.0,6.0,1.0,4.0,2.0,2.0,0.0,0.0,1.0,-2.0,-1.0,-3.0,-1.0,-8.0,1.0,-10.0,10.0,-10.0,10.0,-7.0,7.0,-6.0,7.0,-2.0,10.0,0.0,10.0,3.0,15.0,7.0,16.0,10.0,6.0,10.0,7.0,12.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1590.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1660">
+      <poly hull="!-1,10.0,11.0,6.0,9.0,1.0,9.0,4.0,7.0,1.0,5.0,1.0,0.0,-1.0,-1.0,0.0,-6.0,4.0,-6.0,4.0,-9.0,2.0,-10.0,8.0,-10.0,6.0,-6.0,10.0,-6.0,11.0,-4.0,7.0,-2.0,7.0,1.0,9.0,1.0,11.0,6.0,15.0,8.0,15.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1660.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1730">
+      <poly hull="!-1,10.0,11.0,8.0,9.0,2.0,8.0,1.0,3.0,-1.0,2.0,1.0,-3.0,4.0,-2.0,4.0,-9.0,2.0,-10.0,8.0,-10.0,6.0,-8.0,6.0,-5.0,8.0,-5.0,8.0,-2.0,11.0,0.0,7.0,1.0,7.0,3.0,10.0,3.0,10.0,6.0,14.0,8.0,15.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1730.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1800">
+      <poly hull="!-1,10.0,11.0,6.0,8.0,2.0,8.0,1.0,4.0,-1.0,4.0,1.0,-2.0,4.0,-2.0,4.0,-9.0,1.0,-8.0,1.0,-10.0,9.0,-10.0,6.0,-7.0,9.0,-1.0,8.0,3.0,10.0,3.0,10.0,7.0,15.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1800.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1870">
+      <poly hull="!-1,-1.0,8.0,-1.0,2.0,1.0,1.0,1.0,-2.0,4.0,-1.0,4.0,-8.0,1.0,-8.0,2.0,-10.0,9.0,-10.0,6.0,-7.0,6.0,-4.0,9.0,0.0,8.0,6.0,10.0,6.0,10.0,8.0,14.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1870.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1940">
+      <poly hull="!-1,-1.0,12.0,-1.0,3.0,1.0,2.0,1.0,-1.0,4.0,0.0,4.0,-8.0,1.0,-7.0,2.0,-10.0,10.0,-10.0,6.0,-6.0,6.0,-3.0,8.0,-3.0,9.0,1.0,7.0,7.0,9.0,10.0,12.0,10.0,10.0,11.0,10.0,13.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_1940.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2010">
+      <poly hull="!-1,1.0,17.0,-1.0,15.0,-1.0,6.0,1.0,0.0,4.0,0.0,4.0,-7.0,1.0,-7.0,1.0,-9.0,10.0,-10.0,10.0,-8.0,8.0,-8.0,6.0,-5.0,6.0,-2.0,8.0,-2.0,9.0,1.0,7.0,7.0,7.0,10.0,10.0,13.0,9.0,17.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_2010.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2080">
+      <poly hull="!-1,0.0,20.0,-1.0,7.0,1.0,4.0,1.0,0.0,4.0,1.0,4.0,-6.0,1.0,-6.0,2.0,-9.0,0.0,-10.0,10.0,-10.0,10.0,-8.0,7.0,-7.0,6.0,-4.0,9.0,2.0,7.0,12.0,10.0,16.0,10.0,20.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_2080.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2150">
+      <poly hull="!-1,2.0,24.0,-1.0,22.0,-1.0,13.0,1.0,1.0,4.0,2.0,4.0,-6.0,1.0,-5.0,2.0,-9.0,-1.0,-9.0,0.0,-13.0,7.0,-13.0,7.0,-10.0,10.0,-9.0,10.0,-7.0,6.0,-3.0,9.0,3.0,7.0,14.0,10.0,18.0,10.0,22.0,8.0,24.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_2150.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-14.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2220">
+      <poly hull="!-1,1.0,26.0,-1.0,24.0,-1.0,14.0,0.0,5.0,2.0,4.0,1.0,2.0,4.0,2.0,4.0,-5.0,2.0,-4.0,2.0,-8.0,-1.0,-9.0,0.0,-16.0,7.0,-16.0,8.0,-13.0,6.0,-9.0,10.0,-9.0,10.0,-6.0,6.0,-3.0,6.0,0.0,9.0,3.0,9.0,6.0,7.0,8.0,7.0,16.0,10.0,21.0,9.0,26.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_2220.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2380">
+      <poly hull="!-1,0.0,30.0,0.0,6.0,2.0,5.0,1.0,3.0,4.0,4.0,4.0,-2.0,1.0,-2.0,2.0,-7.0,0.0,-7.0,-1.0,-13.0,0.0,-22.0,8.0,-21.0,6.0,-9.0,10.0,-8.0,10.0,-3.0,6.0,0.0,6.0,2.0,8.0,2.0,9.0,5.0,7.0,9.0,7.0,20.0,9.0,23.0,8.0,30.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_2380.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-23.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2540">
+      <poly hull="!-1,0.0,31.0,0.0,6.0,1.0,4.0,4.0,4.0,4.0,1.0,1.0,1.0,2.0,-5.0,0.0,-6.0,0.0,-27.0,8.0,-26.0,8.0,-21.0,6.0,-17.0,7.0,-9.0,10.0,-6.0,10.0,0.0,6.0,2.0,6.0,4.0,9.0,5.0,6.0,16.0,9.0,25.0,8.0,31.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_2540.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-28.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2700">
+      <poly hull="!-1,0.0,30.0,0.0,6.0,4.0,5.0,4.0,3.0,1.0,3.0,1.0,-3.0,4.0,-3.0,4.0,-5.0,1.0,-5.0,0.0,-7.0,-1.0,-26.0,0.0,-30.0,8.0,-30.0,9.0,-25.0,7.0,-22.0,6.0,-14.0,9.0,-6.0,7.0,-6.0,6.0,-4.0,10.0,-3.0,10.0,3.0,6.0,4.0,9.0,6.0,6.0,14.0,7.0,22.0,9.0,25.0,7.0,30.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_2700.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-31.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2860">
+      <poly hull="!-1,1.0,27.0,-1.0,23.0,-1.0,15.0,0.0,6.0,2.0,4.0,1.0,-1.0,4.0,-1.0,4.0,-5.0,1.0,-4.0,0.0,-7.0,-1.0,-29.0,2.0,-32.0,7.0,-32.0,9.0,-30.0,9.0,-25.0,6.0,-18.0,7.0,-10.0,9.0,-8.0,6.0,-2.0,10.0,0.0,10.0,6.0,8.0,6.0,6.0,12.0,6.0,17.0,8.0,21.0,7.0,27.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_2860.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-32.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3020">
+      <poly hull="!-1,0.0,22.0,-1.0,12.0,0.0,7.0,2.0,7.0,1.0,2.0,4.0,2.0,4.0,-4.0,1.0,-3.0,2.0,-5.0,0.0,-6.0,-1.0,-28.0,0.0,-30.0,9.0,-30.0,9.0,-23.0,7.0,-20.0,7.0,-9.0,9.0,-5.0,6.0,-2.0,6.0,0.0,10.0,3.0,10.0,7.0,6.0,9.0,6.0,15.0,8.0,18.0,7.0,22.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_3020.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-31.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3180">
+      <poly hull="!-1,0.0,16.0,-1.0,9.0,2.0,8.0,1.0,4.0,4.0,4.0,4.0,-2.0,1.0,-2.0,2.0,-4.0,0.0,-5.0,-1.0,-24.0,0.0,-26.0,9.0,-26.0,10.0,-21.0,7.0,-17.0,7.0,-8.0,9.0,-4.0,6.0,2.0,8.0,3.0,8.0,5.0,10.0,5.0,10.0,9.0,6.0,9.0,8.0,13.0,7.0,16.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_3180.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-27.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3250">
+      <poly hull="!-1,0.0,13.0,-1.0,9.0,2.0,9.0,1.0,5.0,4.0,5.0,4.0,-2.0,1.0,-1.0,2.0,-4.0,0.0,-5.0,-1.0,-22.0,1.0,-24.0,8.0,-24.0,10.0,-23.0,10.0,-19.0,7.0,-14.0,9.0,-3.0,6.0,3.0,8.0,6.0,10.0,6.0,10.0,9.0,7.0,9.0,7.0,13.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_3250.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-24.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3320">
+      <poly hull="!-1,-27.0,10.0,-23.0,2.0,-30.0,1.0,-27.0,-1.0,-27.0,-4.0,-25.0,-5.0,-26.0,-12.0,-21.0,-12.0,-21.0,-8.0,-19.0,-8.0,-18.0,-6.0,-23.0,-3.0,-23.0,0.0,-21.0,0.0,-21.0,-2.0,-19.0,0.0,-20.0,8.0,-22.0,10.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_3320.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3390">
+      <poly hull="!-1,1.0,9.0,1.0,7.0,4.0,7.0,4.0,0.0,1.0,0.0,-1.0,-6.0,-1.0,-16.0,1.0,-17.0,10.0,-17.0,10.0,-13.0,7.0,-10.0,9.0,-1.0,8.0,2.0,6.0,2.0,6.0,5.0,10.0,8.0,10.0,10.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_3390.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-18.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3460">
+      <poly hull="!-1,2.0,10.0,1.0,7.0,4.0,8.0,4.0,0.0,1.0,1.0,-1.0,-5.0,0.0,-13.0,10.0,-13.0,12.0,-11.0,7.0,-8.0,9.0,-1.0,6.0,3.0,6.0,6.0,10.0,10.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_3460.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-14.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3530">
+      <poly hull="!-1,2.0,10.0,1.0,8.0,4.0,8.0,4.0,1.0,1.0,1.0,1.0,-2.0,-1.0,-2.0,-1.0,-8.0,14.0,-11.0,10.0,-8.0,10.0,-6.0,8.0,-6.0,9.0,0.0,6.0,6.0,9.0,10.0,">
+        <texture>
+          <image path="render/skins/loopy/zebra_3530.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

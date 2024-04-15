@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+option java_multiple_files = true;
+option java_package = "em.altitude.game.protos";
+
+// Units are whole pixels everywhere.
+// We're using int32 instead of uint32 because some geometry may clip outside.
+
+message ConvexHull {
+    repeated int32 vertices_x = 1 [packed = true];
+    repeated int32 vertices_y = 2 [packed = true];
+}
+
+message ConcaveObstacle {
+    repeated int32 vertices_x = 1 [packed = true];
+    repeated int32 vertices_y = 2 [packed = true];
+
+    repeated ConvexHull decomposition = 3;
+}
+
+message MapGeometry {
+    // Minimum for x and y are 0.
+    optional uint32 max_x = 1;
+    optional uint32 max_y = 2;
+
+    repeated ConcaveObstacle obstacles = 5;
+}

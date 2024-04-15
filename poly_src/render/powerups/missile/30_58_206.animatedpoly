@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="900">
+      <poly hull="!-1,14.0,1.0,11.0,3.0,11.0,5.0,10.0,2.0,8.0,2.0,6.0,6.0,5.0,2.0,-10.0,2.0,-11.0,6.0,-13.0,6.0,-14.0,2.0,-13.0,-6.0,-11.0,-6.0,-9.0,-2.0,5.0,-2.0,5.0,-6.0,7.0,-6.0,8.0,-2.0,10.0,-2.0,11.0,-5.0,11.0,-3.0,14.0,-1.0,">
+        <texture>
+          <image path="render/powerups/missile/30_58_206_0900.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-15.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1033">
+      <poly hull="!-1,14.0,1.0,11.0,3.0,10.0,6.0,9.0,3.0,7.0,4.0,7.0,6.0,5.0,6.0,5.0,2.0,-9.0,2.0,-10.0,5.0,-13.0,6.0,-14.0,2.0,-13.0,-5.0,-11.0,-5.0,-10.0,-2.0,6.0,-2.0,7.0,-5.0,8.0,-2.0,10.0,-2.0,11.0,-4.0,14.0,-1.0,">
+        <texture>
+          <image path="render/powerups/missile/30_58_206_1033.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-15.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1167">
+      <poly hull="!-1,14.0,1.0,11.0,3.0,10.0,6.0,8.0,2.0,6.0,7.0,5.0,2.0,-6.0,2.0,-10.0,3.0,-11.0,6.0,-13.0,6.0,-14.0,2.0,-13.0,-4.0,-11.0,-4.0,-10.0,-2.0,5.0,-2.0,5.0,-4.0,7.0,-4.0,7.0,-2.0,11.0,-3.0,14.0,-1.0,">
+        <texture>
+          <image path="render/powerups/missile/30_58_206_1167.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-15.0" y="-5.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1300">
+      <poly hull="!-1,14.0,1.0,11.0,3.0,10.0,6.0,8.0,2.0,6.0,7.0,5.0,2.0,-9.0,2.0,-11.0,6.0,-13.0,6.0,-14.0,2.0,-13.0,-4.0,-10.0,-4.0,-10.0,-2.0,5.0,-2.0,5.0,-4.0,9.0,-2.0,10.0,-4.0,11.0,-2.0,14.0,-1.0,">
+        <texture>
+          <image path="render/powerups/missile/30_58_206_1300.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-15.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1433">
+      <poly hull="!-1,14.0,1.0,11.0,3.0,10.0,6.0,9.0,3.0,7.0,3.0,7.0,5.0,5.0,6.0,5.0,2.0,-9.0,2.0,-10.0,5.0,-13.0,6.0,-14.0,2.0,-13.0,-5.0,-11.0,-5.0,-10.0,-2.0,5.0,-2.0,5.0,-5.0,7.0,-5.0,7.0,-3.0,9.0,-3.0,10.0,-5.0,14.0,-1.0,">
+        <texture>
+          <image path="render/powerups/missile/30_58_206_1433.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-15.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1567">
+      <poly hull="!-1,14.0,1.0,11.0,2.0,10.0,5.0,9.0,3.0,5.0,5.0,5.0,2.0,-10.0,2.0,-10.0,4.0,-13.0,5.0,-14.0,2.0,-13.0,-6.0,-11.0,-6.0,-9.0,-2.0,5.0,-2.0,5.0,-6.0,9.0,-2.0,10.0,-6.0,11.0,-3.0,14.0,-1.0,">
+        <texture>
+          <image path="render/powerups/missile/30_58_206_1567.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-15.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1700">
+      <poly hull="!-1,14.0,1.0,12.0,1.0,10.0,4.0,9.0,2.0,7.0,2.0,7.0,4.0,5.0,4.0,5.0,2.0,-10.0,2.0,-10.0,4.0,-13.0,4.0,-14.0,2.0,-13.0,-6.0,-11.0,-6.0,-10.0,-3.0,5.0,-2.0,6.0,-7.0,8.0,-2.0,10.0,-6.0,11.0,-3.0,14.0,-1.0,">
+        <texture>
+          <image path="render/powerups/missile/30_58_206_1700.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-15.0" y="-8.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1833">
+      <poly hull="!-1,14.0,1.0,12.0,1.0,11.0,3.0,7.0,2.0,7.0,4.0,6.0,2.0,-11.0,2.0,-11.0,4.0,-13.0,4.0,-14.0,2.0,-13.0,-7.0,-11.0,-7.0,-10.0,-3.0,-5.0,-2.0,5.0,-2.0,6.0,-7.0,8.0,-2.0,10.0,-6.0,11.0,-3.0,14.0,-1.0,">
+        <texture>
+          <image path="render/powerups/missile/30_58_206_1833.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-15.0" y="-8.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1967">
+      <poly hull="!-1,14.0,1.0,11.0,2.0,11.0,4.0,10.0,2.0,8.0,2.0,7.0,5.0,6.0,2.0,-10.0,2.0,-11.0,5.0,-13.0,5.0,-14.0,2.0,-13.0,-6.0,-11.0,-6.0,-10.0,-3.0,-6.0,-2.0,6.0,-2.0,6.0,-6.0,9.0,-2.0,10.0,-6.0,11.0,-3.0,14.0,-1.0,">
+        <texture>
+          <image path="render/powerups/missile/30_58_206_1967.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-15.0" y="-8.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

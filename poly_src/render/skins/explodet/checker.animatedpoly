@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,-32.0,22.0,-34.0,22.0,-33.0,20.0,-25.0,21.0,-24.0,19.0,-22.0,19.0,-25.0,23.0,-29.0,22.0,-30.0,24.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="30">
+      <poly hull="!-1,-33.0,22.0,-33.0,20.0,-31.0,19.0,-30.0,22.0,-25.0,22.0,-30.0,24.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0030.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="60">
+      <poly hull="!-1,-31.0,23.0,-33.0,22.0,-33.0,20.0,-31.0,19.0,-28.0,20.0,-31.0,22.0,-24.0,22.0,-25.0,24.0,-30.0,25.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0060.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="90">
+      <poly hull="!-1,-31.0,25.0,-33.0,20.0,-23.0,19.0,-23.0,21.0,-31.0,21.0,-24.0,22.0,-25.0,24.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0090.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="120">
+      <poly hull="!-1,3.0,27.0,1.0,24.0,7.0,27.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0120.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="150">
+      <poly hull="!-1,3.0,29.0,2.0,26.0,7.0,29.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0150.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-33.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="180">
+      <poly hull="!-1,-33.0,-17.0,-33.0,32.0,23.0,32.0,23.0,-17.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0180.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-33.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="340">
+      <poly hull="!-1,4.0,39.0,3.0,37.0,6.0,37.0,6.0,39.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0340.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-32.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="500">
+      <poly hull="!-1,9.0,42.0,8.0,36.0,1.0,37.0,2.0,30.0,9.0,30.0,9.0,36.0,14.0,36.0,14.0,42.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0500.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-31.0" y="-19.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="660">
+      <poly hull="!-1,8.0,42.0,8.0,37.0,1.0,37.0,2.0,30.0,-1.0,30.0,-3.0,23.0,-1.0,23.0,-1.0,26.0,2.0,27.0,3.0,30.0,8.0,30.0,8.0,27.0,13.0,26.0,13.0,30.0,9.0,30.0,9.0,36.0,13.0,36.0,13.0,42.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0660.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-31.0" y="-27.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="820">
+      <poly hull="!-1,8.0,39.0,8.0,34.0,13.0,34.0,13.0,39.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0820.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-35.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="980">
+      <poly hull="!-1,8.0,34.0,7.0,29.0,1.0,29.0,2.0,24.0,-1.0,23.0,-1.0,21.0,2.0,23.0,8.0,23.0,8.0,29.0,12.0,29.0,12.0,34.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_0980.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-30.0" y="-40.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1140">
+      <poly hull="!-1,7.0,27.0,7.0,23.0,1.0,23.0,2.0,18.0,8.0,18.0,8.0,23.0,12.0,23.0,11.0,27.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1140.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-31.0" y="-43.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1300">
+      <poly hull="!-1,7.0,18.0,7.0,15.0,1.0,14.0,7.0,13.0,8.0,15.0,12.0,15.0,11.0,18.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1300.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-31.0" y="-43.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1460">
+      <poly hull="!-1,-4.0,9.0,-3.0,13.0,3.0,12.0,3.0,15.0,0.0,14.0,-3.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1460.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-32.0" y="-39.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1620">
+      <poly hull="!-1,-4.0,16.0,-4.0,12.0,-3.0,15.0,0.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1620.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-33.0" y="-32.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1650">
+      <poly hull="!-1,-4.0,16.0,-3.0,7.0,2.0,7.0,3.0,12.0,-3.0,13.0,-3.0,15.0,0.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1650.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-33.0" y="-30.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1680">
+      <poly hull="!-1,-4.0,16.0,-4.0,13.0,-2.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1680.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-28.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1710">
+      <poly hull="!-1,-4.0,16.0,-4.0,13.0,-2.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1710.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-26.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1740">
+      <poly hull="!-1,-4.0,16.0,-3.0,9.0,-6.0,7.0,-4.0,3.0,-3.0,8.0,2.0,8.0,3.0,10.0,2.0,14.0,-3.0,14.0,-2.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1740.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-25.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1770">
+      <poly hull="!-1,-4.0,16.0,-3.0,9.0,-6.0,8.0,-5.0,4.0,-3.0,3.0,-3.0,8.0,2.0,8.0,1.0,3.0,3.0,3.0,3.0,14.0,-3.0,14.0,-2.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1770.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-25.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1800">
+      <poly hull="!-1,-4.0,16.0,-4.0,14.0,-2.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1800.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-24.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1830">
+      <poly hull="!-1,-4.0,16.0,-4.0,14.0,-2.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1830.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-23.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1860">
+      <poly hull="!-1,-4.0,16.0,-4.0,14.0,-2.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1860.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-23.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1890">
+      <poly hull="!-1,-4.0,16.0,-4.0,5.0,-3.0,9.0,0.0,9.0,3.0,12.0,2.0,15.0,-2.0,14.0,-2.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1890.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-23.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1920">
+      <poly hull="!-1,-4.0,16.0,-3.0,10.0,2.0,10.0,3.0,14.0,-2.0,14.0,-2.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1920.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-24.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1950">
+      <poly hull="!-1,-4.0,16.0,-3.0,10.0,2.0,10.0,2.0,15.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1950.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-25.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1980">
+      <poly hull="!-1,-4.0,16.0,-3.0,10.0,2.0,10.0,2.0,15.0,-2.0,14.0,-2.0,16.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_1980.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-25.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2140">
+      <poly hull="!-1,-4.0,15.0,-3.0,10.0,2.0,10.0,2.0,8.0,5.0,8.0,6.0,3.0,14.0,2.0,14.0,-2.0,15.0,7.0,20.0,9.0,22.0,8.0,19.0,15.0,14.0,15.0,15.0,8.0,6.0,8.0,7.0,13.0,4.0,13.0,2.0,11.0,2.0,14.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_2140.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-36.0" y="-32.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2300">
+      <poly hull="!-1,3.0,25.0,2.0,19.0,6.0,19.0,6.0,13.0,-3.0,12.0,-3.0,7.0,-5.0,5.0,-6.0,0.0,-3.0,-1.0,-3.0,-5.0,5.0,-5.0,5.0,-1.0,13.0,-1.0,14.0,-5.0,14.0,15.0,16.0,19.0,16.0,25.0,14.0,19.0,7.0,19.0,6.0,25.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_2300.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-37.0" y="-38.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2460">
+      <poly hull="!-1,4.0,35.0,2.0,29.0,6.0,28.0,5.0,21.0,-1.0,21.0,-3.0,13.0,5.0,13.0,5.0,6.0,-3.0,6.0,-4.0,-1.0,6.0,-1.0,5.0,5.0,13.0,5.0,14.0,-1.0,14.0,28.0,7.0,28.0,6.0,35.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_2460.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-38.0" y="-42.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2620">
+      <poly hull="!-1,2.0,35.0,5.0,35.0,5.0,27.0,-1.0,27.0,-3.0,19.0,5.0,19.0,5.0,11.0,-3.0,11.0,-4.0,2.0,6.0,3.0,6.0,11.0,13.0,10.0,14.0,3.0,15.0,10.0,13.0,11.0,13.0,17.0,15.0,19.0,15.0,40.0,13.0,40.0,13.0,35.0,6.0,35.0,5.0,41.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_2620.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-38.0" y="-43.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2780">
+      <poly hull="!-1,2.0,38.0,5.0,37.0,5.0,30.0,13.0,30.0,14.0,42.0,12.0,37.0,7.0,37.0,5.0,38.0,5.0,43.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_2780.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-38.0" y="-41.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2940">
+      <poly hull="!-1,3.0,41.0,2.0,37.0,5.0,37.0,5.0,41.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_2940.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-38.0" y="-36.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3100">
+      <poly hull="!-1,3.0,37.0,2.0,34.0,5.0,34.0,5.0,37.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_3100.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-37.0" y="-26.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3260">
+      <poly hull="!-1,3.0,31.0,2.0,29.0,4.0,29.0,4.0,26.0,-1.0,26.0,-1.0,24.0,-5.0,20.0,-3.0,19.0,-4.0,11.0,-1.0,11.0,-2.0,13.0,13.0,11.0,13.0,13.0,5.0,14.0,5.0,19.0,12.0,19.0,13.0,15.0,12.0,31.0,11.0,29.0,5.0,29.0,5.0,31.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_3260.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-36.0" y="-16.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3420">
+      <poly hull="!-1,-29.0,22.0,-23.0,22.0,-27.0,25.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_3420.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3450">
+      <poly hull="!-1,-29.0,24.0,-29.0,22.0,-35.0,22.0,-35.0,20.0,-31.0,21.0,-33.0,20.0,-32.0,17.0,-27.0,17.0,-31.0,19.0,-25.0,19.0,-25.0,21.0,-28.0,22.0,-23.0,22.0,-24.0,24.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_3450.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3480">
+      <poly hull="!-1,-29.0,22.0,-32.0,22.0,-32.0,18.0,-26.0,18.0,-30.0,19.0,-30.0,21.0,-23.0,21.0,-23.0,23.0,-27.0,24.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_3480.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3510">
+      <poly hull="!-1,-30.0,23.0,-33.0,21.0,-32.0,19.0,-26.0,19.0,-23.0,21.0,-23.0,23.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_3510.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3540">
+      <poly hull="!-1,-35.0,-17.0,-35.0,23.0,33.0,23.0,33.0,-17.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_3540.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3570">
+      <poly hull="!-1,-34.0,22.0,-33.0,20.0,-23.0,20.0,-24.0,22.0,">
+        <texture>
+          <image path="render/skins/explodet/checker_3570.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

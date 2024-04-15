@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,-33.0,15.0,-34.0,11.0,-21.0,9.0,-21.0,13.0,-25.0,13.0,-25.0,15.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="33">
+      <poly hull="!-1,-33.0,16.0,-34.0,12.0,-25.0,11.0,-24.0,6.0,-24.0,8.0,-21.0,9.0,-21.0,12.0,-24.0,12.0,-25.0,16.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0033.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="67">
+      <poly hull="!-1,-33.0,17.0,-33.0,12.0,-25.0,12.0,-25.0,17.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0067.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="100">
+      <poly hull="!-1,-32.0,18.0,-33.0,13.0,-25.0,13.0,-25.0,18.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0100.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="133">
+      <poly hull="!-1,-33.0,18.0,-33.0,14.0,-25.0,14.0,-25.0,18.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0133.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="167">
+      <poly hull="!-1,-32.0,19.0,-33.0,15.0,-31.0,14.0,-25.0,14.0,-25.0,19.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0167.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="200">
+      <poly hull="!-1,-33.0,19.0,-33.0,15.0,-24.0,15.0,-24.0,19.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0200.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-33.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="356">
+      <poly hull="!-1,-2.0,23.0,-3.0,16.0,12.0,16.0,12.0,22.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0356.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-33.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="511">
+      <poly hull="!-1,-2.0,27.0,-3.0,18.0,12.0,19.0,11.0,27.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0511.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-32.0" y="-18.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="667">
+      <poly hull="!-1,-2.0,29.0,-3.0,19.0,2.0,21.0,12.0,21.0,11.0,29.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0667.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-31.0" y="-23.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="822">
+      <poly hull="!-1,-2.0,29.0,-3.0,19.0,-1.0,19.0,0.0,21.0,10.0,21.0,10.0,29.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0822.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-31.0" y="-27.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="978">
+      <poly hull="!-1,-1.0,27.0,-3.0,18.0,3.0,21.0,11.0,21.0,9.0,27.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_0978.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-31.0" y="-29.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1133">
+      <poly hull="!-1,-1.0,23.0,-3.0,15.0,1.0,19.0,10.0,19.0,9.0,23.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1133.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-31.0" y="-29.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1289">
+      <poly hull="!-1,-1.0,18.0,-2.0,13.0,1.0,16.0,9.0,18.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1289.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-32.0" y="-27.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1444">
+      <poly hull="!-1,-33.0,-23.0,-33.0,10.0,35.0,10.0,35.0,-23.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1444.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-33.0" y="-23.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1600">
+      <poly hull="!-1,31.0,7.0,29.0,6.0,20.0,5.0,18.0,-3.0,26.0,-4.0,30.0,-2.0,34.0,2.0,34.0,7.0,32.0,8.0,32.0,10.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1600.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-33.0" y="-19.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1633">
+      <poly hull="!-1,29.0,6.0,21.0,6.0,19.0,4.0,18.0,-2.0,21.0,-4.0,25.0,-4.0,31.0,-1.0,34.0,3.0,34.0,7.0,32.0,8.0,32.0,10.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1633.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-19.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1667">
+      <poly hull="!-1,29.0,7.0,21.0,7.0,19.0,5.0,18.0,-2.0,28.0,-3.0,29.0,-1.0,31.0,-1.0,34.0,3.0,34.0,7.0,32.0,9.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1667.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-18.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1700">
+      <poly hull="!-1,30.0,9.0,29.0,7.0,20.0,7.0,18.0,-1.0,20.0,-3.0,28.0,-3.0,34.0,3.0,34.0,7.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1700.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1733">
+      <poly hull="!-1,29.0,8.0,21.0,8.0,19.0,6.0,18.0,-1.0,21.0,-3.0,28.0,-3.0,34.0,4.0,32.0,10.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1733.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1767">
+      <poly hull="!-1,30.0,10.0,29.0,8.0,20.0,8.0,18.0,0.0,22.0,-3.0,28.0,-3.0,29.0,0.0,31.0,0.0,34.0,4.0,32.0,10.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1767.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-16.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1800">
+      <poly hull="!-1,21.0,9.0,19.0,7.0,18.0,1.0,20.0,-2.0,27.0,-3.0,29.0,0.0,33.0,2.0,34.0,7.0,31.0,10.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1800.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-15.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1833">
+      <poly hull="!-1,19.0,8.0,19.0,-1.0,28.0,-2.0,30.0,1.0,32.0,1.0,34.0,7.0,31.0,10.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1833.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-14.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1867">
+      <poly hull="!-1,22.0,10.0,18.0,6.0,19.0,0.0,22.0,-2.0,28.0,-2.0,33.0,3.0,34.0,7.0,31.0,10.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1867.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-15.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1900">
+      <poly hull="!-1,20.0,10.0,18.0,6.0,18.0,1.0,23.0,-2.0,28.0,-2.0,29.0,1.0,33.0,3.0,34.0,7.0,31.0,10.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1900.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-15.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1933">
+      <poly hull="!-1,20.0,10.0,18.0,7.0,18.0,1.0,24.0,-2.0,28.0,-2.0,29.0,1.0,33.0,3.0,34.0,7.0,31.0,10.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1933.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-16.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1967">
+      <poly hull="!-1,21.0,11.0,18.0,8.0,18.0,2.0,22.0,-1.0,29.0,-1.0,29.0,1.0,33.0,4.0,33.0,8.0,31.0,10.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_1967.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2000">
+      <poly hull="!-1,20.0,11.0,18.0,2.0,23.0,-1.0,29.0,-1.0,29.0,1.0,33.0,4.0,33.0,8.0,27.0,11.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_2000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2156">
+      <poly hull="!-1,-2.0,14.0,-2.0,7.0,12.0,6.0,12.0,14.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_2156.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-20.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2311">
+      <poly hull="!-1,-2.0,22.0,-3.0,13.0,13.0,12.0,11.0,21.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_2311.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-25.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2467">
+      <poly hull="!-1,-1.0,27.0,-3.0,17.0,12.0,16.0,11.0,26.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_2467.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-28.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2622">
+      <poly hull="!-1,-1.0,30.0,-3.0,23.0,-2.0,19.0,12.0,18.0,11.0,29.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_2622.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-33.0" y="-30.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2778">
+      <poly hull="!-1,-2.0,30.0,-3.0,21.0,12.0,19.0,10.0,30.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_2778.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-33.0" y="-30.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2933">
+      <poly hull="!-1,-1.0,29.0,-3.0,20.0,11.0,19.0,10.0,28.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_2933.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-27.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3089">
+      <poly hull="!-1,-1.0,25.0,-2.0,18.0,11.0,18.0,9.0,25.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_3089.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3244">
+      <poly hull="!-1,-1.0,20.0,-2.0,16.0,11.0,15.0,9.0,20.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_3244.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-14.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3400">
+      <poly hull="!-1,-30.0,17.0,-29.0,13.0,-22.0,13.0,-22.0,17.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_3400.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3433">
+      <poly hull="!-1,-29.0,17.0,-29.0,13.0,-22.0,13.0,-22.0,17.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_3433.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3467">
+      <poly hull="!-1,-29.0,16.0,-29.0,13.0,-26.0,12.0,-22.0,12.0,-22.0,16.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_3467.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3500">
+      <poly hull="!-1,-29.0,15.0,-25.0,14.0,-25.0,12.0,-34.0,12.0,-34.0,8.0,-25.0,7.0,-25.0,11.0,-22.0,11.0,-22.0,15.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_3500.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3533">
+      <poly hull="!-1,-25.0,15.0,-25.0,13.0,-34.0,13.0,-34.0,9.0,-25.0,8.0,-25.0,10.0,-22.0,11.0,-22.0,15.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_3533.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-35.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3567">
+      <poly hull="!-1,-34.0,14.0,-34.0,10.0,-32.0,9.0,-21.0,10.0,-22.0,14.0,">
+        <texture>
+          <image path="render/skins/bomber/shark_3567.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-34.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

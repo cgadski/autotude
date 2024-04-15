@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-13369549,-20.0,-14.0,0.0,0.0,-20.0,14.0,">
+  <texture>
+    <xform scale="2.1" rotate="0.0" flipX="false" flipY="false">
+      <translate x="0.0" y="0.0" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

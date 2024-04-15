@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,-26.0,20.0,-27.0,17.0,-25.0,15.0,-21.0,15.0,-20.0,13.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-15.0,2.0,-7.0,2.0,-1.0,4.0,-1.0,7.0,-6.0,15.0,-17.0,15.0,-22.0,17.0,-23.0,20.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="1.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="30">
+      <poly hull="!-1,-26.0,20.0,-27.0,17.0,-25.0,15.0,-21.0,15.0,-20.0,13.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-16.0,4.0,-14.0,2.0,-1.0,4.0,-1.0,8.0,-2.0,10.0,-4.0,10.0,-6.0,15.0,-17.0,15.0,-22.0,17.0,-23.0,20.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0030.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="60">
+      <poly hull="!-1,-26.0,20.0,-27.0,17.0,-25.0,15.0,-21.0,15.0,-20.0,13.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-15.0,3.0,-1.0,4.0,-1.0,9.0,-4.0,10.0,-6.0,15.0,-17.0,15.0,-22.0,17.0,-23.0,20.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0060.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="90">
+      <poly hull="!-1,-26.0,20.0,-26.0,15.0,-21.0,15.0,-19.0,12.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-15.0,3.0,-1.0,4.0,-1.0,9.0,-4.0,10.0,-5.0,14.0,-18.0,15.0,-22.0,17.0,-23.0,20.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0090.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="120">
+      <poly hull="!-1,-27.0,18.0,-26.0,15.0,-22.0,15.0,-19.0,12.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-15.0,3.0,-1.0,4.0,-1.0,9.0,-5.0,12.0,-5.0,14.0,-18.0,15.0,-21.0,16.0,-24.0,20.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0120.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="150">
+      <poly hull="!-1,-26.0,19.0,-26.0,15.0,-22.0,15.0,-19.0,12.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-15.0,3.0,-1.0,4.0,-1.0,10.0,-3.0,10.0,-5.0,14.0,-19.0,15.0,-23.0,19.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0150.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="180">
+      <poly hull="!-1,-26.0,19.0,-27.0,16.0,-25.0,14.0,-21.0,14.0,-20.0,12.0,-14.0,10.0,-16.0,9.0,-15.0,3.0,-1.0,4.0,-1.0,9.0,-7.0,15.0,-19.0,15.0,-23.0,19.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0180.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="340">
+      <poly hull="!-1,-25.0,17.0,-25.0,12.0,-21.0,12.0,-15.0,8.0,-16.0,3.0,-4.0,4.0,-5.0,8.0,-3.0,9.0,-3.0,11.0,-5.0,11.0,-8.0,14.0,-19.0,13.0,-23.0,17.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0340.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="500">
+      <poly hull="!-1,-26.0,13.0,-26.0,10.0,-19.0,9.0,-16.0,6.0,-15.0,2.0,-3.0,4.0,-4.0,11.0,-6.0,12.0,-21.0,11.0,-22.0,13.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0500.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="660">
+      <poly hull="!-1,-10.0,11.0,-18.0,7.0,-16.0,2.0,-4.0,3.0,-3.0,9.0,-5.0,11.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0660.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-18.0" y="-8.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="820">
+      <poly hull="!-1,-10.0,10.0,-17.0,3.0,-3.0,4.0,-4.0,9.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0820.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-9.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="980">
+      <poly hull="!-1,-11.0,8.0,-15.0,4.0,-3.0,5.0,-5.0,8.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_0980.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1140">
+      <poly hull="!-1,-11.0,7.0,-12.0,5.0,-7.0,7.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1140.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-18.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1300">
+      <poly hull="!-1,-16.0,-3.0,-16.0,-7.0,-18.0,-7.0,-18.0,-9.0,-25.0,-9.0,-26.0,-13.0,-23.0,-14.0,-21.0,-11.0,-6.0,-12.0,-4.0,-11.0,-4.0,-3.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1300.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-14.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1460">
+      <poly hull="!-1,-15.0,-3.0,-17.0,-10.0,-26.0,-13.0,-25.0,-17.0,-18.0,-13.0,-7.0,-14.0,-5.0,-11.0,-3.0,-11.0,-5.0,-8.0,-4.0,-4.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1460.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1620">
+      <poly hull="!-1,-15.0,-3.0,-16.0,-9.0,-14.0,-10.0,-21.0,-13.0,-22.0,-15.0,-25.0,-14.0,-27.0,-17.0,-26.0,-19.0,-23.0,-19.0,-19.0,-15.0,-7.0,-15.0,-3.0,-10.0,-1.0,-10.0,-2.0,-4.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1620.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-20.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1650">
+      <poly hull="!-1,-15.0,-3.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-17.0,-11.0,-22.0,-15.0,-26.0,-15.0,-26.0,-19.0,-23.0,-19.0,-21.0,-16.0,-18.0,-15.0,-7.0,-15.0,-3.0,-10.0,-1.0,-10.0,-2.0,-4.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1650.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-20.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1680">
+      <poly hull="!-1,-15.0,-3.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-19.0,-12.0,-21.0,-15.0,-26.0,-15.0,-27.0,-18.0,-25.0,-20.0,-23.0,-20.0,-22.0,-17.0,-18.0,-15.0,-6.0,-15.0,-5.0,-12.0,-1.0,-10.0,-2.0,-4.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1680.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-20.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1710">
+      <poly hull="!-1,-15.0,-3.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-20.0,-13.0,-21.0,-15.0,-25.0,-15.0,-27.0,-17.0,-26.0,-20.0,-23.0,-20.0,-22.0,-17.0,-17.0,-15.0,-6.0,-15.0,-5.0,-12.0,-1.0,-10.0,-2.0,-4.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1710.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1740">
+      <poly hull="!-1,-15.0,-3.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-20.0,-13.0,-21.0,-15.0,-25.0,-15.0,-27.0,-17.0,-26.0,-20.0,-23.0,-20.0,-22.0,-17.0,-17.0,-15.0,-6.0,-15.0,-4.0,-13.0,-4.0,-10.0,-1.0,-9.0,-1.0,-5.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1740.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1770">
+      <poly hull="!-1,-16.0,-4.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-20.0,-13.0,-22.0,-16.0,-25.0,-15.0,-27.0,-17.0,-26.0,-20.0,-23.0,-20.0,-22.0,-17.0,-20.0,-16.0,-6.0,-15.0,-4.0,-13.0,-4.0,-10.0,-2.0,-10.0,-1.0,-5.0,-11.0,-2.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1770.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-27.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1800">
+      <poly hull="!-1,-15.0,-2.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-20.0,-13.0,-22.0,-16.0,-25.0,-15.0,-27.0,-17.0,-26.0,-20.0,-23.0,-20.0,-22.0,-17.0,-20.0,-16.0,-6.0,-15.0,-4.0,-13.0,-4.0,-10.0,-2.0,-10.0,-1.0,-5.0,-7.0,-2.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1800.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1830">
+      <poly hull="!-1,-15.0,-2.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-20.0,-13.0,-22.0,-16.0,-25.0,-15.0,-27.0,-17.0,-26.0,-20.0,-23.0,-20.0,-22.0,-17.0,-20.0,-16.0,-6.0,-15.0,-4.0,-13.0,-4.0,-10.0,-1.0,-9.0,-1.0,-4.0,-6.0,-2.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1830.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1860">
+      <poly hull="!-1,-13.0,-1.0,-16.0,-4.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-20.0,-13.0,-22.0,-16.0,-25.0,-15.0,-27.0,-17.0,-27.0,-20.0,-23.0,-20.0,-22.0,-17.0,-16.0,-15.0,-6.0,-15.0,-4.0,-13.0,-4.0,-10.0,-1.0,-9.0,-1.0,-6.0,-2.0,-3.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1860.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1890">
+      <poly hull="!-1,-14.0,-1.0,-16.0,-4.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-20.0,-13.0,-21.0,-15.0,-25.0,-15.0,-27.0,-17.0,-27.0,-20.0,-23.0,-20.0,-22.0,-17.0,-16.0,-15.0,-6.0,-15.0,-4.0,-13.0,-4.0,-10.0,-1.0,-9.0,-1.0,-4.0,-6.0,-1.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1890.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1920">
+      <poly hull="!-1,-15.0,-1.0,-16.0,-4.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-19.0,-12.0,-21.0,-15.0,-26.0,-15.0,-26.0,-20.0,-23.0,-20.0,-22.0,-17.0,-17.0,-15.0,-5.0,-14.0,-4.0,-10.0,-1.0,-9.0,-1.0,-3.0,-8.0,0.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1920.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1950">
+      <poly hull="!-1,-14.0,0.0,-16.0,-4.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-17.0,-11.0,-22.0,-15.0,-26.0,-15.0,-26.0,-20.0,-23.0,-20.0,-23.0,-18.0,-18.0,-15.0,-6.0,-15.0,-4.0,-10.0,-1.0,-9.0,-1.0,-3.0,-6.0,0.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1950.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1980">
+      <poly hull="!-1,-14.0,0.0,-16.0,-4.0,-16.0,-9.0,-14.0,-9.0,-14.0,-11.0,-17.0,-11.0,-22.0,-15.0,-26.0,-15.0,-26.0,-20.0,-24.0,-20.0,-21.0,-16.0,-18.0,-15.0,-5.0,-14.0,-5.0,-12.0,-1.0,-9.0,-1.0,-3.0,-8.0,1.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_1980.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-20.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2140">
+      <poly hull="!-1,-12.0,3.0,-16.0,-1.0,-16.0,-9.0,-21.0,-11.0,-22.0,-13.0,-27.0,-13.0,-28.0,-16.0,-26.0,-18.0,-24.0,-18.0,-21.0,-14.0,-7.0,-14.0,-5.0,-13.0,-5.0,-11.0,-2.0,-10.0,-1.0,-2.0,-3.0,1.0,-7.0,3.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_2140.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-18.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2300">
+      <poly hull="!-1,-12.0,5.0,-16.0,0.0,-16.0,-7.0,-19.0,-7.0,-22.0,-10.0,-26.0,-9.0,-28.0,-11.0,-27.0,-14.0,-23.0,-14.0,-23.0,-12.0,-20.0,-11.0,-11.0,-13.0,-3.0,-11.0,-1.0,-7.0,-1.0,0.0,-6.0,5.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_2300.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-15.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2460">
+      <poly hull="!-1,-11.0,7.0,-15.0,4.0,-17.0,-4.0,-20.0,-4.0,-22.0,-6.0,-27.0,-5.0,-28.0,-9.0,-24.0,-10.0,-23.0,-8.0,-16.0,-8.0,-11.0,-11.0,-3.0,-10.0,-1.0,-6.0,-1.0,1.0,-6.0,7.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_2460.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2620">
+      <poly hull="!-1,-12.0,8.0,-17.0,0.0,-27.0,0.0,-28.0,-4.0,-15.0,-5.0,-15.0,-7.0,-11.0,-10.0,-4.0,-9.0,-1.0,-4.0,-1.0,2.0,-5.0,8.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_2620.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2780">
+      <poly hull="!-1,-14.0,8.0,-15.0,5.0,-17.0,4.0,-23.0,3.0,-24.0,5.0,-27.0,5.0,-28.0,1.0,-18.0,0.0,-16.0,-1.0,-15.0,-5.0,-12.0,-8.0,-7.0,-9.0,-1.0,-3.0,-2.0,7.0,-7.0,10.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_2780.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-9.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2940">
+      <poly hull="!-1,-11.0,11.0,-15.0,8.0,-23.0,8.0,-24.0,10.0,-28.0,9.0,-27.0,5.0,-20.0,5.0,-16.0,3.0,-16.0,-2.0,-11.0,-7.0,-4.0,-6.0,-1.0,-1.0,-1.0,5.0,-5.0,11.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_2940.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-8.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3100">
+      <poly hull="!-1,-27.0,14.0,-28.0,11.0,-26.0,9.0,-22.0,10.0,-21.0,8.0,-16.0,6.0,-16.0,0.0,-14.0,-4.0,-6.0,-5.0,-2.0,-2.0,-1.0,7.0,-3.0,11.0,-21.0,11.0,-24.0,14.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_3100.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-29.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3260">
+      <poly hull="!-1,-27.0,17.0,-28.0,15.0,-26.0,12.0,-22.0,13.0,-21.0,11.0,-16.0,9.0,-16.0,1.0,-14.0,-2.0,-6.0,-3.0,-2.0,0.0,-1.0,8.0,-3.0,11.0,-5.0,11.0,-7.0,14.0,-21.0,14.0,-23.0,15.0,-23.0,17.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_3260.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-4.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3420">
+      <poly hull="!-1,-27.0,19.0,-26.0,15.0,-22.0,15.0,-20.0,12.0,-14.0,10.0,-16.0,9.0,-16.0,3.0,-14.0,0.0,-7.0,-1.0,-1.0,3.0,-1.0,9.0,-4.0,10.0,-4.0,12.0,-7.0,15.0,-19.0,15.0,-23.0,17.0,-23.0,19.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_3420.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3450">
+      <poly hull="!-1,-26.0,20.0,-26.0,15.0,-22.0,15.0,-19.0,12.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-16.0,3.0,-14.0,0.0,-6.0,0.0,-1.0,3.0,-1.0,9.0,-4.0,10.0,-5.0,14.0,-18.0,15.0,-21.0,16.0,-24.0,20.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_3450.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-1.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3480">
+      <poly hull="!-1,-26.0,20.0,-26.0,15.0,-22.0,15.0,-19.0,12.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-15.0,1.0,-7.0,0.0,-1.0,3.0,-1.0,9.0,-4.0,10.0,-5.0,14.0,-18.0,15.0,-22.0,17.0,-23.0,20.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_3480.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="-1.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3510">
+      <poly hull="!-1,-26.0,20.0,-26.0,15.0,-21.0,15.0,-19.0,12.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-15.0,1.0,-6.0,1.0,-1.0,4.0,-1.0,9.0,-4.0,10.0,-6.0,15.0,-17.0,15.0,-22.0,17.0,-23.0,20.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_3510.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="0.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3540">
+      <poly hull="!-1,-26.0,20.0,-27.0,17.0,-25.0,15.0,-21.0,15.0,-20.0,13.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-16.0,4.0,-14.0,1.0,-7.0,1.0,-2.0,3.0,-1.0,9.0,-4.0,10.0,-6.0,15.0,-17.0,15.0,-22.0,17.0,-23.0,20.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_3540.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="0.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3570">
+      <poly hull="!-1,-26.0,20.0,-27.0,17.0,-25.0,15.0,-21.0,15.0,-20.0,13.0,-14.0,11.0,-14.0,9.0,-16.0,9.0,-15.0,2.0,-10.0,1.0,-1.0,4.0,-1.0,9.0,-4.0,10.0,-6.0,15.0,-17.0,15.0,-22.0,17.0,-23.0,20.0,">
+        <texture>
+          <image path="render/skins/biplane/santa_3570.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-28.0" y="1.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

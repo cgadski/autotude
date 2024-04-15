@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,16.632,1.386,12.473999,3.465,!-256,7.623,4.158,!-1,-13.86,4.158,!-256,-16.632,1.386,!-1,-16.632,-1.386,-14.5529995,-4.158,4.158,-4.158,13.167001,-3.465,16.632,-0.693,">
+  <texture>
+    <image path="planes/explodet/rocket.png" />
+    <xform scale="0.693" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-20.79" y="-4.158" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

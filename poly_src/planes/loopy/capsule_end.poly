@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,-2.2,3.3000002,0.0,3.3000002,2.2,1.1,2.2,-2.2,0.0,-4.4,-2.2,-4.4,">
+  <texture>
+    <image path="planes/loopy/capsule_end.png" />
+    <xform scale="0.70400006" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-2.2" y="-4.4" />
+    </xform>
+  </texture>
+</TexturedPoly>
+
