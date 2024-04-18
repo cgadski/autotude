@@ -58,10 +58,6 @@ site_gen/viewer.js: hx_src/autotude/proto/ build_viewer.hxml \
 	out/polys
 	haxe build_viewer.hxml
 
-recordings/:
-	mkdir -p $@
-	cp -r ~/Library/Application\ Support/NimblyGames/altitude/recordings/* $@
-
 site_gen/: site_src/*.html site_gen/viewer.js
 	cp site_src/*.html $@
 	mkdir -p $@recordings

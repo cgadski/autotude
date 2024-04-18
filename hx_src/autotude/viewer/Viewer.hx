@@ -1,5 +1,6 @@
 package autotude.viewer;
 
+import js.html.URLSearchParams;
 import js.html.CanvasElement;
 import js.html.SpanElement;
 import js.html.InputElement;
@@ -34,6 +35,8 @@ class Viewer extends hxd.App {
 
 	final sidebar:DivElement = cast getElem("sidebar");
 	final help:DivElement = cast getElem("help");
+	final players:DivElement = cast getElem("players");
+
 	final scrubber:InputElement = cast getElem("scrubber");
 	final timeBefore:SpanElement = cast getElem("time_before");
 	final timeAfter:SpanElement = cast getElem("time_after");
@@ -59,7 +62,11 @@ class Viewer extends hxd.App {
 		draggable.onWheel = onWheel;
 
 		// load map
-		final request = Browser.window.fetch("recordings/names.pb.gz");
+		final params = ViewerParams.parse(Browser.location.search);
+		if (params == null)
+			return;
+
+		final request = Browser.window.fetch('recordings/${params.map}.pb.gz');
 		request.then((res) -> {
 			res.arrayBuffer().then((buf) -> {
 				final replay = new Replay(new BytesInput(Bytes.ofData(buf)));
@@ -148,7 +155,15 @@ class Viewer extends hxd.App {
 		final n = (cb:(PlayerState) -> Void) -> {
 			if (playerState != null)
 				cb(playerState);
-		}
+		};
+
+		Browser.document.onkeydown = (e:js.html.Event) -> {
+			e.preventDefault();
+		};
+
+		r("Toggle player list", [Key.TAB], () -> {
+			players.classList.toggle("show");
+		});
 
 		r("Toggle help", [Key.H], () -> {
 			help.classList.toggle("show");

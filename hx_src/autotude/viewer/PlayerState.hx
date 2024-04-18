@@ -7,6 +7,12 @@ import h2d.Scene;
 import h3d.Vector;
 import js.html.DivElement;
 
+enum ChaseMode {
+	ChasePlayer(id:Int);
+	ChaseObjective;
+	ChaseControllable;
+}
+
 class PlayerState {
 	// references
 	public final s2d:Scene;
@@ -16,6 +22,7 @@ class PlayerState {
 	public final canvas:CanvasElement;
 
 	// camera
+	public var chaseMode:Null<ChaseMode> = null;
 	public var pos:Vector = new Vector(0, 0);
 	public var scale:Float = 1;
 	public var showBounds:Bool = true;

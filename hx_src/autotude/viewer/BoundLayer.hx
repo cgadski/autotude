@@ -51,8 +51,6 @@ class BoundLayer extends Graphics {
         moveTo(Viewer.WIDTH / 2, Viewer.HEIGHT / 2 - d);
         lineTo(Viewer.WIDTH / 2, Viewer.HEIGHT / 2 + d);
         flush();
-        // moveTo(Viewer.WIDTH / 2 - 5, Viewer.HEIGHT / 2);
-        // lineTo(Viewer.WIDTH / 2 + 10, Viewer.HEIGHT / 2);
 
         super.draw(ctx);
     }

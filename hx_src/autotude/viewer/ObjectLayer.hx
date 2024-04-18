@@ -45,7 +45,6 @@ class ObjectLayer extends Graphics {
 		final y = poly.verticesY;
 
 		if (object.hasTeam()) {
-			final code = replay.teams.indexOf(object.team);
 			if (object.team == replay.teams[0]) {
 				beginFill(0xEC8686);
 			} else if (object.team == replay.teams[1]) {
@@ -81,9 +80,6 @@ class ObjectLayer extends Graphics {
 	function drawObject(object:GameObject) {
 		final pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
 
-		// fillStyle = C.fill;
-
-		// Tr.tr(object.spin);
 		final poly = polyManager.getPoly(object.type, object.spin);
 		if (poly != null) {
 			showPoly(poly, object);
@@ -93,6 +89,7 @@ class ObjectLayer extends Graphics {
 
 		// TODO: cheat on biplane bullets
 
+		// draw a little cross for health
 		if (object.type == ObjectType.HEALTH_POWERUP) {
 			final d = 10;
 			flush();
@@ -107,19 +104,6 @@ class ObjectLayer extends Graphics {
 		}
 
 		if (object.type == ObjectType.BALL) {}
-
-		if (object.type == 60 && poly != null) {
-			// final pos = vec2(object.positionX / 2, object.positionY / 2);
-			// ctx.fillStyle = "purple";
-			// ctx.fillCircle(toScreen(pos), 5);
-			// ctx.beginPath();
-			// for (i in 0...poly.verticesX.length) {
-			// 	final relative = vec2(poly.verticesX[i], poly.verticesY[i]);
-			// 	ctx.lineToVec(toScreen(pos + relative));
-			// }
-			// ctx.stroke();
-			// cheat on biplane because the hitbox for bullets is too small to see, except for HC
-		}
 	}
 
 	var polysDrawn = 0;
