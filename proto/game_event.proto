@@ -28,7 +28,7 @@ message RemovePlayerEvent {
 }
 
 message GoalEvent {
-    optional uint32 team = 1;
+    // optional uint32 team = 1; // removed, do not use
     repeated uint32 who_scored = 2; // first is scorer, next are assists
 }
 

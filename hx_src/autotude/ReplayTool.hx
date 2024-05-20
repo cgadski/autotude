@@ -43,7 +43,8 @@ class ReplaySummary {
             numPlayerSets += 1;
         }
         if (event.hasGoal()) {
-            p('${state.getName(event.goal.whoScored[0])} scored goal');
+            final team = state.players.get(event.goal.whoScored[0])?.team;
+            p('${state.getName(event.goal.whoScored[0])} scored goal for team $team');
             numGoals += 1;
         }
         if (event.hasChat()) {
@@ -54,7 +55,7 @@ class ReplaySummary {
             final source = state.getName(damage.source);
             final target = state.getName(damage.target);
             final ha = "";
-            p('$source -> $target: ${damage.amount} $ha');
+            // p('$source -> $target: ${damage.amount} $ha');
         }
         if (event.hasKill()) {
             final kill = event.kill;
