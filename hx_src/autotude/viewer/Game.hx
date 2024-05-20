@@ -1,8 +1,14 @@
 package autotude.viewer;
 
+import js.html.SpanElement;
+import autotude.Replay.showTimestampHtml;
+import autotude.proto.GameEvent;
+import protohx.Protohx.PT_Int64;
+import js.html.AnchorElement;
 import js.Browser;
 import js.html.Document;
 import js.html.ParagraphElement;
+import haxe.Int64;
 import js.html.DivElement;
 import h2d.Mask;
 import h2d.RenderContext;
@@ -23,6 +29,8 @@ class Game extends Object {
 	final mapLayer:MapLayer;
 	final objectLayer:ObjectLayer;
 
+	final sidebarEntries:Map<Int, ParagraphElement> = new Map();
+
 	public function new(state:PlayerState) {
 		this.replay = state.replay;
 		this.geom = state.geom;
@@ -30,7 +38,6 @@ class Game extends Object {
 		super();
 
 		final mapGeometry:MapGeometry = cast replay.mapGeometry;
-
 
 		final background = new Graphics();
 		background.beginFill(0xFFFFFF);
@@ -53,23 +60,35 @@ class Game extends Object {
 		loadSidebar();
 	}
 
-	static function sidebarEntry(desc:String): ParagraphElement {
+	static function sidebarEntry(time: Int, cb: (SpanElement) -> Void): ParagraphElement {
 		final elem = Browser.document.createParagraphElement();
-		elem.innerText = desc;
+		final anchor = Browser.document.createAnchorElement();
+		final span = Browser.document.createSpanElement();
+		elem.appendChild(anchor);
+		elem.appendChild(span);
+		anchor.innerHTML = showTimestampHtml(time);
+		anchor.href = "#";
+		cb(span);
 		return elem;
 	}
 
 	function loadSidebar() {
 		final sidebar = state.sidebar;
 
-		sidebar.appendChild(sidebarEntry('map: ${replay.mapName}'));
+		sidebar.appendChild(sidebarEntry(0, (span) -> span.innerText = 'map: ${replay.mapName}'));
+
 		for (update in replay.updates) {
 			for (event in update.events) {
-				if (event.hasChat()) {
-					final message = event.chat.message;
-					final sender = event.chat.sender;
-					sidebar.appendChild(sidebarEntry('$sender: $message'));
-				}
+				// final entry = sidebarEntry(update.time, event);
+				// if (entry != null) {
+				// 	sidebar.appendChild(entry);
+				// 	entries.set(update.time, entry);
+				// }
+				// if (event.hasChat()) {
+				// 	final message = event.chat.message;
+				// 	final sender = event.chat.sender;
+				// 	sidebar.appendChild(sidebarEntry('$sender: $message'));
+				// }
 			}
 		}
 	}

@@ -41,9 +41,18 @@ function showTimestamp(frames:Int):String {
     final seconds = Std.int(frames / 30);
     frames -= seconds * 30;
     final d = showDigits;
-    // return '${d(minutes)}:${d(seconds)}<i>:${d(frames)}</i>';
     return '${d(minutes)}:${d(seconds)}:${d(frames)}';
 }
+
+function showTimestampHtml(frames:Int):String  {
+    final minutes = Std.int(frames / (60 * 30));
+    frames -= minutes * 60 * 30;
+    final seconds = Std.int(frames / 30);
+    frames -= seconds * 30;
+    final d = showDigits;
+    return '${d(minutes)}:${d(seconds)}<i>:${d(frames)}</i>';
+}
+
 
 class Replay {
     public final updates:Array<Update> = [];

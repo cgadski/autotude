@@ -137,8 +137,8 @@ class Viewer extends hxd.App {
 				netTime = 0;
 			}
 
-			timeBefore.innerHTML = Replay.showTimestamp(playerState.frameIdx);
-			timeAfter.innerHTML = Replay.showTimestamp(playerState.framesRemaining);
+			timeBefore.innerHTML = Replay.showTimestampHtml(playerState.frameIdx);
+			timeAfter.innerHTML = Replay.showTimestampHtml(playerState.framesRemaining);
 			scrubber.value = Std.string(playerState.frameIdx);
 		}
 	}
