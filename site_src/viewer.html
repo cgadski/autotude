@@ -24,6 +24,7 @@
         #sidebar-container {
             flex-grow: 1;
             overflow: hidden;
+            position: relative;
         }
 
         #sidebar {
@@ -112,7 +113,7 @@
             <div id="debug"></div>
 
             <!-- needs inline height and width to signal to heaps that it doesn't need to set these properties -->
-            <canvas id="webgl" style="width:100%; height:100%; flex-grow:1;"></canvas>
+            <canvas id="webgl" globalEvents="1" style="width:100%; height:100%; flex-grow:1;"></canvas>
         </div>
         <div id="control-panel">
             <span id="time_before"></span>

@@ -59,7 +59,7 @@ class Viewer extends hxd.App {
 		draggable.onWheel = onWheel;
 
 		// load map
-		final request = Browser.window.fetch("recordings/zz_hates_whale.pb.gz");
+		final request = Browser.window.fetch("recordings/illum.pb.gz");
 		request.then((res) -> {
 			res.arrayBuffer().then((buf) -> {
 				final replay = new Replay(new BytesInput(Bytes.ofData(buf)));
