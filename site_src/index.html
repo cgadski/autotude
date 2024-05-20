@@ -1,10 +1,72 @@
 <!DOCTYPE>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <title>Document</title>
+    <style>
+        .replays {
+            display: grid;
+            grid-template-columns: auto 8em 5em 1fr;
+            gap: 1em;
+            margin-bottom: 2em;
+        }
+
+        .replays h3 {
+            grid-column: 1 / -1;
+            margin-bottom: 0.5em;
+        }
+
+        .replays .header {
+            font-weight: bold;
+        }
+
+        /* .replay-item>* {
+            background-color: #f0f0f0;
+            padding: 0.5em;
+        } */
+
+        .replays>.description {
+            grid-column: 1 / -1;
+            padding: 1em;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
+
 <body>
-    <a href="viewer.html"></a>
+    <div class="replays">
+        <div class="header">Replay</div>
+        <div class="header">Date</div>
+        <div class="header">Duration</div>
+        <div class="header"></div>
+
+        <div><a href="viewer.html?r=zz">zz hates whale</a></div>
+        <div>2024-05-20</div>
+        <div>10:45</div>
+        <div class="description">
+            <p>
+                Opposing team really struggled vs our two whales. Besides zz, I didn't feel anything threatening our
+                map control.
+            </p>
+            <p>
+                I was extremely skittish with ball and never carried it forward. I made some very questionable
+                "panic"
+                passes.
+            </p>
+        </div>
+
+        <div><a href="viewer.html?">duck is a ballerina</a></div>
+        <div>2024-05-18</div>
+        <div>7:45</div>
+        <div class="description">
+            <p>
+                Description goes here.
+            </p>
+        </div>
+    </div>
 </body>
+
 </html>
