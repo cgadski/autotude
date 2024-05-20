@@ -47,7 +47,7 @@ class PolyManager {
         }
 
         // TODO: optimize if this shows up in profiler
-        // (the spins that polys are rendered at in altitude are _not_ uniformly distributed)
+        // (the spins at which rendered polys are available are _not_ uniformly distributed)
         final spins = spinTables.get(type);
         if (spins == null) {
             return null;

@@ -23,13 +23,13 @@ class Game extends Object {
 
 	final state:PlayerState;
 
-	final mapMask:Object;
-	final boundLayer:Graphics;
+	final sidebarManager:SidebarManager;
 
+	final boundLayer:Graphics;
 	final mapLayer:MapLayer;
 	final objectLayer:ObjectLayer;
 
-	final sidebarEntries:Map<Int, ParagraphElement> = new Map();
+	final mapMask:Object;
 
 	public function new(state:PlayerState) {
 		this.replay = state.replay;
@@ -38,6 +38,8 @@ class Game extends Object {
 		super();
 
 		final mapGeometry:MapGeometry = cast replay.mapGeometry;
+
+		sidebarManager = new SidebarManager(state);
 
 		final background = new Graphics();
 		background.beginFill(0xFFFFFF);
@@ -49,48 +51,12 @@ class Game extends Object {
 		objectLayer = new ObjectLayer(state);
 
 		mapMask = new Mask(mapGeometry.maxX, mapGeometry.maxY);
-
 		mapMask.addChild(background);
 		mapMask.addChild(mapLayer);
 		mapMask.addChild(objectLayer);
 
 		addChild(mapMask);
 		addChild(boundLayer);
-
-		loadSidebar();
-	}
-
-	static function sidebarEntry(time: Int, cb: (SpanElement) -> Void): ParagraphElement {
-		final elem = Browser.document.createParagraphElement();
-		final anchor = Browser.document.createAnchorElement();
-		final span = Browser.document.createSpanElement();
-		elem.appendChild(anchor);
-		elem.appendChild(span);
-		anchor.innerHTML = showTimestampHtml(time);
-		anchor.href = "#";
-		cb(span);
-		return elem;
-	}
-
-	function loadSidebar() {
-		final sidebar = state.sidebar;
-
-		sidebar.appendChild(sidebarEntry(0, (span) -> span.innerText = 'map: ${replay.mapName}'));
-
-		for (update in replay.updates) {
-			for (event in update.events) {
-				// final entry = sidebarEntry(update.time, event);
-				// if (entry != null) {
-				// 	sidebar.appendChild(entry);
-				// 	entries.set(update.time, entry);
-				// }
-				// if (event.hasChat()) {
-				// 	final message = event.chat.message;
-				// 	final sender = event.chat.sender;
-				// 	sidebar.appendChild(sidebarEntry('$sender: $message'));
-				// }
-			}
-		}
 	}
 
 	override function sync(ctx:RenderContext) {
