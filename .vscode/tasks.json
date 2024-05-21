@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "hxml",
-			"file": "build_viewer.hxml",
+			"file": "build_tools.hxml",
 			"problemMatcher": [
 				"$haxe-absolute",
 				"$haxe",

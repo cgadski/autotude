@@ -15,7 +15,7 @@
 -main autotude.WritePolys
 -neko tools/write_polys.n
 
-# --next
+--next
 
-# -main autotude.ReplayIndexer
-# -cpp tools/replay_indexer
+-main autotude.MakeIndex
+-neko tools/make_index.n
