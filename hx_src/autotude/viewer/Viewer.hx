@@ -123,7 +123,7 @@ class Viewer extends hxd.App {
 	}
 
 	var netTime:Float = 0;
-	final frameTime:Float = 1/30;
+	final frameTime:Float = 1 / 30;
 
 	override function update(dt:Float) {
 		bindings.update();

@@ -17,43 +17,43 @@ import h2d.Object;
 import autotude.proto.MapGeometry;
 
 class BoundLayer extends Graphics {
-    final state:PlayerState;
+	final state:PlayerState;
 
-    public function new(state:PlayerState) {
-        this.state = state;
-        super();
-    }
+	public function new(state:PlayerState) {
+		this.state = state;
+		super();
+	}
 
-    override function draw(ctx:RenderContext) {
-        clear();
-        if (!state.showBounds) {
-            super.draw(ctx);
-            return;
-        }
+	override function draw(ctx:RenderContext) {
+		clear();
+		if (!state.showBounds) {
+			super.draw(ctx);
+			return;
+		}
 
-        // map bounds
-        lineStyle(1, 0x0000FF, 0.5);
+		// map bounds
+		lineStyle(1, 0x0000FF, 0.5);
 		final tx = Viewer.WIDTH / 2 - state.scale * state.pos.x;
 		final ty = Viewer.HEIGHT / 2 - state.scale * state.pos.y;
-        drawRect(tx, ty, state.scale * state.geom.maxX, state.scale * state.geom.maxY);
+		drawRect(tx, ty, state.scale * state.geom.maxX, state.scale * state.geom.maxY);
 
-        // view bounds
-        lineStyle(1, 0x00FF00, 0.5);
-        final rx = Viewer.WIDTH * state.scale;
-        final ry = Viewer.HEIGHT * state.scale;
-        drawRect((Viewer.WIDTH - rx) / 2, (Viewer.HEIGHT - ry) / 2, rx, ry);
+		// view bounds
+		lineStyle(1, 0x00FF00, 0.5);
+		final rx = Viewer.WIDTH * state.scale;
+		final ry = Viewer.HEIGHT * state.scale;
+		drawRect((Viewer.WIDTH - rx) / 2, (Viewer.HEIGHT - ry) / 2, rx, ry);
 
-        // center of view
-        final d = 2.5;
-        moveTo(Viewer.WIDTH / 2 - d, Viewer.HEIGHT / 2);
-        lineTo(Viewer.WIDTH / 2 + d, Viewer.HEIGHT / 2);
-        flush();
-        moveTo(Viewer.WIDTH / 2, Viewer.HEIGHT / 2 - d);
-        lineTo(Viewer.WIDTH / 2, Viewer.HEIGHT / 2 + d);
-        flush();
-        // moveTo(Viewer.WIDTH / 2 - 5, Viewer.HEIGHT / 2);
-        // lineTo(Viewer.WIDTH / 2 + 10, Viewer.HEIGHT / 2);
+		// center of view
+		final d = 2.5;
+		moveTo(Viewer.WIDTH / 2 - d, Viewer.HEIGHT / 2);
+		lineTo(Viewer.WIDTH / 2 + d, Viewer.HEIGHT / 2);
+		flush();
+		moveTo(Viewer.WIDTH / 2, Viewer.HEIGHT / 2 - d);
+		lineTo(Viewer.WIDTH / 2, Viewer.HEIGHT / 2 + d);
+		flush();
+		// moveTo(Viewer.WIDTH / 2 - 5, Viewer.HEIGHT / 2);
+		// lineTo(Viewer.WIDTH / 2 + 10, Viewer.HEIGHT / 2);
 
-        super.draw(ctx);
-    }
+		super.draw(ctx);
+	}
 }
