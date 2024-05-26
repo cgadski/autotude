@@ -66,7 +66,7 @@ site_gen/viewer.js: hx_src/autotude/proto/ build_viewer.hxml \
 # 	cp -r ~/Library/Application\ Support/NimblyGames/altitude/recordings/* $@
 
 site_gen/: site_src/*.html site_gen/viewer.js
-	cp site_src/*.html $@
+	cp site_src/viewer.html $@
 	mkdir -p $@recordings
 	cp recordings/* $@recordings
 
