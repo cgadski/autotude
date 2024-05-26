@@ -6,6 +6,7 @@ clean:
 	rm -rf java_gen/ # java source gen
 	rm -rf out/ # polys
 	rm -rf tools/ # CLI tools
+	rm -rf indexer/ # replay indexer
 	rm -rf hx_src/autotude/proto/ # haxe source gen
 	rm -rf recordings/ # recordings from game
 	rm -rf site_gen/ # static files for recording viewer
@@ -40,6 +41,8 @@ hx_src/autotude/proto/: $(PROTO_FILES)
 TOOL_SRC = hx_src/autotude/proto/ $(wildcard hx_src/autotude/**)
 
 tools/: $(TOOL_SRC) ; haxe build_tools.hxml
+
+indexer/: $(TOOL_SRC) ; haxe build_indexer.hxml
 
 # Polys
 out/polys: tools/ poly_src/
