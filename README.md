@@ -6,15 +6,15 @@ This repository is my ongoing attempt to make Altitude a nice environment for re
  
 So far, we have:
 
-- A simple protobuf message format that can stream game state at around 12 kbps, or 3 kbps gzipped (see `proto/`, and the section below). This is roughly as efficient (by maybe a factor of two) as the netcode used by the game, but at least 80% less arcane. (Most importantly, it doesn't require the reader to simulate any parts of the game).
-- Hooks in the game engine to stream game state using the new message format. (The source for Altitude is not yet publically available.)
+- A simple protobuf message format that can stream game state at around 12 kbps (raw) or 3 kbps (gzipped). (See `proto/` and the section below for details.) Once gzipped, this is roughly as efficient (by maybe a factor of two) as the netcode used by the game but at least 80% less arcane. (Most importantly, it doesn't require the reader to simulate any parts of the game or keep track of any state besides perhaps object IDs).
+- Hooks in the game engine to stream game state using the new message format. (The source for Altitude is not yet publically available, so these changes are not available in this repository.)
 - An in-browser replay viewer for "recordings"---gzipped streams of game state (extension `.pb.gz`). See the `site_gen` target.
 
 ## `proto/`
 
 `proto/` contains the message format used to serialize game state, game inputs, and geometry of game objects.
 
-I've patched Altitude itself (not fully open source) to serialize game state to a stream of `Update` messages. An `Update` is a screenshot of _all_ game-relevant state at a given moment in time besides map geometry.
+I've patched Altitude itself (not fully open source) to serialize game state to a stream of `Update` messages. An `Update` is roughly a screenshot of _all_ game-relevant state at a given moment in time besides map geometry. This ncludes information not normally available to a player like positions of off-screen planes, powerups held by enemies, and exact health/energy values of all planes.
 
 A replay (extension `.pb.gz`) is just a gzipped sequence of length-delimited `Update` messages.
 
@@ -22,7 +22,7 @@ The bandwidth of a game with 8 players (like 4v4 ball) tends to be about 0.2 meg
 
 ## `out/polys`
 
-Besides map geometry---which is sent in the first `Update` message when a game begins---the only additional information needed to interpret an `Updates` are the relative hitboxes of game objects like planes and projectiles. `out/polys` is a gzipped sequence of length-delimited `Poly` messages (as defined in `proto/poly.proto`) giving the hixboxes of different game objects. This data is read from `poly_src`, an pile of XML files copied from Altitude.
+Map geometry is sent in the first `Update` message when a game begins. Besides map geometry, the only additional information needed to interpret an `Update` are the relative hitboxes of game objects like planes and projectiles. `out/polys` is a gzipped sequence of length-delimited `Poly` messages (as defined in `proto/poly.proto`) giving the hixboxes of different game objects. This data is read from `poly_src`, an bunch of XML files copied from Altitude.
 
 Planes have different hitboxes depending on their "roll." The degrees of roll for which hitboxes are available are irregularly distributed.
 
@@ -36,7 +36,7 @@ Haxe source for a replay viewer using the Heaps game engine.
 
 ### `site_src`
 
-Source files for a static website that acts as a replay browser and viewer.
+Source files for a static website that acts as a replay browser and viewer. (Work in progress.)
 
 # Makefile targets and utilities
 
