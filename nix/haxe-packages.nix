@@ -87,14 +87,12 @@ in rec {
       hash = "sha256-+Uue7pdkl67hRq6RXdao/ayFR75ExfoDDIhSB9EOQM0=";
     };
 
-    propagatedBuildInputs = [
-      darwin.apple_sdk.frameworks.Cocoa
-      xcbuild 
-    ];
+    # propagatedBuildInputs = [
+    #   darwin.apple_sdk.frameworks.Cocoa
+    #   xcbuild 
+    # ];
 
-    patches = [
-      ./hxcpp.diff
-    ];
+    # patches = [ ./hxcpp.diff ];
 
     buildPhase = ''
       (cd tools/hxcpp; haxe compile.hxml)

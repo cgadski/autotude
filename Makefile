@@ -8,7 +8,7 @@ clean:
 	rm -rf tools/ # CLI tools
 	rm -rf indexer/ # replay indexer
 	rm -rf hx_src/autotude/proto/ # haxe source gen
-	rm -rf recordings/ # recordings from game
+	# rm -rf recordings/ # recordings from game
 	rm -rf site_gen/ # static files for recording viewer
 
 ALTI_PATH=../altitude/
