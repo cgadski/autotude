@@ -1,6 +1,5 @@
 -lib protohx
 -lib format
--lib hxmustache
 -cp hx_src
 --macro nullSafety("autotude", Loose)
 --macro nullSafety("autotude.proto", Off)
@@ -14,8 +13,3 @@
 
 -main autotude.WritePolys
 -neko tools/write_polys.n
-
---next
-
--main autotude.MakeIndex
--neko tools/make_index.n

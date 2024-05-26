@@ -3,12 +3,16 @@ let
 in
   with pkgs; rec {
     buildInputs = [
+      # for protobuf
+      protobuf
+      jre8
+
+      # dependencies
       haxe
       haxePackages.protohx
       haxePackages.format
-      haxePackages.hxmustache
-      jre8
-      protobuf
+
+      # for running tools
       neko
     ];
 

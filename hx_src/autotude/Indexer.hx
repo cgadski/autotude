@@ -67,10 +67,15 @@ private class ReplaySummary {
    }
 }
 
-class ReplayIndexer {
+class Indexer {
     public static function main() {
+        final dir = Sys.args()[0];
+        Sys.println(dir);
+
         final files = FileSystem.readDirectory(Sys.args()[0]);
+        Sys.println(files.length);
         var totalUpdates = 0;
+
         for (file in files) {
             final bytes = File.getBytes(Sys.args()[0] + file);
             final replay = new Replay(new BytesInput(bytes));
@@ -78,9 +83,10 @@ class ReplayIndexer {
 
             // final summary = new ReplaySummary(bytes, replay);
             // summary.show();
-            // final ticks = replay.updates.length;
-            // Sys.println('$file: $ticks updates');
+            final ticks = replay.updates.length;
+            Sys.println('$file: $ticks updates');
         }
+
         final minutes = Std.int(totalUpdates / (30 * 60));
         Sys.println('Total time recorded: $minutes minutes');
     }

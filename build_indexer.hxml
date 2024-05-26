@@ -1,0 +1,8 @@
+-lib protohx
+-lib format
+-cp hx_src
+--macro nullSafety("autotude", Loose)
+--macro nullSafety("autotude.proto", Off)
+
+-main autotude.Indexer
+-cpp indexer
