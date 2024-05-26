@@ -1,5 +1,9 @@
 package autotude;
 
+import autotude.Replay.Player;
+import cpp.ObjectType;
+import haxe.io.Path;
+using StringTools;
 import autotude.Replay.GameState;
 import sys.FileStat;
 import sys.db.Connection;
@@ -13,46 +17,97 @@ import sys.io.File;
 import haxe.Json;
 
 private class ReplayIndexer {
-	final replay:Replay;
-	final conn:Connection;
-	final file:String;
-	final stats:FileStat;
-	final replayId:Int;
+	public static function index(path:String, conn:Connection) {
+		final req = conn.request('SELECT replay_id FROM replays WHERE path = ${conn.quote(path)}');
+		if (req.length > 0) {
+			return;	
+		}
 
-	public function new(replay:Replay, conn:Connection, file:String, stats:FileStat) {
-		this.replay = replay;
-		this.conn = conn;
-		this.file = file;
-		this.stats = stats;
+		Sys.println('Indexing ${path}...');
 
-		conn.request('INSERT OR IGNORE INTO replays (file, map, ticks) VALUES (
-			${conn.quote(file)}, 
+		final bytes = File.getBytes(path);
+		final replay = new Replay(new BytesInput(bytes));
+
+		conn.request('INSERT INTO replays (path, map, ticks) VALUES (
+			${conn.quote(path)}, 
 			${conn.quote(replay.mapName)}, 
 			${replay.updates.length}
 		)');
-		this.replayId = conn.request('SELECT replay_id FROM replays WHERE file = ${conn.quote(file)}').getIntResult(0);
+
+		final id = conn.lastInsertId();
+		Sys.println(' indexed with id ${id}');
+		final indexer = new ReplayIndexer(id, replay, conn);
+		indexer.process();
 	}
 
-	public function index() {
+	final id:Int;
+	final replay:Replay;
+	final conn:Connection;
+
+	final playerTimes:Map<String, Int> = new Map();
+	final playerTeams:Map<String, Int> = new Map();
+
+	public function new(id: Int, replay:Replay, conn:Connection) {
+		this.id = id;
+		this.replay = replay;
+		this.conn = conn;
+	}
+
+	public function process() {
 		var idx = 0;
 		for (update in replay.updates) {
+			final state = replay.gameStates[idx];
 			for (event in update.events) {
-				onEvent(idx, replay.gameStates[idx], event);
+				onEvent(idx, state, event);
 			}
+			for (object in update.objects) {
+				if (object.type < 5) {
+					final name = state.getName(object.owner);
+					playerTimes[name] = 1 + (playerTimes.get(name) ?? 0);
+					playerTeams[name] = object.team;
+				}
+			}
+			idx++;
+		}
+
+		for (player in playerTimes.keys()) {
+			final team = playerTeams.get(player);
+			final ticksAlive = playerTimes.get(player);
+			conn.request('INSERT INTO players (replay_id, name, team, ticks_alive) VALUES (
+				${id},
+				${conn.quote(player)},
+				${team},
+				${ticksAlive}
+			)');
 		}
 	}
-
-	public var numMapLoads:Int = 0;
 
 	public function onEvent(tick:Int, state:GameState, event:GameEvent) {
 		if (event.chat != null) {
 			final name = state.getName(event.chat.sender);
 			final chat = event.chat.message;
-			conn.request('INSERT INTO chat (replay_id, tick, name, chat) VALUES (
-				${replayId},
+			conn.request('INSERT INTO messages (replay_id, tick, name, message) VALUES (
+				${id},
 				${tick},
 				${conn.quote(name)},
 				${conn.quote(chat)}
+			)');
+		}
+		if (event.goal != null) {
+			if (event.goal.whoScored.length == 0) {
+				Sys.println("Goal with no scored player!");
+				return;
+			}
+			final player:Null<Player> = state.players.get(event.goal.whoScored[0]);
+			if (player == null) {
+				Sys.println("Goal with unknown player!");
+				return;
+			}
+			conn.request('INSERT INTO goals (replay_id, tick, name, team) VALUES (
+				${id},
+				${tick},
+				${conn.quote(player.name)},
+				${player.team}
 			)');
 		}
 	}
@@ -60,34 +115,45 @@ private class ReplayIndexer {
 
 class Indexer {
 	public static function main() {
-		final dir = Sys.args()[0];
+		final dir = Path.addTrailingSlash(Path.normalize(Sys.args()[0]));
 		Sys.println(dir);
 
-		final files = FileSystem.readDirectory(Sys.args()[0]);
-		Sys.println(files.length);
-		var totalUpdates = 0;
+		final files = [for (f in FileSystem.readDirectory(dir)) if (f.endsWith('.pb.gz')) f];
+		Sys.println('Indexing ${files.length} replay files in $dir.');
 
 		final conn = Sqlite.open('replay_index.db');
 
-		conn.request('CREATE TABLE IF NOT EXISTS replays (replay_id INTEGER PRIMARY KEY, file TEXT, map TEXT, ticks INTEGER)');
-		conn.request('CREATE UNIQUE INDEX IF NOT EXISTS replays_idx ON replays (file)');
-		conn.request('CREATE TABLE IF NOT EXISTS players (replay_id INTEGER, name TEXT, team INTEGER, PRIMARY KEY (replay_id, name))');
-		conn.request('CREATE TABLE IF NOT EXISTS chat (replay_id INTEGER, tick INTEGER, name TEXT, chat TEXT)');
+		conn.request('CREATE TABLE IF NOT EXISTS replays (
+			replay_id INTEGER PRIMARY KEY, 
+			path TEXT, map TEXT, 
+			ticks INTEGER
+		)');
+		conn.request('CREATE UNIQUE INDEX IF NOT EXISTS replays_idx ON replays (path)');
+		conn.request('CREATE TABLE IF NOT EXISTS players (
+			replay_id INTEGER, 
+			name TEXT, 
+			team INTEGER, 
+			ticks_alive INTEGER, 
+			PRIMARY KEY (replay_id, name)
+		)');
+		conn.request('CREATE TABLE IF NOT EXISTS messages (
+			replay_id INTEGER, 
+			tick INTEGER, 
+			name TEXT, 
+			message TEXT
+		)');
+		conn.request('CREATE TABLE IF NOT EXISTS goals (
+			replay_id INTEGER, 
+			tick INTEGER, 
+			name TEXT, 
+			team INTEGER
+		)');
 
 		for (file in files) {
-			final path = Sys.args()[0] + file;
-			final stats = FileSystem.stat(path);
-			final bytes = File.getBytes(path);
-			final replay = new Replay(new BytesInput(bytes));
-
-			final summary = new ReplayIndexer(replay, conn, file, stats);
 			conn.startTransaction();
-			summary.index();
+			ReplayIndexer.index(dir + file, conn);
 			conn.commit();
 		}
-
-		// final minutes = Std.int(totalUpdates / (30 * 60));
-		// Sys.println('Total time recorded: $minutes minutes');
 
 		conn.close();
 	}
