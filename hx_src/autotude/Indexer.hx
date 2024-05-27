@@ -1,5 +1,6 @@
 package autotude;
 
+import haxe.io.Eof;
 import autotude.Replay.Player;
 import cpp.ObjectType;
 import haxe.io.Path;
@@ -25,19 +26,23 @@ private class ReplayIndexer {
 
 		Sys.println('Indexing ${path}...');
 
-		final bytes = File.getBytes(path);
-		final replay = new Replay(new BytesInput(bytes));
+		try {
+			final bytes = File.getBytes(path);
+			final replay = new Replay(new BytesInput(bytes));
 
-		conn.request('INSERT INTO replays (path, map, ticks) VALUES (
-			${conn.quote(path)}, 
-			${conn.quote(replay.mapName)}, 
-			${replay.updates.length}
-		)');
+			conn.request('INSERT INTO replays (path, map, ticks) VALUES (
+				${conn.quote(path)}, 
+				${conn.quote(replay.mapName)}, 
+				${replay.updates.length}
+			)');
 
-		final id = conn.lastInsertId();
-		Sys.println(' indexed with id ${id}');
-		final indexer = new ReplayIndexer(id, replay, conn);
-		indexer.process();
+			final id = conn.lastInsertId();
+			Sys.println(' indexed with id ${id}');
+			final indexer = new ReplayIndexer(id, replay, conn);
+			indexer.process();
+		} catch (e: Eof) {
+			Sys.println(' ${path} not finished');
+		}
 	}
 
 	final id:Int;
@@ -98,16 +103,11 @@ private class ReplayIndexer {
 				Sys.println("Goal with no scored player!");
 				return;
 			}
-			final player:Null<Player> = state.players.get(event.goal.whoScored[0]);
-			if (player == null) {
-				Sys.println("Goal with unknown player!");
-				return;
-			}
-			conn.request('INSERT INTO goals (replay_id, tick, name, team) VALUES (
+			final player = state.getName(event.goal.whoScored[0]);
+			conn.request('INSERT INTO goals (replay_id, tick, name) VALUES (
 				${id},
 				${tick},
-				${conn.quote(player.name)},
-				${player.team}
+				${conn.quote(player)}
 			)');
 		}
 	}
@@ -133,9 +133,10 @@ class Indexer {
 			replay_id INTEGER, 
 			name TEXT, 
 			team INTEGER, 
-			ticks_alive INTEGER, 
-			PRIMARY KEY (replay_id, name)
+			ticks_alive INTEGER 
 		)');
+		conn.request('CREATE INDEX IF NOT EXISTS players_idx ON players (replay_id)');
+		conn.request('CREATE INDEX IF NOT EXISTS players_idx_reverse ON players (name)');
 		conn.request('CREATE TABLE IF NOT EXISTS messages (
 			replay_id INTEGER, 
 			tick INTEGER, 
@@ -145,8 +146,7 @@ class Indexer {
 		conn.request('CREATE TABLE IF NOT EXISTS goals (
 			replay_id INTEGER, 
 			tick INTEGER, 
-			name TEXT, 
-			team INTEGER
+			name TEXT
 		)');
 
 		for (file in files) {
