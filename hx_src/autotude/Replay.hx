@@ -72,12 +72,14 @@ class Replay {
 		final teamMap:Map<Int, Bool> = new Map();
 		var players:Map<Int, Player> = new Map();
 
+		gameStates.push({
+			players: []
+		});
+
 		while (buf.bytesAvailable > 0) {
 			final update = new Update();
 			update.mergeDelimitedFrom(buf);
 			updates.push(update);
-
-			var playersModified = false;
 
 			for (event in update.events) {
 				if (event.hasMapLoad()) {
@@ -86,17 +88,17 @@ class Replay {
 					continue;
 				}
 				if (event.hasSetPlayer()) {
+					players = players.copy();
 					final setPlayer = event.setPlayer;
 					players.set(setPlayer.id, {
 						name: setPlayer.name,
 						team: setPlayer.team
 					});
-					playersModified = true;
 					continue;
 				}
 				if (event.hasRemovePlayer()) {
+					players = players.copy();
 					players.remove(event.removePlayer.id);
-					playersModified = true;
 					continue;
 				}
 			}
@@ -107,9 +109,6 @@ class Replay {
 				}
 			}
 
-			if (playersModified) {
-				players = players.copy();
-			}
 			gameStates.push({
 				players: players
 			});
