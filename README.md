@@ -8,7 +8,7 @@ So far, we have:
 
 - A simple protobuf message format that can stream game state at around 12 kbps (raw) or 3 kbps (gzipped). (See `proto/` and the section below for details.) Once gzipped, this is roughly as efficient (by maybe a factor of two) as the netcode used by the game but at least 80% less arcane. (Most importantly, it doesn't require the reader to simulate any parts of the game or keep track of any state besides perhaps object IDs).
 - Hooks in the game engine to stream game state using the new message format. (The source for Altitude is not yet publically available, so these changes are not available in this repository.)
-- An in-browser replay viewer for "recordings"---gzipped streams of game state (extension `.pb.gz`). See the `site_gen` target.
+- An in-browser replay viewer for "recordings"---gzipped streams of game state (extension `.pb.gz`), and an indexer utility to load directories of saved replays into an sqlite database so you can find the ones you want. See the `site_gen` target.
 
 ## `proto/`
 
@@ -51,4 +51,15 @@ Copy the generated Java source for our protobuf messages into the Altitude sourc
 ## `copy_replay.sh`
 
 Copy the last recorded game to `example_recordings/$1.pb.gz`. (First set RECORDING_PATH to your Altitude instalation directory.)
+
+## replay indexer
+
+Build the indexer with `make indexer/` and run `indexer/Indexer $RECORDING_DIR` to build an sqlite database with information on all the replays in `$RECORDING_DIR`.
+
+Currently indexes:
+
+- Maps and durations of games
+- Active players in games and how long they played
+- Goals
+- Messages
 
