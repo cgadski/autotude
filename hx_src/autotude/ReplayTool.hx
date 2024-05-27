@@ -36,11 +36,15 @@ class ReplaySummary {
 
 	public function onEvent(event:GameEvent, state:GameState, p:(String) -> Void) {
 		if (event.hasMapLoad()) {
+			p('map load ${event.mapLoad.name}');
 			numMapLoads += 1;
 		}
 		if (event.hasSetPlayer()) {
-			// Sys.println('${event.setPlayer.id}: ${event.setPlayer.name}');
+			p('set player ${event.setPlayer.id}: ${event.setPlayer.name}');
 			numPlayerSets += 1;
+		}
+		if (event.hasRemovePlayer()) {
+			p('remove player ${event.removePlayer.id}');
 		}
 		if (event.hasGoal()) {
 			final team = state.players.get(event.goal.whoScored[0])?.team;
@@ -50,19 +54,23 @@ class ReplaySummary {
 		if (event.hasChat()) {
 			p('${state.getName(event.chat.sender)}: ${event.chat.message}');
 		}
-		if (event.hasDamage()) {
-			final damage = event.damage;
-			final source = state.getName(damage.source);
-			final target = state.getName(damage.target);
-			final ha = "";
-			// p('$source -> $target: ${damage.amount} $ha');
-		}
+		// if (event.hasDamage()) {
+		// 	final damage = event.damage;
+		// 	final source = state.getName(damage.source);
+		// 	final target = state.getName(damage.target);
+		// 	final ha = "";
+		// 	// p('$source -> $target: ${damage.amount} $ha');
+		// }
 		if (event.hasKill()) {
 			final kill = event.kill;
+			final name = state.getName(kill.whoDied);
+			if (state.players.get(kill.whoDied) == null) {
+				p([for (k in state.players.keys()) k].toString());
+			}
 			if (kill.whoKilled != null) {
-				p('${state.getName(kill.whoKilled)} killed ${state.getName(kill.whoDied)}');
+				p('${state.getName(kill.whoKilled)} killed ${name}');
 			} else {
-				p('${state.getName(kill.whoDied)} crashed');
+				p('${name} crashed');
 			}
 		}
 	}
