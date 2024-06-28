@@ -25,6 +25,12 @@ def make_replay(row):
     left_team = min(p[1] for p in player_array)
     d["left_team"] = [p[0] for p in player_array if p[1] == left_team]
     d["right_team"] = [p[0] for p in player_array if p[1] != left_team]
+    # d["ticks"] / 30 is the number of seconds
+    # set d["duration"] to a formatted minute:second string
+    tot_seconds = int(d["ticks"] / 30)
+    seconds = tot_seconds % 60
+    minutes = tot_seconds // 60
+    d["duration"] = str(minutes) + ":" + str(seconds)
     return d
 
 
