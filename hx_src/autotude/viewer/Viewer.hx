@@ -63,12 +63,16 @@ class Viewer extends hxd.App {
 		var urlParams = new URLSearchParams(Browser.window.location.search);
     var recordingFile = urlParams.get("f");
 		final request = Browser.window.fetch("recordings/" + recordingFile);
+		final timestamp = urlParams.get("t");
 
 		request.then((res) -> {
 			res.arrayBuffer().then((buf) -> {
 				final replay = new Replay(new BytesInput(Bytes.ofData(buf)));
 				if (replay != null && replay.mapGeometry != null) {
 					this.playerState = new PlayerState(s2d, sidebar, canvas, replay, replay.mapGeometry);
+					if (timestamp != null) {
+						playerState.frameIdx = Std.parseInt(timestamp) ?? 0;
+					}
 					s2d.addChild(game = new Game(playerState));
 
 					scrubber.min = "0";

@@ -71,4 +71,4 @@ site_gen/: site_gen/viewer.js site_src/*
 	python3 site_src/make_index.py
 
 upload: site_gen/
-	scp -r site_gen/* root@cgad.ski:/www/alti_viewer/
+	rsync --progress --delete -az site_gen/* root@cgad.ski:/www/alti_viewer/

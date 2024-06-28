@@ -1,6 +1,5 @@
 package autotude;
 
-import autotude.viewer.Viewer;
 import haxe.io.Bytes;
 import haxe.io.BytesOutput;
 import autotude.proto.MapGeometry;
