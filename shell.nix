@@ -10,5 +10,8 @@ in
         haxePackages.heaps
         haxePackages.hxcpp
         updog
+        (python3.withPackages (ps: with ps; [
+          pystache
+        ]))
       ]);
   }

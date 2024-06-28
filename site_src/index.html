@@ -34,7 +34,10 @@
 <body>
     {{#replays}}
     <div class="replay">
-        replay goes here
+        <h3>{{replay_id}}: {{map}}</h3>
+        <ul>
+            {{#players}}<li>{{.}}</li>{{/players}}
+        </ul>
     </div>
     {{/replays}}
 </body>

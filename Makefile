@@ -8,8 +8,8 @@ clean:
 	rm -rf tools/ # CLI tools
 	rm -rf indexer/ # replay indexer
 	rm -rf hx_src/autotude/proto/ # haxe source gen
-	# rm -rf recordings/ # recordings from game
 	rm -rf site_gen/ # static files for recording viewer
+	rm -rf site_src/index.csv
 
 ALTI_PATH=../altitude/
 GEN_INSTALL_PATH=$(ALTI_PATH)Altitude/src/main/java/em/altitude/game/protos/
@@ -55,20 +55,19 @@ out/polys: tools/ poly_src/
 
 # Recording viewer
 
+# JS source for viewer
 site_gen/viewer.js: hx_src/autotude/proto/ build_viewer.hxml \
 	$(wildcard hx_src/autotude/**) \
 	$(wildcard hx_src/autotude/viewer/**) \
 	out/polys
+	mkdir -p $(@D)
 	haxe build_viewer.hxml
 
-# recordings/:
-# 	mkdir -p $@
-# 	cp -r ~/Library/Application\ Support/NimblyGames/altitude/recordings/* $@
-
-site_gen/: site_src/*.html site_gen/viewer.js
-	cp site_src/viewer.html $@
+# index and recordings
+site_gen/: site_gen/viewer.js site_src/index.sql site_src/make_index.py
+	cp site_src/viewer.html $@viewer.html
 	mkdir -p $@recordings
-	cp recordings/* $@recordings
+	python3 site_src/make_index.py
 
 upload: site_gen/
 	scp -r site_gen/* root@cgad.ski:/www/alti_viewer/

@@ -4,9 +4,10 @@ import haxe.io.Eof;
 import autotude.Replay.Player;
 import cpp.ObjectType;
 import haxe.io.Path;
+
 using StringTools;
+
 import autotude.Replay.GameState;
-import sys.FileStat;
 import sys.db.Connection;
 import sys.db.Sqlite;
 import sys.FileSystem;
@@ -21,7 +22,7 @@ private class ReplayIndexer {
 	public static function index(path:String, conn:Connection) {
 		final req = conn.request('SELECT replay_id FROM replays WHERE path = ${conn.quote(path)}');
 		if (req.length > 0) {
-			return;	
+			return;
 		}
 
 		Sys.println('Indexing ${path}...');
@@ -29,18 +30,22 @@ private class ReplayIndexer {
 		try {
 			final bytes = File.getBytes(path);
 			final replay = new Replay(new BytesInput(bytes));
+			final timestamp = Math.round(FileSystem.stat(path).ctime.getTime() / 1000);
 
-			conn.request('INSERT INTO replays (path, map, ticks) VALUES (
+			final map = replay.mapName;
+
+			conn.request('INSERT INTO replays (path, map, ticks, time) VALUES (
 				${conn.quote(path)}, 
 				${conn.quote(replay.mapName)}, 
-				${replay.updates.length}
+				${replay.updates.length},
+				${timestamp}
 			)');
 
 			final id = conn.lastInsertId();
 			Sys.println(' indexed with id ${id}');
 			final indexer = new ReplayIndexer(id, replay, conn);
 			indexer.process();
-		} catch (e: Eof) {
+		} catch (e:Eof) {
 			Sys.println(' ${path} not finished');
 		}
 	}
@@ -52,7 +57,7 @@ private class ReplayIndexer {
 	final playerTimes:Map<String, Int> = new Map();
 	final playerTeams:Map<String, Int> = new Map();
 
-	public function new(id: Int, replay:Replay, conn:Connection) {
+	public function new(id:Int, replay:Replay, conn:Connection) {
 		this.id = id;
 		this.replay = replay;
 		this.conn = conn;
@@ -125,8 +130,10 @@ class Indexer {
 
 		conn.request('CREATE TABLE IF NOT EXISTS replays (
 			replay_id INTEGER PRIMARY KEY, 
-			path TEXT, map TEXT, 
-			ticks INTEGER
+			path TEXT, 
+			map TEXT, 
+			ticks INTEGER,
+			time INTEGER
 		)');
 		conn.request('CREATE UNIQUE INDEX IF NOT EXISTS replays_idx ON replays (path)');
 		conn.request('CREATE TABLE IF NOT EXISTS players (
