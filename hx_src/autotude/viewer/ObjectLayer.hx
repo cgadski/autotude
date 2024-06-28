@@ -1,10 +1,8 @@
 package autotude.viewer;
 
+import js.html.TextTrackCue;
 import autotude.proto.ObjectType;
 import h2d.Text;
-import h3d.Vector4;
-import h2d.HtmlText;
-import js.html.Console;
 import autotude.proto.Poly;
 import h3d.Matrix;
 import h3d.Vector;
@@ -22,6 +20,8 @@ class ObjectLayer extends Graphics {
 	final geom:MapGeometry;
 	final state:PlayerState;
 	final polyManager:PolyManager;
+
+	final planeGraphics:Map<Int,PlaneGraphics> = new Map();
 
 	public function new(state:PlayerState) {
 		this.replay = state.replay;
@@ -78,6 +78,19 @@ class ObjectLayer extends Graphics {
 		endFill();
 	}
 
+	function getPlaneGraphics(player:Int): PlaneGraphics {
+		final lookup = planeGraphics.get(player);
+		if (lookup != null) {
+			return lookup;
+		}
+		final graphics = new PlaneGraphics(state);
+		planeGraphics.set(player, graphics);
+		addChild(planeGraphics.get(player));
+		return graphics;
+	}
+
+	final planesSynced:Map<Int,Bool> = new Map();
+
 	function drawObject(object:GameObject) {
 		final pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
 
@@ -89,6 +102,11 @@ class ObjectLayer extends Graphics {
 			showPoly(poly, object);
 		} else {
 			// TODO: draw marker
+		}
+
+		if (object.type <= 4) {
+			getPlaneGraphics(object.owner).syncObject(object);
+			planesSynced.set(object.owner, true);
 		}
 
 		// TODO: cheat on biplane bullets
@@ -128,9 +146,19 @@ class ObjectLayer extends Graphics {
 		clear();
 		final update = replay.updates[state.frameIdx];
 
+		// Draw objects / sync planes.
+		planesSynced.clear();
 		polysDrawn = 0;
 		for (object in update.objects) {
 			drawObject(object);
+		}
+
+		// Remove planes that are not used.
+		for (owner in planeGraphics.keys()) {
+			if (!planesSynced.exists(owner)) {
+				removeChild(getPlaneGraphics(owner));
+				planeGraphics.remove(owner);
+			}
 		}
 
 		super.draw(ctx);
