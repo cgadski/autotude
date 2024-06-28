@@ -1,5 +1,8 @@
 package autotude.viewer;
 
+using StringTools;
+import js.html.Console;
+import haxe.Int64;
 import autotude.Replay.showTimestamp;
 import js.Browser;
 import js.html.ParagraphElement;
@@ -13,7 +16,7 @@ class SidebarManager {
 		loadSidebar();
 	}
 
-	static function sidebarEntry(time:Int, cb:(SpanElement) -> Void):ParagraphElement {
+	function sidebarEntry(time:Int, cb:(SpanElement) -> Void):ParagraphElement {
 		final elem = Browser.document.createParagraphElement();
 		final anchor = Browser.document.createAnchorElement();
 		final separator = Browser.document.createSpanElement();
@@ -23,6 +26,10 @@ class SidebarManager {
 		elem.appendChild(span);
 		anchor.innerHTML = showTimestamp(time);
 		anchor.href = "#";
+		anchor.onclick = function(e) {
+			state.frameIdx = time - 15;
+			e.preventDefault();
+		}
 		separator.innerText = ": ";
 		cb(span);
 		return elem;
@@ -33,19 +40,34 @@ class SidebarManager {
 
 		sidebar.appendChild(sidebarEntry(0, (span) -> span.innerText = 'map: ${state.replay.mapName}'));
 
+		var idx = 0;
 		for (update in state.replay.updates) {
+			final gameState = state.replay.gameStates[idx];
 			for (event in update.events) {
 				// final entry = sidebarEntry(update.time, event);
 				// if (entry != null) {
 				// 	sidebar.appendChild(entry);
 				// 	entries.set(update.time, entry);
 				// }
+				if (event.hasGoal()) {
+					final whoScored = gameState.getName(event.goal.whoScored[0]);
+					final color = state.replay.teamColorText(gameState.getTeam(event.goal.whoScored[0]));
+					sidebar.appendChild(sidebarEntry(idx, (span) -> {
+						span.innerHTML = '<span style="color:${color}">${whoScored.htmlEscape()}</span> scored goal';
+					}));
+				}
 				// if (event.hasChat()) {
 				// 	final message = event.chat.message;
-				// 	final sender = event.chat.sender;
-				// 	sidebar.appendChild(sidebarEntry('$sender: $message'));
+				// 	final sender = state.getName(event.chat.sender);
+				// 	sidebar.appendChild(sidebarEntry(idx, (span) -> {
+				// 		span.innerText = '${sender}: ${message}';
+				// 	}));
+				// }
+				// if (event.hasKill()) {
+				// 	final whoKilled = event.kill.whoKilled
 				// }
 			}
+			idx++;
 		}
 	}
 }

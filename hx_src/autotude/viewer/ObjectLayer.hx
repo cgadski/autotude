@@ -45,15 +45,15 @@ class ObjectLayer extends Graphics {
 		final y = poly.verticesY;
 
 		if (object.hasTeam()) {
-			final code = replay.teams.indexOf(object.team);
-			if (object.team == replay.teams[0]) {
-				beginFill(0xEC8686);
-			} else if (object.team == replay.teams[1]) {
-				beginFill(0xAEEBAE);
+			final color = replay.teamColorPoly(object.team);
+			if (color != null) {
+				beginFill(color);
 			} else {
+				// unassigned team?
 				beginFill(Viewer.BACKGROUND, 0.5);
 			}
 		} else {
+			// no team
 			beginFill(Viewer.BACKGROUND, 0.5);
 		}
 
@@ -85,7 +85,7 @@ class ObjectLayer extends Graphics {
 		}
 		final graphics = new PlaneGraphics(state);
 		planeGraphics.set(player, graphics);
-		addChild(planeGraphics.get(player));
+		addChild(graphics);
 		return graphics;
 	}
 
@@ -94,9 +94,6 @@ class ObjectLayer extends Graphics {
 	function drawObject(object:GameObject) {
 		final pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
 
-		// fillStyle = C.fill;
-
-		// Tr.tr(object.spin);
 		final poly = polyManager.getPoly(object.type, object.spin);
 		if (poly != null) {
 			showPoly(poly, object);

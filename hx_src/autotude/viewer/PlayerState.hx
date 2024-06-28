@@ -18,7 +18,7 @@ class PlayerState {
 	// camera
 	public var pos:Vector = new Vector(0, 0);
 	public var scale:Float = 1;
-	public var showBounds:Bool = true;
+	public var showBounds:Bool = false;
 
 	// scrubber
 	public var frameIdx(default, set):Int = 0;

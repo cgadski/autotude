@@ -1,5 +1,6 @@
 package autotude;
 
+import autotude.viewer.Viewer;
 import haxe.io.Bytes;
 import haxe.io.BytesOutput;
 import autotude.proto.MapGeometry;
@@ -19,11 +20,11 @@ import format.gz.Reader;
 	public final players:Map<Int, Player>;
 
 	public function getName(id:Int):String {
-		final player = players.get(id);
-		if (player != null) {
-			return player.name;
-		}
-		return "??";
+		return players.get(id)?.name ?? "??";
+	}
+
+	public function getTeam(id:Int):Int {
+		return players.get(id)?.team ?? 0;
 	}
 }
 
@@ -61,6 +62,24 @@ class Replay {
 	public var mapName:String = cast null;
 
 	public final teams:Array<Int>;
+
+	public function teamColorPoly(team:Int):Null<Int> {
+			if (team == teams[0]) {
+				return 0xEC8686;
+			} else if (team == teams[1]) {
+				return 0xAEEBAE;
+			} 
+			return null;
+	}
+
+	public function teamColorText(team:Int):String {
+			if (team == teams[0]) {
+				return "#D20000";
+			} else if (team == teams[1]) {
+				return "#007200";
+			} 
+			return "#000000";
+	}
 
 	public function new(bytes:BytesInput) {
 		final reader = new Reader(bytes);

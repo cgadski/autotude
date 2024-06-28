@@ -47,7 +47,7 @@ class Viewer extends hxd.App {
 		registerBindings();
 		bindings.renderCard(help);
 
-		help.classList.toggle("show");
+		// help.classList.toggle("show");
 	}
 
 	override function init() {

@@ -9,8 +9,6 @@
         .player-card {
             display: grid;
             grid-template-columns: 12em 12em;
-            gap: 1em;
-            margin-bottom: 2em;
         }
 
         #query {
@@ -23,7 +21,7 @@
         }
 
         li {
-            list-style-type: none; 
+            list-style-type: none;
         }
 
         .replay h3 {
@@ -50,12 +48,12 @@
     <div class="replay">
         <h3><a href="viewer.html?f={{replay_id}}">{{time}}: {{map}}</a></h3>
         <div class="player-card">
-        <ul>
-            {{#left_team}}<li>{{.}}</li>{{/left_team}}
-        </ul>
-        <ul>
-            {{#right_team}}<li>{{.}}</li>{{/right_team}}
-        </ul>
+            <ul>
+                {{#left_team}}<li>{{.}}</li>{{/left_team}}
+            </ul>
+            <ul>
+                {{#right_team}}<li>{{.}}</li>{{/right_team}}
+            </ul>
         </div>
     </div>
     {{/replays}}
