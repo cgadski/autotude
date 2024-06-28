@@ -64,8 +64,9 @@ site_gen/viewer.js: hx_src/autotude/proto/ build_viewer.hxml \
 	haxe build_viewer.hxml
 
 # index and recordings
-site_gen/: site_gen/viewer.js site_src/index.sql site_src/make_index.py
+site_gen/: site_gen/viewer.js site_src/*
 	cp site_src/viewer.html $@viewer.html
+	rm -rf $@recordings
 	mkdir -p $@recordings
 	python3 site_src/make_index.py
 

@@ -6,11 +6,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <title>Document</title>
     <style>
-        .replay {
+        .player-card {
             display: grid;
-            grid-template-columns: auto 8em 8em 1fr;
+            grid-template-columns: 12em 12em;
             gap: 1em;
             margin-bottom: 2em;
+        }
+
+        #query {
+            grid-column: 1 / -1;
+            padding: 1em;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            white-space: pre;
+        }
+
+        li {
+            list-style-type: none; 
         }
 
         .replay h3 {
@@ -32,12 +45,18 @@
 </head>
 
 <body>
+    <div id="query">{{query}}</div>
     {{#replays}}
     <div class="replay">
-        <h3>{{replay_id}}: {{map}}</h3>
+        <h3><a href="viewer.html?f={{replay_id}}">{{time}}: {{map}}</a></h3>
+        <div class="player-card">
         <ul>
-            {{#players}}<li>{{.}}</li>{{/players}}
+            {{#left_team}}<li>{{.}}</li>{{/left_team}}
         </ul>
+        <ul>
+            {{#right_team}}<li>{{.}}</li>{{/right_team}}
+        </ul>
+        </div>
     </div>
     {{/replays}}
 </body>

@@ -1,5 +1,6 @@
 package autotude.viewer;
 
+import js.html.URLSearchParams;
 import js.html.CanvasElement;
 import js.html.SpanElement;
 import js.html.InputElement;
@@ -59,12 +60,15 @@ class Viewer extends hxd.App {
 		draggable.onWheel = onWheel;
 
 		// load map
-		final request = Browser.window.fetch("recordings/illum.pb.gz");
+		var urlParams = new URLSearchParams(Browser.window.location.search);
+    var recordingFile = urlParams.get("f");
+		final request = Browser.window.fetch("recordings/" + recordingFile);
+
 		request.then((res) -> {
 			res.arrayBuffer().then((buf) -> {
 				final replay = new Replay(new BytesInput(Bytes.ofData(buf)));
 				if (replay != null && replay.mapGeometry != null) {
-					this.playerState = new PlayerState(s2d, sidebar, canvas, replay, replay.mapGeometry,);
+					this.playerState = new PlayerState(s2d, sidebar, canvas, replay, replay.mapGeometry);
 					s2d.addChild(game = new Game(playerState));
 
 					scrubber.min = "0";
