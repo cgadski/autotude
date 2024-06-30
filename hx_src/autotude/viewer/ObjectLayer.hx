@@ -91,8 +91,22 @@ class ObjectLayer extends Graphics {
 
 	final planesSynced:Map<Int,Bool> = new Map();
 
+	function drawBallAt(object:GameObject) {
+		// draw a spiky ball
+		var pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
+		var radius = 16;
+		beginFill(replay.teamColorPoly(object.team));
+		drawCircle(pos.x, pos.y, radius);
+		endFill();
+	}
+
 	function drawObject(object:GameObject) {
 		final pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
+
+		if (object.type == ObjectType.BALL) {
+			drawBallAt(object);
+			return;
+		}
 
 		final poly = polyManager.getPoly(object.type, object.spin);
 		if (poly != null) {
@@ -104,6 +118,9 @@ class ObjectLayer extends Graphics {
 		if (object.type <= 4) {
 			getPlaneGraphics(object.owner).syncObject(object);
 			planesSynced.set(object.owner, true);
+			if (object.powerup == ObjectType.BALL) {
+				drawBallAt(object);
+			};
 		}
 
 		// TODO: cheat on biplane bullets

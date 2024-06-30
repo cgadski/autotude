@@ -7,6 +7,10 @@ import h2d.Scene;
 import h3d.Vector;
 import js.html.DivElement;
 
+// enum {
+
+// }
+
 class PlayerState {
 	// references
 	public final s2d:Scene;
@@ -68,5 +72,13 @@ class PlayerState {
 		if (frameIdx < 0) {
 			frameIdx = 0;
 		}
+	}
+
+	public function onSpectatePlayer() {
+
+	}
+
+	public function onSpectateBall() {
+
 	}
 }

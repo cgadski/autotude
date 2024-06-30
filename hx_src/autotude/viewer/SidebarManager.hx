@@ -56,13 +56,14 @@ class SidebarManager {
 						span.innerHTML = '<span style="color:${color}">${whoScored.htmlEscape()}</span> scored goal';
 					}));
 				}
-				// if (event.hasChat()) {
-				// 	final message = event.chat.message;
-				// 	final sender = state.getName(event.chat.sender);
-				// 	sidebar.appendChild(sidebarEntry(idx, (span) -> {
-				// 		span.innerText = '${sender}: ${message}';
-				// 	}));
-				// }
+				if (event.hasChat()) {
+					final message = event.chat.message;
+					final sender = gameState.getName(event.chat.sender);
+					sidebar.appendChild(sidebarEntry(idx, (span) -> {
+						span.innerText = '${sender}: ${message}';
+						span.style.opacity = "0.5";
+					}));
+				}
 				// if (event.hasKill()) {
 				// 	final whoKilled = event.kill.whoKilled
 				// }

@@ -35,6 +35,8 @@ class Viewer extends hxd.App {
 
 	final sidebar:DivElement = cast getElem("sidebar");
 	final help:DivElement = cast getElem("help");
+	final scoreboard:DivElement = cast getElem("scoreboard");
+
 	final scrubber:InputElement = cast getElem("scrubber");
 	final timeBefore:SpanElement = cast getElem("time_before");
 	final timeAfter:SpanElement = cast getElem("time_after");
@@ -48,6 +50,7 @@ class Viewer extends hxd.App {
 		bindings.renderCard(help);
 
 		// help.classList.toggle("show");
+		scoreboard.classList.toggle("show");
 	}
 
 	override function init() {
@@ -208,6 +211,14 @@ class Viewer extends hxd.App {
 
 		r("Toggle bounds", [Key.B], () -> {
 			n((s) -> s.showBounds = !s.showBounds);
+		});
+
+		r("Spectate player", [Key.T], () -> {
+			n((s) -> s.onSpectatePlayer());
+		});
+
+		r("Spectate ball", [Key.T], () -> {
+			n((s) -> s.onSpectateBall());
 		});
 	}
 
