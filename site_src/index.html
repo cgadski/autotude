@@ -1,63 +1,68 @@
-<!DOCTYPE>
+<!DOCTYPE >
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css"
+    />
     <title>Document</title>
     <style>
-        .player-card {
-            display: grid;
-            grid-template-columns: 12em 12em;
-        }
+      .player-card {
+        display: grid;
+        grid-template-columns: 12em 12em;
+      }
 
-        #query {
-            grid-column: 1 / -1;
-            padding: 1em;
-            background-color: #f8f8f8;
-            border: 1px solid #ddd;
-            font-family: monospace;
-            white-space: pre;
-        }
+      #query {
+        grid-column: 1 / -1;
+        padding: 1em;
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        font-family: monospace;
+        white-space: pre;
+      }
 
-        li {
-            list-style-type: none;
-        }
+      li {
+        list-style-type: none;
+      }
 
-        .replay h3 {
-            grid-column: 1 / -1;
-            margin-bottom: 0.5em;
-        }
+      .replay h3 {
+        grid-column: 1 / -1;
+        margin-bottom: 0.5em;
+      }
 
-        .replay .header {
-            font-weight: bold;
-        }
+      .replay .header {
+        font-weight: bold;
+      }
 
-        .replay>.description {
-            grid-column: 1 / -1;
-            padding: 1em;
-            background-color: #f8f8f8;
-            border: 1px solid #ddd;
-        }
+      .replay > .description {
+        grid-column: 1 / -1;
+        padding: 1em;
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="query">{{query}}</div>
     {{#replays}}
     <div class="replay">
-        <h3><a href="viewer.html?f={{replay_id}}">{{time}}: {{map}}</a></h3>
-        duration: {{duration}}
-        <div class="player-card">
-            <ul>
-                {{#left_team}}<li>{{.}}</li>{{/left_team}}
-            </ul>
-            <ul>
-                {{#right_team}}<li>{{.}}</li>{{/right_team}}
-            </ul>
-        </div>
+      <h3><a href="viewer.html?f={{replay_id}}">{{time}}: {{map}}</a></h3>
+      duration: {{duration}}
+      <div class="player-card">
+        <ul>
+          {{#left_team}}
+          <li>{{.}}</li>
+          {{/left_team}}
+        </ul>
+        <ul>
+          {{#right_team}}
+          <li>{{.}}</li>
+          {{/right_team}}
+        </ul>
+      </div>
     </div>
     {{/replays}}
-</body>
-
+  </body>
 </html>

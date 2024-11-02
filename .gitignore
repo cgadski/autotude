@@ -12,3 +12,4 @@ bin
 .direnv
 replay_index.db
 site_src/index.csv
+site_src/.index.sql.swp
