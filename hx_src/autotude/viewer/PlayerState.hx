@@ -74,11 +74,9 @@ class PlayerState {
 		}
 	}
 
-	public function onSpectatePlayer() {
-
-	}
-
-	public function onSpectateBall() {
-
+	public function addTimestamp() {
+	  var url = new js.html.URL(js.Browser.window.location.href);
+	  url.searchParams.set('t', Std.string(frameIdx));
+	  js.Browser.window.history.pushState({}, "", url.href);
 	}
 }

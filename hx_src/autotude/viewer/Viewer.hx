@@ -213,12 +213,8 @@ class Viewer extends hxd.App {
 			n((s) -> s.showBounds = !s.showBounds);
 		});
 
-		r("Spectate player", [Key.T], () -> {
-			n((s) -> s.onSpectatePlayer());
-		});
-
-		r("Spectate ball", [Key.T], () -> {
-			n((s) -> s.onSpectateBall());
+		r("Add timestamp to URL", [Key.T], () -> {
+			n((s) -> s.addTimestamp());
 		});
 	}
 
