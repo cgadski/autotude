@@ -51,6 +51,10 @@ class Viewer extends hxd.App {
 
 		// help.classList.toggle("show");
 		scoreboard.classList.toggle("show");
+
+		sidebar.addEventListener("wheel", (e:js.html.WheelEvent) -> {
+		  e.stopPropagation();
+		}, { passive: true });
 	}
 
 	override function init() {
@@ -177,27 +181,27 @@ class Viewer extends hxd.App {
 			n((s) -> s.togglePlay());
 		});
 
-		r("-> 2 seconds", [Key.SHIFT, Key.L], () -> {
+		r("→ 2 seconds", [Key.SHIFT, Key.L], () -> {
 			n((s) -> s.frameIdx += 60);
 		});
 
-		r("<- 2 seconds", [Key.SHIFT, Key.J], () -> {
+		r("← 2 seconds", [Key.SHIFT, Key.J], () -> {
 			n((s) -> s.frameIdx -= 60);
 		});
 
-		r("-> one frame ", [Key.CTRL, Key.L], () -> {
+		r("→ one frame ", [Key.CTRL, Key.L], () -> {
 			n((s) -> s.frameIdx += 1);
 		});
 
-		r("<- one frame", [Key.CTRL, Key.J], () -> {
+		r("← one frame", [Key.CTRL, Key.J], () -> {
 			n((s) -> s.frameIdx -= 1);
 		});
 
-		r("-> 1/3 seconds", [Key.L], () -> {
+		r("→ 1/3 seconds", [Key.L], () -> {
 			n((s) -> s.frameIdx += 10);
 		});
 
-		r("<- 1/3 second", [Key.J], () -> {
+		r("← 1/3 seconds", [Key.J], () -> {
 			n((s) -> s.frameIdx -= 10);
 		});
 
