@@ -64,7 +64,8 @@ site_gen/viewer.js: hx_src/autotude/proto/ build_viewer.hxml \
 	haxe build_viewer.hxml
 
 # index and recordings
-site_gen/: site_gen/viewer.js site_src/* replay_index.db
+site_gen/: site_gen/viewer.js site_src/* \
+	site_src/index/* replay_index.db
 	cp site_src/viewer.html $@viewer.html
 	rm -rf $@recordings
 	mkdir -p $@recordings

@@ -17,8 +17,11 @@ ladder_games AS (
     GROUP BY replay_id
     HAVING n_players >= 8 AND goals >= 2
 )
-SELECT name, COUNT() AS goals
+SELECT path
 FROM (SELECT replay_id FROM ladder_games)
-NATURAL JOIN goals
-GROUP BY name
-ORDER BY goals DESC
+NATURAL JOIN replays
+-- SELECT name, COUNT() AS goals
+-- FROM (SELECT replay_id FROM ladder_games)
+-- NATURAL JOIN goals
+-- GROUP BY name
+-- ORDER BY goals DESC

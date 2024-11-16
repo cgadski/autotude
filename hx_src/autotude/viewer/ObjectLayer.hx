@@ -92,12 +92,13 @@ class ObjectLayer extends Graphics {
 	final planesSynced:Map<Int,Bool> = new Map();
 
 	function drawBallAt(object:GameObject) {
-		// draw a spiky ball
 		var pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
 		var radius = 16;
+		lineStyle(2, 0, 1);
 		beginFill(replay.teamColorPoly(object.team));
 		drawCircle(pos.x, pos.y, radius);
 		endFill();
+		lineStyle(0, 0, 0);
 	}
 
 	function drawObject(object:GameObject) {
@@ -123,7 +124,7 @@ class ObjectLayer extends Graphics {
 			};
 		}
 
-		// TODO: cheat on biplane bullets
+		// TODO: cheat on biplane bullets, bomber flak
 
 		if (object.type == ObjectType.HEALTH_POWERUP) {
 			final d = 10;
@@ -137,8 +138,6 @@ class ObjectLayer extends Graphics {
 			flush();
 			lineStyle(0, 0, 1);
 		}
-
-		if (object.type == ObjectType.BALL) {}
 
 		if (object.type == 60 && poly != null) {
 			// final pos = vec2(object.positionX / 2, object.positionY / 2);
