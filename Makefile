@@ -4,7 +4,7 @@ all: java_gen/ out/polys site_gen/
 
 # nix environment (haxe, java protobuf)
 etc/nix.env: default.nix
-	rm $@
+	rm -f $@
 	nix build -f . env -o $@.tmp
 	cat $@.tmp > $@
 	rm $@.tmp
@@ -40,7 +40,7 @@ copy_gen: java_gen/
 
 ## generated haxe classes
 hx_src/autotude/proto/: $(PROTO_FILES)
-	haxelib run protohx generate protohx.json
+	haxelib run protohx generate hx_src/protohx.json
 	bash hx_src/clean_hxproto.sh
 
 rl/bot_driver/proto/: $(PROTO_FILES)
@@ -51,14 +51,14 @@ rl/bot_driver/proto/: $(PROTO_FILES)
 
 TOOL_SRC = hx_src/autotude/proto/ $(wildcard hx_src/autotude/**)
 
-tools/: $(TOOL_SRC) ; haxe hx_src/build_tools.hxml
+bin/write_polys.n: $(TOOL_SRC) ; haxe hx_src/build_tools.hxml
 
 indexer/: $(TOOL_SRC) ; haxe hx_src/build_indexer.hxml
 
 # Polys
-data/polys: tools/ poly_src/
-	mkdir -p out/
-	neko ./tools/write_polys.n
+data/polys: bin/write_polys.n poly_src/
+	mkdir -p $(@D)
+	neko ./bin/write_polys.n
 	gzip $@
 	mv $@.gz $@
 	@echo "Size of poly file (bytes): "

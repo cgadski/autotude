@@ -21,7 +21,7 @@ class ObjectLayer extends Graphics {
 	final state:PlayerState;
 	final polyManager:PolyManager;
 
-	final planeGraphics:Map<Int,PlaneGraphics> = new Map();
+	final planeGraphics:Map<Int, PlaneGraphics> = new Map();
 
 	public function new(state:PlayerState) {
 		this.replay = state.replay;
@@ -78,7 +78,7 @@ class ObjectLayer extends Graphics {
 		endFill();
 	}
 
-	function getPlaneGraphics(player:Int): PlaneGraphics {
+	function getPlaneGraphics(player:Int):PlaneGraphics {
 		final lookup = planeGraphics.get(player);
 		if (lookup != null) {
 			return lookup;
@@ -89,7 +89,7 @@ class ObjectLayer extends Graphics {
 		return graphics;
 	}
 
-	final planesSynced:Map<Int,Bool> = new Map();
+	final planesSynced:Map<Int, Bool> = new Map();
 
 	function drawBallAt(object:GameObject) {
 		var pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);

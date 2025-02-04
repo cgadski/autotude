@@ -53,8 +53,8 @@ class Viewer extends hxd.App {
 		scoreboard.classList.toggle("show");
 
 		sidebar.addEventListener("wheel", (e:js.html.WheelEvent) -> {
-		  e.stopPropagation();
-		}, { passive: true });
+			e.stopPropagation();
+		}, {passive: true});
 	}
 
 	override function init() {
@@ -68,7 +68,7 @@ class Viewer extends hxd.App {
 
 		// load map
 		var urlParams = new URLSearchParams(Browser.window.location.search);
-    var recordingFile = urlParams.get("f");
+		var recordingFile = urlParams.get("f");
 		final request = Browser.window.fetch("recordings/" + recordingFile);
 		final timestamp = urlParams.get("t");
 

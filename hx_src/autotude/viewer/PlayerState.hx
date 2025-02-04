@@ -8,9 +8,7 @@ import h3d.Vector;
 import js.html.DivElement;
 
 // enum {
-
 // }
-
 class PlayerState {
 	// references
 	public final s2d:Scene;
@@ -75,8 +73,8 @@ class PlayerState {
 	}
 
 	public function addTimestamp() {
-	  var url = new js.html.URL(js.Browser.window.location.href);
-	  url.searchParams.set('t', Std.string(frameIdx));
-	  js.Browser.window.history.pushState({}, "", url.href);
+		var url = new js.html.URL(js.Browser.window.location.href);
+		url.searchParams.set('t', Std.string(frameIdx));
+		js.Browser.window.history.pushState({}, "", url.href);
 	}
 }

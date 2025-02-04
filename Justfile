@@ -1,17 +1,27 @@
+set dotenv-load
+
 ALTI_PATH := "../altitude/"
 SERVER_DIST := ALTI_PATH + "BotServer/build/distributions/BotServer-1.1.9-SNAPSHOT.tar"
 CLIENT_DIST := ALTI_PATH + "BotClient/build/distributions/BotClient-1.1.9-SNAPSHOT.tar"
 
-# rust stuff
+default:
+    just --list
+
+# format everything
+fmt:
+    cd rust_src && cargo fmt
+    hx-fmt --source hx_src/ > /dev/null
 
 rust-build:
-    cd rust_src && cargo build
-
-rust-fmt:
-    cd rust_src && cargo fmt
+    cd rust_src && cargo build --release
 
 index:
-    cd rust_src && cargo run --release --bin alti-index -- ../recordings
+    cd rust_src \
+    && cargo run --release --bin alti-index -- $ALTI_RECORDINGS
+
+# haxe stuff
+
+haxe-fmt:
 
 # java stuff
 

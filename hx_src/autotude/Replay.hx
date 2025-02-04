@@ -63,21 +63,21 @@ class Replay {
 	public final teams:Array<Int>;
 
 	public function teamColorPoly(team:Int):Null<Int> {
-			if (team == teams[0]) {
-				return 0xEC8686;
-			} else if (team == teams[1]) {
-				return 0xAEEBAE;
-			} 
-			return null;
+		if (team == teams[0]) {
+			return 0xEC8686;
+		} else if (team == teams[1]) {
+			return 0xAEEBAE;
+		}
+		return null;
 	}
 
 	public function teamColorText(team:Int):String {
-			if (team == teams[0]) {
-				return "#D20000";
-			} else if (team == teams[1]) {
-				return "#007200";
-			} 
-			return "#000000";
+		if (team == teams[0]) {
+			return "#D20000";
+		} else if (team == teams[1]) {
+			return "#007200";
+		}
+		return "#000000";
 	}
 
 	public function new(bytes:BytesInput) {

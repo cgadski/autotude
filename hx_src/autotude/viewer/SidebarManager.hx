@@ -1,6 +1,7 @@
 package autotude.viewer;
 
 using StringTools;
+
 import js.html.Console;
 import haxe.Int64;
 import autotude.Replay.showTimestamp;

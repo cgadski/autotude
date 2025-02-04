@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "alti-index"
-path = "src/bin/alti-index.rs"
+path = "src/alti-index.rs"
 
 [dependencies]
 prost = "0.12"

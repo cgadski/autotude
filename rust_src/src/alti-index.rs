@@ -83,7 +83,7 @@ fn main() -> Result<()> {
     }
 
     let limit = args.get(2).and_then(|s| s.parse().ok());
-    let conn = Connection::open("replays.duckdb")?;
+    let conn = Connection::open("data/replays.db")?;
 
     // Create table if it doesn't exist
     conn.execute(

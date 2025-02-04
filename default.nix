@@ -12,6 +12,7 @@ in
       haxe
       neko
     ] ++ (with haxePackages; [
+      formatter
       protohx
       format
       heaps
@@ -52,8 +53,10 @@ in
 
         installPhase = ''
           mkdir -p $out
+          rm ./hx_src/protohx.json
+          rm ./hx_src/clean_hxproto.sh
           cp -r ./hx_src $out/
-          cp ./haxelib.json $out/
+          cp ./hx_src/haxelib.json $out/
         '';
       };
     };

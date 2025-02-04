@@ -182,9 +182,10 @@ in rec {
 
     HXCPP_CLANG = true;
 
-    buildInputs = [ 
-      haxe hxcpp
-      tokentree haxeparser hxparse json2object hxargs hxjsonast 
+    buildInputs = [
+      darwin.apple_sdk.frameworks.Cocoa
+      haxe hxcpp xcbuild
+      tokentree haxeparser hxparse json2object hxargs hxjsonast
     ];
 
     src = fetchFromGitHub {
