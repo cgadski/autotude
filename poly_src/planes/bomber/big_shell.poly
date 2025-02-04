@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-3355444,-1.6796162,1.6796162,2.7993598,1.6796162,2.7993598,-1.1197441,-1.6796162,-1.1197441,">
+  <texture>
+    <image path="planes/bomber/big_shell.png" />
+    <xform scale="0.55987203" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-2.7993598" y="-2.2394881" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

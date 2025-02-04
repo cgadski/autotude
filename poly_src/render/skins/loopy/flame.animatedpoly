@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,17.0,0.0,20.0,0.0,21.0,-3.0,25.0,-5.0,19.0,-5.0,16.0,-3.0,9.0,-4.0,22.0,-6.0,23.0,-8.0,18.0,-10.0,23.0,-10.0,28.0,-6.0,28.0,-2.0,21.0,2.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="70">
+      <poly hull="!-1,19.0,2.0,21.0,-2.0,26.0,-4.0,23.0,-5.0,17.0,-2.0,11.0,-2.0,14.0,-4.0,24.0,-6.0,22.0,-8.0,18.0,-8.0,18.0,-10.0,25.0,-9.0,28.0,-5.0,28.0,-2.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_0070.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="140">
+      <poly hull="!-1,9.0,4.0,11.0,4.0,10.0,6.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_0140.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="210">
+      <poly hull="!-1,0.0,-12.0,0.0,10.0,28.0,10.0,28.0,-12.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_0210.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="280">
+      <poly hull="!-1,0.0,-12.0,0.0,14.0,28.0,14.0,28.0,-12.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_0280.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="350">
+      <poly hull="!-1,11.0,2.0,16.0,2.0,24.0,-2.0,22.0,-4.0,18.0,-4.0,23.0,-5.0,20.0,-6.0,20.0,-8.0,18.0,-8.0,18.0,-6.0,14.0,-6.0,13.0,-8.0,10.0,-7.0,12.0,-11.0,20.0,-11.0,27.0,-7.0,27.0,1.0,25.0,1.0,24.0,-1.0,23.0,1.0,12.0,4.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_0350.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="420">
+      <poly hull="!-1,11.0,5.0,12.0,3.0,17.0,3.0,24.0,0.0,24.0,-2.0,18.0,-2.0,18.0,-4.0,23.0,-4.0,20.0,-5.0,20.0,-7.0,18.0,-7.0,18.0,-5.0,14.0,-5.0,13.0,-7.0,10.0,-6.0,10.0,-10.0,18.0,-11.0,19.0,-9.0,20.0,-11.0,25.0,-9.0,27.0,-7.0,28.0,0.0,15.0,5.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_0420.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="580">
+      <poly hull="!-1,0.0,-12.0,0.0,27.0,29.0,27.0,29.0,-12.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_0580.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="740">
+      <poly hull="!-1,0.0,-12.0,0.0,10.0,29.0,10.0,29.0,-12.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_0740.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-12.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="900">
+      <poly hull="!-1,2.0,10.0,5.0,8.0,16.0,7.0,13.0,10.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_0900.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1060">
+      <poly hull="!-1,5.0,11.0,16.0,9.0,14.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1060.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-10.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1220">
+      <poly hull="!-1,0.0,-28.0,0.0,12.0,29.0,12.0,29.0,-28.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1220.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-28.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1380">
+      <poly hull="!-1,10.0,10.0,11.0,7.0,14.0,5.0,18.0,5.0,18.0,7.0,20.0,7.0,20.0,5.0,23.0,4.0,19.0,4.0,18.0,2.0,24.0,2.0,23.0,-1.0,26.0,-2.0,28.0,0.0,27.0,7.0,20.0,11.0,18.0,9.0,17.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1380.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-22.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1450">
+      <poly hull="!-1,12.0,11.0,11.0,8.0,13.0,8.0,14.0,6.0,18.0,6.0,18.0,8.0,20.0,8.0,20.0,6.0,22.0,5.0,18.0,5.0,18.0,3.0,22.0,4.0,24.0,3.0,24.0,1.0,19.0,0.0,17.0,-2.0,11.0,-2.0,11.0,-4.0,18.0,-3.0,20.0,-1.0,23.0,-1.0,22.0,-3.0,26.0,-2.0,28.0,1.0,27.0,7.0,23.0,10.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1450.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-18.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1520">
+      <poly hull="!-1,11.0,11.0,10.0,8.0,20.0,8.0,22.0,6.0,18.0,5.0,24.0,4.0,19.0,0.0,11.0,-2.0,18.0,-2.0,23.0,1.0,27.0,0.0,27.0,7.0,18.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1520.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-14.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1590">
+      <poly hull="!-1,10.0,11.0,10.0,9.0,13.0,8.0,20.0,9.0,20.0,7.0,18.0,6.0,24.0,5.0,23.0,3.0,11.0,-1.0,17.0,-1.0,23.0,2.0,26.0,1.0,22.0,0.0,21.0,-2.0,26.0,-1.0,28.0,1.0,27.0,7.0,18.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1590.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1660">
+      <poly hull="!-1,10.0,11.0,13.0,9.0,18.0,9.0,18.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1660.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1730">
+      <poly hull="!-1,0.0,-2.0,0.0,12.0,28.0,12.0,28.0,-2.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1730.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="0.0" y="-2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1800">
+      <poly hull="!-1,7.0,8.0,1.0,8.0,1.0,6.0,12.0,6.0,13.0,8.0,16.0,9.0,15.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1800.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1870">
+      <poly hull="!-1,7.0,10.0,9.0,9.0,9.0,7.0,2.0,7.0,1.0,4.0,10.0,4.0,10.0,7.0,12.0,7.0,16.0,11.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1870.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="1940">
+      <poly hull="!-1,9.0,11.0,-1.0,11.0,0.0,9.0,3.0,9.0,1.0,6.0,6.0,7.0,7.0,5.0,10.0,5.0,11.0,9.0,16.0,10.0,11.0,11.0,10.0,13.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_1940.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-2.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2010">
+      <poly hull="!-1,4.0,15.0,2.0,13.0,-1.0,14.0,-1.0,12.0,2.0,12.0,3.0,10.0,5.0,10.0,7.0,6.0,9.0,6.0,10.0,9.0,14.0,10.0,10.0,11.0,10.0,16.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_2010.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-3.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2080">
+      <poly hull="!-1,6.0,18.0,4.0,19.0,2.0,16.0,-1.0,16.0,3.0,12.0,6.0,12.0,5.0,10.0,8.0,7.0,10.0,8.0,10.0,10.0,13.0,10.0,13.0,12.0,10.0,12.0,10.0,20.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_2080.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2150">
+      <poly hull="!-1,6.0,21.0,4.0,22.0,2.0,18.0,-1.0,19.0,-1.0,17.0,2.0,17.0,3.0,14.0,6.0,14.0,5.0,11.0,7.0,8.0,10.0,8.0,10.0,11.0,13.0,11.0,10.0,12.0,10.0,23.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_2150.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-14.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2220">
+      <poly hull="!-1,6.0,25.0,3.0,23.0,3.0,21.0,-1.0,21.0,-1.0,19.0,2.0,19.0,2.0,17.0,6.0,14.0,-1.0,14.0,1.0,12.0,7.0,12.0,7.0,9.0,10.0,9.0,11.0,11.0,9.0,12.0,10.0,25.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_2220.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-16.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2380">
+      <poly hull="!-1,3.0,27.0,2.0,24.0,-1.0,25.0,-1.0,23.0,2.0,22.0,3.0,18.0,6.0,19.0,6.0,16.0,4.0,15.0,7.0,12.0,4.0,12.0,2.0,10.0,10.0,10.0,9.0,29.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_2380.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-22.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2540">
+      <poly hull="!-1,4.0,30.0,3.0,26.0,-1.0,26.0,-1.0,24.0,2.0,23.0,3.0,19.0,6.0,20.0,6.0,17.0,-1.0,18.0,-1.0,16.0,5.0,16.0,7.0,13.0,2.0,12.0,3.0,9.0,1.0,8.0,10.0,9.0,9.0,30.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_2540.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-27.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2700">
+      <poly hull="!-1,4.0,29.0,3.0,27.0,5.0,26.0,-1.0,25.0,-1.0,23.0,2.0,22.0,2.0,19.0,5.0,20.0,5.0,17.0,-1.0,18.0,-1.0,16.0,1.0,14.0,4.0,16.0,6.0,12.0,2.0,11.0,1.0,8.0,9.0,9.0,8.0,29.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_2700.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-30.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="2860">
+      <poly hull="!-1,3.0,26.0,3.0,23.0,-1.0,21.0,2.0,20.0,2.0,17.0,5.0,18.0,6.0,11.0,2.0,10.0,2.0,8.0,9.0,8.0,8.0,26.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_2860.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-31.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3020">
+      <poly hull="!-1,2.0,18.0,-1.0,18.0,2.0,16.0,2.0,14.0,5.0,14.0,4.0,11.0,6.0,9.0,2.0,7.0,9.0,9.0,8.0,21.0,6.0,22.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_3020.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-30.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3180">
+      <poly hull="!-1,4.0,16.0,2.0,13.0,0.0,15.0,-1.0,12.0,8.0,9.0,7.0,16.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_3180.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-26.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3250">
+      <poly hull="!-1,3.0,13.0,3.0,11.0,0.0,12.0,-1.0,10.0,8.0,10.0,7.0,13.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_3250.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-24.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3320">
+      <poly hull="!-1,20.0,2.0,20.0,-2.0,17.0,-2.0,16.0,-4.0,11.0,-3.0,11.0,-5.0,15.0,-6.0,18.0,-3.0,22.0,-3.0,21.0,-6.0,24.0,-8.0,11.0,-9.0,25.0,-9.0,28.0,-3.0,23.0,2.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_3320.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-21.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3390">
+      <poly hull="!-1,20.0,2.0,18.0,-2.0,11.0,-2.0,11.0,-4.0,15.0,-5.0,21.0,-2.0,21.0,-5.0,25.0,-7.0,11.0,-8.0,25.0,-9.0,28.0,-3.0,26.0,0.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_3390.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-17.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3460">
+      <poly hull="!-1,19.0,-1.0,11.0,-3.0,20.0,-2.0,20.0,-4.0,25.0,-5.0,25.0,-7.0,11.0,-7.0,25.0,-9.0,28.0,-3.0,26.0,0.0,21.0,2.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_3460.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-13.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="3530">
+      <poly hull="!-1,19.0,0.0,12.0,-2.0,20.0,-1.0,20.0,-3.0,25.0,-6.0,1.0,-4.0,-1.0,-8.0,9.0,-7.0,9.0,-9.0,7.0,-10.0,16.0,-11.0,10.0,-6.0,17.0,-6.0,23.0,-7.0,23.0,-9.0,25.0,-9.0,28.0,-6.0,28.0,-2.0,21.0,2.0,">
+        <texture>
+          <image path="render/skins/loopy/flame_3530.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-2.0" y="-11.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

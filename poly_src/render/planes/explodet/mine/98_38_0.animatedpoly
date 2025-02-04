@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,14.0,6.0,7.0,7.0,6.0,9.0,2.0,10.0,2.0,12.0,1.0,10.0,-2.0,11.0,-7.0,7.0,-13.0,7.0,-13.0,-7.0,-11.0,-6.0,-4.0,-9.0,-2.0,-15.0,2.0,-15.0,4.0,-9.0,6.0,-9.0,7.0,-7.0,14.0,-6.0,">
+        <texture>
+          <image path="render/planes/explodet/mine/98_38_0_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-15.0" y="-16.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+

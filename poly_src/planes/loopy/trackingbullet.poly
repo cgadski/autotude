@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,7.0,1.0,6.0,1.0,6.0,2.0,-4.0,2.0,-4.0,3.0,-6.0,4.0,-6.0,-3.0,-5.0,-3.0,-4.0,-1.0,6.0,-1.0,6.0,0.0,7.0,0.0,">
+  <texture>
+    <image path="planes/loopy/trackingbullet.png" />
+    <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-7.0" y="-7.0" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

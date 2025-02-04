@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,8.992001,2.268,5.2120004,2.268,5.0,3.0,2.0,3.0,2.0,-3.0,4.7079997,-3.024,5.2120004,-2.016,9.0,-2.0,">
+  <texture>
+    <image path="planes/bomber/gun.png" />
+    <xform scale="0.252" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-3.6079998" y="-6.2999997" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

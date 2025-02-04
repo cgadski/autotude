@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,-1.188,2.8160002,-3.3000002,1.4080001,-3.3000002,-1.4080001,4.4440007,-1.4080001,0.9240002,2.8160002,">
+  <texture>
+    <image path="planes/loopy/shattered_glass1.png" />
+    <xform scale="0.70400006" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-3.3000002" y="-2.1120002" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

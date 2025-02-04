@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,1.5333121,1.5333121,!-3355444,-2.2999682,1.5333121,!-1,-2.2999682,-0.76665604,1.5333121,-0.76665604,!-3355444,1.9666241,0.0,1.9666241,0.76665604,">
+  <texture>
+    <image path="planes/biplane/bullet_cannon.png" />
+    <xform scale="0.47300002" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-2.97" y="-1.54" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

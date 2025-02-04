@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,12.0,1.0,6.0,8.0,6.0,33.0,-6.0,33.0,-6.0,8.0,!-1761607681,-9.0,7.0,-12.0,-3.0,-8.0,-11.0,!-1,2.0,-13.0,9.0,-11.0,">
+  <texture>
+    <image path="render/map/turret/98_38_0_gun.png"/>
+    <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-13.0" y="-15.0" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

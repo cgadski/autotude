@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,2.8799999,1.728,-1.728,1.728,-1.728,-1.1520001,2.8799999,-1.1520001,">
+  <texture>
+    <image path="planes/biplane/shell.png" />
+    <xform scale="0.57600003" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-2.8799999" y="-2.3040001" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

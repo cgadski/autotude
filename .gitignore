@@ -1,0 +1,47 @@
+# secrets
+/etc/secrets.env
+
+# rust stuff
+rust_src/target/
+Cargo.lock
+
+# nix stuff
+/result
+/etc/nix.env
+
+# recordings
+/recordings/
+
+# generated data
+/data/
+
+# binaries
+/bin/
+
+# game data
+/game/client/lib
+/game/recordings
+/game/server/lib
+/game/client.tar
+/game/server.tar
+/game/cache/maps
+/game/maps/
+
+# build outputs
+/bin/
+/site_gen/
+/java_gen/
+/hx_src/autotude/proto/
+/build/
+.DS_STORE
+.direnv
+site_src/index.csv
+site_src/.index.sql.swp
+
+# python
+__pycache__
+
+# aider
+.aider.tags.cache.v3
+.aider.chat.history.md
+.aider.input.history

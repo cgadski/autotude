@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TexturedPoly hull="!-1,29.0,12.0,22.0,36.0,14.0,50.0,14.0,-50.0,22.0,-36.0,29.0,-12.0,">
+  <texture>
+    <image path="planes/powerup/shield/shield_0.png" />
+    <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+      <translate x="-27.0" y="-56.0" />
+    </xform>
+  </texture>
+</TexturedPoly>
+

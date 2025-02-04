@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnimatedPoly>
+  <frames>
+    <Frame delayMs="0">
+      <poly hull="!-1,19.0,2.0,17.0,2.0,14.0,5.0,-8.0,5.0,-10.0,3.0,-12.0,3.0,-12.0,5.0,-17.0,5.0,-17.0,-4.0,14.0,-4.0,17.0,-1.0,19.0,-1.0,">
+        <texture>
+          <image path="render/powerups/big_bomb/30_58_206_0000.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-19.0" y="-6.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="225">
+      <poly hull="!-1,19.0,2.0,17.0,2.0,14.0,5.0,-12.0,4.0,-12.0,6.0,-17.0,6.0,-17.0,-5.0,-12.0,-5.0,-12.0,-3.0,14.0,-4.0,17.0,-1.0,19.0,-1.0,">
+        <texture>
+          <image path="render/powerups/big_bomb/30_58_206_0225.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-19.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="450">
+      <poly hull="!-1,19.0,2.0,17.0,2.0,14.0,5.0,-12.0,4.0,-12.0,6.0,-17.0,6.0,-18.0,1.0,-17.0,-6.0,-12.0,-5.0,-12.0,-3.0,14.0,-4.0,17.0,-1.0,19.0,-1.0,">
+        <texture>
+          <image path="render/powerups/big_bomb/30_58_206_0450.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-19.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+    <Frame delayMs="675">
+      <poly hull="!-1,19.0,2.0,17.0,2.0,14.0,5.0,-12.0,4.0,-12.0,6.0,-17.0,6.0,-17.0,-5.0,-12.0,-5.0,-12.0,-3.0,14.0,-4.0,17.0,-1.0,19.0,-1.0,">
+        <texture>
+          <image path="render/powerups/big_bomb/30_58_206_0675.png" />
+          <xform scale="1.0" rotate="0.0" flipX="false" flipY="false">
+            <translate x="-19.0" y="-7.0" />
+          </xform>
+        </texture>
+      </poly>
+    </Frame>
+  </frames>
+</AnimatedPoly>
+
