@@ -21,6 +21,7 @@ message SetPlayerEvent {
     optional uint32 team = 3;
     optional uint32 level = 4;
     optional uint32 ace_rank = 5;
+    optional string vapor = 6;
 }
 
 message RemovePlayerEvent {

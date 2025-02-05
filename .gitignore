@@ -13,7 +13,8 @@ Cargo.lock
 /recordings/
 
 # generated data
-/data/
+/data/polys
+/data/replays.db
 
 # binaries
 /bin/
@@ -45,3 +46,5 @@ __pycache__
 .aider.tags.cache.v3
 .aider.chat.history.md
 .aider.input.history
+.aider*
+data/replays.db.wal

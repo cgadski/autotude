@@ -18,8 +18,7 @@ clean:
 	rm -rf site_gen/ # static files for recording viewer
 	rm -rf site_src/index.csv
 
-ALTI_PATH=../altitude/
-GEN_INSTALL_PATH=$(ALTI_PATH)Altitude/src/main/java/em/altitude/game/protos/
+GEN_INSTALL_PATH=$(ALTI_SRC)/Altitude/src/main/java/em/altitude/game/protos/
 PROTO_SRC=proto/
 PROTO_FILES=$(wildcard proto/*)
 
@@ -63,6 +62,12 @@ data/polys: bin/write_polys.n poly_src/
 	mv $@.gz $@
 	@echo "Size of poly file (bytes): "
 	@wc -c $@
+
+# Rust tools
+bin/alti-index: rust_src/bin/* rust_src/src/** rust_src/Cargo.toml
+	mkdir -p $(@D)
+	cd rust_src && cargo build --release --bin alti-index
+	cp rust_src/target/release/alti-index $@
 
 # Recording viewer
 

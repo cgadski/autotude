@@ -5,17 +5,19 @@ edition = "2021"
 
 [[bin]]
 name = "alti-index"
-path = "src/alti-index.rs"
+path = "bin/alti-index.rs"
 
 [dependencies]
 prost = "0.12"
 prost-types = "0.12"
 bytes = "1.5"
-duckdb = { version = "0.8", features = ["bundled"] }
+duckdb = { version = "1.1.1", features = ["bundled"] }
 chrono = "0.4"
 walkdir = "2.4"
 flate2 = "1.0"
 anyhow = "1.0"
+indicatif = "0.17"
+clap = { version = "4.4", features = ["derive"] }
 
 [build-dependencies]
 prost-build = "0.12"

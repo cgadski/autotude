@@ -16,8 +16,13 @@ rust-build:
     cd rust_src && cargo build --release
 
 index:
-    cd rust_src \
-    && cargo run --release --bin alti-index -- $ALTI_RECORDINGS
+    make bin/alti-index
+    rm -f data/replays.db*
+    duckdb data/replays.db < data/replay_schema.sql
+    alti-index \
+       --replays $ALTI_RECORDINGS \
+       --out data/replays.db \
+       --progress
 
 # haxe stuff
 
