@@ -5,24 +5,6 @@ import "game_object.proto";
 option java_multiple_files = true;
 option java_package = "em.altitude.game.protos";
 
-// set general options
-message SetOptionsCmd {
-
-}
-
-// switch/reset the map
-message SetMapCmd {
-    optional string map = 1;
-}
-
-// start a new recording, save old
-message StartRecordCmd {
-    optional string name = 1;
-}
-
-// save recording
-message StopRecordCmd {}
-
 enum TeamTarget {
     TEAM_SPEC = 1;
     TEAM_LEFT = 2;
@@ -44,16 +26,6 @@ message InputCmd {
 }
 
 message Cmd {
-    optional SetOptionsCmd setOptions = 1;
-
-    // only for bot server
-    optional SetMapCmd setMap = 2;
-
-    // recordings
-    optional StopRecordCmd stopRecord = 10;
-    optional StartRecordCmd startRecord = 11;
-
-    // input and configs
     map<uint32, ConfigCmd> configs = 21;
     map<uint32, InputCmd> inputs = 22;
 }

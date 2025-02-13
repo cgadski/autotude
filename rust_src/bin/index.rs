@@ -1,6 +1,6 @@
 use alti_reader::proto::game_event::Event;
 use alti_reader::proto::{
-    GameEvent, GameObject, MapGeometry, RemovePlayerEvent, SetPlayerEvent, Update,
+    GameEvent, GameObject, ObjectType, RemovePlayerEvent, SetPlayerEvent, Update,
 };
 use alti_reader::replay::{ReplayListener, Result as ReplayResult};
 use anyhow::{anyhow, Result};
@@ -59,58 +59,77 @@ struct Args {
 struct PlayerState {
     key: PlayerKey,
     data: SetPlayerEvent,
-    team: Option<i32>,
+    team: i32,
     nick: String,
     ticks_alive: i32,
 }
 
 struct IndexingListener<'a> {
-    dump: bool,
-
-    map_name: Option<String>,
     replay_key: u32,
     conn: &'a Connection,
+
+    dump: bool,
+
+    server: Option<String>,
+    datetime: Option<DateTime<chrono::FixedOffset>>,
+    map_name: Option<String>,
+
     current_tick: usize,
     id_to_key: HashMap<PlayerId, PlayerKey>, // maps game ID to our allocated key
     player_states: HashMap<PlayerKey, PlayerState>, // maps our key to player state
 
     state_buffer: Vec<[u32; 11]>,
+    ball_buffer: Vec<[u32; 5]>,
 }
 
 impl<'a> IndexingListener<'a> {
     fn new(replay_key: u32, conn: &'a Connection, dump: bool) -> Self {
         Self {
-            dump,
-
-            map_name: None,
             replay_key,
             conn,
-            current_tick: 0,
 
+            dump,
+
+            server: None,
+            datetime: None,
+            map_name: None,
+
+            current_tick: 0,
             id_to_key: HashMap::new(),
             player_states: HashMap::new(),
 
             state_buffer: Vec::with_capacity(if dump { BUFFER_LEN } else { 0 }),
+            ball_buffer: Vec::with_capacity(if dump { BUFFER_LEN } else { 0 }),
         }
     }
 
     fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<()> {
-        let key = if let Ok(k) = self.get_player_key(id) {
+        let player_key = if let Ok(k) = self.get_player_key(id) {
             k
         } else {
             return Ok(());
         };
 
-        if let Some(state) = self.player_states.get_mut(&key) {
+        if let Some(state) = self.player_states.get_mut(&player_key) {
             state.ticks_alive += 1;
-            if let Some(team) = plane.team {
-                state.team = Some(team as i32);
+            let team = plane.team();
+            if team > 2 {
+                state.team = team as i32;
             }
         }
 
-        if self.dump {
+        if self.dump && self.current_tick % 10 == 0 {
+            if plane.powerup() == ObjectType::Ball {
+                self.ball_buffer.push([
+                    self.current_tick as u32,
+                    self.replay_key,
+                    player_key.0,
+                    plane.position_x(),
+                    plane.position_y(),
+                ]);
+            }
             self.state_buffer.push([
-                key.0,
+                player_key.0,
                 self.current_tick as u32,
                 plane.r#type() as u32,
                 plane.team(),
@@ -122,7 +141,19 @@ impl<'a> IndexingListener<'a> {
                 plane.throttle(),
                 plane.bars(),
             ]);
-            self.write_buffered(false)?;
+        };
+        Ok(())
+    }
+
+    fn on_ball(&mut self, ball: &GameObject) -> Result<()> {
+        if self.dump && self.current_tick % 10 == 0 {
+            self.ball_buffer.push([
+                self.current_tick as u32,
+                self.replay_key,
+                0,
+                ball.position_x(),
+                ball.position_y(),
+            ])
         }
         Ok(())
     }
@@ -146,7 +177,7 @@ impl<'a> IndexingListener<'a> {
                 key,
                 nick: name.clone(),
                 data: data.clone(),
-                team: None,
+                team: 2, // spectator
                 ticks_alive: 0,
             };
 
@@ -177,9 +208,17 @@ impl<'a> IndexingListener<'a> {
                 app.append_row([
                     &row[0], &row[1], &row[2], &row[3], &row[4], &row[5], &row[6], &row[7],
                     &row[8], &row[9], &row[10],
-                ])?;
+                ])
+                .or_else(|_| Err(anyhow!("Couldn't append state record: {:?}", row)))?;
             }
             self.state_buffer.clear();
+
+            let mut app = self.conn.appender("ball")?;
+            for row in &self.ball_buffer {
+                app.append_row([&row[0], &row[1], &row[2], &row[3], &row[4]])
+                    .or_else(|_| Err(anyhow!("Couldn't append ball record.")))?;
+            }
+            self.ball_buffer.clear();
         }
 
         Ok(())
@@ -197,46 +236,53 @@ impl<'a> IndexingListener<'a> {
                 state.data.level.map(|v| v as i32),
                 state.data.ace_rank.map(|v| v as i32),
                 state.ticks_alive,
-            ])?;
+                state.team,
+            ])
+            .or_else(|_| Err(anyhow!("Couldn't append player record.")))?;
         }
         Ok(())
     }
 }
 
 impl<'a> ReplayListener for IndexingListener<'a> {
-    fn on_game_start(&mut self, map_name: String, _map_geometry: MapGeometry) -> ReplayResult<()> {
-        self.map_name = Some(map_name);
-        Ok(())
-    }
-
     fn on_update(&mut self, update: &Update) -> ReplayResult<()> {
-        self.current_tick = update.time.unwrap_or_default() as usize;
+        self.current_tick += 1;
 
-        // Iterate over planes
+        // Iterate over objects
         for obj in update.objects.iter() {
             let is_plane = obj.r#type.map(|v| v < 5).unwrap_or(false);
-            if !is_plane {
-                continue;
+            if is_plane {
+                let player_id = PlayerId(obj.owner());
+                self.on_plane(player_id, obj)?;
             }
 
-            let player_id = PlayerId(obj.owner());
-            self.on_plane(player_id, obj)?;
+            if obj.r#type() == ObjectType::Ball {
+                self.on_ball(obj)?;
+            }
         }
 
-        Ok(())
+        self.write_buffered(false)
     }
 
     fn on_event(&mut self, event: &GameEvent) -> ReplayResult<()> {
         match &event.event {
+            Some(Event::MapLoad(load)) => {
+                self.map_name = load.name.as_ref().map(|x| x.to_string());
+                self.server = load.server.clone();
+                self.datetime = parse_datetime(load.datetime());
+            }
             Some(Event::Chat(chat)) => {
                 let player_id = PlayerId(chat.sender());
                 let player_key = self.get_player_key(player_id).unwrap_or(PlayerKey(0));
-                self.conn.appender("chat")?.append_row(params![
-                    self.replay_key,
-                    self.current_tick,
-                    player_key.0,
-                    chat.message()
-                ])?;
+                self.conn
+                    .appender("chat")?
+                    .append_row(params![
+                        self.replay_key,
+                        self.current_tick,
+                        player_key.0,
+                        chat.message()
+                    ])
+                    .or_else(|_| Err(anyhow!("Couldn't append chat record.")))?;
             }
             Some(Event::Goal(goal)) => {
                 if goal.who_scored.len() > 0 {
@@ -244,7 +290,8 @@ impl<'a> ReplayListener for IndexingListener<'a> {
                     let player_key = self.get_player_key(player_id)?;
                     self.conn
                         .appender("goals")?
-                        .append_row(params![self.replay_key, player_key.0])?;
+                        .append_row(params![self.replay_key, player_key.0])
+                        .or_else(|_| Err(anyhow!("Couldn't append goal record.")))?;
                 }
             }
             Some(Event::Kill(kill)) => {
@@ -252,12 +299,15 @@ impl<'a> ReplayListener for IndexingListener<'a> {
                     .get_player_key(PlayerId(kill.who_killed()))
                     .unwrap_or(PlayerKey(0));
                 let who_died = self.get_player_key(PlayerId(kill.who_died()))?;
-                self.conn.appender("kills")?.append_row(params![
-                    self.current_tick,
-                    self.replay_key,
-                    who_killed.0,
-                    who_died.0
-                ])?;
+                self.conn
+                    .appender("kills")?
+                    .append_row(params![
+                        self.current_tick,
+                        self.replay_key,
+                        who_killed.0,
+                        who_died.0
+                    ])
+                    .or_else(|_| Err(anyhow!("Couldn't append kill record.")))?;
             }
             Some(Event::SetPlayer(data)) => {
                 self.on_set_player(data)?;
@@ -271,13 +321,27 @@ impl<'a> ReplayListener for IndexingListener<'a> {
     }
 }
 
-fn index_replay(
-    conn: &Connection,
-    path: &PathBuf,
-    dump: bool,
-    replay_key: u32,
-    datetime: Option<DateTime<chrono::FixedOffset>>,
-) -> Result<()> {
+// Expects a timestamp of the form %Y_%m_%dT%H_%M_%SZ in GMT+0
+// 2024_13_13T10_10_10Z
+fn parse_datetime(s: &str) -> Option<DateTime<chrono::FixedOffset>> {
+    if s.len() >= 19 {
+        DateTime::parse_from_str(&format!("{}+0000", &s[..19]), "%Y_%m_%dT%H_%M_%S%z").ok()
+    } else {
+        None
+    }
+}
+
+fn index_replay(conn: &Connection, path: &PathBuf, dump: bool, replay_key: u32) -> Result<()> {
+    let path_datetime: Option<DateTime<chrono::FixedOffset>> = path
+        .file_name()
+        .and_then(|name| parse_datetime(&name.to_string_lossy()));
+
+    let path_stem = path
+        .file_stem()
+        .ok_or_else(|| anyhow!("Couldn't read stem on path {:?}", path))?
+        .to_string_lossy()
+        .to_string();
+
     let path_str: &str = &path.to_string_lossy().to_string();
 
     // Walk through replay
@@ -290,13 +354,15 @@ fn index_replay(
         .map_name
         .ok_or_else(|| anyhow!("No map name found in replay"))?;
 
+    let datetime = listener.datetime.or(path_datetime);
     // Add record
     conn.execute(
-        "INSERT INTO replays (key, path, map, ticks, datetime, dumped)
-         VALUES (?, ?, ?, ?, ?, ?)",
+        "INSERT INTO replays_imported (key, path, stem, map, ticks, datetime, dumped, errored)
+         VALUES (?, ?, ?, ?, ?, ?, ?, false)",
         params![
             replay_key,
             path_str,
+            path_stem,
             map_name,
             listener.current_tick,
             datetime.map(|dt| dt.to_rfc3339().to_string()),
@@ -311,7 +377,7 @@ fn collect_replay_paths(dir: &PathBuf, limit: Option<usize>) -> Result<Vec<std::
         .follow_links(true)
         .into_iter()
         .filter_map(|e| e.ok())
-        .filter(|e| e.path().extension().and_then(|s| s.to_str()) == Some("gz"))
+        .filter(|e| e.path().extension().and_then(|s| s.to_str()) == Some("pb"))
         .map(|e| e.path().to_owned())
         .collect();
 
@@ -364,7 +430,7 @@ fn filter_paths(args: &Args, conn: &Connection, paths: Vec<PathBuf>) -> Result<V
         FROM temp_paths
         LEFT JOIN replays ON temp_paths.path = replays.path
         WHERE replays.path IS NULL
-        OR (? AND NOT replays.dumped)
+        OR replays.errored OR (? AND NOT replays.dumped)
     ";
 
     let mut stmt = conn.prepare(sql)?;
@@ -375,9 +441,6 @@ fn filter_paths(args: &Args, conn: &Connection, paths: Vec<PathBuf>) -> Result<V
         })?
         .filter_map(|r| r.ok())
         .collect();
-
-    // Clean up
-    conn.execute_batch("DROP TABLE temp_paths")?;
 
     Ok(paths)
 }
@@ -407,17 +470,14 @@ fn main() -> Result<()> {
         let replay_key: u32 =
             conn.query_row("SELECT nextval('replay_keys')", [], |row| row.get(0))?;
 
-        let datetime: Option<DateTime<chrono::FixedOffset>> = path
-            .file_name()
-            .and_then(|name| name.to_str())
-            .and_then(|name| {
-                DateTime::parse_from_str(&format!("{}+0000", &name[..19]), "%Y_%m_%dT%H_%M_%S%z")
-                    .ok()
-            });
-
-        let result = index_replay(&conn, &path, args.dump, replay_key, datetime);
+        let result = index_replay(&conn, &path, args.dump, replay_key);
         if let Err(e) = result {
             eprintln!("{} (from {})", &e, path.display());
+            let _ = conn.execute(
+                "INSERT INTO replays_imported (key, path, errored)
+                 VALUES (?, ?, true)",
+                params![replay_key, &path.to_string_lossy()],
+            );
         }
         if let Some(pb) = &pb {
             pb.set_message(format!(

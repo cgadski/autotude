@@ -3,6 +3,9 @@ root = true
 [*.hx]
 indent_style = tab
 
+[Justfile]
+indent_style = tab
+
 [*.nix]
 indent_style = space
 indent_size = 2

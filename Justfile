@@ -1,56 +1,50 @@
 set dotenv-load
 
-ALTI_PATH := "../altitude/"
-SERVER_DIST := ALTI_PATH + "BotServer/build/distributions/BotServer-1.1.9-SNAPSHOT.tar"
-CLIENT_DIST := ALTI_PATH + "BotClient/build/distributions/BotClient-1.1.9-SNAPSHOT.tar"
+alti_src := env("ALTI_SRC")
 
 default:
     just --list
 
-# format everything
-fmt:
-    cd rust_src && cargo fmt
-    hx-fmt --source hx_src/ > /dev/null
+# Install dependencies through nix
+nix:
+	nix build -f . env -o etc/nix.env
 
-rust-build:
-    cd rust_src && cargo build --release
+# Build alti_home/ using Altitude source tree at $ALTI_SRC
+copy-alti:
+	mkdir -p alti_home/
+	mkdir -p bin/
+	tar -xf {{alti_src / "BotServer/build/distributions/*.tar"}} -C alti_home/
+	ln -sf $PWD/alti_home/BotServer*/bin/BotServer bin/server
+	rsync -ru {{alti_src / "BotServer/build/alti_home/"}} alti_home/
 
+# Format haxe source
+fmt-haxe:
+	hx-fmt --source hx_src/
+
+# Index replays at $ALTI_RECORDINGS into data/index.db
 index:
-    make bin/alti-index
-    rm -f data/replays.db*
-    duckdb data/replays.db < data/replay_schema.sql
-    alti-index \
+    make bin/index
+    duckdb data/index.db < data/schema.sql
+    index \
        --replays $ALTI_RECORDINGS \
-       --out data/replays.db \
+       --out data/index.db \
        --progress
 
-# haxe stuff
+# Dump extended database of 4ball recordings into data/dump.db
+dump-4ball:
+    duckdb -csv -noheader data/index.db < data/4ball.sql > data/4ball.csv
+    duckdb data/dump.db < data/schema.sql
+    cat data/4ball.csv | index \
+        --stdin \
+        --out data/dump.db \
+        --dump \
+        --progress
 
-haxe-fmt:
+java_install := alti_src + "/Altitude/src/main/java/em/altitude/game/protos/"
 
-# java stuff
-
-extract-client:
-    rm -rf game/client game/client.tar
-    cp {{CLIENT_DIST}} game/client.tar
-    cd game && tar -xf client.tar
-    mv game/BotClient-1.1.9-SNAPSHOT game/client
-
-extract-server:
-    rm -rf game/server game/server.tar
-    cp {{SERVER_DIST}} game/server.tar
-    cd game && tar -xf server.tar
-    mv game/BotServer-1.1.9-SNAPSHOT game/server
-
-client: extract-client
-    game/client/bin/BotClient
-
-# site stuff
-
-upload-replays:
-	source ./indexer.sh
-	cp site_src/viewer.html site_gen/viewer.html
-	rm -rf site_gen/recordings
-	mkdir -p site_gen/recordings
-	python3 site_src/make_index.py
-	rsync --progress -az site_gen/* root@cgad.ski:/www/alti_viewer/
+# Copy generated java source into Altitude tree
+export-java-gen:
+	make java_gen/
+	rm -rf {{java_install}}
+	mkdir -p {{java_install}}
+	cp java_gen/em/altitude/game/protos/* {{java_install}}

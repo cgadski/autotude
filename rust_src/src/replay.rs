@@ -4,24 +4,13 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
-use crate::proto::game_event::Event;
-use crate::proto::{GameEvent, MapGeometry, Update};
+use crate::proto::{GameEvent, Update};
 
 pub type Result<T> = std::result::Result<T, anyhow::Error>;
 
 pub trait ReplayListener {
-    fn on_game_start(&mut self, map_name: String, map_geometry: MapGeometry) -> Result<()>;
     fn on_update(&mut self, update: &Update) -> Result<()>;
     fn on_event(&mut self, event: &GameEvent) -> Result<()>;
-}
-
-fn on_event<L: ReplayListener>(event: &Event, listener: &mut L) -> Result<()> {
-    if let Event::MapLoad(map_load) = event {
-        if let (Some(geom), Some(name)) = (&map_load.map, &map_load.name) {
-            listener.on_game_start(name.clone(), geom.clone())?;
-        }
-    }
-    Ok(())
 }
 
 pub fn from_path<P: AsRef<Path>, L: ReplayListener>(path: P, listener: &mut L) -> Result<()> {
@@ -42,9 +31,6 @@ pub fn from_path<P: AsRef<Path>, L: ReplayListener>(path: P, listener: &mut L) -
         buf = &buf[prost::length_delimiter_len(len) + len..];
 
         for opt_event in &update.events {
-            if let Some(ref event) = opt_event.event {
-                on_event(&event, listener)?;
-            }
             listener.on_event(opt_event)?;
         }
 

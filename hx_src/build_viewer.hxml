@@ -3,11 +3,11 @@
 -lib heaps
 -cp hx_src
 -dce full
---resource out/polys@polys
+--resource data/polys@polys
 -D analyzer-optimize
 --macro nullSafety("autotude", Loose)
 --macro nullSafety("autotude.proto", Off)
 -D resourcesPath=./viewer_assets/
 
 -main autotude.viewer.Viewer
---js site_gen/viewer.js
+--js hx_src/out/viewer.js

@@ -87,11 +87,6 @@ in rec {
       hash = "sha256-+Uue7pdkl67hRq6RXdao/ayFR75ExfoDDIhSB9EOQM0=";
     };
 
-    # propagatedBuildInputs = [
-    #   darwin.apple_sdk.frameworks.Cocoa
-    #   xcbuild 
-    # ];
-
     # patches = [ ./hxcpp.diff ];
 
     buildPhase = ''
@@ -122,7 +117,7 @@ in rec {
     meta.description = "A Haxe Library for supporting different file formats";
   };
 
-  tokentree = buildHaxeLib rec {
+  tokentree = buildHaxeLib {
     libname = "tokentree";
     version = "1.2.11";
     src = fetchFromGitHub {
@@ -133,7 +128,7 @@ in rec {
     };
   };
 
-  haxeparser = buildHaxeLib rec {
+  haxeparser = buildHaxeLib {
     libname = "haxeparser";
     version = "4.3.0";
     src = fetchFromGitHub {
@@ -144,25 +139,25 @@ in rec {
     };
   };
 
-  hxparse = buildHaxeLib rec {
+  hxparse = buildHaxeLib {
     libname = "hxparse";
     version = "4.3.0";
     sha256 = "sha256-3r351fSXC1AY9zOhZU1SEKyovxSEiay0B/Si7TP+tG4=";
   };
 
-  json2object = buildHaxeLib rec {
+  json2object = buildHaxeLib {
     libname = "json2object";
     version = "3.11.0";
     sha256 = "sha256-M2iJZjI9Un6QOIWd/7Qv0XsQSntq3JJmXwTIzBSEXCo=";
   };
 
-  hxargs = buildHaxeLib rec {
+  hxargs = buildHaxeLib {
     libname = "hxargs";
     version = "4.0.0";
     sha256 = "sha256-RIy7Mai2MsmjC0A6F0sCeQu7XQaRjUYiHxVpgTrUSnY=";
   };
 
-  hxjsonast = buildHaxeLib rec {
+  hxjsonast = buildHaxeLib {
     libname = "hxjsonast";
     version = "1.1.0";
     sha256 = "sha256-5Kbq/hDKypx29omnU8bFfd634KqBVYybEmUZh13qjYc=";

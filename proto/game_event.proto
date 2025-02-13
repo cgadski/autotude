@@ -13,12 +13,15 @@ message ChatEvent {
 message MapLoadEvent {
    optional MapGeometry map = 1;
    optional string name = 2;
+
+   optional string server = 3;
+   optional string datetime = 4;
 }
 
 message SetPlayerEvent {
     optional uint32 id = 1;
     optional string name = 2;
-    optional uint32 team = 3;
+    optional uint32 team = 3; //
     optional uint32 level = 4;
     optional uint32 ace_rank = 5;
     optional string vapor = 6;

@@ -1,5 +1,5 @@
-# secrets
-/etc/secrets.env
+# dev environment vars
+/etc/dev.env
 
 # rust stuff
 rust_src/target/
@@ -13,24 +13,19 @@ Cargo.lock
 /recordings/
 
 # generated data
-/data/polys
-/data/replays.db
+data/*.csv
+data/*.db*
 
 # binaries
 /bin/
 
-# game data
-/game/client/lib
-/game/recordings
-/game/server/lib
-/game/client.tar
-/game/server.tar
-/game/cache/maps
-/game/maps/
+# altitude "home directory"
+/alti_home/*
+!/alti_home/bot-server.xml
 
 # build outputs
 /bin/
-/site_gen/
+/hx_src/out/
 /java_gen/
 /hx_src/autotude/proto/
 /build/
@@ -46,5 +41,4 @@ __pycache__
 .aider.tags.cache.v3
 .aider.chat.history.md
 .aider.input.history
-.aider*
-data/replays.db.wal
+!.aiderignore

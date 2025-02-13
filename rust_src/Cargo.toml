@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "alti-index"
-path = "bin/alti-index.rs"
+name = "index"
+path = "bin/index.rs"
 
 [dependencies]
 prost = "0.12"
