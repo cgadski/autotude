@@ -4,8 +4,6 @@ let
 in
   with pkgs; rec {
     buildInputs = [
-      duckdb
-
       # protobuf
       protobuf
       jdk23

@@ -1,0 +1,11 @@
+name: alti
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - flask=3.0
+  - duckdb-cli=1.1.3
+  - libduckdb=1.1.3
+  - python-duckdb=1.1.3
+  - pytz
+  - pandas=2.2.3

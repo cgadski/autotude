@@ -43,3 +43,18 @@ Haxe soure. Mainly the replay viewer, written with the heaps game engine.
 ## `rust_src/`
 
 Rust source for the indexer (`bin/index`) used to dump replays into a DuckDB database.
+
+## `viewer/`
+
+A web application for browsing and viewing replay files. The app reads from a DuckDB database created by the indexer and provides a web interface to browse and launch replays in the viewer.
+
+To run the viewer:
+1. Make sure you have indexed some replays with `bin/index`
+2. Set the `DATA_DIR` environment variable to point to your data directory
+3. Create and activate the conda environment:
+   ```bash
+   mamba env create -f environment.yml
+   mamba activate alti
+   ```
+4. Run `python viewer/app.py`
+5. Open http://localhost:5000 in your browser

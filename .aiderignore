@@ -16,4 +16,5 @@
 !/altistats.com/src/**.svelte
 !/altistats.com/src/**.ts
 !/data/*.sql
-!/site_src/**
+!/viewer/**
+!environment.yml

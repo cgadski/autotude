@@ -1,7 +1,5 @@
 set dotenv-load
 
-alti_src := env("ALTI_SRC")
-
 default:
     just --list
 
@@ -11,11 +9,15 @@ nix:
 
 # Build alti_home/ using Altitude source tree at $ALTI_SRC
 copy-alti:
+	if [ -z "$ALTI_SRC" ]; then \
+		echo "ALTI_SRC not set"; \
+		exit 1; \
+	fi
 	mkdir -p alti_home/
 	mkdir -p bin/
-	tar -xf {{alti_src / "BotServer/build/distributions/*.tar"}} -C alti_home/
+	tar -xf $ALTI_SRC/BotServer/build/distributions/*.tar -C alti_home/
 	ln -sf $PWD/alti_home/BotServer*/bin/BotServer bin/server
-	rsync -ru {{alti_src / "BotServer/build/alti_home/"}} alti_home/
+	rsync -ru $ALTI_SRC/BotServer/build/alti_home/ alti_home/
 
 # Format haxe source
 fmt-haxe:
@@ -23,7 +25,6 @@ fmt-haxe:
 
 # Index replays at $ALTI_RECORDINGS into data/index.db
 index:
-    make bin/index
     duckdb data/index.db < data/schema.sql
     index \
        --replays $ALTI_RECORDINGS \
@@ -40,11 +41,16 @@ dump-4ball:
         --dump \
         --progress
 
-java_install := alti_src + "/Altitude/src/main/java/em/altitude/game/protos/"
+
+JAVA_INSTALL := env_var_or_default("ALTI_SRC", "") + "/Altitude/src/main/java/em/altitude/game/protos/"
 
 # Copy generated java source into Altitude tree
 export-java-gen:
+	if [ -z "$alti_src" ]; then \
+		echo "ALTI_SRC not set" \
+		exit 1 \
+	fi
 	make java_gen/
-	rm -rf {{java_install}}
-	mkdir -p {{java_install}}
-	cp java_gen/em/altitude/game/protos/* {{java_install}}
+	rm -rf {{JAVA_INSTALL}}
+	mkdir -p {{JAVA_INSTALL}}
+	cp java_gen/em/altitude/game/protos/* {{JAVA_INSTALL}}
