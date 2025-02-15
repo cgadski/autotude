@@ -4,7 +4,12 @@ in
   import sources.nixpkgs {
     overlays = [
       (self: super: {
-        haxePackages = super.haxePackages // super.callPackage ./haxe-packages.nix {};
+        protobuf = super.protobuf.override {
+          version = "28.3";
+          hash = "sha256-+bb5RxITzxuX50ItmpQhWEG1kMfvlizWTMJJzwlhhYM=";
+        };
+        haxePackages = super.haxePackages
+          // super.callPackage ./haxe-packages.nix {};
       })
     ];
   }

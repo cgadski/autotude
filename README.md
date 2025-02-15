@@ -7,14 +7,16 @@ This repository is my ongoing attempt to make Altitude a nice environment for re
 So far, we have:
 
 - A protobuf schema that can stream game state at around 12 kbps (raw) or 3 kbps (gzipped).
-- An in-browser replay viewer for game recording files.
+- An "indexer" that can dump features of replays into a database.
+- An in-browser replay viewer.
 - A "bot server" that can simulate offline bots faster than realtime.
+- A Python interface for controlling bots running on the bot server.
 
 # Quickstart
 
-Use direnv to load environment variables from `.envrc`. Run `just nix` to build `etc/nix.env` if you'd like to manage Haxe, Java and protoc through nix.
+Use direnv to load environment variables from `.envrc`. Run `just nix` to build `etc/nix.env` if you'd like to manage Haxe, Java and protoc through nix. Install the conda environment specified at `environment.yml` for other dependencies.
 
-If you have the `bot-server` branch of the Altitude source tree, point to it with `ALTI_SRC` and run `just copy-alti` to initialize the `alti_home/` directory, which holds the bot server/client and resources and config files for the game.
+If you have the `bot-server` branch of the Altitude source tree, point to it with `ALTI_SRC` and run `just setup`. Then run `server tbd_standalone` to play Altitude's existing bots against each other on tbd_cave, or run `python -m alti_rl` to run some bots controllable through Python.
 
 # Project Structure
 

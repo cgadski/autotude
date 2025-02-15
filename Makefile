@@ -25,7 +25,8 @@ hx_src/autotude/proto/: $(PROTO_FILES)
 	bash hx_src/clean_hxproto.sh
 
 ## python sourcegen
-rl/bot_driver/proto/: $(PROTO_FILES)
+alti_rl/proto/: $(PROTO_FILES)
+	rm -rf $@
 	mkdir -p $@
 	protoc -I=$(PROTO_SRC) --python_out=$@ --mypy_out=$@ $^
 

@@ -5,19 +5,20 @@ default:
 
 # Install dependencies through nix
 nix:
-	nix build -f . env -o etc/nix.env
+	nix build -L -f . env -o etc/nix.env
 
-# Build alti_home/ using Altitude source tree at $ALTI_SRC
-copy-alti:
+# Set up alti_home/ using Altitude source tree at $ALTI_SRC
+setup:
 	if [ -z "$ALTI_SRC" ]; then \
 		echo "ALTI_SRC not set"; \
 		exit 1; \
 	fi
 	mkdir -p alti_home/
-	mkdir -p bin/
 	tar -xf $ALTI_SRC/BotServer/build/distributions/*.tar -C alti_home/
 	ln -sf $PWD/alti_home/BotServer*/bin/BotServer bin/server
-	rsync -ru $ALTI_SRC/BotServer/build/alti_home/ alti_home/
+	rsync -ru \
+		$ALTI_SRC/BotServer/build/alti_home/{maps,resources,data} \
+		alti_home/
 
 # Format haxe source
 fmt-haxe:
@@ -46,9 +47,9 @@ JAVA_INSTALL := env_var_or_default("ALTI_SRC", "") + "/Altitude/src/main/java/em
 
 # Copy generated java source into Altitude tree
 export-java-gen:
-	if [ -z "$alti_src" ]; then \
-		echo "ALTI_SRC not set" \
-		exit 1 \
+	if [ -z "$ALTI_SRC" ]; then \
+		echo "ALTI_SRC not set"; \
+		exit 1; \
 	fi
 	make java_gen/
 	rm -rf {{JAVA_INSTALL}}

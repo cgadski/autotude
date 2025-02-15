@@ -1,39 +1,67 @@
 import os
+import subprocess
+import stat
 from pathlib import Path
 from typing import Optional, Iterator
 from google.protobuf.internal.encoder import _VarintBytes  # type: ignore
 from google.protobuf.internal.decoder import _DecodeVarint  # type: ignore
-from alti_rl.proto.update_pb2 import Update
+from io import BufferedWriter, BufferedReader
+
+from .proto.command_pb2 import Cmd
+from .proto.update_pb2 import Update
+
+def ensure_fifo(path: Path):
+    if not os.path.exists(path):
+        os.mkfifo(path)
+    elif not stat.S_ISFIFO(os.stat(path).st_mode):
+        raise ValueError(f"{path} exists but is not a named pipe")
 
 class Controller:
-    def __init__(self, server_dir: Optional[str] = None):
-        if server_dir is None:
-            server_dir = os.environ.get('SERVER_DIR')
-            if not server_dir:
-                raise ValueError("SERVER_DIR environment variable not set")
+    command_pipe: BufferedWriter
+    update_pipe: BufferedReader
 
-        self.server_dir = Path(server_dir)
-        self.in_pipe_path = self.server_dir / "server_in"
-        self.out_pipe_path = self.server_dir / "server_out"
+    map_load: Update
 
-        if not self.in_pipe_path.exists():
-            raise FileNotFoundError(f"Input pipe not found at {self.in_pipe_path}")
-        if not self.out_pipe_path.exists():
-            raise FileNotFoundError(f"Output pipe not found at {self.out_pipe_path}")
+    def __init__(self, config: str):
+        alti_home = os.environ.get('ALTI_HOME')
+        if not alti_home:
+            raise ValueError("ALTI_HOME not set")
 
-        self.in_pipe = open(self.in_pipe_path, 'wb')
-        self.out_pipe = open(self.out_pipe_path, 'rb')
+        self.alti_home = Path(alti_home)
+        command_path = self.alti_home / "command"
+        update_path = self.alti_home / "update"
+        for p in [command_path, update_path]:
+            ensure_fifo(p)
 
-    def send_command(self, command) -> None:
-        serialized = command.SerializeToString()
-        self.in_pipe.write(_VarintBytes(len(serialized)))
-        self.in_pipe.write(serialized)
-        self.in_pipe.flush()
+        log_path = self.alti_home / "server.log"
+        with open(log_path, 'w') as log:
+            print("Starting server")
+            self.process = subprocess.Popen(
+                ['server', config],
+                stdout=log,
+                stderr=log,
+            )
+
+        self.command_pipe = open(command_path, 'wb')
+        self.update_pipe = open(update_path, 'rb')
+        print("Connected to server, waiting for first message")
+        self.map_load = self.read_update()
+        print("Got map load!")
+
+    def update(self, cmd: Cmd) -> Update:
+        self.write_command(cmd)
+        return self.read_update()
+
+    def write_command(self, cmd: Cmd):
+        serialized = cmd.SerializeToString()
+        self.command_pipe.write(_VarintBytes(len(serialized)))
+        self.command_pipe.write(serialized)
+        self.command_pipe.flush()
 
     def read_update(self) -> Update:
         buf = bytearray()
         while True:
-            byte = self.out_pipe.read(1)
+            byte = self.update_pipe.read(1)
             buf.extend(byte)
             try:
                 size, pos = _DecodeVarint(buf, 0)
@@ -41,7 +69,7 @@ class Controller:
             except IndexError:
                 continue
 
-        message_buf = self.out_pipe.read(size)
+        message_buf = self.update_pipe.read(size)
         if len(message_buf) != size:
             raise IOError("Incomplete message read")
 
@@ -53,5 +81,10 @@ class Controller:
         return self
 
     def __exit__(self, type, val, tb):
-        self.in_pipe.close()
-        self.out_pipe.close()
+        cmd = Cmd()
+        cmd.shutdown = True
+        self.write_command(cmd)
+        self.process.wait(timeout=2)
+
+        self.command_pipe.close()
+        self.update_pipe.close()

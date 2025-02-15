@@ -1,22 +1,20 @@
-from alti_rl.proto.command_pb2 import Cmd
-from alti_rl.controller import Controller
+from .proto.command_pb2 import Cmd
+from .controller import Controller
+from time import sleep
+from tqdm import tqdm
 
-def main(controller:Controller):
-    controller = Controller()
+def main():
+    pass
+    # controller = Controller()
 
-    cmd = Cmd()
-    cmd.setMap.map = "tbd_asteroids"
-    print(f"Setting map: {cmd.setMap.map}")
-    controller.send_command(cmd)
-    controller.read_update()
-
-    cmd = Cmd()
-    while True:
-        update = controller.read_update()
-        controller.send_command(cmd)
-        print(f"Tick {update.time}: {len(update.objects)} objects", end="")
-        print()
+    # cmd = Cmd()
+    # controller.update(cmd)
+    # print(f"Tick {update.time}: {len(update.objects)} objects", end="")
+    # print()
 
 if __name__ == "__main__":
-    with Controller() as controller:
-        main(controller)
+    with Controller("simple_ffa") as c:
+        cmd = Cmd()
+        cmd.inputs[0].controls = 1
+        for _ in tqdm(range(1000)):
+            c.update(cmd)

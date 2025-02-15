@@ -21,7 +21,7 @@ data/*.db*
 
 # altitude "home directory"
 /alti_home/*
-!/alti_home/bot-server.xml
+!/alti_home/server_configs/
 
 # build outputs
 /bin/

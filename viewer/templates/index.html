@@ -23,6 +23,7 @@
     </head>
     <body>
         <h1>Replays</h1>
+        <p>Total: {{ total_replays }} replays ({{ total_hours }}h {{ total_minutes }}m)</p>
 
         <table>
             <thead>
@@ -31,6 +32,7 @@
                     <th>Map</th>
                     <th>Duration</th>
                     <th>Kills</th>
+                    <th>Players</th>
                     <th>Actions</th>
                     <th>Stem</th>
                 </tr>
@@ -42,6 +44,7 @@
                     <td>{{ replay.map }}</td>
                     <td>{{ replay.duration }}</td>
                     <td>{{ replay.kills }}</td>
+                    <td>{{ replay.players }}</td>
                     <td>
                         <a href="/view?f={{ replay.stem }}.pb">View Replay</a>
                     </td>

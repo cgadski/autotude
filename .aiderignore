@@ -8,7 +8,7 @@
 !/Justfile
 !/Makefile
 !/etc/*.env
-!/hx_src/autotude/**
+# !/hx_src/autotude/**
 !/altistats.com/src
 !/altistats.com/*.ts
 !/altistats.com/*.js
@@ -18,3 +18,7 @@
 !/data/*.sql
 !/viewer/**
 !environment.yml
+!/nb/**.sql
+!/nb/**.py
+!/alti_rl/**.py
+/alti_rl/proto/
