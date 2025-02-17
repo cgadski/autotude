@@ -7,6 +7,13 @@ default:
 nix:
 	nix build -L -f . env -o etc/nix.env
 
+# Upload to production
+up:
+    rsync --progress -av \
+        --exclude 'recordings/' \
+        alti_home/ \
+        root@altistats.com:/root/autotude/alti_home/
+
 # Set up alti_home/ using Altitude source tree at $ALTI_SRC
 setup:
 	if [ -z "$ALTI_SRC" ]; then \
@@ -15,7 +22,9 @@ setup:
 	fi
 	mkdir -p alti_home/
 	tar -xf $ALTI_SRC/BotServer/build/distributions/*.tar -C alti_home/
+	tar -xf $ALTI_SRC/BotClient/build/distributions/*.tar -C alti_home/
 	ln -sf $PWD/alti_home/BotServer*/bin/BotServer bin/server
+	ln -sf $PWD/alti_home/BotClient*/bin/BotClient bin/client
 	rsync -ru \
 		$ALTI_SRC/BotServer/build/alti_home/{maps,resources,data} \
 		alti_home/
