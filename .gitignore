@@ -27,6 +27,7 @@ data/*.db*
 /bin/
 /hx_src/out/
 /java_gen/
+/java_dist/
 /hx_src/autotude/proto/
 /build/
 .DS_STORE

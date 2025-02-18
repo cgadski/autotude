@@ -1,0 +1,44 @@
+services:
+  listing_bot: &bot-base
+    image: bot-client:latest
+    volumes:
+      - /root/alti_home:/app
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - ALTI_HOME=/app
+      - BOT_CONFIG=/app/client_configs/get_listings.xml
+    restart: unless-stopped
+
+  spec_bot_1:
+    <<: *bot-base
+    environment:
+      - BOT_CONFIG=/app/client_configs/spectate_ladder_1.xml
+
+  spec_bot_2:
+    <<: *bot-base
+    environment:
+      - BOT_CONFIG=/app/client_configs/spectate_ladder_2.xml
+
+  # pg:
+  #   image: postgres:15
+  #   environment:
+  #     - POSTGRES_PASSWORD=password
+  #     - POSTGRES_USER=user
+  #     - POSTGRES_DB=alti
+  #   volumes:
+  #     - /root/postgres-data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   restart: unless-stopped
+
+  # site:
+  #   build:
+  #     context: ..
+  #     dockerfile: docker/site.Dockerfile
+  #   volumes:
+  #     - alti_home:/alti_home:ro
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - ALTI_HOME=/alti_home
+  #   restart: unless-stopped

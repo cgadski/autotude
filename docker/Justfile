@@ -1,0 +1,18 @@
+# Build the bot client image
+build-client:
+    docker context use default
+    docker build -t bot-client:latest -f botclient.Dockerfile ..
+
+# Start an interactive shell in the bot client container
+shell:
+    docker run --rm -it \
+        --entrypoint /bin/bash \
+        -v {{invocation_directory()}}/../alti_home:/app \
+        -e JAVA_OPTS=-Xmx512m \
+        -e ALTI_HOME=/app \
+        $(docker build -q -f botclient.Dockerfile ..)
+
+# Deploy the bot client
+deploy: build-client
+    docker context use production
+    docker compose up

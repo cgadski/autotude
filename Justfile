@@ -7,24 +7,17 @@ default:
 nix:
 	nix build -L -f . env -o etc/nix.env
 
-# Upload to production
-up:
-    rsync --progress -av \
-        --exclude 'recordings/' \
-        alti_home/ \
-        root@altistats.com:/root/autotude/alti_home/
-
 # Set up alti_home/ using Altitude source tree at $ALTI_SRC
 setup:
 	if [ -z "$ALTI_SRC" ]; then \
 		echo "ALTI_SRC not set"; \
 		exit 1; \
 	fi
-	mkdir -p alti_home/
-	tar -xf $ALTI_SRC/BotServer/build/distributions/*.tar -C alti_home/
-	tar -xf $ALTI_SRC/BotClient/build/distributions/*.tar -C alti_home/
-	ln -sf $PWD/alti_home/BotServer*/bin/BotServer bin/server
-	ln -sf $PWD/alti_home/BotClient*/bin/BotClient bin/client
+	mkdir -p java_dist/
+	tar -xf $ALTI_SRC/BotServer/build/distributions/*.tar -C java_dist/
+	tar -xf $ALTI_SRC/BotClient/build/distributions/*.tar -C java_dist/
+	ln -sf $PWD/java_dist/BotServer*/bin/BotServer bin/server
+	ln -sf $PWD/java_dist/BotClient*/bin/BotClient bin/client
 	rsync -ru \
 		$ALTI_SRC/BotServer/build/alti_home/{maps,resources,data} \
 		alti_home/
@@ -51,7 +44,6 @@ dump-4ball:
         --dump \
         --progress
 
-
 JAVA_INSTALL := env_var_or_default("ALTI_SRC", "") + "/Altitude/src/main/java/em/altitude/game/protos/"
 
 # Copy generated java source into Altitude tree
@@ -64,3 +56,20 @@ export-java-gen:
 	rm -rf {{JAVA_INSTALL}}
 	mkdir -p {{JAVA_INSTALL}}
 	cp java_gen/em/altitude/game/protos/* {{JAVA_INSTALL}}
+
+# Managing
+
+# Deploy docker-compose configuration
+deploy:
+    cd docker && just deploy
+
+# Download recordings
+dl:
+	rsync --progress -av root@altistats.com:/root/alti_home/recordings/ ./alti_home/recordings/
+
+# Upload alti_home
+up:
+    rsync --progress -av \
+        --exclude 'recordings/' \
+        ./alti_home/ \
+        root@altistats.com:/root/alti_home/

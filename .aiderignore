@@ -2,6 +2,7 @@
 !/rust_src/*
 !/rust_src/*
 /rust_src/target/
+!/docker/*
 !/README.md
 !/proto/**
 !/data/schema.sql
