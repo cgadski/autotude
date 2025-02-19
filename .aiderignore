@@ -1,7 +1,9 @@
 /*
+!/sql_schema/*
 !/rust_src/*
 !/rust_src/*
 /rust_src/target/
+!/docker/*
 !/README.md
 !/proto/**
 !/data/schema.sql
@@ -9,12 +11,13 @@
 !/Makefile
 !/etc/*.env
 # !/hx_src/autotude/**
-!/altistats.com/src
-!/altistats.com/*.ts
-!/altistats.com/*.js
-!/altistats.com/*.json
-!/altistats.com/src/**.svelte
-!/altistats.com/src/**.ts
+!/altistats/src
+!/altistats/Dockerfile
+!/altistats/*.ts
+!/altistats/*.js
+!/altistats/*.json
+!/altistats/src/**.svelte
+!/altistats/src/**.ts
 !/data/*.sql
 !/viewer/**
 !environment.yml
@@ -22,3 +25,4 @@
 !/nb/**.py
 !/alti_rl/**.py
 /alti_rl/proto/
+!thing.java

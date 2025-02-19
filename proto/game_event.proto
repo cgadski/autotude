@@ -16,6 +16,7 @@ message MapLoadEvent {
 
    optional string server = 3;
    optional string datetime = 4;
+   optional string server_ip = 5;
 }
 
 message SetPlayerEvent {

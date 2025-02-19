@@ -11,7 +11,7 @@ path = "bin/index.rs"
 prost = "0.12"
 prost-types = "0.12"
 bytes = "1.5"
-duckdb = { version = "=1.1.1", features = ["bundled"] }
+postgres = { version = "0.19", features = ["with-chrono-0_4"] }
 chrono = "0.4"
 walkdir = "2.4"
 flate2 = "1.0"
