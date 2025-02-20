@@ -26,23 +26,12 @@ setup:
 fmt-haxe:
 	hx-fmt --source hx_src/
 
-# Index replays at $ALTI_RECORDINGS into data/index.db
+# Index replays into our database
 index:
-    duckdb data/index.db < data/schema.sql
-    index \
-       --replays $ALTI_RECORDINGS \
-       --out data/index.db \
-       --progress
-
-# Dump extended database of 4ball recordings into data/dump.db
-dump-4ball:
-    duckdb -csv -noheader data/index.db < data/4ball.sql > data/4ball.csv
-    duckdb data/dump.db < data/schema.sql
-    cat data/4ball.csv | index \
-        --stdin \
-        --out data/dump.db \
-        --dump \
-        --progress
+	make bin/index
+	index --replays alti_home/recordings/ \
+		--out "host=altistats.com user=root password=${PGPASSWORD} dbname=altistats" \
+		--progress
 
 JAVA_INSTALL := env_var_or_default("ALTI_SRC", "") + "/Altitude/src/main/java/em/altitude/game/protos/"
 
@@ -82,9 +71,12 @@ dev:
 	docker context use default
 	docker compose -f docker/dev.yml up --remove-orphans --build
 
-pg:
-	psql -h altistats.com -d altistats -U root
-
 update-schema:
 	cat sql_schema/{listings,index}.sql \
 		| psqldef altistats -U root -h=altistats.com
+	cat sql_schema/views.sql | psql
+
+# Run a SQL query file with parameters
+# Example: just query listings.sql param1 param2
+query file *args:
+    PGPASSWORD=${PGPASSWORD} psql -h altistats.com -U root -d altistats -f altistats/sql/{{file}}.sql {{args}}

@@ -9,7 +9,6 @@ WITH recent_listings AS (
         hardcore,
         ping
     FROM listings
-    WHERE time > NOW() - INTERVAL '5 minutes'
     ORDER BY name, time DESC
 )
 SELECT *

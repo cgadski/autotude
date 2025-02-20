@@ -18,6 +18,7 @@
 !/altistats/*.json
 !/altistats/src/**.svelte
 !/altistats/src/**.ts
+!/altistats/sql/**
 !/data/*.sql
 !/viewer/**
 !environment.yml

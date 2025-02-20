@@ -1,14 +1,25 @@
-<script>
+<script lang="ts">
+    import GameCard from "$lib/GameCard.svelte";
     /** @type {import('./$types').PageData} */
     export let data;
     import "./styles.css";
+
+    let secondsAgo = 0;
+
+    function updateTimer() {
+        if (data.lastUpdate) {
+            const lastUpdate = new Date(data.lastUpdate);
+            secondsAgo = Math.floor((new Date() - lastUpdate) / 1000);
+        }
+    }
+
+    // Update timer every second
+    setInterval(updateTimer, 1000);
+    updateTimer(); // Initial update
 </script>
 
 <svelte:head>
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css"
-    />
+    <link rel="stylesheet" href="/css/water.css" />
 </svelte:head>
 
 <div class="container mt-5">
@@ -35,7 +46,10 @@
             {/each}
         </tbody>
     </table>
+    <p class="update-time">(Update from {secondsAgo} seconds ago)</p>
 
-    <h2>Replays</h2>
-    <p>Coming this afternoon…</p>
+    <h2>Recordings</h2>
+    {#each data.games as game}
+        <GameCard {game} />
+    {/each}
 </div>
