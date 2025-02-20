@@ -30,7 +30,7 @@ export async function getLastUpdate() {
   return result.rows[0]?.last_update;
 }
 
-const SQL_DIR = join(process.cwd(), "sql");
+const SQL_DIR = process.env.NODE_ENV === "production" ? "/app/sql" : join(process.cwd(), "sql");
 
 function loadSql(filename: string): string {
   return readFileSync(join(SQL_DIR, filename), "utf-8");

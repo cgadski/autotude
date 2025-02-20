@@ -8,30 +8,30 @@ x-db-env: &db-env
   POSTGRES_DB: altistats
 
 services:
-  # site:
-  #   build:
-  #     context: ../altistats
-  #   environment:
-  #     <<: *db-env
-  #     NODE_ENV: development
-  #   ports:
-  #     - "3000:3000"
-  #   restart: unless-stopped
-
-  listing:
+  site:
     build:
-      context: ../java_dist/
-      dockerfile: botclient.Dockerfile
-    image: magneticduck/botclient:latest
-    deploy:
-      mode: global
-    volumes:
-      - ../alti_home/:/app
+      context: ../altistats
     environment:
-      JAVA_OPTS: -Xmx512m
-      ALTI_HOME: /app
-      POSTGRES_HOST: altistats.com
-      POSTGRES_PORT: 5432
-      BOT_CONFIG: /app/client_configs/get_listings.xml
       <<: *db-env
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
     restart: unless-stopped
+
+  # listing:
+  #   build:
+  #     context: ../java_dist/
+  #     dockerfile: botclient.Dockerfile
+  #   image: magneticduck/botclient:latest
+  #   deploy:
+  #     mode: global
+  #   volumes:
+  #     - ../alti_home/:/app
+  #   environment:
+  #     JAVA_OPTS: -Xmx512m
+  #     ALTI_HOME: /app
+  #     POSTGRES_HOST: altistats.com
+  #     POSTGRES_PORT: 5432
+  #     BOT_CONFIG: /app/client_configs/get_listings.xml
+  #     <<: *db-env
+  #   restart: unless-stopped
