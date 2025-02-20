@@ -2,8 +2,6 @@
     import GameCard from "$lib/GameCard.svelte";
     /** @type {import('./$types').PageData} */
     export let data;
-    import "./styles.css";
-
     let secondsAgo = 0;
 
     function updateTimer() {
@@ -49,6 +47,14 @@
     <p class="update-time">(Update from {secondsAgo} seconds ago)</p>
 
     <h2>Recordings</h2>
+    <p>
+        <strong>{data.totals.n_vapors}</strong> players,
+        <strong>{data.totals.n_replays}</strong> games,
+        <strong>{data.totals.hours}</strong> hours of gameplay.
+    </p>
+
+    <p>Last 5 games:</p>
+
     {#each data.games as game}
         <GameCard {game} />
     {/each}

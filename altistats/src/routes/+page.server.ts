@@ -1,14 +1,16 @@
-import { getRecentListings, getLastUpdate, getRecentGames } from '$lib/db';
+import { getRecentListings, getLastUpdate, getRecentGames, getTotals } from '$lib/db';
 
 export async function load() {
-    const [listings, lastUpdate, games] = await Promise.all([
+    const [listings, lastUpdate, games, totals] = await Promise.all([
         getRecentListings(),
         getLastUpdate(),
-        getRecentGames()
+        getRecentGames(),
+        getTotals()
     ]);
     return {
         listings,
         lastUpdate,
-        games
+        games,
+        totals
     };
 }

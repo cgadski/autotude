@@ -30,7 +30,10 @@ export async function getLastUpdate() {
   return result.rows[0]?.last_update;
 }
 
-const SQL_DIR = process.env.NODE_ENV === "production" ? "/app/sql" : join(process.cwd(), "sql");
+const SQL_DIR =
+  process.env.NODE_ENV === "production"
+    ? "/app/sql"
+    : join(process.cwd(), "sql");
 
 function loadSql(filename: string): string {
   return readFileSync(join(SQL_DIR, filename), "utf-8");
@@ -41,9 +44,20 @@ export async function getRecentListings() {
   return result.rows;
 }
 
-export async function getRecentGames(limit = 10): Promise<Game[]> {
+export async function getRecentGames(limit = 5): Promise<Game[]> {
   const result = await pool.query(loadSql("4ball_games.sql"), [limit]);
   return result.rows;
+}
+
+export type Totals = {
+  n_vapors: number;
+  n_replays: number;
+  hours: number;
+};
+
+export async function getTotals(): Promise<Totals> {
+  const result = await pool.query(loadSql("totals.sql"));
+  return result.rows[0];
 }
 
 export async function getGame(stem: string): Promise<Game | null> {

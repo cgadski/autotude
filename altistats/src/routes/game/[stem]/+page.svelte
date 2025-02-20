@@ -12,19 +12,13 @@
     <link rel="stylesheet" href="/css/water.css" />
 </svelte:head>
 
-<div class="container">
-    <h1>Game Details</h1>
-    {#if data.game}
-        <GameCard game={data.game} disableLink="true" />
-    {:else}
-        <p>Game not found</p>
-    {/if}
-</div>
+<h1>Game Details</h1>
+{#if data.game}
+    <GameCard game={data.game} disableLink="true" />
+{:else}
+    <p>Game not found</p>
+{/if}
 
-<style>
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 1rem;
-    }
-</style>
+<h2>Stats</h2>
+
+<p>Coming soon...</p>
