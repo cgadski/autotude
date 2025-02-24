@@ -1,0 +1,66 @@
+name: altistats
+
+x-db-env: &db-env
+  POSTGRES_USER: root
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  POSTGRES_DB: altistats
+  POSTGRES_HOST: pg
+  POSTGRES_PORT: 5432
+
+x-bot-base: &bot-base
+  image: magneticduck/botclient:latest
+  deploy:
+    mode: global
+  environment:
+    JAVA_OPTS: -Xmx512m
+  volumes:
+    - /root/alti_home:/app
+  restart: unless-stopped
+
+services:
+  nginx:
+    build: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - /root/alti_home/recordings/:/usr/share/nginx/recordings/
+    restart: unless-stopped
+
+  site:
+    image: magneticduck/altistats:latest
+    environment:
+      <<: *db-env
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  listing-bot:
+    <<: *bot-base
+    environment:
+      BOT_CONFIG: /app/client_configs/get_listings.xml
+      <<: *db-env
+    depends_on:
+      - pg
+
+  spec-bot-1:
+    <<: *bot-base
+    environment:
+      BOT_CONFIG: /app/client_configs/spectate_ladder_1.xml
+
+  spec-bot-2:
+    <<: *bot-base
+    environment:
+      BOT_CONFIG: /app/client_configs/spectate_ladder_2.xml
+
+  pg:
+    image: postgres:15
+    deploy:
+      mode: global
+    environment:
+      <<: *db-env
+    volumes:
+      - /root/postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped

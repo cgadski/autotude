@@ -13,7 +13,10 @@ pub trait ReplayListener {
     fn on_event(&mut self, event: &GameEvent) -> Result<()>;
 }
 
-pub fn from_path<P: AsRef<Path>, L: ReplayListener>(path: P, listener: &mut L) -> Result<()> {
+pub fn read_replay_file<P: AsRef<Path>, L: ReplayListener>(
+    path: P,
+    listener: &mut L,
+) -> Result<()> {
     let mut file = File::open(path)?;
     let mut compressed = Vec::new();
     file.read_to_end(&mut compressed)?;

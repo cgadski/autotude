@@ -14,8 +14,9 @@ Cargo.lock
 /recordings/
 
 # generated data
-data/*.csv
-data/*.db*
+/data/*.csv
+/data/*.db*
+/data/polys
 
 # binaries
 /bin/
@@ -35,6 +36,8 @@ data/*.db*
 .direnv
 site_src/index.csv
 site_src/.index.sql.swp
+/viewer/bin/
+/rust_src/proto/
 
 # python
 __pycache__

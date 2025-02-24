@@ -16,11 +16,10 @@
 !/altistats/*.ts
 !/altistats/*.js
 !/altistats/*.json
-!/altistats/src/**.svelte
-!/altistats/src/**.ts
+!/altistats/src/**
 !/altistats/sql/**
 !/data/*.sql
-!/viewer/**
+!/viewer-lite/**
 !environment.yml
 !/nb/**.sql
 !/nb/**.py

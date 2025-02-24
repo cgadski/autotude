@@ -3,7 +3,6 @@ use crate::proto::{GameEvent, GameObject, ObjectType, RemovePlayerEvent, SetPlay
 use crate::replay::{ReplayListener, Result as ReplayResult};
 use anyhow::{anyhow, Result};
 use chrono::DateTime;
-use postgres::Transaction;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
@@ -55,21 +54,17 @@ impl ReplayState {
     }
 }
 
-pub struct IndexingListener<'a, 'b> {
-    replay_key: i32,
-    transaction: &'a mut Transaction<'b>,
+pub struct IndexingListener {
     pub state: ReplayState,
 
     // mapping from altitude player IDs to our database keys
     next_player_key: i32,
-    id_to_key: HashMap<PlayerId, PlayerKey>,
+    pub id_to_key: HashMap<PlayerId, PlayerKey>,
 }
 
-impl<'a, 'b> IndexingListener<'a, 'b> {
-    pub fn new(replay_key: i32, transaction: &'a mut Transaction<'b>) -> Self {
+impl IndexingListener {
+    pub fn new() -> Self {
         Self {
-            replay_key,
-            transaction,
             state: ReplayState::new(),
             next_player_key: 0,
             id_to_key: HashMap::new(),
@@ -128,43 +123,15 @@ impl<'a, 'b> IndexingListener<'a, 'b> {
         Ok(())
     }
 
-    fn get_player_key(&mut self, id: PlayerId) -> Result<PlayerKey> {
+    pub fn get_player_key(&mut self, id: PlayerId) -> Result<PlayerKey> {
         self.id_to_key
             .get(&id)
             .ok_or_else(|| anyhow!("Unregistered player id used."))
             .map(|x| x.clone())
     }
-
-    pub fn write_players(&mut self) -> Result<()> {
-        let stmt = self
-            .transaction
-            .prepare(
-                "INSERT INTO players (replay_key, player_key, vapor, level, ace, ticks_alive, team)
-                VALUES ($1, $2, $3, $4, $5, $6, $7)",
-            )
-            .map_err(|e| anyhow!("Failed to prepare player insertion statement: {}", e))?;
-
-        for state in self.state.player_states.values() {
-            self.transaction
-                .execute(
-                    &stmt,
-                    &[
-                        &self.replay_key,
-                        &state.key.0,
-                        &state.data.vapor,
-                        &state.data.level.map(|v| v as i32),
-                        &state.data.ace_rank.map(|v| v as i32),
-                        &state.ticks_alive,
-                        &state.team,
-                    ],
-                )
-                .map_err(|e| anyhow!("Failed to insert players: {}", e))?;
-        }
-        Ok(())
-    }
 }
 
-impl<'a, 'b> ReplayListener for IndexingListener<'a, 'b> {
+impl ReplayListener for IndexingListener {
     fn on_update(&mut self, update: &Update) -> ReplayResult<()> {
         self.state.current_tick += 1;
 

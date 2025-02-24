@@ -1,0 +1,8 @@
+h1 {
+    text-align: center;
+}
+
+.update-time {
+    color: var(--text-muted);
+    font-size: 0.9em;
+}

@@ -69,7 +69,7 @@ class Viewer extends hxd.App {
 		// load map
 		var urlParams = new URLSearchParams(Browser.window.location.search);
 		var recordingFile = urlParams.get("f");
-		final request = Browser.window.fetch("recordings/" + recordingFile);
+		final request = Browser.window.fetch("/recordings/" + recordingFile);
 		final timestamp = urlParams.get("t");
 
 		request.then((res) -> {

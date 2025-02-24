@@ -1,5 +1,5 @@
 use alti_reader::listener::{PlayerKey, PlayerState};
-use alti_reader::{IndexingListener, ReplayState};
+use alti_reader::{collect_replay_paths, get_stem, make_pb, IndexingListener, ReplayState};
 use anyhow::{anyhow, Result};
 use chrono::DateTime;
 use clap::Parser;
@@ -9,7 +9,6 @@ use postgres::{Client, NoTls, Statement, Transaction};
 use std::collections::HashMap;
 use std::io::{self, BufRead};
 use std::path::PathBuf;
-use walkdir::WalkDir;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -31,14 +30,6 @@ struct Args {
 
     #[arg(long, default_value="false", action = clap::ArgAction::SetTrue)]
     dump: bool,
-}
-
-fn get_stem(path: &PathBuf) -> Result<String> {
-    Ok(path
-        .file_stem()
-        .ok_or_else(|| anyhow!("Couldn't read stem on path {:?}", path))?
-        .to_string_lossy()
-        .to_string())
 }
 
 struct Indexer {
@@ -113,8 +104,8 @@ impl Indexer {
             .get(0);
 
         let state: ReplayState = {
-            let mut listener = IndexingListener::new(replay_key, conn);
-            alti_reader::replay::from_path(path, &mut listener)?;
+            let mut listener = IndexingListener::new();
+            alti_reader::replay::read_replay_file(path, &mut listener)?;
             listener.state
         };
 
@@ -137,22 +128,6 @@ impl Indexer {
     }
 }
 
-fn collect_replay_paths(dir: &PathBuf, limit: Option<usize>) -> Result<Vec<std::path::PathBuf>> {
-    let mut paths: Vec<_> = WalkDir::new(dir)
-        .follow_links(true)
-        .into_iter()
-        .filter_map(|e| e.ok())
-        .filter(|e| e.path().extension().and_then(|s| s.to_str()) == Some("pb"))
-        .map(|e| e.path().to_owned())
-        .collect();
-
-    if let Some(limit) = limit {
-        paths.truncate(limit);
-    }
-
-    Ok(paths)
-}
-
 fn get_paths(args: &Args) -> Result<Vec<PathBuf>> {
     if args.stdin {
         let stdin = io::stdin();
@@ -168,7 +143,7 @@ fn get_paths(args: &Args) -> Result<Vec<PathBuf>> {
         }
         return Ok(paths);
     } else if let Some(replay_dir) = &args.replays {
-        return collect_replay_paths(&replay_dir, args.limit);
+        return Ok(collect_replay_paths(&replay_dir));
     } else {
         return Err(anyhow!("Must specify either --replays or --stdin"));
     };
@@ -233,12 +208,7 @@ fn main() -> Result<()> {
 
     // Create progress bar
     let pb = if args.progress {
-        let pb = ProgressBar::new(paths.len() as u64);
-        pb.set_style(ProgressStyle::default_bar()
-            .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta}) {msg}")
-            .unwrap()
-            .progress_chars("#>-"));
-        Some(pb)
+        Some(make_pb(paths.len()))
     } else {
         None
     };

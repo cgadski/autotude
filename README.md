@@ -20,9 +20,15 @@ If you have the `bot-server` branch of the Altitude source tree, point to it wit
 
 # Project Structure
 
+## `altistats.com`
+
+Source for site, including docker compose configuration.
+
+- `altistats.com/site`: sveltekit source for [http://altistats.com].
+
 ## `proto/`
 
-`proto/` contains the message format used to serialize game state, game inputs, and geometry of game objects.
+Protobuf message format used to serialize game state, game inputs, and geometry of game objects.
 
 I've patched Altitude (not fully open source) to serialize game state to a stream of `Update` messages. An `Update` is roughly a screenshot of _all_ game-relevant state at a given moment in time besides map geometry. This ncludes information not normally available to a player like positions of off-screen planes, powerups held by enemies, and exact health/energy values of all planes.
 
