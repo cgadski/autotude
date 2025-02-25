@@ -1,77 +1,128 @@
 <script lang="ts">
+    import { formatDuration } from "$lib";
+
     export let game: {
         stem: string;
         map: string;
         started_at: string;
-        teams: {
+        duration: number;
+        teams?: {
             "3": Array<{ nick: string; vapor: string }>;
             "4": Array<{ nick: string; vapor: string }>;
         };
     };
+    export let linkForm;
+
+    // Format the full date for display
+    const formatFullDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toLocaleTimeString([], {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
 </script>
 
-<div class="header">
-    <strong class="map-name">{game.map}</strong>
-    <span class="time">{new Date(game.started_at).toLocaleString()}</span>
-</div>
-<div class="teams">
-    <div class="team blue">
-        {#each game.teams["3"] || [] as player}
-            <div class="player">{player.nick}</div>
-        {/each}
+{#if linkForm}
+    <a
+        class="card-head d-flex justify-content-between align-items-center m-1"
+        href="/game/{game.stem}"
+    >
+        <div class="time-cell">
+            {formatFullDate(game.started_at)}
+        </div>
+        <div class="map-cell">
+            {game.map}
+        </div>
+        <div
+            class="duration-cell d-flex align-items-center justify-content-end"
+        >
+            <span>{formatDuration(game.duration)}</span>
+            <i class="bi bi-chevron-right ms-2"></i>
+        </div>
+    </a>
+{:else}
+    <div
+        class="card-head d-flex justify-content-between align-items-center m-1"
+    >
+        <div class="time-cell">
+            {formatFullDate(game.started_at)}
+        </div>
+        <div class="map-cell">
+            {game.map}
+        </div>
+        <div
+            class="duration-cell d-flex align-items-center justify-content-end"
+        >
+            <span>{formatDuration(game.duration)}</span>
+        </div>
     </div>
-    <div class="team red">
-        {#each game.teams["4"] || [] as player}
-            <div class="player">{player.nick}</div>
-        {/each}
-    </div>
-</div>
+{/if}
 
-<p>
-    <a href="/viewer/?f={game.stem}.pb">View replay</a> (desktop only)
-</p>
+<!-- Expanded details view -->
+{#if !linkForm}
+    <div class="teams p-2">
+        <div class="team red">
+            {#each game.teams["3"] || [] as player}
+                <div>
+                    <a href="/player/{player.vapor}">{player.nick}</a>
+                </div>
+            {/each}
+        </div>
+        <div class="team blue">
+            {#each game.teams["4"] || [] as player}
+                <div>
+                    <a href="/player/{player.vapor}">{player.nick}</a>
+                </div>
+            {/each}
+        </div>
+    </div>
+
+    <p>
+        <a href="/viewer/?f={game.stem}.pb">View replay</a> (desktop only)
+    </p>
+{/if}
 
 <style>
-    .game-card {
-        padding: 1rem;
-        margin: 0.5rem 0;
-        /* background: rgba(0, 0, 0, 0.03);
-        border-radius: 4px; */
+    .card-head {
         text-decoration: none;
         color: inherit;
-        display: block;
+        margin: 0.5em;
     }
 
-    .game-card:not(.no-link) {
-        transition: all 0.2s ease;
-    }
-
-    .game-card:not(.no-link):hover {
-        background: rgba(0, 0, 0, 0.07);
-    }
-
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .game-card-container {
         margin-bottom: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        overflow: hidden;
     }
 
-    .map-name {
-        font-size: 1.17em;
-        margin: 0;
+    .time-cell,
+    .map-cell,
+    .duration-cell {
+        padding: 0 0.5rem;
+    }
+
+    .time-cell {
+        width: 25%;
+        color: #666;
+    }
+
+    .map-cell {
+        width: 50%;
+        font-weight: 500;
+    }
+
+    .duration-cell {
+        width: 25%;
     }
 
     .teams {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
-
-    .links {
-        display: flex;
-        justify-content: center;
-        margin-top: 0.5rem;
+        gap: 0.5rem;
     }
 
     .team {
@@ -81,23 +132,22 @@
 
     .blue {
         background: #96ccff;
-        transition: background 0.2s ease;
     }
 
     .red {
         background: #fbabab;
-        transition: background 0.2s ease;
     }
 
-    .game-card:not(.no-link):hover .blue {
-        background: #7abbff;
-    }
+    @media (max-width: 576px) {
+        .map-cell {
+            width: 43%;
+        }
 
-    .game-card:not(.no-link):hover .red {
-        background: #f99a9a;
-    }
-
-    .player {
-        padding: 0.2rem 0;
+        .time-cell {
+            width: 27%;
+        }
+        .duration-cell {
+            width: 30%;
+        }
     }
 </style>

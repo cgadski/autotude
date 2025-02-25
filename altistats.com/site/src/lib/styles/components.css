@@ -1,0 +1,29 @@
+/* Content sections */
+.content-section {
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    border: 1px solid #eaeaea;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #333;
+    font-weight: 500;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .content-section {
+        padding: 15px;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+}

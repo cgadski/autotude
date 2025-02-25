@@ -1,24 +1,18 @@
 <script lang="ts">
     import GameCard from "$lib/GameCard.svelte";
+    import SiteHeader from "$lib/SiteHeader.svelte";
     import type { Game } from "$lib/db";
 
     /* @type {import('./$types').PageData} */
     export let data: {
         game: Game;
     };
+
+    let game = data.game;
 </script>
 
-<svelte:head>
-    <link rel="stylesheet" href="/css/water.css" />
-</svelte:head>
+<SiteHeader />
 
-<h1>Game Details</h1>
-{#if data.game}
-    <GameCard game={data.game} />
-{:else}
-    <p>Game not found</p>
-{/if}
-
-<h2>Stats</h2>
-
-<p>Coming soon...</p>
+<div class="content-section">
+    <GameCard {game} />
+</div>

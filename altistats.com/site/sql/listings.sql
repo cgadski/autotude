@@ -1,18 +1,10 @@
 WITH recent_listings AS (
-    SELECT DISTINCT ON (name)
-        time,
-        name,
-        map,
-        players,
-        pw_required,
-        version,
-        hardcore,
-        ping
+    SELECT DISTINCT ON (name) name, map, time, players
     FROM listings
+    WHERE time >= NOW() - INTERVAL '2 minutes'
     ORDER BY name, time DESC
 )
-SELECT *
+SELECT name, map, time, players
 FROM recent_listings
 WHERE players > 0
-AND time >= NOW() - INTERVAL '2 minutes'
 ORDER BY players DESC, name;

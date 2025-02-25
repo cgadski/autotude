@@ -14,3 +14,5 @@ export function formatDuration(dur: number): string {
     return `${seconds}s`;
   }
 }
+
+export type NavPage = "home" | "player" | "date" | "map" | null;

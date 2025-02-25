@@ -1,5 +1,9 @@
 CREATE OR REPLACE VIEW replays AS
-    SELECT DISTINCT ON (stem) * FROM replays_raw
+    SELECT DISTINCT ON (stem) *,
+        date_trunc('day',
+            (started_at::timestamp + interval '12 hours') AT TIME ZONE 'UTC'
+        )::date AS binned_date
+    FROM replays_raw
     WHERE completed
     ORDER BY stem, replay_key DESC;
 

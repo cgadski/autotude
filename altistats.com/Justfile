@@ -8,7 +8,7 @@ dl:
 
 # Index replays into our database
 index:
-	make -C .. bin/index
+	# make -C .. bin/index
 	index --replays ${ALTI_HOME}/recordings/ \
 		--out "host=altistats.com user=root password=${PGPASSWORD} dbname=altistats" \
 		--progress

@@ -12,4 +12,7 @@ CREATE TABLE listings (
 
 CREATE INDEX listings_time_idx ON public.listings ("time");
 
+CREATE INDEX listings_time_players_idx ON listings (time)
+WHERE players > 0;
+
 CREATE INDEX listings_name_idx ON public.listings (name, "time");
