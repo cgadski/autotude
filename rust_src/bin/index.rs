@@ -4,7 +4,6 @@ use anyhow::{anyhow, Result};
 use chrono::DateTime;
 use clap::Parser;
 use csv;
-use indicatif::{ProgressBar, ProgressStyle};
 use postgres::{Client, NoTls, Statement, Transaction};
 use std::collections::HashMap;
 use std::io::{self, BufRead};

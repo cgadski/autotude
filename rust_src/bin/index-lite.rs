@@ -1,12 +1,10 @@
 use alti_reader::{
-    collect_replay_paths, get_stem,
-    listener::{PlayerId, PlayerKey},
-    make_pb,
+    collect_replay_paths, get_stem, make_pb,
     proto::{game_event::Event, GameEvent, Update},
     replay::{read_replay_file, ReplayListener},
     IndexingListener,
 };
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use clap::Parser;
 use sqlite::State;
 use std::path::PathBuf;
@@ -55,12 +53,12 @@ fn main() -> Result<()> {
 
     for path in paths {
         let stem = get_stem(&path)?;
-        
+
         // Skip if replay already exists
         check_replay.bind((1, stem.as_str()))?;
         let exists = check_replay.next()? == State::Row;
         check_replay.reset()?;
-        
+
         if exists {
             pb.inc(1);
             continue;

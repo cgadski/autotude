@@ -12,14 +12,10 @@
 !/etc/*.env
 # !/hx_src/autotude/**
 !/altistats/src
-!/altistats/Dockerfile
-!/altistats/*.ts
-!/altistats/*.js
-!/altistats/*.json
-!/altistats/src/**
-!/altistats/sql/**
-!/data/*.sql
-!/viewer-lite/**
+!Dockerfile
+!site/*.ts
+!/altistats.com/**
+!/viewer/**
 !environment.yml
 !/nb/**.sql
 !/nb/**.py
