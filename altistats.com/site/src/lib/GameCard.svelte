@@ -27,7 +27,7 @@
 
 {#if linkForm}
     <a
-        class="card-head d-flex justify-content-between align-items-center m-1"
+        class="card-head d-flex justify-content-between align-items-center"
         href="/game/{game.stem}"
     >
         <div class="time-cell">
@@ -44,9 +44,7 @@
         </div>
     </a>
 {:else}
-    <div
-        class="card-head d-flex justify-content-between align-items-center m-1"
-    >
+    <div class="card-head d-flex justify-content-between align-items-center">
         <div class="time-cell">
             {formatFullDate(game.started_at)}
         </div>
@@ -89,7 +87,7 @@
     .card-head {
         text-decoration: none;
         color: inherit;
-        margin: 0.5em;
+        /* margin: 0.5em; */
     }
 
     .game-card-container {

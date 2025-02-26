@@ -2,10 +2,10 @@
     import { formatDuration } from "$lib";
     import GameCard from "$lib/GameCard.svelte";
     import SiteHeader from "$lib/SiteHeader.svelte";
-    
+
     // @type {import('./$types').PageData}
     export let data;
-    
+
     // Format the date for display
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
@@ -18,70 +18,74 @@
     };
 </script>
 
-<div>
-    <SiteHeader />
+<SiteHeader />
 
-    <div class="content-section">
-        <h2 class="section-title">Player: {data.player.nick}</h2>
-        
-        <div class="player-stats mb-4">
-            <div class="row row-cols-1 row-cols-md-3 g-3">
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h3 class="h4 mb-0">{data.player.games}</h3>
-                            <p class="mb-0 small">Games Played</p>
-                        </div>
+<section>
+    <h2 class="section-title">Player: {data.player.nick}</h2>
+
+    <div class="player-stats">
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h3 class="h4 mb-0">{data.player.games}</h3>
+                        <p class="mb-0 small">Games Played</p>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h3 class="h4 mb-0">{data.player.days_played}</h3>
-                            <p class="mb-0 small">Days Active</p>
-                        </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h3 class="h4 mb-0">{data.player.days_played}</h3>
+                        <p class="mb-0 small">Days Active</p>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h3 class="h4 mb-0">{new Date(data.player.last_seen).toLocaleDateString()}</h3>
-                            <p class="mb-0 small">Last Played</p>
-                        </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h3 class="h4 mb-0">
+                            {new Date(
+                                data.player.last_seen,
+                            ).toLocaleDateString()}
+                        </h3>
+                        <p class="mb-0 small">Last Played</p>
                     </div>
                 </div>
             </div>
         </div>
-        
-        {#if data.player.nicks.length > 1}
-            <div class="mb-4">
-                <h3 class="h5">Known aliases:</h3>
-                <div class="d-flex flex-wrap gap-2">
-                    {#each data.player.nicks as nick}
-                        <span class="badge bg-secondary">{nick}</span>
+    </div>
+
+    {#if data.player.nicks.length > 1}
+        <h2>Nicknames</h2>
+        <div class="d-flex flex-wrap gap-2">
+            {#each data.player.nicks as nick}
+                <span class="badge bg-secondary">{nick}</span>
+            {/each}
+        </div>
+    {/if}
+</section>
+
+<section class="no-bg">
+    <h2>Games</h2>
+
+    {#if data.gamesByDate && data.gamesByDate.length > 0}
+        {#each data.gamesByDate as dateGroup}
+            <div class="date-group mb-4">
+                <h6 class="date-header">
+                    {formatDate(dateGroup.binned_date)}
+                </h6>
+                <div class="games-list">
+                    {#each dateGroup.games as game}
+                        <GameCard {game} linkForm={true} />
                     {/each}
                 </div>
             </div>
-        {/if}
-        
-        <h3 class="h5 mb-3">Game History</h3>
-        
-        {#if data.gamesByDate && data.gamesByDate.length > 0}
-            {#each data.gamesByDate as dateGroup}
-                <div class="date-group mb-4">
-                    <h4 class="h6 date-header">{formatDate(dateGroup.binned_date)}</h4>
-                    <div class="games-list">
-                        {#each dateGroup.games as game}
-                            <GameCard game={game} linkForm={true} />
-                        {/each}
-                    </div>
-                </div>
-            {/each}
-        {:else}
-            <p class="text-muted">No games found for this player.</p>
-        {/if}
-    </div>
-</div>
+        {/each}
+    {:else}
+        <p class="text-muted">No games found for this player.</p>
+    {/if}
+</section>
 
 <style>
     .date-header {
@@ -90,7 +94,7 @@
         border-radius: 4px;
         margin-bottom: 0.5rem;
     }
-    
+
     .games-list {
         margin-left: 1rem;
     }

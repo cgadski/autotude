@@ -13,6 +13,6 @@
 
 <SiteHeader />
 
-<div class="content-section">
+<section>
     <GameCard {game} />
-</div>
+</section>

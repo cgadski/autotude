@@ -44,4 +44,4 @@ upload-site:
 upload-bot:
 	docker build {{docker_plat}} -t magneticduck/botclient:latest \
 		-f ../java_dist/botclient.Dockerfile ../java_dist
-	docker push magneticduck/altistats:latest
+	docker push magneticduck/botclient:latest

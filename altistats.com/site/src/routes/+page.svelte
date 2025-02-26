@@ -3,7 +3,7 @@
     import { formatDuration } from "$lib";
     import * as d3 from "d3";
     import { onMount } from "svelte";
-    import { invalidateAll } from '$app/navigation';
+    import { invalidateAll } from "$app/navigation";
 
     // @type {import('./$types').PageData}
     export let data;
@@ -15,7 +15,7 @@
         if (data.lastUpdate) {
             const lastUpdate = new Date(data.lastUpdate);
             secondsAgo = Math.floor((new Date() - lastUpdate) / 1000);
-            
+
             // Auto-refresh data when it's been over 60 seconds
             if (secondsAgo > 60) {
                 invalidateAll();
@@ -27,7 +27,7 @@
     onMount(() => {
         refreshInterval = setInterval(updateTimer, 1000) as unknown as number;
         updateTimer();
-        
+
         return () => {
             clearInterval(refreshInterval);
         };
@@ -235,78 +235,70 @@
     ];
 </script>
 
-<div>
-    <SiteHeader navPage="home" />
+<SiteHeader navPage="home" />
 
-    <div class="content-section">
-        <h2 class="section-title">Active servers</h2>
-        <div class="d-flex flex-wrap gap-2">
-            {#each data.listings as listing}
-                <div class="card">
-                    <div class="card-body py-2 px-3 d-flex align-items-center">
-                        <div class="me-2 server-info">
-                            <span class="fw-medium server-name"
-                                >{listing.name}</span
-                            >
-                            <small class="text-muted ms-2 map-name"
-                                >{listing.map}</small
-                            >
-                        </div>
-                        <span class="badge bg-primary rounded-pill ms-1"
-                            >{listing.players}</span
+<section>
+    <h2>Active servers</h2>
+    <div class="d-flex flex-wrap gap-2">
+        {#each data.listings as listing}
+            <div class="card">
+                <div class="card-body py-2 px-3 d-flex align-items-center">
+                    <div class="me-2 server-info">
+                        <span class="fw-medium server-name">{listing.name}</span
+                        >
+                        <small class="text-muted ms-2 map-name"
+                            >{listing.map}</small
                         >
                     </div>
+                    <span class="badge bg-primary rounded-pill ms-1"
+                        >{listing.players}</span
+                    >
                 </div>
-            {/each}
-        </div>
-        <p class="text-muted small text-end mt-2 mb-0">
-            (Update from {secondsAgo} seconds ago)
-        </p>
+            </div>
+        {/each}
     </div>
+    <p class="text-muted small text-end mt-2 mb-0">
+        (Update from {secondsAgo} seconds ago)
+    </p>
+</section>
 
-    <div class="content-section mb-4">
-        <h2 class="section-title">Past activity (3 days)</h2>
-        <div class="chart-container" bind:this={chartElement}></div>
-    </div>
+<section>
+    <h2>Past activity (3 days)</h2>
+    <div class="chart-container" bind:this={chartElement}></div>
+</section>
 
-    <div class="content-section mb-4">
-        <h2 class="section-title">Recording database</h2>
+<section>
+    <h2>Recording database</h2>
 
-        <div class="row row-cols-3 g-2">
-            {#each stats as stat}
-                <div class="col">
-                    <div class="card stats-card">
-                        <div class="card-body text-center">
-                            <p class="h4 mb-0">{stat.value}</p>
-                            <p class="mb-0 small">{stat.label}</p>
-                        </div>
+    <div class="row row-cols-3 g-2">
+        {#each stats as stat}
+            <div class="col">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <p class="h4 mb-0">{stat.value}</p>
+                        <p class="mb-0 small">{stat.label}</p>
                     </div>
                 </div>
-            {/each}
-        </div>
+            </div>
+        {/each}
     </div>
+</section>
 
-    <style>
-        .clickable-row a {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
+<style>
+    .chart-container {
+        width: 100%;
+        height: 200px;
+        margin: 20px 0;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 576px) {
         .chart-container {
-            width: 100%;
-            height: 200px;
-            margin: 20px 0;
-            box-sizing: border-box;
+            height: 150px;
         }
+    }
 
-        @media (max-width: 576px) {
-            .chart-container {
-                height: 150px;
-            }
-        }
-
-        .server-card {
-            max-width: 100%;
-        }
-    </style>
-</div>
+    .server-card {
+        max-width: 100%;
+    }
+</style>

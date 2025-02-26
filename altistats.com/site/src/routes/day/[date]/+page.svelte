@@ -18,18 +18,16 @@
     };
 </script>
 
-<div>
-    <SiteHeader />
+<SiteHeader />
 
-    <div class="content-section">
-        <h2 class="section-title">
-            {data.games.length} games from {formatDate(data.date)}
-        </h2>
+<section class="no-bg">
+    <h2>
+        {data.games.length} games from {formatDate(data.date)}
+    </h2>
 
-        <div class="mt-2">
-            {#each data.games as game, i}
-                <GameCard {game} linkForm="true" />
-            {/each}
-        </div>
+    <div class="mt-2">
+        {#each data.games as game, i}
+            <GameCard {game} linkForm="true" />
+        {/each}
     </div>
-</div>
+</section>
