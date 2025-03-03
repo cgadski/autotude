@@ -1,6 +1,7 @@
 benchmark:
 	just ../setup
 	SERVER_CONFIG=./server_benchmark.xml \
+	SERVER_RUNTIME="" \
 		server
 
 index:
@@ -11,3 +12,6 @@ index:
 view:
 	make -C .. rl/viewer/js/
 	cd viewer && uv sync && uv run app.py
+
+logs:
+	cat ${ALTI_HOME}/server.log

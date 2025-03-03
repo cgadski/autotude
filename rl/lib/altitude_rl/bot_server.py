@@ -5,33 +5,32 @@ import subprocess
 import stat
 from pathlib import Path
 import shutil
+import uuid
 from google.protobuf.internal.encoder import _VarintBytes  # type: ignore
 from google.protobuf.internal.decoder import _DecodeVarint  # type: ignore
 from io import BufferedWriter, BufferedReader
 
-from altitude_rl.proto.command_pb2 import Cmd
-from altitude_rl.proto.update_pb2 import Update
-from altitude_rl.server_config import ServerConfig
+from .proto.command_pb2 import Cmd
+from .proto.map_geometry_pb2 import MapGeometry
+from .proto.update_pb2 import Update
+from .server_config import ServerConfig
 
 import gymnasium as gym
 
 
 def ensure_fifo(path: Path):
-    if not os.path.exists(path):
-        os.mkfifo(path)
-    elif not stat.S_ISFIFO(os.stat(path).st_mode):
-        raise ValueError(f"{path} exists but is not a named pipe")
+    if os.path.exists(path):
+        os.remove(path)
+    os.mkfifo(path)
 
-class BotServer(gym.Env):
+class BotServer:
     command_pipe: BufferedWriter
     update_pipe: BufferedReader
-    config_ctx: AbstractContextManager[Path]
+    runtime_path: Path
 
-    map_load: Update
+    map_geometry: MapGeometry
 
     def __init__(self, config: ServerConfig):
-        self.config_ctx = config.to_xml()
-
         server_exec = shutil.which("server")
         if server_exec is None:
             raise ValueError("No server executible found in PATH")
@@ -41,29 +40,38 @@ class BotServer(gym.Env):
             raise ValueError("ALTI_HOME not set")
 
         self.alti_home = Path(alti_home)
-        command_path = self.alti_home / "command"
-        update_path = self.alti_home / "update"
+        self.runtime_path = self.alti_home / "run" / str(uuid.uuid1())
+
+        print(f"Creating runtime directory at {self.runtime_path}")
+        self.runtime_path.mkdir(parents=True, exist_ok=True)
+        config.write(self.runtime_path / 'config.xml')
+        command_path = self.runtime_path / "command"
+        update_path = self.runtime_path / "update"
         for p in [command_path, update_path]:
             ensure_fifo(p)
 
-        log_path = self.alti_home / "server.log"
+        log_path = self.runtime_path / "log"
         with open(log_path, 'w') as log:
-            print("Starting server")
             self.process = subprocess.Popen(
                 [server_exec],
                 stdout=log,
                 stderr=log,
                 env={
                     **os.environ,
-                    "SERVER_CONFIG": self.config_ctx.__enter__()
+                    "SERVER_RUNTIME": self.runtime_path,
+                    "SERVER_CONFIG": self.runtime_path / 'config.xml'
                 }
             )
 
+        print(f"Server started with PID {self.process.pid}")
+        with open(self.runtime_path / 'pid', 'w') as pid_file:
+            pid_file.write(str(self.process.pid))
+
         self.command_pipe = open(command_path, 'wb')
         self.update_pipe = open(update_path, 'rb')
-        print("Connected to server, waiting for first message")
-        self.map_load = self._read_update()
-        print("Got map load!")
+        map_load = self._read_update()
+        self.read_map_load(map_load)
+        print("Map loaded, server is ready to receive commands")
 
     def update(self, cmd: Cmd) -> Update:
         self._write_command(cmd)
@@ -94,12 +102,17 @@ class BotServer(gym.Env):
         update.ParseFromString(message_buf)
         return update
 
-    def close(self):
+    def read_map_load(self, up: Update):
+        for event in up.events:
+            if event.map_load is not None:
+                self.map_geometry = event.map_load.map
+
+    def __exit__(self):
+        print("Shutting down server")
         cmd = Cmd()
         cmd.shutdown = True
         self._write_command(cmd)
-        self.process.wait(timeout=2)
+        self.process.wait(timeout=1)
 
-        self.config_ctx.__exit__(None, None, None)
         self.command_pipe.close()
         self.update_pipe.close()

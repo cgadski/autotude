@@ -35,10 +35,10 @@ class ServerConfig:
 
         return self
 
-    @contextmanager
-    def to_xml(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            path = Path(temp_dir) / "config.xml"
-            tree = ET.ElementTree(self.root)
-            tree.write(path, encoding='UTF-8', xml_declaration=True)
-            yield path
+    def add_baseline_bot(self, **kwargs):
+        self.add_bot(**kwargs, **{'type': 'EASY'})
+
+
+    def write(self, path:Path):
+        ET.indent(self.root)
+        ET.ElementTree(self.root).write(path, encoding='unicode')
