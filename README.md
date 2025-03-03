@@ -24,6 +24,10 @@ Use direnv to load environment variables from `.envrc`. Run `just nix` to build 
 
 If you have the `bot-server` branch of the Altitude source tree, point to it with `ALTI_SRC`—for example by adding a line `etc/dev.env`. Then `cd rl` and run `just benchmark` to run the bot server without a controller attached. With rust installed, run `just index` to build an index of the replays being generated, and run `just viewer` to view the replays in your browser.
 
+## Using RL environment
+
+![](./demo.png)
+
 # Project Structure
 
 ## `altistats.com/`

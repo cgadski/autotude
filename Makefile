@@ -1,7 +1,5 @@
 .DELETE_ON_ERROR:
 
-.PHONY: copy_gen copy_polys upload recordings/
-
 all: java_gen/ data/polys
 
 clean:

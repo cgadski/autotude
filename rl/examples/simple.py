@@ -23,6 +23,9 @@
 # %%
 import gymnasium as gym
 import altitude_rl as arl
+from tqdm import tqdm
+import numpy as np
+import matplotlib.pyplot as plt
 
 # %%
 import os
@@ -30,11 +33,15 @@ os.environ['PATH'] += ':/Users/christopher.gadzinsk/autotude/bin/'
 os.environ['ALTI_HOME'] = '/Users/christopher.gadzinsk/autotude/alti_home/'
 
 # %%
-config = arl.ServerConfig()
-config.set(map='ball_grotto')
-config.add_bot(nick='player 1', team='6')
-env = arl.BotServer(config)
-
+SAMPLES = 30 * 60 * 120 # 2 hours of gameplay
+history = np.zeros((SAMPLES, 2, 3))
+with arl.FreeForAllEnv() as env:
+    action = np.array([0, 1, 0, 0, 0, 0, 0])
+    for i in tqdm(range(SAMPLES)):
+        obs, reward, terminated, truncated, info = env.step(action)
+        history[i] = obs
 
 # %%
-env.__exit__()
+plt.scatter(history[:, 1, 0], history[:, 1, 1], alpha=0.1, s=1)
+plt.scatter(history[:, 0, 0], history[:, 0, 1], alpha=0.1, s=1)
+plt.show()
