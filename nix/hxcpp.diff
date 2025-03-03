@@ -1,0 +1,36 @@
+diff --git a/toolchain/mac-toolchain.xml b/toolchain/mac-toolchain.xml
+index 907c2270..7d816c58 100644
+--- a/toolchain/mac-toolchain.xml
++++ b/toolchain/mac-toolchain.xml
+@@ -23,7 +23,7 @@
+ 
+ 
+ <compiler id="darwin" exe="g++" if="macos">
+-  <exe name="xcrun --sdk macosx${MACOSX_VER} clang++" if="HXCPP_CLANG" />
++  <exe name="xcrun clang++" if="HXCPP_CLANG" />
+   <flag value="-c"/>
+   <flag value="-fvisibility=hidden"/>
+   <cppflag value="-std=c++11" if="HXCPP_CPP11"/>
+@@ -64,11 +64,11 @@
+   <flag value="-msse4.1" if="HXCPP_SSE4" unless="HXCPP_ARM" />
+   <outflag value="-o"/>
+   <ext value=".o"/>
+-  <getversion value="xcrun --sdk macosx${MACOSX_VER} clang++ -v" if="HXCPP_CLANG" />
++  <getversion value="xcrun clang++ -v" if="HXCPP_CLANG" />
+ </compiler>
+ 
+ <linker id="dll" exe="g++" if="macos">
+-  <exe name="xcrun --sdk macosx${MACOSX_VER} clang++" if="HXCPP_CLANG" />
++  <exe name="xcrun clang++" if="HXCPP_CLANG" />
+   <fromfile value="" if="GCC_OLD" />
+   <flag value="-Wl,-bundle,-bundle_loader,${dll_import_link}" if="dll_import_link" />
+   <flag value="-Wl,-cache_path_lto,/tmp" if="HXCPP_LTO_THIN" unless="debug"/>
+@@ -90,7 +90,7 @@
+ </linker>
+ 
+ <linker id="exe" exe="g++" if="macos">
+-  <exe name="xcrun --sdk macosx${MACOSX_VER} clang++" if="HXCPP_CLANG" />
++  <exe name="xcrun clang++" if="HXCPP_CLANG" />
+   <!-- <flag value="-Wl,-stack_size,0x8000"/> -->
+   <flag value="-rpath" />
+   <flag value="@executable_path"/>

@@ -1,0 +1,13 @@
+-lib protohx
+-lib format
+-lib heaps
+-cp hx_src
+-dce full
+--resource data/polys@polys
+-D analyzer-optimize
+--macro nullSafety("autotude", Loose)
+--macro nullSafety("autotude.proto", Off)
+-D resourcesPath=./viewer_assets/
+
+-main autotude.viewer.Viewer
+--js hx_src/out/viewer.js

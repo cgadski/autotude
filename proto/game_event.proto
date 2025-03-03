@@ -1,0 +1,67 @@
+syntax = "proto2";
+
+import "map_geometry.proto";
+
+option java_multiple_files = true;
+option java_package = "em.altitude.game.protos";
+
+message ChatEvent {
+    optional uint32 sender = 1;
+    optional string message = 2;
+}
+
+message MapLoadEvent {
+   optional MapGeometry map = 1;
+   optional string name = 2;
+
+   optional string server = 3;
+   optional string datetime = 4;
+   optional string server_ip = 5;
+}
+
+message SetPlayerEvent {
+    optional uint32 id = 1;
+    optional string name = 2;
+    optional uint32 team = 3; //
+    optional uint32 level = 4;
+    optional uint32 ace_rank = 5;
+    optional string vapor = 6;
+}
+
+message RemovePlayerEvent {
+    optional uint32 id = 1;
+}
+
+message GoalEvent {
+    // optional uint32 team = 1; // removed, do not use
+    repeated uint32 who_scored = 2; // first is scorer, next are assists
+}
+
+message KillEvent {
+    optional uint32 who_killed = 1; // if not assigned, was a crash
+    optional uint32 who_died = 2;
+}
+
+message DamageEvent {
+    optional uint32 source = 1;
+    optional uint32 target = 2;
+    optional uint32 amount = 3; // in tenths of a hp
+    optional uint32 angle = 4;
+}
+
+message MetaEvent {
+    optional string data = 1;
+}
+
+message GameEvent {
+    oneof event {
+        ChatEvent chat = 1;
+        MapLoadEvent map_load = 2;
+        SetPlayerEvent set_player = 3;
+        RemovePlayerEvent remove_player = 4;
+        GoalEvent goal = 6;
+        KillEvent kill = 7;
+        DamageEvent damage = 8;
+        MetaEvent meta = 9;
+    }
+}

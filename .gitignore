@@ -1,0 +1,49 @@
+# environment variables
+/etc/secrets.env
+/etc/dev.env
+
+# rust stuff
+rust_src/target/
+Cargo.lock
+
+# nix stuff
+/result
+/etc/nix.env
+
+# generated data
+/data/*.csv
+/data/*.db*
+/data/polys
+/poly_src/
+
+# binaries
+/bin/
+
+# altitude "home directory"
+/alti_home/*
+!/alti_home/server_configs/
+
+# build outputs
+/bin/
+/hx_src/out/
+/java_gen/
+/java_dist/
+/hx_src/autotude/proto/
+/build/
+.DS_STORE
+.direnv
+site_src/index.csv
+site_src/.index.sql.swp
+/viewer/bin/
+/rust_src/proto/
+
+# python
+__pycache__
+
+# aider
+.aider.tags.cache.v3
+.aider.chat.history.md
+.aider.input.history
+!.aiderignore
+rl/examples/.ipynb_checkpoints
+rl/examples/.jupyter

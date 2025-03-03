@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Config map="tbd_cave" record="true" connect="false">
+  <bots>
+    <BotInstance
+			nick="left"
+			team="6"
+			type="EXPERT"
+			plane="EXPLODET"
+			red="0"
+			blue="0"
+			green="0"
+		/>
+    <BotInstance
+			nick="right"
+			team="5"
+			type="EXPERT"
+			plane="LOOPY"
+			red="0"
+			blue="0"
+			green="0"
+		/>
+  </bots>
+</Config>

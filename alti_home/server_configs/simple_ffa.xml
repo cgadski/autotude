@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Config
+	map="ffa_channelpark"
+	record="true"
+	connect="true"
+	instantRespawn="true"
+>
+  <bots>
+    <BotInstance
+			nick="controlled"
+			team="5"
+			type="CONTROLLED"
+			plane="LOOPY"
+			red="0"
+			blue="1"
+			green="2"
+		/>
+    <BotInstance
+			nick="bot"
+			team="3"
+			type="EASY"
+			plane="LOOPY"
+			red="0"
+			blue="1"
+			green="2"
+		/>
+  </bots>
+</Config>

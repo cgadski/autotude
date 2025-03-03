@@ -1,0 +1,124 @@
+diff --git a/protohx/Message.hx b/protohx/Message.hx
+index 26dc835..f3cdc41 100644
+--- a/protohx/Message.hx
++++ b/protohx/Message.hx
+@@ -30,8 +30,8 @@ class Message {
+      * <code>flash.utils.PT_Bytes</code>, input.position will increase by
+      * number of bytes being read.</p>
+      */
+-    public function mergeFrom(input:Bytes):Void {
+-        readFromSlice(ReadingBuffer.fromBytes(input), 0);
++    public function mergeFrom(input:ReadingBuffer):Void {
++        readFromSlice(input, 0);
+     }
+     /**
+      * Like <code>mergeFrom()</code>, but does not read until EOF. Instead,
+@@ -48,8 +48,8 @@ class Message {
+      * @see #mergeFrom()
+      * @see #writeDelimitedTo()
+      */
+-    public function mergeDelimitedFrom(input:Bytes):Void {
+-        ReadUtils.read__TYPE_MESSAGE(ReadingBuffer.fromBytes(input), this);
++    public function mergeDelimitedFrom(input:ReadingBuffer):Void {
++        ReadUtils.read__TYPE_MESSAGE(input, this);
+     }
+     /**
+      * Serializes the message and writes it to <code>output</code>.
+diff --git a/protohx/WriteUtils.hx b/protohx/WriteUtils.hx
+index 6de2021..5c893ce 100644
+--- a/protohx/WriteUtils.hx
++++ b/protohx/WriteUtils.hx
+@@ -31,7 +31,7 @@ class WriteUtils {
+
+     public static function writeUnknownPair(output:PT_OutputStream, tag:PT_UInt, value:Dynamic):Void {
+         //TODO check
+-        var repeated:Array<Dynamic> = if(Std.is(value, Array)) cast (value, Array<Dynamic> ) else null;
++        var repeated:Array<Dynamic> = if (value is Array) cast (value, Array<Dynamic> ) else null;
+         if (repeated!=null) {
+             for (element in repeated) {
+                 writeSingleUnknown(output, tag, element);
+diff --git a/protohx/Message.hx b/protohx/Message.hx
+index 26dc835..249ff1a 100644
+--- a/protohx/Message.hx
++++ b/protohx/Message.hx
+@@ -170,7 +170,7 @@ class Message {
+         var currentValue:Dynamic = this.getByTag(tag);
+         if (currentValue == null) {
+             this.setByTag(tag, value);
+-        } else if (Std.is(currentValue, Array)) {
++        } else if (currentValue is Array) {
+             currentValue.push(value);
+         } else {
+             this.setByTag(tag, [currentValue, value]);
+diff --git a/protohx/MessageUtils.hx b/protohx/MessageUtils.hx
+index 61f7ede..8eb75e9 100644
+--- a/protohx/MessageUtils.hx
++++ b/protohx/MessageUtils.hx
+@@ -10,28 +10,28 @@ class MessageUtils {
+     public static function toObject(value:Dynamic, keepNulls:Bool = false):Dynamic {
+         if (
+             (value == null)
+-            || Std.is(value, String)
+-            || Std.is(value, Float)
+-            || Std.is(value, Int)
+-            || Std.is(value, Bool)
++            || (value is String)
++            || (value is Float)
++            || (value is Int)
++            || (value is Bool)
+         ) {
+             return value;
+-        } else if (Std.is(value, Bytes)) {
++        } else if (value is Bytes) {
+             return cast(value, Bytes).toHex();
+ #if (haxe_ver >= 3.2)
+         } else if (Int64.is(value)) {
+ #else
+-        } else if (Std.is(value, Int64)) {
++        } else if (value is Int64) {
+ #end
+             return Int64.toStr(cast(value));
+-        } else if (Std.is(value, protohx.Message)) {
++        } else if (value is protohx.Message) {
+             var m:Dynamic = {};
+             var msg = cast(value, protohx.Message);
+             msg.forEachFields(function (f, v) {
+                 Reflect.setField(m, f, toObject(v, keepNulls));
+             });
+             return m;
+-        } else if (Std.is(value, Array)) {
++        } else if (value is Array) {
+             var a:Array<Dynamic> = [];
+             for (sv in cast(value, Array<Dynamic>)) {
+                 a.push(toObject(sv, keepNulls));
+diff --git a/tools/run/src/CommandLineTools.hx b/tools/run/src/CommandLineTools.hx
+index 36d8cb2..33d1762 100644
+--- a/tools/run/src/CommandLineTools.hx
++++ b/tools/run/src/CommandLineTools.hx
+@@ -138,9 +138,6 @@ class CommandLineTools {
+ 			}
+ 			var pluginDir = FileSystem.fullPath(context.getProtohxBaseDir() + "/tools/plugin/bin/");
+ 				var pluginPath = PathHelper.norm(pluginDir + "/" + pluginFileName);
+-                        if (!PlatformHelper.isWindows()) {
+-			    PlatformHelper.setExecutableBit(pluginPath); // TODO optimize 
+-			}              
+             newCwd = pluginDir;
+             args.push("--plugin=protoc-gen-haxe=" + (PlatformHelper.isWindows()?pluginFileName:pluginPath));
+             args.push("--haxe_out=" + PathHelper.norm(task.haxeOut));
+diff --git a/tools/run/src/Helpers.hx b/tools/run/src/Helpers.hx
+index 3a9e8db..8339613 100644
+--- a/tools/run/src/Helpers.hx
++++ b/tools/run/src/Helpers.hx
+@@ -101,12 +101,5 @@ class PlatformHelper {
+         Sys.println("  Sys.command: '" + cmd + "' '" + args.join("' '") + "'");
+         return Sys.command(cmd, args);
+     }
+-
+-    public static function setExecutableBit(executable:String):Void {
+-        var platform = PlatformHelper.getHostPlatform();
+-        if (platform == Platform.LINUX || platform == Platform.MAC) {
+-            PlatformHelper.command("chmod", ["a+x", PathHelper.norm(executable)]);
+-        }
+-    }
+ }
+ 

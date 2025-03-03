@@ -1,0 +1,13 @@
+benchmark:
+	just ../setup
+	SERVER_CONFIG=./server_benchmark.xml \
+		server
+
+index:
+	make -C .. bin/index-lite
+	index-lite --path ${ALTI_HOME}/recordings \
+		--db ${DB_PATH}
+
+view:
+	make -C .. rl/viewer/js/
+	cd viewer && uv sync && uv run app.py

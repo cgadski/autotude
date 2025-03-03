@@ -1,0 +1,13 @@
+{
+    "protoPath": "proto",
+    "protoFiles": [
+        "proto/game_event.proto",
+        "proto/game_object.proto",
+        "proto/map_geometry.proto",
+        "proto/poly.proto",
+        "proto/update.proto"
+    ],
+    "package": "asdf",
+    "cleanOut": false,
+    "haxeOut": "hx_src/autotude/proto/"
+}

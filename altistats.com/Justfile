@@ -1,0 +1,47 @@
+set dotenv-load
+
+# Deployment
+
+# Download recordings
+dl:
+	rsync --progress -av root@altistats.com:/root/alti_home/recordings/ ${ALTI_HOME}/recordings/
+
+# Index replays into our database
+index:
+	# make -C .. bin/index
+	index --replays ${ALTI_HOME}/recordings/ \
+		--out "host=altistats.com user=root password=${PGPASSWORD} dbname=altistats" \
+		--progress
+
+# Deploy altistats.com with docker compose
+deploy:
+	docker --host "ssh://root@altistats.com" \
+		compose -f docker/prod.yml up -d --remove-orphans
+
+dev:
+	docker context use default
+	docker compose -f docker/dev.yml up --remove-orphans --build
+
+update-views:
+	cat sql/views.sql | psql
+
+# Run a query from site/sql/
+query file *args:
+    psql -f site/sql/{{file}}.sql {{args}}
+
+# Docker compose
+
+up:
+	docker --host "ssh://root@altistats.com" compose -f prod.yml pull
+	docker --host "ssh://root@altistats.com" compose -f prod.yml up -d --build
+
+docker_plat := "--platform=linux/amd64"
+
+upload-site:
+	docker build {{docker_plat}} -t magneticduck/altistats:latest site
+	docker push magneticduck/altistats:latest
+
+upload-bot:
+	docker build {{docker_plat}} -t magneticduck/botclient:latest \
+		-f ../java_dist/botclient.Dockerfile ../java_dist
+	docker push magneticduck/botclient:latest

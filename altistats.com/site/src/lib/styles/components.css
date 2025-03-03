@@ -1,0 +1,37 @@
+/* Content sections */
+section {
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    border: 1px solid #eaeaea;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+section.no-bg {
+    background: inherit;
+    border: none;
+    box-shadow: none;
+}
+
+section > h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #333;
+    font-weight: 500;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+    overflow: none;
+}
+
+section > h2:not(:first-child) {
+    margin-top: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    section > h2 {
+        font-size: 1.1rem;
+    }
+}

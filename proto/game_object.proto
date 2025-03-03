@@ -1,0 +1,139 @@
+syntax = "proto2";
+
+option java_multiple_files = true;
+option java_package = "em.altitude.game.protos";
+
+enum ObjectType {
+    // # Planes
+    LOOPY = 0;
+    BOMBER = 1;
+    EXPLODET = 2;
+    BIPLANE = 3;
+    MIRANDA = 4;
+
+    // # Powerups
+    MISSLE_POWERUP = 10;
+    SHIELD_POWERUP = 11;
+    WALL_POWERUP = 12;
+    BIG_BOMB_POWERUP = 13;
+    BALL = 14; // works like a powerup
+    HEALTH_POWERUP = 15;
+    POWERUP_SPAWNER = 16;
+
+    // # Projectiles
+    // ## Loopy
+    DOUBLE_FIRE_MISSLE = 20;
+    TRACKER_MISSLE = 21;
+    EMP_CAPSULE = 22;
+    EMP_EXPLOSION = 23;
+    ACID_BOMB = 24;
+    ACID_CLOUD = 25;
+
+    // ## Bomber
+    NADE = 30;
+    FLAK = 31;
+    SUPPRESSOR = 32;
+    DOMB = 33;
+
+    // ## Biplane
+    BIPLANE_PRIMARY = 40;
+    BIPLANE_SECONDARY = 41;
+    HEAVY_CANNON = 42;
+
+    // ## Explodet
+    DIRECTOR_ROCKET = 50;
+    THERMOBARIC_ROCKET = 51;
+    REMOTE_MINE = 52;
+    DIRECTOR_MINE = 53;
+
+    // ## Miranda
+    LASER = 60;
+    TRICKSTER_SHOT = 61;
+    LASER_SHOT = 62;
+
+    // ## Special
+    HOMING_MISSLE = 70;
+    WALL = 71;
+    SHIELD = 72;
+    BIG_BOMB = 73;
+    GOAL = 74;
+    BASE = 75;
+}
+
+enum Perk {
+    // red
+    R_LOOPY_TRACKER = 0;
+    R_LOOPY_DOUBLE_FIRE = 1;
+    R_LOOPY_ACID_BOMB = 2;
+
+    R_BOMBER_SUPPRESSOR = 3;
+    R_BOMBER_BOMBS = 4;
+    R_BOMBER_FLAK_TAILGUN = 5;
+
+    R_EXPLODET_DIRECTOR = 6;
+    R_EXPLODET_THERMOBARIC_ROCKETS = 7;
+    R_EXPLODET_REMOTE_MINE = 8;
+
+    R_BIPLANE_DOGFIGHTER = 9;
+    R_BIPLANE_RECOILLESS_GUN = 10;
+    R_BIPLANE_HEAVY_CANNON = 11;
+
+    R_MIRANDA_TRICKSTER = 12;
+    R_MIRANDA_LASER = 13;
+    R_MIRANDA_TIME_ANCHOR = 14;
+
+    // green
+    G_RUBBERIZED_HULL = 15;
+    G_HEAVY_ARMOR = 16;
+    G_REPAIR_DRONE = 17;
+    G_FLEXIBLE_WINGS = 18;
+
+    // blue
+    B_TURBOCHARGER = 19;
+    B_ULTRACAPACITOR = 20;
+    B_REVERSE_THRUST = 21;
+    B_ACE_INSTINCTS = 22;
+}
+
+message GameObject {
+    optional uint32 uid = 1;
+    optional ObjectType type = 2;
+    optional uint32 owner = 3;
+    optional uint32 team = 4;
+
+    // # Physical data
+    optional uint32 position_x = 10; // half-pixels
+    optional uint32 position_y = 11;
+    optional uint32 angle = 12; // 1/10 degrees
+
+    // ## Scaling for goals and bases
+    optional uint32 scale = 20; // unit is 1/1000
+    optional bool flipX = 21;
+    optional bool flipY = 22;
+
+    // ## Misc
+    optional uint32 charge = 30; // for randa shots. max is 1000
+    optional uint32 heal_percentage = 31; // for health packs. max is 100
+    optional uint32 time_remaining = 32; // ticks (1/30 second)
+
+    // # Planes
+    optional uint32 ammo = 40; // max is 1000 for all loadouts
+    optional uint32 health = 41; // max is 1000 for all loadouts
+    optional uint32 health_restore = 53; // additional incoming health, max is 1000
+    optional uint32 throttle = 42; // max is 1000
+    optional uint32 bars = 43; // from 0 to 9
+
+    optional uint32 emp_for = 44; // ticks remaining
+    optional uint32 acid_for = 45; // ticks remaining
+
+    optional sint32 spin = 46; // degrees
+    optional bool controllable = 47; // whether plane is the "subject" or a controllable bot
+
+    optional uint32 controls = 48; // up + down << 1 + left << 2 + right << 3
+
+    optional ObjectType powerup = 49;
+
+    optional Perk redPerk = 50;
+    optional Perk bluePerk = 51;
+    optional Perk greenPerk = 52;
+}

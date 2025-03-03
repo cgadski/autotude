@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Config
+	map="ball_grotto"
+	record="true"
+	connect="false"
+	instantRespawn="true"
+	goalsPerRound="100"
+>
+  <bots>
+    <BotInstance
+			nick="player 1"
+			team="6"
+			type="EXPERT"
+			plane="LOOPY"
+			red="0"
+			blue="1"
+			green="2"
+		/>
+    <BotInstance
+			nick="player 2"
+			team="3"
+			type="EXPERT"
+			plane="LOOPY"
+			red="0"
+			blue="1"
+			green="2"
+		/>
+  </bots>
+</Config>

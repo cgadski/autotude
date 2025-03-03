@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+option java_multiple_files = true;
+option java_package = "em.altitude.game.protos";
+
+message InputCmd {
+    optional uint32 controls = 1;
+    // left + right << 1 + up << 2 + down << 3
+    // + f << 4 + d << 5 + s << 6
+}
+
+message Cmd {
+    map<uint32, InputCmd> inputs = 1;
+
+    optional bool shutdown = 100;
+}

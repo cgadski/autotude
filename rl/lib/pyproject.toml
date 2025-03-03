@@ -1,0 +1,19 @@
+[project]
+name = "altitude-rl"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "gymnasium>=1.1.0",
+    "numpy>=2.2.3",
+    "protobuf>=5.28.3",
+    "scipy>=1.15.2",
+]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

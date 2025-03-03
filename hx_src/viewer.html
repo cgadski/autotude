@@ -1,0 +1,152 @@
+<!DOCTYPE >
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>Viewer</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            #container {
+                height: 100vh;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+
+            #sidebar-container {
+                flex-grow: 1;
+                overflow: hidden;
+                position: relative;
+            }
+
+            #sidebar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 600px; /* Set a fixed width */
+                padding-left: 1em;
+                display: none;
+                overflow-y: auto;
+                background-color: rgba(255, 255, 255, 0.3);
+                box-sizing: border-box;
+            }
+
+            #sidebar.show {
+                display: block;
+            }
+
+            #sidebar p {
+                margin: 0.2em 0;
+            }
+
+            #sidebar p i {
+                font-style: normal;
+                opacity: 0.5;
+            }
+
+            #help {
+                position: absolute;
+                right: 0;
+                top: 0;
+                padding-right: 1em;
+                display: none;
+            }
+
+            #help.show {
+                display: block;
+            }
+
+            #help p {
+                margin: 0.2em 0;
+            }
+
+            #debug-container {
+                position: absolute;
+                width: 100;
+                height: 100%;
+                display: flex;
+            }
+
+            #debug {
+            }
+
+            #toggle-btn {
+                position: absolute;
+                top: 10px;
+                left: 200px;
+            }
+
+            #toggle-btn.collapsed {
+                left: 0;
+            }
+
+            #control-panel {
+                width: 100%;
+                background-color: rgba(255, 255, 255, 0.8);
+                padding: 20px;
+                box-sizing: border-box;
+                text-align: center;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            #time_before,
+            #time_after {
+                padding-left: 1em;
+                padding-right: 1em;
+            }
+
+            #scrubber {
+                flex-grow: 1;
+                max-width: 600px;
+            }
+
+            #control-panel i {
+                font-style: normal;
+                color: rgb(172, 172, 172);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="container">
+            <div id="sidebar-container">
+                <div id="sidebar"></div>
+                <div id="help"></div>
+                <div id="scoreboard"></div>
+
+                <!-- needs inline height and width to signal to heaps that it doesn't need to set these properties -->
+                <canvas
+                    id="webgl"
+                    globalEvents="1"
+                    style="width: 100%; height: 100%; flex-grow: 1"
+                ></canvas>
+            </div>
+            <div id="control-panel">
+                <span id="time_before"></span>
+                <input
+                    id="scrubber"
+                    type="range"
+                    id="scrubber"
+                    min="0"
+                    max="100"
+                    value="0"
+                    disabled
+                />
+                <span id="time_after"></span>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="./viewer.js"></script>
+    </body>
+</html>

@@ -1,0 +1,19 @@
+{
+    "name": "autotude",
+    "url": "https://github.com/jasononeil/useless/",
+    "license": "MIT",
+    "tags": [
+        "cross",
+        "useless"
+    ],
+    "description": "",
+    "version": "1.0.0",
+    "classPath": "hx_src/",
+    "releasenote": "",
+    "contributors": [
+        "cgadski"
+    ],
+    "dependencies": {
+        "protohx": "0.4.6"
+    }
+}
