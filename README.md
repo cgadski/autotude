@@ -18,7 +18,7 @@ So far, we have:
 
 ## Dependencies
 
-Install [direnv](https://direnv.net/) to load environment variables from `.envrc` and `rl/.envrc`. Install [just](https://github.com/casey/just) to run commands from `Justfiles`. We also need rust/cargo installed (try https://rustup.rs/) to build a program that processes replay files.
+Install [direnv](https://direnv.net/) to load environment variables from `.envrc` and `rl/.envrc`. Install [just](https://github.com/casey/just) to run commands from `Justfiles`. We also need protobuf (`protoc`) and rust/cargo installed (try https://rustup.rs/) to build a program that processes replay files.
 
 Run `just nix` to build `etc/nix.env` if you'd like to manage Haxe, Java and protoc through nix. These dependencies are not required to do reinforcement learning!
 
@@ -33,10 +33,6 @@ Still inside `rl`, run `just index` to build an indexer and index your generated
 Finally, to run notebooks in `rl/notebooks`, change directories to `rl/notebooks` and run `uv sync` to create a virtualenv. Then try running e.g. `uv run show_random_trajectories.py`.
 
 # Project Structure
-
-## `java_src`
-
-Source for some extra targets
 
 ## `altistats.com/`
 
