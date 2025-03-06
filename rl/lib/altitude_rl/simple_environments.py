@@ -7,12 +7,14 @@ from typing import Optional
 import gymnasium as gym
 import numpy as np
 
+
 class FreeForAllEnv(gym.Env):
-    def __init__(self):
+    def __init__(self, with_opponent=True):
         config = ServerConfig()
-        config.set(map='ffa_cave')
-        config.add_bot(nick='controlled', team='3')
-        config.add_baseline_bot(nick='enemy', team='4')
+        config.set(map="ffa_channelpark")
+        config.add_bot(nick="controlled", team="3")
+        if with_opponent:
+            config.add_baseline_bot(nick="enemy", team="4")
 
         self.action_space = gym.spaces.MultiBinary(7)
         self.observation_space = gym.spaces.Box(0, 1, shape=(2, 3))
@@ -20,7 +22,7 @@ class FreeForAllEnv(gym.Env):
         self._server = BotServer(config)
         self._obs = np.zeros((2, 3))
 
-    def _get_obs(self, up:Update):
+    def _get_obs(self, up: Update):
         geom = self._server.map_geometry
         i = 0
         for o in up.objects:
@@ -30,13 +32,19 @@ class FreeForAllEnv(gym.Env):
                 self._obs[o.owner, 2] = o.angle / 3600
         return self._obs
 
-    def _get_reward(self, up:Update):
+    def _get_reward(self, up: Update):
+        reward = 0
         for e in up.events:
-            pass
-        return 0
+            if e.HasField("kill"):
+                if e.kill.who_died == 0:
+                    reward -= 1
+                else:
+                    reward += 1
+        return reward
 
     def step(self, action):
         cmd = Cmd()
+        action = (action > 0.5).astype(int)
         cmd.inputs[0].controls = np.dot(action, 2 ** np.arange(7))
         up = self._server.update(cmd)
 

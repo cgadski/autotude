@@ -1,5 +1,4 @@
 benchmark:
-	just ../setup
 	SERVER_CONFIG=./server_benchmark.xml \
 	SERVER_RUNTIME="" \
 		server
@@ -7,11 +6,14 @@ benchmark:
 index:
 	make -C .. bin/index-lite
 	index-lite --path ${ALTI_HOME}/recordings \
-		--db ${DB_PATH}
+		--db ${ALTI_HOME}/recordings.db
 
 view:
-	make -C .. rl/viewer/js/
-	cd viewer && uv sync && uv run app.py
+	mkdir -p viewer/js
+	cp ../hx_src/out/viewer.js viewer/js/
+	cd viewer && \
+		DB_PATH=${ALTI_HOME}/recordings.db \
+		uv run app.py
 
 logs:
 	cat ${ALTI_HOME}/server.log

@@ -3,12 +3,20 @@ set dotenv-load
 default:
     just --list
 
+# Download and unpack resources.
+setup:
+	wget https://cgad.ski/autotude-dist.tar -O dist.tar
+	tar -xvf dist.tar
+	rm dist.tar
+	mkdir -p bin/
+	ln -sf $PWD/java_dist/BotServer*/bin/BotServer bin/server
+
 # Install dependencies through nix
 nix:
 	nix build -L -f . env -o etc/nix.env
 
-# Set up alti_home/ using Altitude source tree at $ALTI_SRC
-setup:
+# Copy game files from Altitude source tree at $ALTI_SRC
+setup-from-src:
 	if [ -z "$ALTI_SRC" ]; then \
 		echo "ALTI_SRC not set"; \
 		exit 1; \
@@ -22,10 +30,7 @@ setup:
 	rsync -ru \
 		$ALTI_SRC/BotServer/build/alti_home/{maps,resources,data} \
 		alti_home/
-
-# Format haxe source
-fmt-haxe:
-	hx-fmt --source hx_src/
+	rm -rf alti_home/resources/dist/{.image,.sound}
 
 JAVA_INSTALL := env_var_or_default("ALTI_SRC", "") + "/Altitude/src/main/java/em/altitude/game/protos/"
 
@@ -39,3 +44,11 @@ export-java-gen:
 	rm -rf {{JAVA_INSTALL}}
 	mkdir -p {{JAVA_INSTALL}}
 	cp java_gen/em/altitude/game/protos/* {{JAVA_INSTALL}}
+
+# Package and upload resources.
+dist:
+	tar -czf dist.tar \
+		alti_home/{maps,resources,data}/ \
+		java_dist/BotServer* \
+		hx_src/out/viewer.js
+	rsync -v --progress dist.tar root@cgad.ski:/www/autotude-dist.tar

@@ -1,3 +1,5 @@
+dist.tar
+
 # environment variables
 /etc/secrets.env
 /etc/dev.env
@@ -21,7 +23,6 @@ Cargo.lock
 
 # altitude "home directory"
 /alti_home/*
-!/alti_home/server_configs/
 
 # build outputs
 /bin/

@@ -18,23 +18,32 @@ So far, we have:
 
 ## Dependencies
 
-Use direnv to load environment variables from `.envrc`. Run `just nix` to build `etc/nix.env` if you'd like to manage Haxe, Java and protoc through nix.
+Install [direnv](https://direnv.net/) to load environment variables from `.envrc` and `rl/.envrc`. Install [just](https://github.com/casey/just) to run commands from `Justfiles`. We also need rust/cargo installed (try https://rustup.rs/) to build a program that processes replay files.
 
-## Testing RL environment
+Run `just nix` to build `etc/nix.env` if you'd like to manage Haxe, Java and protoc through nix. These dependencies are not required to do reinforcement learning!
 
-If you have the `bot-server` branch of the Altitude source tree, point to it with `ALTI_SRC`—for example by adding a line `etc/dev.env`. Then `cd rl` and run `just benchmark` to run the bot server without a controller attached. With rust installed, run `just index` to build an index of the replays being generated, and run `just viewer` to view the replays in your browser.
+Run `just setup` to download game resources and a build of the in-browser replay viewer (`hx_src/out/viewer.js`) to your working tree.
 
 ## Using RL environment
 
-![](./demo.png)
+Change directories to `rl`. Run `just benchmark` to run the bot server with no controller attached. It should run and generate replays in `alti_home/replays/`.
+
+Still inside `rl`, run `just index` to build an indexer and index your generated replays. With [uv](https://github.com/astral-sh/uv) installed, run `just view` to run a server that lets you view replays in your browser.
+
+Finally, to run notebooks in `rl/notebooks`, change directories to `rl/notebooks` and run `uv sync` to create a virtualenv. Then try running e.g. `uv run show_random_trajectories.py`.
 
 # Project Structure
 
+## `java_src`
+
+Source for some extra targets
+
 ## `altistats.com/`
 
-Source for site, including docker compose configuration.
+Source altistats.com, including docker compose files.
 
-- `altistats.com/site`: sveltekit source for [http://altistats.com].
+- `altistats.com/site`: sveltekit source
+- `altistats.com/sql`: database schemas/views for the replay database
 
 ## `proto/`
 
@@ -42,7 +51,7 @@ Protobuf message format used to serialize game state, game inputs, and geometry 
 
 I've patched Altitude (not fully open source) to serialize game state to a stream of `Update` messages. An `Update` is roughly a screenshot of _all_ game-relevant state at a given moment in time besides map geometry. This ncludes information not normally available to a player like positions of off-screen planes, powerups held by enemies, and exact health/energy values of all planes.
 
-Once gzipped, streaming a game as a series of `Update` messages (see `proto/update.proto`) is roughly as efficient as the netcode used by the game but much less arcane. Most importantly, `Updates` don't require the reader to simulate any parts of the game, and provide all "game objects" as .
+Once gzipped, streaming a game as a series of `Update` messages (see `proto/update.proto`) is roughly as efficient as the netcode used by the game but much less arcane. Most importantly, `Updates` don't require the reader to simulate any parts of the game.
 
 A replay (extension `.pb`) is just a gzipped sequence of length-delimited `Update` messages.
 
@@ -60,19 +69,4 @@ Haxe soure. Mainly the replay viewer, written with the heaps game engine.
 
 ## `rust_src/`
 
-Rust source for the indexer (`bin/index`) used to dump replays into a DuckDB database.
-
-## `viewer/`
-
-A web application for browsing and viewing replay files. The app reads from a DuckDB database created by the indexer and provides a web interface to browse and launch replays in the viewer.
-
-To run the viewer:
-1. Make sure you have indexed some replays with `bin/index`
-2. Set the `DATA_DIR` environment variable to point to your data directory
-3. Create and activate the conda environment:
-   ```bash
-   mamba env create -f environment.yml
-   mamba activate alti
-   ```
-4. Run `python viewer/app.py`
-5. Open http://localhost:5000 in your browser
+Rust source for the indexers (`bin/index`, `bin/index-lite`).

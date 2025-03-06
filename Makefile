@@ -78,7 +78,3 @@ altistats.com/nginx/assets/: hx_src/out/viewer.js hx_src/viewer.html
 	mkdir -p $@
 	cp hx_src/out/viewer.js $@
 	cp hx_src/viewer.html $@/index.html
-
-rl/viewer/js/: hx_src/out/viewer.js
-	mkdir -p $@
-	cp $^ $@
