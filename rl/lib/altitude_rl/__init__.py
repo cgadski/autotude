@@ -5,3 +5,5 @@ from .bot_server import BotServer
 from .simple_environments import SoloChannelparkEnv
 from .paths import ALTI_HOME, BIN
 from .simple_policies import TurningPolicy
+
+from . import networks
