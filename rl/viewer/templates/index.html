@@ -23,7 +23,10 @@
     </head>
     <body>
         <h1>Replays</h1>
-        <p>Total: {{ total_replays }} replays ({{ total_hours }}h {{ total_minutes }}m)</p>
+        <p>
+            Total: {{ total_replays }} replays ({{ total_hours }}h {{
+            total_minutes }}m)
+        </p>
 
         <table>
             <thead>
@@ -34,6 +37,7 @@
                     <th>Kills</th>
                     <th>Players</th>
                     <th>Actions</th>
+                    <th>Version</th>
                     <th>Stem</th>
                 </tr>
             </thead>
@@ -48,6 +52,7 @@
                     <td>
                         <a href="/view?f={{ replay.stem }}.pb">View Replay</a>
                     </td>
+                    <td>{{ replay.version }}</td>
                     <td class="stem">{{ replay.stem }}</td>
                 </tr>
                 {% endfor %}

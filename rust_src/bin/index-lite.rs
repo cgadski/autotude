@@ -21,6 +21,7 @@ struct Args {
 struct LiteListener {
     indexer: IndexingListener,
     n_kills: usize,
+    protocol_version: String,
 }
 
 impl ReplayListener for LiteListener {
@@ -30,6 +31,13 @@ impl ReplayListener for LiteListener {
     }
     fn on_event(&mut self, event: &GameEvent) -> Result<()> {
         self.indexer.on_event(event)?;
+        if let Some(Event::MapLoad(ref load)) = event.event {
+            self.protocol_version = load
+                .protocol_version
+                .as_ref()
+                .map(|x| x.clone())
+                .unwrap_or(String::from("0.0"));
+        }
         if let Some(Event::Kill(_)) = event.event {
             self.n_kills += 1;
         }
@@ -43,9 +51,9 @@ fn main() -> Result<()> {
 
     let conn = sqlite::open(args.db).unwrap();
     conn.execute("
-        CREATE TABLE IF NOT EXISTS replays (stem STRING, started_at STRING, kills INTEGER, duration INTEGER, players INTEGER, map STRING)")?;
+        CREATE TABLE IF NOT EXISTS replays (stem STRING, started_at STRING, kills INTEGER, duration INTEGER, players INTEGER, map STRING, version STRING)")?;
     let mut add_replay = conn.prepare(
-        "INSERT INTO replays (stem, started_at, kills, duration, players, map) VALUES (?, ?, ?, ?, ?, ?)",
+        "INSERT INTO replays (stem, started_at, kills, duration, players, map, version) VALUES (?, ?, ?, ?, ?, ?, ?)",
     )?;
     let mut check_replay = conn.prepare("SELECT 1 FROM replays WHERE stem = ?")?;
 
@@ -67,6 +75,7 @@ fn main() -> Result<()> {
         let mut listener = LiteListener {
             indexer: IndexingListener::new(),
             n_kills: 0,
+            protocol_version: String::from(""),
         };
         if let Ok(()) = read_replay_file(&path, &mut listener) {
             add_replay.bind((1, stem.as_str()))?;
@@ -84,6 +93,7 @@ fn main() -> Result<()> {
             add_replay.bind((4, listener.indexer.state.current_tick as i64))?;
             add_replay.bind((5, listener.indexer.state.player_states.len() as i64))?;
             add_replay.bind((6, listener.indexer.state.map_name.unwrap().as_str()))?;
+            add_replay.bind((7, listener.protocol_version.as_str()))?;
             while State::Done != add_replay.next()? {}
             add_replay.reset()?;
         }

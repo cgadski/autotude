@@ -4,6 +4,8 @@ option java_multiple_files = true;
 option java_package = "em.altitude.game.protos";
 
 enum ObjectType {
+    UNKNOWN_OBJECT = 128;
+
     // # Planes
     LOOPY = 0;
     BOMBER = 1;
@@ -125,6 +127,7 @@ message GameObject {
 
     optional uint32 emp_for = 44; // ticks remaining
     optional uint32 acid_for = 45; // ticks remaining
+    optional bool stalled = 54;
 
     optional sint32 spin = 46; // degrees
     optional bool controllable = 47; // whether plane is the "subject" or a controllable bot
