@@ -18,9 +18,9 @@ So far, we have:
 
 ## Dependencies
 
-Install [direnv](https://direnv.net/) to load environment variables from `.envrc` and `rl/.envrc`. Install [just](https://github.com/casey/just) to run commands from `Justfiles`. We also need protobuf (`protoc`) and rust/cargo installed (try https://rustup.rs/) to build a program that processes replay files.
+Install [direnv](https://direnv.net/) to load environment variables from `.envrc` and `rl/.envrc`. Install [just](https://github.com/casey/just) to run commands from `Justfiles`.
 
-Run `just nix` to build `etc/nix.env` if you'd like to manage Haxe, Java and protoc through nix. These dependencies are not required to do reinforcement learning!
+Run `just nix` to build `etc/nix.env` if you'd like to manage Haxe, Java and protoc through nix. _However, these dependencies are not required to do reinforcement learning._
 
 Run `just setup` to download game resources and a build of the in-browser replay viewer (`hx_src/out/viewer.js`) to your working tree.
 
@@ -28,9 +28,9 @@ Run `just setup` to download game resources and a build of the in-browser replay
 
 Change directories to `rl`. Run `just benchmark` to run the bot server with no controller attached. It should run and generate replays in `alti_home/replays/`.
 
-Still inside `rl`, run `just index` to build an indexer and index your generated replays. With [uv](https://github.com/astral-sh/uv) installed, run `just view` to run a server that lets you view replays in your browser.
+With rust/cargo installed (try `https://rustup.rs/`), run `just index` to build an indexer and index your generated replays in `DB_PATH`. With [uv](https://github.com/astral-sh/uv) installed, run `just view` to run a server that lets you view replays in your browser.
 
-Finally, to run notebooks in `rl/notebooks`, change directories to `rl/notebooks` and run `uv sync` to create a virtualenv. Then try running e.g. `uv run show_random_trajectories.py`.
+Finally, to run notebooks in `rl/notebooks`, change directories to `rl/notebooks` and run `uv sync` to create a virtualenv. Try running `uv run show_random_trajectories.py`.
 
 # Project Structure
 

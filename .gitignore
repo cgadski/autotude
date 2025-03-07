@@ -40,11 +40,11 @@ site_src/.index.sql.swp
 
 # python
 __pycache__
+.ipynb_checkpoints
+.jupyter
 
 # aider
 .aider.tags.cache.v3
 .aider.chat.history.md
 .aider.input.history
 !.aiderignore
-rl/examples/.ipynb_checkpoints
-rl/examples/.jupyter

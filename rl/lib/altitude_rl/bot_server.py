@@ -1,27 +1,27 @@
 from ast import TypeVar
 from contextlib import AbstractContextManager
-import os
-import subprocess
-import stat
-from pathlib import Path
-import shutil
-import uuid
-from google.protobuf.internal.encoder import _VarintBytes  # type: ignore
 from google.protobuf.internal.decoder import _DecodeVarint  # type: ignore
+from google.protobuf.internal.encoder import _VarintBytes  # type: ignore
 from io import BufferedWriter, BufferedReader
+from pathlib import Path
+import os
+import shutil
+import stat
+import subprocess
+import uuid
 
 from .proto.command_pb2 import Cmd
 from .proto.map_geometry_pb2 import MapGeometry
 from .proto.update_pb2 import Update
 from .server_config import ServerConfig
-
-import gymnasium as gym
+from .paths import BIN, ALTI_HOME
 
 
 def ensure_fifo(path: Path):
     if os.path.exists(path):
         os.remove(path)
     os.mkfifo(path)
+
 
 class BotServer:
     command_pipe: BufferedWriter
@@ -31,44 +31,42 @@ class BotServer:
     map_geometry: MapGeometry
 
     def __init__(self, config: ServerConfig):
-        server_exec = shutil.which("server")
+        server_exec = BIN / "server"
+
         if server_exec is None:
             raise ValueError("No server executible found in PATH")
 
-        alti_home = os.environ.get('ALTI_HOME')
-        if alti_home is None:
-            raise ValueError("ALTI_HOME not set")
-
-        self.alti_home = Path(alti_home)
+        self.alti_home = ALTI_HOME
         self.runtime_path = self.alti_home / "run" / str(uuid.uuid1())
 
         print(f"Creating runtime directory at {self.runtime_path}")
         self.runtime_path.mkdir(parents=True, exist_ok=True)
-        config.write(self.runtime_path / 'config.xml')
+        config.write(self.runtime_path / "config.xml")
         command_path = self.runtime_path / "command"
         update_path = self.runtime_path / "update"
         for p in [command_path, update_path]:
             ensure_fifo(p)
 
         log_path = self.runtime_path / "log"
-        with open(log_path, 'w') as log:
+        with open(log_path, "w") as log:
             self.process = subprocess.Popen(
                 [server_exec],
                 stdout=log,
                 stderr=log,
                 env={
                     **os.environ,
+                    "ALTI_HOME": self.alti_home,
                     "SERVER_RUNTIME": self.runtime_path,
-                    "SERVER_CONFIG": self.runtime_path / 'config.xml'
-                }
+                    "SERVER_CONFIG": self.runtime_path / "config.xml",
+                },
             )
 
         print(f"Server started with PID {self.process.pid}")
-        with open(self.runtime_path / 'pid', 'w') as pid_file:
+        with open(self.runtime_path / "pid", "w") as pid_file:
             pid_file.write(str(self.process.pid))
 
-        self.command_pipe = open(command_path, 'wb')
-        self.update_pipe = open(update_path, 'rb')
+        self.command_pipe = open(command_path, "wb")
+        self.update_pipe = open(update_path, "rb")
         map_load = self._read_update()
         self.read_map_load(map_load)
         print("Map loaded, server is ready to receive commands")

@@ -13,51 +13,41 @@
 #     name: python3
 # ---
 
-# %% [markdown]
-# #
-
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
 # %%
-import gymnasium as gym
 import altitude_rl as arl
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 
+# %% [markdown]
+# # Random trajectories
+#
+# Let's just generate some trajectories from the `SoloChannelparkEnv` and display them.
+
 # %%
-from dotenv import load_dotenv
-
-load_dotenv()
-
-
-# %%
-SAMPLES = 30 * 60 * 30
-history = np.zeros((SAMPLES, 2, 3))
+SAMPLES = 30 * 60 * 30  # 30 minutes of gameplay
+obs = np.zeros((SAMPLES, 3))
 rewards = np.zeros((SAMPLES,))
-turn_right = True
+policy = arl.TurningPolicy()
 
-with arl.FreeForAllEnv(with_opponent=False) as env:
+with arl.SoloChannelparkEnv() as env:
     for i in tqdm(range(SAMPLES)):
-        action = np.zeros((7,))
-
-        switch_dir = np.random.rand() < 3 / 30
-        if switch_dir:
-            turn_right = not turn_right
-
-        if turn_right:
-            action[1] = 1
-        else:
-            action[0] = 1
-
-        obs, reward, terminated, truncated, info = env.step(action)
+        action = policy.act()
+        ob, reward, terminated, truncated, info = env.step(action)
         rewards[i] = reward
-        history[i] = obs
+        obs[i] = ob
+
+# %% [markdown]
+# After 30 minutes of gameplay, we can see the outline of the map. Orange dots show where the plane received a penalty, meaning it took damage or crashed.
 
 # %%
-plt.scatter(history[:, 0, 0], history[:, 0, 1], alpha=0.1, s=1)
-where_killed = rewards != 0
-plt.scatter(history[where_killed, 0, 0], history[where_killed, 0, 1], s=2)
+plt.scatter(obs[:, 0], obs[:, 1], s=1, alpha=0.2)
+negative_reward = rewards < 0
+plt.scatter(obs[negative_reward, 0], obs[negative_reward, 1], s=2)
 plt.show()
+
+# %%
