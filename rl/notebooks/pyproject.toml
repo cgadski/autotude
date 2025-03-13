@@ -9,10 +9,8 @@ dependencies = [
     "jupyterlab-vim>=4.1.4",
     "jupytext>=1.16.7",
     "matplotlib>=3.10.1",
-    "python-dotenv>=1.0.1",
-    "pytorch-ignite>=0.5.1",
     "scikit-learn>=1.6.1",
-    "torch>=2.6.0",
+    "torch==2.2.0",
     "tqdm>=4.67.1",
     "wandb>=0.19.8",
 ]
