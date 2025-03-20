@@ -29,18 +29,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # %%
-SAMPLES = 30 * 60 * 60 * 1 # 24 hours
-obs = np.zeros((SAMPLES, 3))
+MEMORY =10
+SAMPLES = 30 * 60 * 60 * 24 # 24 hours
+obs = np.zeros((SAMPLES, 3 * MEMORY)) # last 5 observations
 acts = np.zeros((SAMPLES, 7), dtype=np.int8)
 rewards = np.zeros((SAMPLES,))
 policy = arl.TurningPolicy()
 
 with arl.SoloChannelparkEnv() as env:
-    for i in tqdm(range(SAMPLES)):
+    ob = env._obs
+    obs[0]= np.tile(ob,MEMORY)
+    rewards[0] = 0
+    acts[0] = np.zeros(7)
+    for i in tqdm(range(1,SAMPLES)):
         action = policy.act()
         ob, reward = env.step(action)
         rewards[i] = reward
-        obs[i] = ob
+        obs[i] = np.concatenate((obs[i-1,3:],ob))
         acts[i] = action
 
 
@@ -66,7 +71,12 @@ def show_to_go(obs, rewards, to_go, lim=1000, offset=0):
     
     
     plt.tight_layout()
-    plt.savefig("data/plot.png", dpi=300, bbox_inches="tight")
+    plt.savefig("data/rewards.png", dpi=300, bbox_inches="tight")
+    plt.clf()
+    plt.scatter(obs[:, 0], obs[:, 1], s=1, alpha=0.2)
+    negative_reward = rewards < 0
+    plt.scatter(obs[negative_reward, 0], obs[negative_reward, 1], s=2)
+    plt.savefig("data/trajectories.png", dpi=300, bbox_inches="tight")
 
 # %%
 to_go = get_to_go(rewards, gamma=0.95)
@@ -91,4 +101,4 @@ dataset = TensorDataset(
 
 print([x.shape for x in next(iter(dataset))])
 
-t.save(dataset, "data/ffa_channelpark.pt")
+t.save(dataset, "data/ffa_channelpark_2.pt")

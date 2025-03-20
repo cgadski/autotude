@@ -29,18 +29,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # %%
-SAMPLES = 30 * 60 * 60 * 1 # 24 hours
-obs = np.zeros((SAMPLES, 3))
+MEMORY =5
+SAMPLES = 30 * 60 * 60 * 24 # 24 hours
+obs = np.zeros((SAMPLES, 5)) 
 acts = np.zeros((SAMPLES, 7), dtype=np.int8)
 rewards = np.zeros((SAMPLES,))
 policy = arl.TurningPolicy()
 
 with arl.SoloChannelparkEnv() as env:
-    for i in tqdm(range(SAMPLES)):
+    for i in tqdm(range(1,SAMPLES)):
         action = policy.act()
         ob, reward = env.step(action)
         rewards[i] = reward
-        obs[i] = ob
+        if i >= MEMORY:
+            v = ob[:2] - obs[i-MEMORY,:2]
+            obs[i] = np.append(ob,v)
+        else:
+            obs[i] = np.append(ob,[0,0])
         acts[i] = action
 
 
@@ -77,6 +82,8 @@ import torch as t
 from torch.utils.data import TensorDataset, DataLoader, random_split
 
 print(obs.shape, acts.shape, to_go.shape)
+print(obs[-2])
+print(obs[-1])
 
 def to_torch(x):
     return t.tensor(x, dtype=t.float16)
@@ -91,4 +98,4 @@ dataset = TensorDataset(
 
 print([x.shape for x in next(iter(dataset))])
 
-t.save(dataset, "data/ffa_channelpark.pt")
+t.save(dataset, "data/ffa_channelpark_3.pt")

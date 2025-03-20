@@ -18,16 +18,18 @@ wandb.init(
     config={"model": "deepish-fixed", **vars(args)},
 )
 
-dataset = t.load("data/ffa_channelpark.pt", weights_only=False)
+dataset = t.load("data/ffa_channelpark_3.pt", weights_only=False)
+
+
 
 d = args.d
 model = t.nn.Sequential(
-    arl.networks.ObsEncoder(d=d),
-    t.nn.Linear(d, d, dtype=t.float16),
+    arl.networks.ObsEncoder3(d=d),
+    t.nn.Linear(d, d),
     t.nn.ReLU(),
-    t.nn.Linear(d, 1, dtype=t.float16),
+    t.nn.Linear(d, 1),
     t.nn.Flatten(start_dim=0),
-)
+).to(t.float32)
 
 train_loader = D.DataLoader(dataset, batch_size=1024, shuffle=True)
 opt = t.optim.SGD(lr=args.lr, params=model.parameters())
@@ -37,6 +39,8 @@ loss_fn = t.nn.MSELoss()
 for epoch_num in range(args.epochs):
     print(f"Epoch {epoch_num}")
     for i, (x, y) in enumerate(tqdm(train_loader)):
+        x=x.float()
+        y=y.float()
         train_loss = loss_fn(y, model(x))
         opt.zero_grad()
         train_loss.backward()

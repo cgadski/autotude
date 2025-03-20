@@ -15,29 +15,75 @@ class PositionEncoder(t.nn.Module):
         return t.exp(-10 * self.radii * dist)
 
 
-class ObsEncoder(t.nn.Module):
+class OrientationEncoder(t.nn.Module):
     """
     Learnable encoding of observations (x, y, angle, left, right).
     """
 
     def __init__(self, d=128):
         super().__init__()
-        self.pos_encoder = PositionEncoder(d=d, dtype=t.float16)
-        self.angle_encoder = t.nn.Linear(2, d, dtype=t.float16)
-        self.control_encoder = t.nn.Linear(2, d, dtype=t.float16)
+        self.pos_encoder = PositionEncoder(d=d)
+        self.angle_encoder = t.nn.Linear(2, d)
 
-    def forward(self, obs):
-        pos = obs[:, :2]
-        angle = 2 * t.pi * obs[:, 2]
-        control = obs[:, 3:]
+    def forward(self, orientation):
+        pos = orientation[:, :2]
+        angle = 2 * t.pi * orientation[:, 2]
 
         angle_vec = t.stack([t.cos(angle), t.sin(angle)], dim=-1)
 
         return (
             self.pos_encoder(pos)
             + self.angle_encoder(angle_vec)
-            + self.control_encoder(control)
         )
+
+class ObsEncoder(t.nn.Module):
+    def __init__(self, d=128):
+        super().__init__()
+        self.orientation_encoder = OrientationEncoder(d=d)
+        self.control_encoder = t.nn.Linear(2, d)
+    
+    def forward(self, obs):
+        orientation = obs[:,:3]
+        action = obs[:,3:]
+
+        return (
+            self.orientation_encoder(orientation)
+            + self.control_encoder(action)
+        )
+class ObsEncoder3(t.nn.Module):
+    def __init__(self, d=128):
+        super().__init__()
+        self.orientation_encoder = OrientationEncoder(d=d)
+        self.action_encoder = t.nn.Linear(2, d)
+        self.velocity_encoder = t.nn.Linear(2, d)
+    
+    def forward(self, obs):
+        orientation = obs[:,:3]
+        velocity = obs[:,3:5]
+        action = obs[:,5:]
+        return (
+            self.orientation_encoder(orientation)
+            + self.action_encoder(action)
+            + self.velocity_encoder(velocity)
+        )
+
+    
+class MultiObsEncoder(t.nn.Module):
+    """
+    Learnable encoding of observations (x, y, angle, left, right).
+    """
+
+    def __init__(self, n_obs, d=128):
+        super().__init__()
+        self.orientation_encoder = OrientationEncoder(d=int(d/n_obs))
+        self.obs_encoder = ObsEncoder(d=int(d/n_obs))
+        self.n_obs = n_obs
+
+    def forward(self, obs):
+        past_orientations = t.cat([self.orientation_encoder(obs[:,i*3:i*3+3]) for i in range(self.n_obs-1)],axis=1)
+        current_orientation = self.obs_encoder(obs[:,(self.n_obs-1)*3:])
+        return t.cat((past_orientations,current_orientation),axis=1)
+
 
 
 class ValueNet(t.nn.Module):

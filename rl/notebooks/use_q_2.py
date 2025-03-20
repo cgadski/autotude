@@ -24,14 +24,18 @@ print("loaded model")
 def to_torch(x):
     return t.tensor(x).float()
 
-    
-
+MEMORY = 5
 SAMPLES = 30 * 60 * 5
+old_ob = 0
+i=0
 with arl.SoloChannelparkEnv() as env:
     ob, reward = env.step(np.zeros((7,)))  # (3, )
+    ob = np.tile(ob,MEMORY)
     ob = to_torch(ob)
 
+
     for i in tqdm(range(SAMPLES)):
+
         possible_actions = t.tensor(
             [
                 [0, 1],
@@ -52,5 +56,7 @@ with arl.SoloChannelparkEnv() as env:
         act = t.zeros((7,))
         act[:2] = possible_actions[i, :]
 
-        ob, reward = env.step(act.numpy())
+        new_ob, reward = env.step(act.numpy())
+        ob = np.concatenate((ob[3:],new_ob))
         ob = to_torch(ob)
+

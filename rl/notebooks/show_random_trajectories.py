@@ -37,7 +37,7 @@ policy = arl.TurningPolicy()
 with arl.SoloChannelparkEnv() as env:
     for i in tqdm(range(SAMPLES)):
         action = policy.act()
-        ob, reward, terminated, truncated, info = env.step(action)
+        ob, reward = env.step(action) # terminated, truncated, info
         rewards[i] = reward
         obs[i] = ob
 
