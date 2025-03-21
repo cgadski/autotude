@@ -18,13 +18,13 @@ wandb.init(
     config={"model": "deepish-fixed", **vars(args)},
 )
 
-dataset = t.load("data/ffa_channelpark_3.pt", weights_only=False)
+dataset = t.load("data/ffa_channelpark.pt", weights_only=False)
 
 
 
 d = args.d
 model = t.nn.Sequential(
-    arl.networks.ObsEncoder3(d=d),
+    arl.networks.ObsEncoder(velocity_frame_window=1,d=d),
     t.nn.Linear(d, d),
     t.nn.ReLU(),
     t.nn.Linear(d, 1),

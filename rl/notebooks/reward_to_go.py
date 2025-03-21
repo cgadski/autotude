@@ -29,7 +29,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # %%
-SAMPLES = 30 * 60 * 60 * 1 # 24 hours
+SAMPLES = 30 * 60 * 60 * 24 # 24 hours
 obs = np.zeros((SAMPLES, 3))
 acts = np.zeros((SAMPLES, 7), dtype=np.int8)
 rewards = np.zeros((SAMPLES,))
