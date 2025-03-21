@@ -26,30 +26,41 @@ class OrientationEncoder(t.nn.Module):
         self.angle_encoder = t.nn.Linear(2, d)
 
     def forward(self, orientation):
+
         pos = orientation[:, :2]
         angle = 2 * t.pi * orientation[:, 2]
 
         angle_vec = t.stack([t.cos(angle), t.sin(angle)], dim=-1)
 
-        return (
-            self.pos_encoder(pos)
-            + self.angle_encoder(angle_vec)
-        )
+        return self.pos_encoder(pos) + self.angle_encoder(angle_vec)
+
+
+class VelocityEncoder(t.nn.Module):
+    def __init__(self, window,d=128):
+        super().__init__()
+        self.velocity_encoder = t.nn.Linear(2, d)
+        self.window = window
+
+    def forward(self, obs):
+        v = obs[self.window :, :2] - obs[: -self.window, :2]
+        v = t.concat((t.zeros((self.window, 2)), v))
+        return self.velocity_encoder(v)
+
 
 class ObsEncoder(t.nn.Module):
-    def __init__(self, d=128):
+    def __init__(self, velocity_frame_window=None, d=128):
         super().__init__()
         self.orientation_encoder = OrientationEncoder(d=d)
         self.control_encoder = t.nn.Linear(2, d)
-    
-    def forward(self, obs):
-        orientation = obs[:,:3]
-        action = obs[:,3:]
+        if velocity_frame_window is not None:
+            self.velocity_encoder = VelocityEncoder(velocity_frame_window, d=d)
+        else:
+            self.velocity_encoder = lambda obs: t.zeros(obs.size(0), d)
 
-        return (
-            self.orientation_encoder(orientation)
-            + self.control_encoder(action)
-        )
+    def forward(self, obs):
+        action = obs[:, 3:]
+        return self.orientation_encoder(obs) + self.control_encoder(action) + self.velocity_encoder(obs)
+    
 class ObsEncoderWithEnemy(t.nn.Module):
     def __init__(self, d=128):
         super().__init__()
@@ -63,23 +74,6 @@ class ObsEncoderWithEnemy(t.nn.Module):
             self.obs_encoder(agent_obs)
             + self.distToEnemy_encoder(distToEnemy)
         )
-class ObsEncoder3(t.nn.Module):
-    def __init__(self, d=128):
-        super().__init__()
-        self.orientation_encoder = OrientationEncoder(d=d)
-        self.action_encoder = t.nn.Linear(2, d)
-        self.velocity_encoder = t.nn.Linear(2, d)
-    
-    def forward(self, obs):
-        orientation = obs[:,:3]
-        velocity = obs[:,3:5]
-        action = obs[:,5:]
-        return (
-            self.orientation_encoder(orientation)
-            + self.action_encoder(action)
-            + self.velocity_encoder(velocity)
-        )
-
     
 class MultiObsEncoder(t.nn.Module):
     """
@@ -88,15 +82,20 @@ class MultiObsEncoder(t.nn.Module):
 
     def __init__(self, n_obs, d=128):
         super().__init__()
-        self.orientation_encoder = OrientationEncoder(d=int(d/n_obs))
-        self.obs_encoder = ObsEncoder(d=int(d/n_obs))
+        self.orientation_encoder = OrientationEncoder(d=int(d / n_obs))
+        self.obs_encoder = ObsEncoder(d=int(d / n_obs))
         self.n_obs = n_obs
 
     def forward(self, obs):
-        past_orientations = t.cat([self.orientation_encoder(obs[:,i*3:i*3+3]) for i in range(self.n_obs-1)],axis=1)
-        current_orientation = self.obs_encoder(obs[:,(self.n_obs-1)*3:])
-        return t.cat((past_orientations,current_orientation),axis=1)
-
+        past_orientations = t.cat(
+            [
+                self.orientation_encoder(obs[:, i * 3 : i * 3 + 3])
+                for i in range(self.n_obs - 1)
+            ],
+            axis=1,
+        )
+        current_orientation = self.obs_encoder(obs[:, (self.n_obs - 1) * 3 :])
+        return t.cat((past_orientations, current_orientation), axis=1)
 
 
 class ValueNet(t.nn.Module):
