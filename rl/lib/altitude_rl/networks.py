@@ -50,6 +50,19 @@ class ObsEncoder(t.nn.Module):
             self.orientation_encoder(orientation)
             + self.control_encoder(action)
         )
+class ObsEncoderWithEnemy(t.nn.Module):
+    def __init__(self, d=128):
+        super().__init__()
+        self.obs_encoder = ObsEncoder(d=d)
+        self.distToEnemy_encoder = t.nn.Linear(2, d)
+    
+    def forward(self, obs):
+        agent_obs = t.concatenate((obs[:,:3],obs[:,5:]),axis=1)
+        distToEnemy = obs[:,3:5]
+        return (
+            self.obs_encoder(agent_obs)
+            + self.distToEnemy_encoder(distToEnemy)
+        )
 class ObsEncoder3(t.nn.Module):
     def __init__(self, d=128):
         super().__init__()

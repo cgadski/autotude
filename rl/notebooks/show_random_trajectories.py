@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 # Let's just generate some trajectories from the `SoloChannelparkEnv` and display them.
 
 # %%
-SAMPLES = 30 * 60 * 30  # 30 minutes of gameplay
+SAMPLES = 30 * 60 * 1  # 30 minutes of gameplay
 obs = np.zeros((SAMPLES, 3))
 rewards = np.zeros((SAMPLES,))
 policy = arl.TurningPolicy()
@@ -47,7 +47,9 @@ with arl.SoloChannelparkEnv() as env:
 # %%
 plt.scatter(obs[:, 0], obs[:, 1], s=1, alpha=0.2)
 negative_reward = rewards < 0
-plt.scatter(obs[negative_reward, 0], obs[negative_reward, 1], s=2)
+positive_reward = rewards > 0
+plt.scatter(obs[negative_reward, 0], obs[negative_reward, 1], s=2, alpha=rewards[negative_reward]/np.min(rewards[negative_reward]))
+plt.scatter(obs[positive_reward, 0], obs[positive_reward, 1], s=2)
 plt.show()
 
 # %%

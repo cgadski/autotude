@@ -29,8 +29,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # %%
-SAMPLES = 30 * 60 * 60 * 1 # 24 hours
-obs = np.zeros((SAMPLES, 3))
+SAMPLES = 30 * 60 * 60 * 24 # 24 hours
+obs = np.zeros((SAMPLES, 5))
 acts = np.zeros((SAMPLES, 7), dtype=np.int8)
 rewards = np.zeros((SAMPLES,))
 policy = arl.TurningPolicy()
@@ -51,7 +51,7 @@ def get_to_go(rewards: np.ndarray, gamma: float = 0.9):
         res[:-1] = rewards[:-1] + gamma * res[1:]
     return res 
 
-def show_to_go(obs, rewards, to_go, lim=1000, offset=0):
+def show_to_go(obs, rewards, to_go, lim=5000, offset=0):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
     
     obs = obs[offset:offset + lim]
@@ -61,12 +61,12 @@ def show_to_go(obs, rewards, to_go, lim=1000, offset=0):
     scatter = ax1.scatter(obs[:, 0], obs[:, 1], s=1, c=to_go)
     plt.colorbar(scatter, ax=ax1)
 
-    ax2.scatter(np.arange(lim)[rewards < 0], rewards[rewards < 0])
+    #ax2.scatter(np.arange(lim)[rewards < 0], rewards[rewards < 0])
     ax2.plot(np.arange(lim), to_go)
     
     
     plt.tight_layout()
-    plt.savefig("data/plot.png", dpi=300, bbox_inches="tight")
+    plt.savefig("data/use.png", dpi=300, bbox_inches="tight")
 
 # %%
 to_go = get_to_go(rewards, gamma=0.95)
