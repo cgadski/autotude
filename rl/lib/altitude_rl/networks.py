@@ -14,6 +14,19 @@ class PositionEncoder(t.nn.Module):
         dist = ((self.centers[None, :, :] - x[:, None, :]) ** 2).sum(dim=-1)
         return t.exp(-10 * self.radii * dist)
 
+class AngleEncoder(t.nn.Module):
+    def __init__(self, d=128, dtype=t.float):
+        super().__init__()
+        self.angle_encoder = t.nn.Linear(2, d)
+
+    def forward(self, orientation):
+
+        angle = 2 * t.pi * orientation
+
+        angle_vec = t.stack([t.cos(angle), t.sin(angle)], dim=-1)
+
+        return self.angle_encoder(angle_vec)
+
 
 class OrientationEncoder(t.nn.Module):
     """
@@ -48,12 +61,12 @@ class VelocityEncoder(t.nn.Module):
 
 
 class ObsEncoder(t.nn.Module):
-    def __init__(self, velocity_frame_window=None, d=128):
+    def __init__(self, window_size=None, d=128):
         super().__init__()
         self.orientation_encoder = OrientationEncoder(d=d)
         self.control_encoder = t.nn.Linear(2, d)
-        if velocity_frame_window is not None:
-            self.velocity_encoder = VelocityEncoder(velocity_frame_window, d=d)
+        if window_size is not None:
+            self.velocity_encoder = VelocityEncoder(window_size, d=d)
         else:
             self.velocity_encoder = lambda obs: t.zeros(obs.size(0), d)
 
@@ -80,22 +93,20 @@ class MultiObsEncoder(t.nn.Module):
     Learnable encoding of observations (x, y, angle, left, right).
     """
 
-    def __init__(self, n_obs, d=128):
+    def __init__(self, window_size, d=128):
         super().__init__()
-        self.orientation_encoder = OrientationEncoder(d=int(d / n_obs))
-        self.obs_encoder = ObsEncoder(d=int(d / n_obs))
-        self.n_obs = n_obs
+        self.obs_encoder = ObsEncoder(d=int(d / window_size))
+        self.n_obs = window_size
 
     def forward(self, obs):
-        past_orientations = t.cat(
+        return t.cat(
             [
                 self.orientation_encoder(obs[:, i * 3 : i * 3 + 3])
                 for i in range(self.n_obs - 1)
             ],
             axis=1,
         )
-        current_orientation = self.obs_encoder(obs[:, (self.n_obs - 1) * 3 :])
-        return t.cat((past_orientations, current_orientation), axis=1)
+
 
 
 class ValueNet(t.nn.Module):

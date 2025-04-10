@@ -16,14 +16,15 @@ class SoloChannelparkEnv:
     Rewards: -2 when it dies, something in range [-1, 0] when it takes damage.
     """
 
-    def __init__(self):
+    def __init__(self,goal="survive"):
         config = ServerConfig()
         config.set(map="ffa_channelpark")
         config.add_bot(nick="controlled", team="3")
-        config.add_baseline_bot(nick="enemy", team="4")
 
         self._server = BotServer(config)
-        self._obs = np.zeros((5,))
+        self._obs = np.zeros((3,))
+
+        self.goal = goal
 
     def _get_obs(self, up: Update):
         geom = self._server.map_geometry
@@ -33,15 +34,9 @@ class SoloChannelparkEnv:
                     self._obs[0] = o.position_x / (2 * geom.max_x)
                     self._obs[1] = o.position_y / (2 * geom.max_y)
                     self._obs[2] = o.angle / 3600
-                if o.owner == 1:
-                    enemy_x = o.position_x / (2 * geom.max_x)
-                    enemy_y = o.position_y / (2 * geom.max_y)
-                    self._obs[3] = self._obs[0] - enemy_x
-                    self._obs[4] = self._obs[1] - enemy_y
         return self._obs
 
-    mode = "survive"
-
+    
     def _get_reward(self, up: Update):
         reward = 0
         for e in up.events:
@@ -51,7 +46,7 @@ class SoloChannelparkEnv:
             if e.HasField("kill"):
                 if e.kill.who_died == 0:
                     reward -= 2
-        match self.mode:
+        match self.goal:
             case "reach_position":
                 reward -= -0.1
                 goal_x = 0.3
@@ -81,3 +76,30 @@ class SoloChannelparkEnv:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._server.__exit__()
+
+class DuoChannelparkEnv(SoloChannelparkEnv):
+
+    def __init__(self):
+        config = ServerConfig()
+        config.set(map="ffa_channelpark")
+        config.add_bot(nick="controlled", team="3")
+        config.add_baseline_bot(nick="enemy", team="4")
+
+        self._server = BotServer(config)
+        self._obs = np.zeros((5,))
+
+    def _get_obs(self, up: Update):
+        geom = self._server.map_geometry
+        for o in up.objects:
+            if o.type < 5:
+                if o.owner == 0:
+                    self._obs[0] = o.position_x / (2 * geom.max_x)
+                    self._obs[1] = o.position_y / (2 * geom.max_y)
+                    self._obs[2] = o.angle / 3600
+                if o.owner == 1:
+                    enemy_x = o.position_x / (2 * geom.max_x)
+                    enemy_y = o.position_y / (2 * geom.max_y)
+                    self._obs[3] = self._obs[0] - enemy_x
+                    self._obs[4] = self._obs[1] - enemy_y
+        return self._obs
+
