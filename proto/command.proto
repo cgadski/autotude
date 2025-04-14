@@ -14,3 +14,7 @@ message Cmd {
 
     optional bool shutdown = 100;
 }
+
+message ClientCmd {
+    optional InputCmd input = 1;
+}
