@@ -3,7 +3,7 @@ set dotenv-load
 default:
     just --list
 
-# Download and unpack resources.
+# Download and unpack resources, including .jar for server.
 setup:
 	wget https://cgad.ski/autotude-dist.tar -O dist.tar
 	tar -xvf dist.tar

@@ -1,7 +1,5 @@
-import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from contextlib import contextmanager
 
 _bot_defaults = {
     "nick": "player",

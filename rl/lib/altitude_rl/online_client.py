@@ -12,25 +12,21 @@ import uuid
 from .proto.command_pb2 import Cmd
 from .proto.map_geometry_pb2 import MapGeometry
 from .proto.update_pb2 import Update
-from .server_config import ServerConfig
+from .client_config import ClientConfig
 from .paths import BIN, ALTI_HOME
 
-
-def ensure_fifo(path: Path):
-    if os.path.exists(path):
-        os.remove(path)
-    os.mkfifo(path)
+from .bot_server import ensure_fifo
 
 
-class BotServer:
+class OnlineClient:
     command_pipe: BufferedWriter
     update_pipe: BufferedReader
     runtime_path: Path
 
     map_geometry: MapGeometry
 
-    def __init__(self, config: ServerConfig):
-        server_exec = BIN / "server"
+    def __init__(self, config: ClientConfig):
+        client_exec = BIN / "client"
 
         self.alti_home = ALTI_HOME
         self.runtime_path = self.alti_home / "run" / str(uuid.uuid1())
@@ -46,14 +42,14 @@ class BotServer:
         log_path = self.runtime_path / "log"
         with open(log_path, "w") as log:
             self.process = subprocess.Popen(
-                [server_exec],
+                [client_exec],
                 stdout=log,
                 stderr=log,
                 env={
                     **os.environ,
                     "ALTI_HOME": self.alti_home,
-                    "SERVER_RUNTIME": self.runtime_path,
-                    "SERVER_CONFIG": self.runtime_path / "config.xml",
+                    "BOT_RUNTIME": self.runtime_path,
+                    "BOT_CONFIG": self.runtime_path / "config.xml",
                 },
             )
 
@@ -63,9 +59,15 @@ class BotServer:
 
         self.command_pipe = open(command_path, "wb")
         self.update_pipe = open(update_path, "rb")
-        map_load = self._read_update()
-        self.read_map_load(map_load)
-        print("Map loaded, server is ready to receive commands")
+
+        print("Now polling client")
+
+    def poll(self):
+        print("")
+        while True:
+
+    def on_update(self, update: Update) -> Cmd:
+        return Cmd()
 
     def update(self, cmd: Cmd) -> Update:
         self._write_command(cmd)
@@ -100,13 +102,3 @@ class BotServer:
         for event in up.events:
             if event.map_load is not None:
                 self.map_geometry = event.map_load.map
-
-    def __exit__(self):
-        print("Shutting down server")
-        cmd = Cmd()
-        cmd.shutdown = True
-        self._write_command(cmd)
-        self.process.wait(timeout=1)
-
-        self.command_pipe.close()
-        self.update_pipe.close()
