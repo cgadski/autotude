@@ -1,5 +1,6 @@
 from datetime import time
 import torch.utils.data as D
+from torch.utils.data import TensorDataset
 import altitude_rl as arl
 import torch as t
 from tqdm import tqdm
@@ -8,7 +9,7 @@ import argparse
 from pprint import pprint
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--epochs", type=int, default=10)
+parser.add_argument("--epochs", type=int, default=3)
 parser.add_argument("--lr", type=float, default=1e-3)
 parser.add_argument("--d", type=int, default=128)
 args = parser.parse_args()
@@ -21,13 +22,12 @@ wandb.init(
 dataset = t.load("data/ffa_channelpark.pt", weights_only=False)
 
 
-
 d = args.d
 model = t.nn.Sequential(
-    arl.networks.AngleEncoder(d=d),
+    arl.networks.MultiObsEncoder(d=d),
     t.nn.Linear(d, d),
     t.nn.ReLU(),
-    t.nn.Linear(d, 2),
+    t.nn.Linear(d, 3),
     #t.nn.Flatten(start_dim=0),
 ).to(t.float32)
 
@@ -40,7 +40,7 @@ for epoch_num in range(args.epochs):
     print(f"Epoch {epoch_num}")
     for i, (x, y) in enumerate(tqdm(train_loader)):
         x=x.float()
-        y=y.float()
+        y=x[1:-28,:3]
         train_loss = loss_fn(y, model(x))
         opt.zero_grad()
         train_loss.backward()

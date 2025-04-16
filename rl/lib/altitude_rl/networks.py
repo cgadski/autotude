@@ -89,23 +89,15 @@ class ObsEncoderWithEnemy(t.nn.Module):
         )
     
 class MultiObsEncoder(t.nn.Module):
-    """
-    Learnable encoding of observations (x, y, angle, left, right).
-    """
 
-    def __init__(self, window_size, d=128):
+    def __init__(self,  d=128):
         super().__init__()
-        self.obs_encoder = ObsEncoder(d=int(d / window_size))
-        self.n_obs = window_size
+        self.conv = t.nn.Conv1d(in_channels=d, out_channels=d, kernel_size=30, stride=1)
+        self.obs_encoder = ObsEncoder(d=d)
 
     def forward(self, obs):
-        return t.cat(
-            [
-                self.orientation_encoder(obs[:, i * 3 : i * 3 + 3])
-                for i in range(self.n_obs - 1)
-            ],
-            axis=1,
-        )
+        encoded_obs = self.obs_encoder(obs).T.unsqueeze(0)
+        return self.conv(encoded_obs).transpose(1,2)
 
 
 

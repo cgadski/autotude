@@ -30,28 +30,12 @@ with arl.SoloChannelparkEnv() as env:
     for i in tqdm(range(SAMPLES)):
         action = policy.act()
         ob, reward = env.step(action)
-        if reward < 0:
-            rewards[i] = -100
-            obs[i] = -100
-            acts[i] = -100
-            rewards[i-1] = -100
-            obs[i-1] = -100
-            acts[i-1] = -100
-        else:
-            rewards[i] = reward
-            obs[i] = ob
-            acts[i] = action
+        rewards[i] = reward
+        obs[i] = ob
+        acts[i] = action
 
 
 
-# %%
-mask = np.any(obs == -100, axis=1)
-
-# %%
-
-obs = obs[~mask]
-acts = acts[~mask]
-rewards = rewards[~mask]
 
 # %%
 import torch as t
@@ -62,8 +46,11 @@ def to_torch(x):
     return t.tensor(x, dtype=t.float16)
 
 dataset = TensorDataset(
-    to_torch(obs[:-1,2]),
-    to_torch(obs[1:,:2]-obs[:-1,:2])
+    t.concat([
+        to_torch(obs),
+        to_torch(acts[:, :2])
+    ], dim=-1),
+    to_torch(rewards)
 )
 
 print(obs.shape, acts.shape)
