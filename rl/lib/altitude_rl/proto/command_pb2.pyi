@@ -18,7 +18,7 @@ class InputCmd(google.protobuf.message.Message):
 
     CONTROLS_FIELD_NUMBER: builtins.int
     controls: builtins.int
-    """up + down << 1 + left << 2 + right << 3
+    """left + right << 1 + up << 2 + down << 3
     + f << 4 + d << 5 + s << 6
     """
     def __init__(
@@ -68,3 +68,20 @@ class Cmd(google.protobuf.message.Message):
     def ClearField(self, field_name: typing.Literal["inputs", b"inputs", "shutdown", b"shutdown"]) -> None: ...
 
 global___Cmd = Cmd
+
+@typing.final
+class ClientCmd(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    INPUT_FIELD_NUMBER: builtins.int
+    @property
+    def input(self) -> global___InputCmd: ...
+    def __init__(
+        self,
+        *,
+        input: global___InputCmd | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["input", b"input"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["input", b"input"]) -> None: ...
+
+global___ClientCmd = ClientCmd

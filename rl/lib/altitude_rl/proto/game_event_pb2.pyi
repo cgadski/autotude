@@ -40,9 +40,13 @@ class MapLoadEvent(google.protobuf.message.Message):
     NAME_FIELD_NUMBER: builtins.int
     SERVER_FIELD_NUMBER: builtins.int
     DATETIME_FIELD_NUMBER: builtins.int
+    SERVER_IP_FIELD_NUMBER: builtins.int
+    PROTOCOL_VERSION_FIELD_NUMBER: builtins.int
     name: builtins.str
     server: builtins.str
     datetime: builtins.str
+    server_ip: builtins.str
+    protocol_version: builtins.str
     @property
     def map(self) -> map_geometry_pb2.MapGeometry: ...
     def __init__(
@@ -52,9 +56,11 @@ class MapLoadEvent(google.protobuf.message.Message):
         name: builtins.str | None = ...,
         server: builtins.str | None = ...,
         datetime: builtins.str | None = ...,
+        server_ip: builtins.str | None = ...,
+        protocol_version: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["datetime", b"datetime", "map", b"map", "name", b"name", "server", b"server"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["datetime", b"datetime", "map", b"map", "name", b"name", "server", b"server"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["datetime", b"datetime", "map", b"map", "name", b"name", "protocol_version", b"protocol_version", "server", b"server", "server_ip", b"server_ip"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["datetime", b"datetime", "map", b"map", "name", b"name", "protocol_version", b"protocol_version", "server", b"server", "server_ip", b"server_ip"]) -> None: ...
 
 global___MapLoadEvent = MapLoadEvent
 
@@ -71,7 +77,6 @@ class SetPlayerEvent(google.protobuf.message.Message):
     id: builtins.int
     name: builtins.str
     team: builtins.int
-    """"""
     level: builtins.int
     ace_rank: builtins.int
     vapor: builtins.str

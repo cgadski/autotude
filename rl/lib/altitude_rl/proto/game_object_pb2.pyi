@@ -23,6 +23,7 @@ class _ObjectType:
 
 class _ObjectTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ObjectType.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    UNKNOWN_OBJECT: _ObjectType.ValueType  # 128
     LOOPY: _ObjectType.ValueType  # 0
     """# Planes"""
     BOMBER: _ObjectType.ValueType  # 1
@@ -75,6 +76,7 @@ class _ObjectTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._Enu
 
 class ObjectType(_ObjectType, metaclass=_ObjectTypeEnumTypeWrapper): ...
 
+UNKNOWN_OBJECT: ObjectType.ValueType  # 128
 LOOPY: ObjectType.ValueType  # 0
 """# Planes"""
 BOMBER: ObjectType.ValueType  # 1
@@ -213,6 +215,7 @@ class GameObject(google.protobuf.message.Message):
     BARS_FIELD_NUMBER: builtins.int
     EMP_FOR_FIELD_NUMBER: builtins.int
     ACID_FOR_FIELD_NUMBER: builtins.int
+    STALLED_FIELD_NUMBER: builtins.int
     SPIN_FIELD_NUMBER: builtins.int
     CONTROLLABLE_FIELD_NUMBER: builtins.int
     CONTROLS_FIELD_NUMBER: builtins.int
@@ -261,6 +264,7 @@ class GameObject(google.protobuf.message.Message):
     """ticks remaining"""
     acid_for: builtins.int
     """ticks remaining"""
+    stalled: builtins.bool
     spin: builtins.int
     """degrees"""
     controllable: builtins.bool
@@ -294,6 +298,7 @@ class GameObject(google.protobuf.message.Message):
         bars: builtins.int | None = ...,
         emp_for: builtins.int | None = ...,
         acid_for: builtins.int | None = ...,
+        stalled: builtins.bool | None = ...,
         spin: builtins.int | None = ...,
         controllable: builtins.bool | None = ...,
         controls: builtins.int | None = ...,
@@ -302,7 +307,7 @@ class GameObject(google.protobuf.message.Message):
         bluePerk: global___Perk.ValueType | None = ...,
         greenPerk: global___Perk.ValueType | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["acid_for", b"acid_for", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "bluePerk", b"bluePerk", "charge", b"charge", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "flipX", b"flipX", "flipY", b"flipY", "greenPerk", b"greenPerk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "redPerk", b"redPerk", "scale", b"scale", "spin", b"spin", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["acid_for", b"acid_for", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "bluePerk", b"bluePerk", "charge", b"charge", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "flipX", b"flipX", "flipY", b"flipY", "greenPerk", b"greenPerk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "redPerk", b"redPerk", "scale", b"scale", "spin", b"spin", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["acid_for", b"acid_for", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "bluePerk", b"bluePerk", "charge", b"charge", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "flipX", b"flipX", "flipY", b"flipY", "greenPerk", b"greenPerk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "redPerk", b"redPerk", "scale", b"scale", "spin", b"spin", "stalled", b"stalled", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["acid_for", b"acid_for", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "bluePerk", b"bluePerk", "charge", b"charge", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "flipX", b"flipX", "flipY", b"flipY", "greenPerk", b"greenPerk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "redPerk", b"redPerk", "scale", b"scale", "spin", b"spin", "stalled", b"stalled", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> None: ...
 
 global___GameObject = GameObject

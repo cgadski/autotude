@@ -22,11 +22,17 @@ hx_src/autotude/proto/: $(PROTO_FILES)
 	haxelib run protohx generate hx_src/protohx.json
 	bash hx_src/clean_hxproto.sh
 
+
 # python sourcegen
-rl/altitude_rl/: $(PROTO_FILES)
+rl/lib/altitude_rl/proto/: $(PROTO_FILES)
 	rm -rf $@
 	mkdir -p $@
-	protoc -I=$(PROTO_SRC) --python_out=$@ --mypy_out=$@ $^
+	cd rl/lib; uv sync
+	echo "running protoc..."
+	@PATH=$(PATH):rl/lib/.venv/bin/ \
+	   protoc -I=$(PROTO_SRC) --python_out=$@ --mypy_out=$@ $^
+	find $@ -name "*.py*" -exec \
+	   sed -i 's/^import \([a-zA-Z0-9_]*_pb2\) as/from . import \1 as/g' {} \;
 
 TOOL_SRC = $(wildcard hx_src/autotude/**)
 

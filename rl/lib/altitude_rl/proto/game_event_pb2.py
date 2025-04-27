@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 from . import map_geometry_pb2 as map__geometry__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10game_event.proto\x1a\x12map_geometry.proto\",\n\tChatEvent\x12\x0e\n\x06sender\x18\x01 \x01(\r\x12\x0f\n\x07message\x18\x02 \x01(\t\"Y\n\x0cMapLoadEvent\x12\x19\n\x03map\x18\x01 \x01(\x0b\x32\x0c.MapGeometry\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06server\x18\x03 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x04 \x01(\t\"h\n\x0eSetPlayerEvent\x12\n\n\x02id\x18\x01 \x01(\r\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0c\n\x04team\x18\x03 \x01(\r\x12\r\n\x05level\x18\x04 \x01(\r\x12\x10\n\x08\x61\x63\x65_rank\x18\x05 \x01(\r\x12\r\n\x05vapor\x18\x06 \x01(\t\"\x1f\n\x11RemovePlayerEvent\x12\n\n\x02id\x18\x01 \x01(\r\"\x1f\n\tGoalEvent\x12\x12\n\nwho_scored\x18\x02 \x03(\r\"1\n\tKillEvent\x12\x12\n\nwho_killed\x18\x01 \x01(\r\x12\x10\n\x08who_died\x18\x02 \x01(\r\"L\n\x0b\x44\x61mageEvent\x12\x0e\n\x06source\x18\x01 \x01(\r\x12\x0e\n\x06target\x18\x02 \x01(\r\x12\x0e\n\x06\x61mount\x18\x03 \x01(\r\x12\r\n\x05\x61ngle\x18\x04 \x01(\r\"\x19\n\tMetaEvent\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\t\"\x9b\x02\n\tGameEvent\x12\x1a\n\x04\x63hat\x18\x01 \x01(\x0b\x32\n.ChatEventH\x00\x12!\n\x08map_load\x18\x02 \x01(\x0b\x32\r.MapLoadEventH\x00\x12%\n\nset_player\x18\x03 \x01(\x0b\x32\x0f.SetPlayerEventH\x00\x12+\n\rremove_player\x18\x04 \x01(\x0b\x32\x12.RemovePlayerEventH\x00\x12\x1a\n\x04goal\x18\x06 \x01(\x0b\x32\n.GoalEventH\x00\x12\x1a\n\x04kill\x18\x07 \x01(\x0b\x32\n.KillEventH\x00\x12\x1e\n\x06\x64\x61mage\x18\x08 \x01(\x0b\x32\x0c.DamageEventH\x00\x12\x1a\n\x04meta\x18\t \x01(\x0b\x32\n.MetaEventH\x00\x42\x07\n\x05\x65ventB\x1b\n\x17\x65m.altitude.game.protosP\x01')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10game_event.proto\x1a\x12map_geometry.proto\",\n\tChatEvent\x12\x0e\n\x06sender\x18\x01 \x01(\r\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x86\x01\n\x0cMapLoadEvent\x12\x19\n\x03map\x18\x01 \x01(\x0b\x32\x0c.MapGeometry\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06server\x18\x03 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x04 \x01(\t\x12\x11\n\tserver_ip\x18\x05 \x01(\t\x12\x18\n\x10protocol_version\x18\x06 \x01(\t\"h\n\x0eSetPlayerEvent\x12\n\n\x02id\x18\x01 \x01(\r\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0c\n\x04team\x18\x03 \x01(\r\x12\r\n\x05level\x18\x04 \x01(\r\x12\x10\n\x08\x61\x63\x65_rank\x18\x05 \x01(\r\x12\r\n\x05vapor\x18\x06 \x01(\t\"\x1f\n\x11RemovePlayerEvent\x12\n\n\x02id\x18\x01 \x01(\r\"\x1f\n\tGoalEvent\x12\x12\n\nwho_scored\x18\x02 \x03(\r\"1\n\tKillEvent\x12\x12\n\nwho_killed\x18\x01 \x01(\r\x12\x10\n\x08who_died\x18\x02 \x01(\r\"L\n\x0b\x44\x61mageEvent\x12\x0e\n\x06source\x18\x01 \x01(\r\x12\x0e\n\x06target\x18\x02 \x01(\r\x12\x0e\n\x06\x61mount\x18\x03 \x01(\r\x12\r\n\x05\x61ngle\x18\x04 \x01(\r\"\x19\n\tMetaEvent\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\t\"\x9b\x02\n\tGameEvent\x12\x1a\n\x04\x63hat\x18\x01 \x01(\x0b\x32\n.ChatEventH\x00\x12!\n\x08map_load\x18\x02 \x01(\x0b\x32\r.MapLoadEventH\x00\x12%\n\nset_player\x18\x03 \x01(\x0b\x32\x0f.SetPlayerEventH\x00\x12+\n\rremove_player\x18\x04 \x01(\x0b\x32\x12.RemovePlayerEventH\x00\x12\x1a\n\x04goal\x18\x06 \x01(\x0b\x32\n.GoalEventH\x00\x12\x1a\n\x04kill\x18\x07 \x01(\x0b\x32\n.KillEventH\x00\x12\x1e\n\x06\x64\x61mage\x18\x08 \x01(\x0b\x32\x0c.DamageEventH\x00\x12\x1a\n\x04meta\x18\t \x01(\x0b\x32\n.MetaEventH\x00\x42\x07\n\x05\x65ventB\x1b\n\x17\x65m.altitude.game.protosP\x01')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,20 +35,20 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._serialized_options = b'\n\027em.altitude.game.protosP\001'
   _globals['_CHATEVENT']._serialized_start=40
   _globals['_CHATEVENT']._serialized_end=84
-  _globals['_MAPLOADEVENT']._serialized_start=86
-  _globals['_MAPLOADEVENT']._serialized_end=175
-  _globals['_SETPLAYEREVENT']._serialized_start=177
-  _globals['_SETPLAYEREVENT']._serialized_end=281
-  _globals['_REMOVEPLAYEREVENT']._serialized_start=283
-  _globals['_REMOVEPLAYEREVENT']._serialized_end=314
-  _globals['_GOALEVENT']._serialized_start=316
-  _globals['_GOALEVENT']._serialized_end=347
-  _globals['_KILLEVENT']._serialized_start=349
-  _globals['_KILLEVENT']._serialized_end=398
-  _globals['_DAMAGEEVENT']._serialized_start=400
-  _globals['_DAMAGEEVENT']._serialized_end=476
-  _globals['_METAEVENT']._serialized_start=478
-  _globals['_METAEVENT']._serialized_end=503
-  _globals['_GAMEEVENT']._serialized_start=506
-  _globals['_GAMEEVENT']._serialized_end=789
+  _globals['_MAPLOADEVENT']._serialized_start=87
+  _globals['_MAPLOADEVENT']._serialized_end=221
+  _globals['_SETPLAYEREVENT']._serialized_start=223
+  _globals['_SETPLAYEREVENT']._serialized_end=327
+  _globals['_REMOVEPLAYEREVENT']._serialized_start=329
+  _globals['_REMOVEPLAYEREVENT']._serialized_end=360
+  _globals['_GOALEVENT']._serialized_start=362
+  _globals['_GOALEVENT']._serialized_end=393
+  _globals['_KILLEVENT']._serialized_start=395
+  _globals['_KILLEVENT']._serialized_end=444
+  _globals['_DAMAGEEVENT']._serialized_start=446
+  _globals['_DAMAGEEVENT']._serialized_end=522
+  _globals['_METAEVENT']._serialized_start=524
+  _globals['_METAEVENT']._serialized_end=549
+  _globals['_GAMEEVENT']._serialized_start=552
+  _globals['_GAMEEVENT']._serialized_end=835
 # @@protoc_insertion_point(module_scope)
