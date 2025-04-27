@@ -28,7 +28,8 @@ Cargo.lock
 /bin/
 /hx_src/out/
 /java_gen/
-/java_dist/
+/java_dist/*
+!/java_dist/botclient.Dockerfile
 /hx_src/autotude/proto/
 /build/
 .DS_STORE
