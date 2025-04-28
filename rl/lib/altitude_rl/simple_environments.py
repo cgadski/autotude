@@ -59,4 +59,4 @@ class SoloChannelparkEnv:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self._server.__exit__()
+        self._server.__exit__(exc_type, exc_val, exc_tb)

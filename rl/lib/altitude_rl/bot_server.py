@@ -101,7 +101,10 @@ class BotServer:
             if event.map_load is not None:
                 self.map_geometry = event.map_load.map
 
-    def __exit__(self):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
         print("Shutting down server")
         cmd = Cmd()
         cmd.shutdown = True
