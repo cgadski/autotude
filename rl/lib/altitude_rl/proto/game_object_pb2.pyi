@@ -4,7 +4,9 @@ isort:skip_file
 """
 
 import builtins
+import collections.abc
 import google.protobuf.descriptor
+import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
 import sys
@@ -223,6 +225,7 @@ class GameObject(google.protobuf.message.Message):
     REDPERK_FIELD_NUMBER: builtins.int
     BLUEPERK_FIELD_NUMBER: builtins.int
     GREENPERK_FIELD_NUMBER: builtins.int
+    CLEAR_DISTANCES_FIELD_NUMBER: builtins.int
     uid: builtins.int
     type: global___ObjectType.ValueType
     owner: builtins.int
@@ -275,6 +278,10 @@ class GameObject(google.protobuf.message.Message):
     redPerk: global___Perk.ValueType
     bluePerk: global___Perk.ValueType
     greenPerk: global___Perk.ValueType
+    @property
+    def clear_distances(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]:
+        """# Special bot features"""
+
     def __init__(
         self,
         *,
@@ -306,8 +313,9 @@ class GameObject(google.protobuf.message.Message):
         redPerk: global___Perk.ValueType | None = ...,
         bluePerk: global___Perk.ValueType | None = ...,
         greenPerk: global___Perk.ValueType | None = ...,
+        clear_distances: collections.abc.Iterable[builtins.int] | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["acid_for", b"acid_for", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "bluePerk", b"bluePerk", "charge", b"charge", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "flipX", b"flipX", "flipY", b"flipY", "greenPerk", b"greenPerk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "redPerk", b"redPerk", "scale", b"scale", "spin", b"spin", "stalled", b"stalled", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["acid_for", b"acid_for", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "bluePerk", b"bluePerk", "charge", b"charge", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "flipX", b"flipX", "flipY", b"flipY", "greenPerk", b"greenPerk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "redPerk", b"redPerk", "scale", b"scale", "spin", b"spin", "stalled", b"stalled", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["acid_for", b"acid_for", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "bluePerk", b"bluePerk", "charge", b"charge", "clear_distances", b"clear_distances", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "flipX", b"flipX", "flipY", b"flipY", "greenPerk", b"greenPerk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "redPerk", b"redPerk", "scale", b"scale", "spin", b"spin", "stalled", b"stalled", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> None: ...
 
 global___GameObject = GameObject

@@ -139,4 +139,7 @@ message GameObject {
     optional Perk redPerk = 50;
     optional Perk bluePerk = 51;
     optional Perk greenPerk = 52;
+
+    // # Special bot features
+    repeated uint32 clear_distances = 60;
 }
