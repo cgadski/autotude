@@ -34,5 +34,5 @@ services:
     environment:
       JAVA_OPTS: -Xmx512m
       ALTI_HOME: /app
-      BOT_CONFIG: /app/client_configs/spectate_ladder_test.xml
-      <<: *db-env
+      BOT_CONFIG: /app/client_configs/test.xml
+      # <<: *db-env
