@@ -81,7 +81,7 @@ class PDRadarController:
 N_STEPS = 60 * 60
 pos = np.zeros((N_STEPS, 2))
 
-with arl.BotServer(config) as server:
+with arl.BotServer(make_config()) as server:
     controller = PDRadarController()
     my_plane = None
     
@@ -96,9 +96,4 @@ with arl.BotServer(config) as server:
 
 # %%
 plt.scatter(pos[:, 0], pos[:, 1], s=1)
-
-# %%
-plt.scatter(obs[:, 0], obs[:, 1], s=1, alpha=0.2)
-negative_reward = rewards < 0
-plt.scatter(obs[negative_reward, 0], obs[negative_reward, 1], s=2)
 plt.show()
