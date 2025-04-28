@@ -67,7 +67,7 @@ class PDRadarController:
         diff = angle - self.last_angle
         self.last_angle = angle
 
-        pd_response = prop # + 3 * diff
+        pd_response = prop + 3 * diff
         TOL = 3
         controls = 0
         if pd_response > TOL:
