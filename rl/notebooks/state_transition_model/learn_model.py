@@ -9,7 +9,7 @@ import argparse
 from pprint import pprint
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--epochs", type=int, default=3)
+parser.add_argument("--epochs", type=int, default=1)
 parser.add_argument("--lr", type=float, default=1e-3)
 parser.add_argument("--d", type=int, default=128)
 args = parser.parse_args()
@@ -23,11 +23,12 @@ dataset = t.load("data/ffa_channelpark.pt", weights_only=False)
 
 
 d = args.d
+window= 50
 model = t.nn.Sequential(
-    arl.networks.MultiObsEncoder(d=d),
+    arl.networks.MultiObsEncoder(d=d,window=window),
     t.nn.Linear(d, d),
     t.nn.ReLU(),
-    t.nn.Linear(d, 3),
+    t.nn.Linear(d, 4),
     #t.nn.Flatten(start_dim=0),
 ).to(t.float32)
 
@@ -40,8 +41,12 @@ for epoch_num in range(args.epochs):
     print(f"Epoch {epoch_num}")
     for i, (x, y) in enumerate(tqdm(train_loader)):
         x=x.float()
-        y=x[1:-28,:3]
-        train_loss = loss_fn(y, model(x))
+        y=x[window:,:3]
+        angles =  10 * y[:, 2] * t.pi / 180
+        cosi = t.stack([t.cos(angles), t.sin(angles)], dim=1)
+        new_y=t.cat((y[:, :2], cosi), dim=1)
+
+        train_loss = loss_fn(new_y, model(x)[:-1])
         opt.zero_grad()
         train_loss.backward()
         opt.step()

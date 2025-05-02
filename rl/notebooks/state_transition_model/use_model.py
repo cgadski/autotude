@@ -10,11 +10,12 @@ from pprint import pprint
 import matplotlib.pyplot as plt
 
 d = 128
+window = 50
 model = t.nn.Sequential(
-    arl.networks.MultiObsEncoder(d=d),
+    arl.networks.MultiObsEncoder(d=d,window=window),
     t.nn.Linear(d, d),
     t.nn.ReLU(),
-    t.nn.Linear(d, 3),
+    t.nn.Linear(d, 4),
     #t.nn.Flatten(start_dim=0),
 ).to(t.float32)
 
@@ -27,7 +28,6 @@ def to_torch(x):
     return t.tensor(x).float()
 
 def show(obs):    
-    
     plt.scatter(obs[:, 0], obs[:, 1], s=1)  
     plt.xlim(0, 1)  
     plt.ylim(0, 1) 
@@ -35,32 +35,24 @@ def show(obs):
 
 
 
-# init_obs = t.stack(
-#     (t.linspace(0,1,100),
-#      t.full((100,),0.5),
-#      t.repeat_interleave(t.tensor([0.0,1800]),repeats=50)),
-# dim=1)
-init_obs = t.stack(
-    (t.linspace(0,1,100),
-     t.full((100,),0.5),
-     t.repeat_interleave(t.tensor([0.0,1800]),repeats=50)),
-dim=1)
-obs = t.zeros((100*1030,3))
-obs[0:30] = init_obs[0].repeat(30,1) 
-ob = init_obs[-1]
-out = init_obs[-1]
-input = t.zeros((30,5))
-for i in tqdm(range(100*1000)):
-    obs[i+30] = out[:] 
-    input[:-1,:3] = obs[-29:]
-    if i%1000 == 0:
-        input[-1,:3] = init_obs[i//1000]
-    else:
-        input[-1,:3] = out[0]
-    input[:,3:] = t.zeros(2).repeat(30,1)
+n_obs = 1000000
+obs = t.zeros((n_obs,3))
+policy = arl.TurningPolicy()
+with arl.SoloChannelparkEnv() as env:
+    for i in tqdm(range(50)):
+        action = policy.act()
+        ob, reward = env.step(action)
+        obs[i] = to_torch(ob)
+angles =  10 * obs[:, 2] * t.pi / 180
+cosi = t.stack([t.cos(angles), t.sin(angles)], dim=1)
+obs = t.cat((obs[:, :2], cosi,obs[:,3:]), dim=1)
+out = obs[window-1][None,:]
+input = t.zeros(window,5)
+for i in tqdm(range(n_obs-window)):
+    obs[i+window-1] = out[:]
+    input[:,:2] = obs[i:i+window,:2]
+    input[:,2] =  t.atan2( obs[i:i+window,3],obs[i:i+window,2])*18/t.pi
+    input[:,3:] = t.zeros((window,2))
     out = model(input)
-    print(out)
-    
-    
-    
+      
 show(obs[:,:2].detach().numpy())

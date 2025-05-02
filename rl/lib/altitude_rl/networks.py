@@ -90,14 +90,17 @@ class ObsEncoderWithEnemy(t.nn.Module):
     
 class MultiObsEncoder(t.nn.Module):
 
-    def __init__(self,  d=128):
+    def __init__(self,  d=128, window = 30):
         super().__init__()
-        self.conv = t.nn.Conv1d(in_channels=d, out_channels=d, kernel_size=30, stride=1)
-        self.obs_encoder = ObsEncoder(d=d)
+        self.linear = t.nn.Linear(window * 6, d)
+        self.window = window
 
     def forward(self, obs):
-        encoded_obs = self.obs_encoder(obs).T.unsqueeze(0)
-        return self.conv(encoded_obs).transpose(1,2)
+        angles =  10 * obs[:, 2] * t.pi / 180
+        cosi = t.stack([t.cos(angles), t.sin(angles)], dim=1)
+        obs = t.cat((obs[:, :2], cosi,obs[:,3:]), dim=1)
+        obs = obs.unfold(dimension=0, size=self.window, step=1).flatten(start_dim=1,end_dim=2)  
+        return self.linear(obs)
 
 
 
