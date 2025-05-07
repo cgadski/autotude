@@ -29,8 +29,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # %%
-SAMPLES = 30 * 60 * 60 * 24  # 24 hours
-obs = np.zeros((SAMPLES, 3))
+
+
+n_obs = 3 # Solo:3  Duo:5
+
+SAMPLES = 30 * 60 * 60 * 24 # 24 hours
+obs = np.zeros((SAMPLES, n_obs))
+
 acts = np.zeros((SAMPLES, 7), dtype=np.int8)
 rewards = np.zeros((SAMPLES,))
 policy = arl.TurningPolicy()
@@ -66,12 +71,12 @@ def show_to_go(obs, rewards, to_go, lim=5000, offset=0):
     ax2.plot(np.arange(lim), to_go)
 
     plt.tight_layout()
-    plt.savefig("data/use.png", dpi=300, bbox_inches="tight")
+    plt.savefig("data/collect.png", dpi=300, bbox_inches="tight")
 
 
 # %%
 to_go = get_to_go(rewards, gamma=0.95)
-show_to_go(obs, rewards, to_go, lim=30 * 60)
+show_to_go(obs, rewards, to_go)
 
 # %%
 import torch as t

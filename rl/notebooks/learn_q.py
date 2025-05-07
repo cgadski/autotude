@@ -21,17 +21,18 @@ wandb.init(
 dataset = t.load("data/ffa_channelpark.pt", weights_only=False)
 
 
-
+window_size = 30
 d = args.d
+d = 150
 model = t.nn.Sequential(
-    arl.networks.ObsEncoder(velocity_frame_window=1,d=d),
+    arl.networks.MultiObsEncoder(d=d),
     t.nn.Linear(d, d),
     t.nn.ReLU(),
     t.nn.Linear(d, 1),
     t.nn.Flatten(start_dim=0),
 ).to(t.float32)
 
-train_loader = D.DataLoader(dataset, batch_size=1024, shuffle=True)
+train_loader = D.DataLoader(dataset, batch_size=1024, shuffle=False)
 opt = t.optim.SGD(lr=args.lr, params=model.parameters())
 loss_fn = t.nn.MSELoss()
 
