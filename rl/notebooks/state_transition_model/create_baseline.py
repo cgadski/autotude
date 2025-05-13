@@ -12,7 +12,7 @@ wandb.init(
 dataset = t.load("data/ffa_channelpark.pt", weights_only=False)
 
 loss_fn = t.nn.MSELoss()
-window = 50
+window = 1
 train_loader = D.DataLoader(dataset, batch_size=1024, shuffle=False)
 for i, (x, r) in enumerate(tqdm(train_loader)):
         x=x.float()
