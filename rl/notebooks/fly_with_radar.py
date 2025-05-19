@@ -1,18 +1,3 @@
-# ---
-# jupyter:
-#   jupytext:
-#     formats: py:percent
-#     text_representation:
-#       extension: .py
-#       format_name: percent
-#       format_version: '1.3'
-#       jupytext_version: 1.16.7
-#   kernelspec:
-#     display_name: Python 3 (ipykernel)
-#     language: python
-#     name: python3
-# ---
-
 # %%
 # %load_ext autoreload
 # %autoreload 2
@@ -23,9 +8,6 @@ from tqdm import tqdm
 
 import numpy as np
 import matplotlib.pyplot as plt
-
-# %%
-np.arange(0, 360, 2)
 
 # %%
 from altitude_rl.proto.game_object_pb2 import GameObject
@@ -51,7 +33,7 @@ class PDRadarController:
         clears = np.array(o.clear_distances)
         costs = 1 / (clears ** 2 + 0.1) + 1e-8 * np.abs(wrap_180(options - current))
         return options[np.argmin(costs)]
-    
+
     def control(self, o:GameObject):
         if o is None:
             self.last_angle = None
@@ -68,23 +50,23 @@ class PDRadarController:
         self.last_angle = angle
 
         pd_response = prop + 3 * diff
-        TOL = 3
+        TOL = 0.6
         controls = 0
         if pd_response > TOL:
             controls = 2
         elif pd_response < -TOL:
             controls = 1
         self.cmd.inputs[0].controls = controls + 4
-            
+
         return self.cmd
-        
+
 N_STEPS = 60 * 60
 pos = np.zeros((N_STEPS, 2))
 
 with arl.BotServer(make_config()) as server:
     controller = PDRadarController()
     my_plane = None
-    
+
     for i in range(N_STEPS):
         up = server.update(controller.control(my_plane))
         angle = 0

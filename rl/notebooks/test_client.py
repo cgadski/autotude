@@ -11,7 +11,7 @@ def make_config():
     config = arl.ClientConfig(
         user="me@cgad.ski",
         pw=pw,
-        server="Official #3 - TBD - maxPing=400"
+        server="Official #4 - FFA+TBD+Ball - maxPing=400"
     )
     config.set(port=27281)
     return config
@@ -51,7 +51,7 @@ class ControlledClient(OnlineClient):
             controls = 2
         elif pd_response < -TOL:
             controls = 1
-        return controls
+        return controls + 16
 
     def on_update(self, update):
         my_plane = None
