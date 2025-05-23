@@ -1,7 +1,9 @@
 use alti_reader::{
+    listener::PlayerId,
     make_pb,
     proto::{game_event::Event, GameEvent, ObjectType, Update},
     replay::{read_replay_file, ReplayListener},
+    IndexingListener,
 };
 use anyhow::{anyhow, Result};
 use ndarray::Array1;
@@ -12,9 +14,11 @@ use std::io::{self, BufRead};
 use std::path::PathBuf;
 
 struct BallDumpListener {
-    ball_active: Vec<i32>, // Using i32 instead of bool for NumPy compatibility
+    ball_active: Vec<i32>,
     ball_pos_x: Vec<i32>,
     ball_pos_y: Vec<i32>,
+    is_pro: Vec<i32>,
+    idx: IndexingListener,
 }
 
 impl BallDumpListener {
@@ -23,34 +27,58 @@ impl BallDumpListener {
             ball_active: Vec::new(),
             ball_pos_x: Vec::new(),
             ball_pos_y: Vec::new(),
+            is_pro: Vec::new(),
+            idx: IndexingListener::new(),
         }
     }
 }
 
 impl ReplayListener for BallDumpListener {
     fn on_update(&mut self, update: &Update) -> Result<()> {
+        self.idx.on_update(update)?;
+
         let mut found_ball = false;
+        let mut is_pro = false;
 
         for obj in &update.objects {
             if obj.r#type() == ObjectType::Ball {
                 found_ball = true;
-                self.ball_active.push(1);
+                self.ball_active.push(0);
                 self.ball_pos_x.push(obj.position_x() as i32);
                 self.ball_pos_y.push(obj.position_y() as i32);
+                break;
+            }
+
+            if obj.powerup() == ObjectType::Ball {
+                found_ball = true;
+                self.ball_active.push(obj.team() as i32);
+                self.ball_pos_x.push(obj.position_x() as i32);
+                self.ball_pos_y.push(obj.position_y() as i32);
+
+                let id = PlayerId(obj.owner());
+                let key = self.idx.get_player_key(id)?;
+                let nick: &String = &self.idx.state.player_states.get(&key).unwrap().nick;
+                if nick == "XX2" || nick == "> <8).G(u)ss [-fu] <" {
+                    is_pro = true;
+                }
                 break;
             }
         }
 
         if !found_ball {
-            self.ball_active.push(0);
+            self.ball_active.push(-1);
             self.ball_pos_x.push(0);
             self.ball_pos_y.push(0);
         }
+
+        self.is_pro.push(if is_pro { 1 } else { 0 });
 
         Ok(())
     }
 
     fn on_event(&mut self, event: &GameEvent) -> Result<()> {
+        self.idx.on_event(event)?;
+
         match &event.event {
             Some(Event::Goal(_)) => {}
             _ => {}
@@ -59,23 +87,15 @@ impl ReplayListener for BallDumpListener {
     }
 }
 
-fn save_to_numpy(
-    all_ball_active: Vec<i32>,
-    all_ball_pos_x: Vec<i32>,
-    all_ball_pos_y: Vec<i32>,
-    output_path: &str,
-) -> Result<()> {
-    let ball_active_array = Array1::from(all_ball_active);
-    let ball_pos_x_array = Array1::from(all_ball_pos_x);
-    let ball_pos_y_array = Array1::from(all_ball_pos_y);
-
+fn save_to_numpy(listener: BallDumpListener, output_path: &str) -> Result<()> {
     let path = std::path::Path::new(output_path);
     let file = File::create(path).map_err(|e| anyhow!("Failed to create file: {}", e))?;
     let mut npz = NpzWriter::new(file);
 
-    npz.add_array("ball_active", &ball_active_array)?;
-    npz.add_array("ball_pos_x", &ball_pos_x_array)?;
-    npz.add_array("ball_pos_y", &ball_pos_y_array)?;
+    npz.add_array("ball_active", &Array1::from(listener.ball_active))?;
+    npz.add_array("ball_pos_x", &Array1::from(listener.ball_pos_x))?;
+    npz.add_array("ball_pos_y", &Array1::from(listener.ball_pos_y))?;
+    npz.add_array("is_pro", &Array1::from(listener.is_pro))?;
 
     npz.finish()?;
 
@@ -90,10 +110,7 @@ fn main() -> Result<()> {
 
     let stdin = io::stdin();
 
-    // Arrays to store all ball data
-    let mut all_ball_active = Vec::new();
-    let mut all_ball_pos_x = Vec::new();
-    let mut all_ball_pos_y = Vec::new();
+    let mut agg_listener = BallDumpListener::new();
 
     let lines: Vec<String> = stdin
         .lock()
@@ -114,9 +131,10 @@ fn main() -> Result<()> {
         match read_replay_file(&path, &mut listener) {
             Ok(()) => {
                 // Collect data from this replay
-                all_ball_active.extend(listener.ball_active);
-                all_ball_pos_x.extend(listener.ball_pos_x);
-                all_ball_pos_y.extend(listener.ball_pos_y);
+                agg_listener.ball_active.extend(listener.ball_active);
+                agg_listener.ball_pos_x.extend(listener.ball_pos_x);
+                agg_listener.ball_pos_y.extend(listener.ball_pos_y);
+                agg_listener.is_pro.extend(listener.is_pro);
 
                 processed_count += 1;
                 pb.inc(1);
@@ -131,16 +149,8 @@ fn main() -> Result<()> {
 
     pb.finish_with_message(format!("Complete. Processed {} replays", processed_count));
 
-    // Save data to numpy file
-    if !all_ball_active.is_empty() {
-        println!("Saving ball data to numpy file...");
-        save_to_numpy(
-            all_ball_active,
-            all_ball_pos_x,
-            all_ball_pos_y,
-            "ball_data.npz",
-        )?;
-    }
+    println!("Saving ball data to numpy file...");
+    save_to_numpy(agg_listener, "ball_data.npz")?;
 
     Ok(())
 }
