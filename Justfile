@@ -52,3 +52,9 @@ dist:
 		java_dist/BotServer* \
 		hx_src/out/viewer.js
 	rsync -v --progress dist.tar root@cgad.ski:/www/autotude-dist.tar
+
+
+# Download recordings from altistats.com
+dl:
+	mkdir -p ${REPLAY_DIR}
+	rsync --progress -av root@altistats.com:/root/alti_home/recordings/ ${REPLAY_DIR}
