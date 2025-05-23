@@ -20,7 +20,7 @@ deploy:
 
 dev:
 	docker context use default
-	docker compose -f docker/dev.yml up --remove-orphans --build
+	docker compose -f dev.yml up --remove-orphans --build
 
 update-views:
 	cat sql/views.sql | psql

@@ -35,4 +35,4 @@ services:
       JAVA_OPTS: -Xmx512m
       ALTI_HOME: /app
       BOT_CONFIG: /app/client_configs/test.xml
-      # <<: *db-env
+      <<: *db-env

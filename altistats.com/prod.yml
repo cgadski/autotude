@@ -11,8 +11,6 @@ x-bot-base: &bot-base
   image: magneticduck/botclient:latest
   deploy:
     mode: global
-  environment:
-    JAVA_OPTS: -Xmx512m
   volumes:
     - /root/alti_home:/app
   restart: unless-stopped
@@ -39,7 +37,9 @@ services:
     <<: *bot-base
     environment:
       BOT_CONFIG: /app/client_configs/get_listings.xml
+      ALTI_HOME: /app
       <<: *db-env
+
     depends_on:
       - pg
 
@@ -47,11 +47,15 @@ services:
     <<: *bot-base
     environment:
       BOT_CONFIG: /app/client_configs/spectate_ladder_1.xml
+      JAVA_OPTS: -Xmx512m
+      ALTI_HOME: /app
 
   spec-bot-2:
     <<: *bot-base
     environment:
       BOT_CONFIG: /app/client_configs/spectate_ladder_2.xml
+      JAVA_OPTS: -Xmx512m
+      ALTI_HOME: /app
 
   pg:
     image: postgres:15
