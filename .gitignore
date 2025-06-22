@@ -51,3 +51,6 @@ __pycache__
 !.aiderignore
 recordings
 rust_src/ball_data.npz
+rust_src/all_chat.db
+rust_src/chat
+rust_src/chat_messages.db

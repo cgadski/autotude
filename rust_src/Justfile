@@ -1,0 +1,2 @@
+show-chat db="chat_messages.db":
+    sqlite3 {{db}} < sql/show_chat.sql
