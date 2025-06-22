@@ -15,6 +15,10 @@ path = "bin/index-lite.rs"
 name = "dump-ball"
 path = "bin/dump-ball.rs"
 
+[[bin]]
+name = "dump-chat"
+path = "bin/dump-chat.rs"
+
 [dependencies]
 prost = "0.12"
 prost-types = "0.12"

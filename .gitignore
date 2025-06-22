@@ -50,3 +50,4 @@ __pycache__
 .aider.input.history
 !.aiderignore
 recordings
+rust_src/ball_data.npz
