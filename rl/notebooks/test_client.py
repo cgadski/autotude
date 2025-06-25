@@ -65,28 +65,3 @@ class ControlledClient(OnlineClient):
         return cmd
 
 ControlledClient().poll()
-
-# def wrap_180(angle):
-#     return (angle + 180) % 360 - 180
-
-# class PDRadarController:
-#     def __init__(self):
-
-#     def get_target(self, o):
-#         current = o.angle / 10
-#         options = current + np.arange(0, 360, 2)
-#         clears = np.array(o.clear_distances)
-#         costs = 1 / (clears ** 2 + 0.1) + 1e-8 * np.abs(wrap_180(options - current))
-#         return options[np.argmin(costs)]
-
-
-# with arl.BotServer(make_config()) as server:
-#     controller = PDRadarController()
-#     my_plane = None
-
-#     for i in range(N_STEPS):
-#         up = server.update(controller.control(my_plane))
-#         angle = 0
-#         for o in up.objects:
-#             if o.type < 5:
-#                 my_plane = o
