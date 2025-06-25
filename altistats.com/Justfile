@@ -10,11 +10,6 @@ index:
 update-views:
 	cat sql/views.sql | psql
 
-# Deploy altistats.com with docker compose
-deploy:
-	docker --host "ssh://root@altistats.com" \
-		compose -f docker/prod.yml up -d --remove-orphans
-
 dev:
 	docker context use default
 	docker compose -f dev.yml up --remove-orphans --build
