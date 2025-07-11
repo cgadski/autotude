@@ -1,2 +1,5 @@
-show-chat db="chat_messages.db":
+dump-chat:
+	cargo run --release --bin dump-chat -- --db chat.db
+
+show-chat db="chat.db":
     sqlite3 {{db}} < sql/show_chat.sql

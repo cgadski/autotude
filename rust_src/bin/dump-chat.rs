@@ -43,7 +43,6 @@ fn main() -> Result<()> {
         eprintln!("Found {} replay files", paths.len());
     }
 
-    // Create/open SQLite database
     let conn = sqlite::open(&args.db)?;
 
     conn.execute(
@@ -67,6 +66,48 @@ fn main() -> Result<()> {
     conn.execute("CREATE INDEX IF NOT EXISTS idx_vapor ON chat_messages(vapor)")?;
 
     eprintln!("Database created/opened: {}", args.db);
+
+    // Create temporary table with all replay stems
+    conn.execute("CREATE TEMP TABLE all_replays (replay_stem TEXT PRIMARY KEY)")?;
+
+    let mut insert_stmt =
+        conn.prepare("INSERT OR IGNORE INTO all_replays (replay_stem) VALUES (?)")?;
+    for path in &paths {
+        let replay_stem = get_stem(path)?;
+        insert_stmt.bind((1, replay_stem.as_str()))?;
+        while State::Done != insert_stmt.next()? {}
+        insert_stmt.reset()?;
+    }
+
+    // Query to find replays that don't have chat messages yet
+    let mut query = conn.prepare(
+        "SELECT ar.replay_stem
+         FROM all_replays ar
+         LEFT JOIN (SELECT DISTINCT replay_stem FROM chat_messages) cm
+         ON ar.replay_stem = cm.replay_stem
+         WHERE cm.replay_stem IS NULL",
+    )?;
+
+    let mut paths_to_process = Vec::new();
+    while let State::Row = query.next()? {
+        let stem: String = query.read(0)?;
+        // Find the path that corresponds to this stem
+        for path in &paths {
+            if get_stem(path)? == stem {
+                paths_to_process.push(path.clone());
+                break;
+            }
+        }
+    }
+
+    let already_processed = paths.len() - paths_to_process.len();
+    eprintln!(
+        "Found {} replays to process ({} already have chat messages)",
+        paths_to_process.len(),
+        already_processed
+    );
+
+    paths = paths_to_process;
 
     let pb = make_pb(paths.len());
     let mut processed_count = 0;
