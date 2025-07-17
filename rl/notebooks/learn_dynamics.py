@@ -6,9 +6,14 @@ import torch as t
 
 # %%
 data = t.load("data/channelpark.pt")
-act = data["act"][1:]
-ob = data["ob"][1:]
-reward = data["reward"][:-2]
+act = data["act"]
+ob = data["ob"]
+reward = data["reward"]
+episode = -reward.cumsum(0, dtype=t.int)
+
+# %%
+plt.scatter(ob[:, 0], ob[:, 1], s=0.01)
+plt.show()
 
 # %%
 d = t.diff(ob[:, :2], dim=0)
