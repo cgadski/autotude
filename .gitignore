@@ -1,4 +1,5 @@
 dist.tar
+recordings.tar
 
 # environment variables
 /etc/secrets.env

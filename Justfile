@@ -54,6 +54,11 @@ dist:
 	rsync -v --progress dist.tar root@cgad.ski:/www/autotude-dist.tar
 
 
+# Package and upload recordings
+dist-recordings:
+	tar -cf recordings.tar recordings/*
+	rsync -v --progress recordings.tar root@cgad.ski:/www/recordings.tar
+
 # Download recordings from altistats.com
 dl:
 	mkdir -p ${REPLAY_DIR}

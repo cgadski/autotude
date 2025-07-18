@@ -16,8 +16,8 @@ name = "dump-ball"
 path = "bin/dump-ball.rs"
 
 [[bin]]
-name = "dump-chat"
-path = "bin/dump-chat.rs"
+name = "dump-meta"
+path = "bin/dump-meta.rs"
 
 [dependencies]
 prost = "0.12"
