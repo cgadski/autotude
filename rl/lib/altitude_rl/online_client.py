@@ -9,7 +9,7 @@ import stat
 import subprocess
 import uuid
 
-from .proto.command_pb2 import Cmd
+from .proto.command_pb2 import ClientCmd
 from .proto.map_geometry_pb2 import MapGeometry
 from .proto.update_pb2 import Update
 from .client_config import ClientConfig
@@ -43,8 +43,6 @@ class OnlineClient:
         with open(log_path, "w") as log:
             self.process = subprocess.Popen(
                 [client_exec],
-                stdout=log,
-                stderr=log,
                 env={
                     **os.environ,
                     "ALTI_HOME": self.alti_home,
@@ -53,27 +51,35 @@ class OnlineClient:
                 },
             )
 
-        print(f"Server started with PID {self.process.pid}")
+        print(f"Client started with PID {self.process.pid}")
         with open(self.runtime_path / "pid", "w") as pid_file:
             pid_file.write(str(self.process.pid))
 
         self.command_pipe = open(command_path, "wb")
         self.update_pipe = open(update_path, "rb")
 
-        print("Now polling client")
+        print("Pipes open, now polling client")
 
     def poll(self):
-        print("")
+        ct = 0
         while True:
+            if self.process.poll() is not None:
+                print(f"Client process exited with code {self.process.returncode}")
+                raise RuntimeError(f"Client process died with return code {self.process.returncode}")
 
-    def on_update(self, update: Update) -> Cmd:
-        return Cmd()
+            update = self._read_update()
+            for event in update.events:
+                if event.map_load is not None:
+                    self.map_geometry = event.map_load.map
+            self._write_command(self.on_update(update))
+            ct += 1
+            if ct % 100 == 0:
+                print(f"Client running: processed {ct} updates")
 
-    def update(self, cmd: Cmd) -> Update:
-        self._write_command(cmd)
-        return self._read_update()
+    def on_update(self, update: Update) -> ClientCmd:
+        return ClientCmd()
 
-    def _write_command(self, cmd: Cmd):
+    def _write_command(self, cmd: ClientCmd):
         serialized = cmd.SerializeToString()
         self.command_pipe.write(_VarintBytes(len(serialized)))
         self.command_pipe.write(serialized)
@@ -97,8 +103,3 @@ class OnlineClient:
         update = Update()
         update.ParseFromString(message_buf)
         return update
-
-    def read_map_load(self, up: Update):
-        for event in up.events:
-            if event.map_load is not None:
-                self.map_geometry = event.map_load.map

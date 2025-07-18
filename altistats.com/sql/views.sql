@@ -31,12 +31,20 @@ NATURAL JOIN no_bots
 WHERE map != 'lobby_4ball'
 AND n_players = 8;
 
+CREATE VIEW games_per_player AS
+SELECT vapor,
+COUNT(*) FILTER (WHERE team > 2) as games
+FROM players
+NATURAL JOIN "4ball_games"
+GROUP BY vapor;
+
 DROP MATERIALIZED VIEW IF EXISTS "mv_totals" CASCADE;
 CREATE MATERIALIZED VIEW mv_totals AS
 WITH
 vapor_totals AS (
     SELECT count(distinct vapor) AS n_vapors
-    FROM players
+    FROM games_per_player
+    WHERE games > 0
 ),
 replay_totals AS (
     SELECT count(*) AS n_replays,

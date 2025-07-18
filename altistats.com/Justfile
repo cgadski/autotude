@@ -1,29 +1,18 @@
 set dotenv-load
 
-# Deployment
-
-# Download recordings
-dl:
-	rsync --progress -av root@altistats.com:/root/alti_home/recordings/ ${ALTI_HOME}/recordings/
-
 # Index replays into our database
 index:
 	# make -C .. bin/index
-	index --replays ${ALTI_HOME}/recordings/ \
+	index --replays ${REPLAY_DIR} \
 		--out "host=altistats.com user=root password=${PGPASSWORD} dbname=altistats" \
 		--progress
 
-# Deploy altistats.com with docker compose
-deploy:
-	docker --host "ssh://root@altistats.com" \
-		compose -f docker/prod.yml up -d --remove-orphans
+update-views:
+	cat sql/views.sql | psql
 
 dev:
 	docker context use default
-	docker compose -f docker/dev.yml up --remove-orphans --build
-
-update-views:
-	cat sql/views.sql | psql
+	docker compose -f dev.yml up --remove-orphans --build
 
 # Run a query from site/sql/
 query file *args:

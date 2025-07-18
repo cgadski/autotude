@@ -16,5 +16,5 @@ venvPath = "."
 venv = ".venv"
 
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

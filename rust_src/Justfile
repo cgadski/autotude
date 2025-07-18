@@ -1,0 +1,10 @@
+dump-meta:
+	cargo run --release --bin dump-meta -- --db meta.db
+
+show-chat db="meta.db":
+	sqlite3 {{db}} "SELECT COUNT(*) as total_chat_messages FROM chat;"
+	sqlite3 {{db}} "SELECT vapor, current_nick, message FROM chat LIMIT 20;"
+
+show-replays db="meta.db":
+	sqlite3 {{db}} "SELECT COUNT(*) as total_replays FROM replays;"
+	sqlite3 {{db}} "SELECT replay_stem, path FROM replays LIMIT 10;"

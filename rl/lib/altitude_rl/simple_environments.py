@@ -13,7 +13,7 @@ class SoloChannelparkEnv:
 
     Observations: its position and bearing.
     Actions: binary vector of controls.
-    Rewards: -2 when it dies, something in range [-1, 0] when it takes damage.
+    Rewards: -1 when it dies, 0 otherwise.
     """
 
     def __init__(self):
@@ -28,21 +28,17 @@ class SoloChannelparkEnv:
         geom = self._server.map_geometry
         for o in up.objects:
             if o.type < 5:
-                self._obs[0] = o.position_x / (2 * geom.max_x)
-                self._obs[1] = o.position_y / (2 * geom.max_y)
+                self._obs[0] = o.position_x
+                self._obs[1] = o.position_y
                 self._obs[2] = o.angle / 3600
         return self._obs
 
     def _get_reward(self, up: Update):
-        reward = 0
         for e in up.events:
-            if e.HasField("damage"):
-                if e.damage.target == 0:
-                    reward -= e.damage.amount / 2000
             if e.HasField("kill"):
                 if e.kill.who_died == 0:
-                    reward -= 2
-        return reward
+                    return -1
+        return 0
 
     def step(self, action):
         cmd = Cmd()

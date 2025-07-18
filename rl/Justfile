@@ -14,6 +14,3 @@ view:
 	cd viewer && \
 		DB_PATH=${ALTI_HOME}/recordings.db \
 		uv run app.py
-
-logs:
-	cat ${ALTI_HOME}/server.log

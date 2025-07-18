@@ -1,4 +1,5 @@
 dist.tar
+recordings.tar
 
 # environment variables
 /etc/secrets.env
@@ -49,3 +50,9 @@ __pycache__
 .aider.chat.history.md
 .aider.input.history
 !.aiderignore
+recordings
+rust_src/ball_data.npz
+rust_src/all_chat.db
+rust_src/chat
+rust_src/chat_messages.db
+rust_src/chat.db
