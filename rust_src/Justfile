@@ -3,10 +3,19 @@ dump:
 	sqlite3 altistats.db < schema/data.sql
 	cargo run --release --bin dump -- --db altistats.db --limit 100
 
+dump-one stem:
+	rm -f test.db
+	sqlite3 test.db < schema/data.sql
+	cargo run --release --bin dump -- --db test.db --stem {{stem}}
+
 dump-all:
 	rm -f altistats.db
 	sqlite3 altistats.db < schema/data.sql
 	cargo run --release --bin dump -- --db altistats.db
 
-query:
-	sqlite3 altistats.db < sql/{{name}}.sql
+load-views:
+	sqlite3 altistats.db < schema/views.sql
+
+query name:
+	sqlite3 altistats.db < schema/views.sql
+	sqlite3 altistats.db -table < sql/{{name}}.sql

@@ -1,6 +1,6 @@
 dist.tar
 recordings.tar
-altistats.db
+*.db
 
 # environment variables
 /etc/secrets.env

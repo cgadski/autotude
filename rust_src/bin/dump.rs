@@ -66,8 +66,10 @@ fn main() -> Result<()> {
 
     let pb = make_pb(paths.len());
     let mut processed_count = 0;
+    let mut total_chat_messages = 0;
     let mut total_goals = 0;
-    let mut replay_key = 0;
+    let mut total_kills = 0;
+    let mut replay_key = 1;
 
     for path in paths {
         let replay_stem = get_stem(&path)?;
@@ -79,22 +81,26 @@ fn main() -> Result<()> {
             conn: &conn,
             chat_count: 0,
             goal_count: 0,
+            kill_count: 0,
             replay_key: replay_key,
         };
 
         match read_replay_file(&path, &mut dump_listener) {
             Ok(()) => {
                 dump_listener.write_replay()?;
+                total_chat_messages += dump_listener.chat_count;
                 total_goals += dump_listener.goal_count;
+                total_kills += dump_listener.kill_count;
                 processed_count += 1;
                 replay_key += 1;
                 pb.inc(1);
                 pb.set_message(format!(
-                    "Processed {} replays, {} goals",
-                    processed_count, total_goals
+                    "Processed {} replays, {} chat messages, {} goals, {} kills",
+                    processed_count, total_chat_messages, total_goals, total_kills
                 ));
             }
             Err(e) => {
+                println!("Error processing {}: {}", replay_stem, e);
                 pb.set_message(format!("Error processing {}: {}", replay_stem, e));
                 pb.inc(1);
             }
@@ -102,8 +108,8 @@ fn main() -> Result<()> {
     }
 
     pb.finish_with_message(format!(
-        "Complete. Processed {} replays, {} goals",
-        processed_count, total_goals
+        "Complete. Processed {} replays, {} chat messages, {} goals, {} kills",
+        processed_count, total_chat_messages, total_goals, total_kills
     ));
 
     eprintln!("Database saved to: {}", args.db);
@@ -117,6 +123,7 @@ struct DumpListener<'a> {
     conn: &'a sqlite::Connection,
     chat_count: usize,
     goal_count: usize,
+    kill_count: usize,
     replay_key: i64,
 }
 
@@ -216,6 +223,24 @@ impl<'a> ReplayListener for DumpListener<'a> {
                 while State::Done != stmt.next()? {}
                 self.goal_count += 1;
             }
+        }
+
+        if let Some(Event::Kill(kill)) = &event.event {
+            let mut stmt = self.conn.prepare(
+                "INSERT INTO kills (replay_key, who_killed, who_died, tick) VALUES (?, ?, ?, ?)",
+            )?;
+
+            stmt.bind((1, self.replay_key))?;
+            if kill.who_killed.is_none() {
+                stmt.bind((2, sqlite::Value::Null))?;
+            } else {
+                stmt.bind((2, kill.who_killed() as i64))?;
+            }
+            stmt.bind((3, kill.who_died() as i64))?;
+            stmt.bind((4, self.indexer.state.current_tick as i64))?;
+
+            while State::Done != stmt.next()? {}
+            self.kill_count += 1;
         }
 
         Ok(())

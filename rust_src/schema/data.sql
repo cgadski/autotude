@@ -1,8 +1,8 @@
 CREATE TABLE replays (
     replay_key INTEGER PRIMARY KEY,
-    stem VARCHAR,
-    map VARCHAR,
-    server VARCHAR,
+    stem TEXT,
+    map TEXT,
+    server TEXT,
     duration INTEGER,
     started_at INTEGER
 );
@@ -14,8 +14,8 @@ CREATE INDEX idx_replays_started_at ON replays (started_at);
 CREATE TABLE players (
     replay_key INTEGER REFERENCES replays (replay_key),
     player_key INTEGER,
-    nick VARCHAR,
-    vapor VARCHAR,
+    nick TEXT,
+    vapor TEXT,
     level INTEGER,
     ticks_alive INTEGER,
     team INTEGER,
@@ -43,3 +43,11 @@ CREATE TABLE goals (
 );
 
 CREATE INDEX idx_goals_replay ON goals (replay_key);
+
+CREATE TABLE kills (
+    replay_key INTEGER REFERENCES replays (replay_key),
+    who_killed INTEGER,
+    who_died INTEGER,
+    tick INTEGER,
+    PRIMARY KEY (replay_key, who_killed, tick)
+);
