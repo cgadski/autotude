@@ -184,16 +184,19 @@ impl<'a> ReplayListener for DumpListener<'a> {
 
         if let Some(Event::Chat(chat)) = &event.event {
             let mut stmt = self.conn.prepare(
-                "INSERT INTO messages (replay_key, player_key, tick, chat_team, chat_message) VALUES (?, ?, ?, ?, ?)"
+                "INSERT INTO messages (replay_key, player_key, tick, chat_message) VALUES (?, ?, ?, ?)"
             )?;
 
-            let player_id = PlayerId(chat.sender());
+            let sender = self.indexer.get_player_key(PlayerId(chat.sender()));
 
             stmt.bind((1, self.replay_key))?;
-            stmt.bind((2, player_id.0 as i64))?;
+            if let Ok(sender_key) = sender {
+                stmt.bind((2, sender_key.0 as i64))?;
+            } else {
+                stmt.bind((2, sqlite::Value::Null))?;
+            }
             stmt.bind((3, self.indexer.state.current_tick as i64))?;
-            stmt.bind((4, ""))?;
-            stmt.bind((5, chat.message()))?;
+            stmt.bind((4, chat.message()))?;
 
             while State::Done != stmt.next()? {}
             self.chat_count += 1;
@@ -230,12 +233,15 @@ impl<'a> ReplayListener for DumpListener<'a> {
             )?;
 
             stmt.bind((1, self.replay_key))?;
+
+            let died_key = self.indexer.get_player_key(PlayerId(kill.who_died()))?;
             if kill.who_killed.is_none() {
                 stmt.bind((2, sqlite::Value::Null))?;
             } else {
-                stmt.bind((2, kill.who_killed() as i64))?;
+                let killed_key = self.indexer.get_player_key(PlayerId(kill.who_killed()))?;
+                stmt.bind((2, killed_key.0 as i64))?;
             }
-            stmt.bind((3, kill.who_died() as i64))?;
+            stmt.bind((3, died_key.0 as i64))?;
             stmt.bind((4, self.indexer.state.current_tick as i64))?;
 
             while State::Done != stmt.next()? {}

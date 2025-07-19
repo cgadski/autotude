@@ -18,5 +18,11 @@ WITH named_kills AS (
         dying_player.vapor = p1.vapor
     WHERE kills.who_killed IS NOT NULL
 )
-SELECT COUNT() FROM named_kills
-WHERE who_died = 'xx2';
+SELECT
+    stem,
+    replay_key,
+    COUNT() FILTER (WHERE who_killed = 'xx2') AS kills,
+    COUNT() FILTER (WHERE who_died = 'xx2') AS deaths
+FROM named_kills
+NATURAL JOIN replays
+GROUP BY replay_key;

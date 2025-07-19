@@ -29,7 +29,6 @@ CREATE TABLE messages (
     replay_key INTEGER REFERENCES replays (replay_key),
     player_key INTEGER,
     tick INTEGER,
-    chat_team TEXT,
     chat_message TEXT
 );
 
