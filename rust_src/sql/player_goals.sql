@@ -11,9 +11,13 @@ total_goals AS (
     NATURAL JOIN names
     GROUP BY name
 )
-SELECT name, 10. * n_goals / minutes_alive AS per_10
+SELECT
+    name,
+    n_goals,
+    printf('%.1f', minutes_alive / 60.) AS hours_alive,
+    printf('%.2f', 10. * n_goals / minutes_alive) AS per_10
 FROM names
 NATURAL JOIN play_time
 NATURAL JOIN total_goals
 GROUP BY name
-ORDER BY per_10 DESC;
+ORDER BY n_goals DESC;

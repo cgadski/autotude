@@ -51,8 +51,8 @@ CREATE TABLE kills (
     PRIMARY KEY (replay_key, tick, who_killed, who_died)
 );
 
--- CREATE TABLE possession (
---     replay_key INTEGER REFERENCES replays (replay_key),
---     tick INTEGER,
+CREATE TABLE possession (
+    replay_key INTEGER REFERENCES replays (replay_key),
+    tick INTEGER,
 
--- );
+);
