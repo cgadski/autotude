@@ -27,3 +27,7 @@ upload-players:
 upload-db:
 	tar -czf altistats.db.tar altistats.db
 	rsync altistats.db.tar --progress root@cgad.ski:/www/files/altistats.db.tar
+
+load-names:
+	sqlite3 altistats.db "DROP TABLE IF EXISTS names; CREATE TABLE names (vapor TEXT, name TEXT);"
+	sqlite3 altistats.db ".mode csv" ".import some_players.csv names"
