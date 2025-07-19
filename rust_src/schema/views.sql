@@ -19,9 +19,13 @@ DROP VIEW IF EXISTS outcomes;
 CREATE VIEW outcomes AS
 SELECT
     replay_key,
-    FIRST_VALUE(team) OVER (
-        PARTITION BY replay_key ORDER BY tick DESC
-    ) as winner
-FROM ladder_games
-NATURAL JOIN goals
-GROUP BY replay_key;
+    team as winner
+FROM (
+    SELECT
+        replay_key,
+        team,
+        row_number() OVER (PARTITION BY replay_key ORDER BY tick) as rn
+    FROM ladder_games
+    NATURAL JOIN goals
+)
+WHERE rn = 1;
