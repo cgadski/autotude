@@ -1,5 +1,4 @@
-dist.tar
-recordings.tar
+*.tar
 *.db
 
 # environment variables

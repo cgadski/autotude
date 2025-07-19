@@ -1,7 +1,6 @@
 SELECT
-    p.vapor,
     COUNT(*) as total_crashes,
-    MAX(p.nick) as last_nick_used
+    p.nick as nick
 FROM kills k
 JOIN players p ON k.replay_key = p.replay_key AND k.who_died = p.player_key
 WHERE k.who_killed IS NULL

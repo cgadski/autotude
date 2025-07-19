@@ -49,5 +49,5 @@ CREATE TABLE kills (
     who_killed INTEGER,
     who_died INTEGER,
     tick INTEGER,
-    PRIMARY KEY (replay_key, who_killed, tick)
+    PRIMARY KEY (replay_key, tick, who_killed, who_died)
 );

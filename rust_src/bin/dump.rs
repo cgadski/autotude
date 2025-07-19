@@ -100,7 +100,6 @@ fn main() -> Result<()> {
                 ));
             }
             Err(e) => {
-                println!("Error processing {}: {}", replay_stem, e);
                 pb.set_message(format!("Error processing {}: {}", replay_stem, e));
                 pb.inc(1);
             }

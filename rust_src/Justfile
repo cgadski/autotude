@@ -1,7 +1,7 @@
 dump:
-	rm -f altistats.db
-	sqlite3 altistats.db < schema/data.sql
-	cargo run --release --bin dump -- --db altistats.db --limit 100
+	rm -f test.db
+	sqlite3 test.db < schema/data.sql
+	cargo run --release --bin dump -- --db test.db --limit 100
 
 dump-one stem:
 	rm -f test.db
@@ -19,3 +19,11 @@ load-views:
 query name:
 	sqlite3 altistats.db < schema/views.sql
 	sqlite3 altistats.db -table < sql/{{name}}.sql
+
+upload-players:
+	sqlite3 altistats.db -table < sql/players.sql > players.txt
+	rsync players.txt --progress root@cgad.ski:/www/files/players.txt
+
+upload-db:
+	tar -czf altistats.db.tar altistats.db
+	rsync altistats.db.tar --progress root@cgad.ski:/www/files/altistats.db.tar

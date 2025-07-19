@@ -14,7 +14,7 @@ WHERE duration > 30 * 120 -- at least two minutes
 AND active_players.ct == 8 -- exactly 8 vapor ids in game
 AND map != "lobby_4ball";
 
--- outcome of game, decided by team scoring last goal
+-- outcomes of ladder games, decided by team scoring last goal
 DROP VIEW IF EXISTS outcomes;
 CREATE VIEW outcomes AS
 SELECT
@@ -22,6 +22,6 @@ SELECT
     FIRST_VALUE(team) OVER (
         PARTITION BY replay_key ORDER BY tick DESC
     ) as winner
-FROM replays
+FROM ladder_games
 NATURAL JOIN goals
 GROUP BY replay_key;
