@@ -1,10 +1,12 @@
-dump-meta:
-	cargo run --release --bin dump-meta -- --db meta.db
+dump:
+	rm -f altistats.db
+	sqlite3 altistats.db < schema/data.sql
+	cargo run --release --bin dump -- --db altistats.db --limit 100
 
-show-chat db="meta.db":
-	sqlite3 {{db}} "SELECT COUNT(*) as total_chat_messages FROM chat;"
-	sqlite3 {{db}} "SELECT vapor, current_nick, message FROM chat LIMIT 20;"
+dump-all:
+	rm -f altistats.db
+	sqlite3 altistats.db < schema/data.sql
+	cargo run --release --bin dump -- --db altistats.db
 
-show-replays db="meta.db":
-	sqlite3 {{db}} "SELECT COUNT(*) as total_replays FROM replays;"
-	sqlite3 {{db}} "SELECT replay_stem, path FROM replays LIMIT 10;"
+query:
+	sqlite3 altistats.db < sql/{{name}}.sql
