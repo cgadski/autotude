@@ -24,14 +24,17 @@ FROM (
     SELECT
         replay_key,
         team,
-        row_number() OVER (PARTITION BY replay_key ORDER BY tick) as rn
+        row_number() OVER (
+            PARTITION BY replay_key ORDER BY tick DESC
+        ) AS goal_idx
     FROM ladder_games
     NATURAL JOIN goals
 )
-WHERE rn = 1;
+WHERE goal_idx = 1;
 
-DROP TABLE IF EXISTS named_kills;
-CREATE TABLE named_kills AS
+-- kills between "named players" (with names in the `names` table)
+-- DROP TABLE IF EXISTS named_kills;
+CREATE TABLE IF NOT EXISTS named_kills AS
 SELECT
     ladder_games.replay_key AS replay_key,
     killing_player.name AS who_killed,
@@ -50,5 +53,5 @@ JOIN names dying_player ON
     dying_player.vapor = p1.vapor
 WHERE kills.who_killed IS NOT NULL;
 
-CREATE INDEX IF NOT EXISTS idx_who_killed ON named_kills (who_killed);
-CREATE INDEX IF NOT EXISTS idx_who_died ON named_kills (who_died);
+CREATE INDEX IF NOT EXISTS idx_kill_killed ON named_kills (who_killed);
+CREATE INDEX IF NOT EXISTS idx_kill_died ON named_kills (who_died);

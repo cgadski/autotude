@@ -57,7 +57,7 @@ dist:
 # Package and upload recordings
 dist-recordings:
 	tar -cf recordings.tar recordings/*
-	rsync -v --progress recordings.tar root@cgad.ski:/www/recordings.tar
+	rsync -v --progress recordings.tar root@altistats.com:/root/files/recordings.tar
 
 # Download recordings from altistats.com
 dl:

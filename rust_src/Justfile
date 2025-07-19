@@ -1,3 +1,4 @@
+# dumping
 dump:
 	rm -f test.db
 	sqlite3 test.db < schema/data.sql
@@ -13,13 +14,21 @@ dump-all:
 	sqlite3 altistats.db < schema/data.sql
 	cargo run --release --bin dump -- --db altistats.db
 
+
+# loading views and names
+load-names:
+		sqlite3 altistats.db "DROP TABLE IF EXISTS names; CREATE TABLE names (vapor TEXT, name TEXT);"
+		sqlite3 altistats.db ".mode csv" ".import some_players.csv names"
+
 load-views:
 	sqlite3 altistats.db < schema/views.sql
 
+# queries
 query name:
-	sqlite3 altistats.db < schema/views.sql
 	sqlite3 altistats.db -table < sql/{{name}}.sql
 
+
+# uploading results
 upload-players:
 	sqlite3 altistats.db -table < sql/players.sql > players.txt
 	rsync players.txt --progress root@cgad.ski:/www/files/players.txt
@@ -27,7 +36,3 @@ upload-players:
 upload-db:
 	tar -czf altistats.db.tar altistats.db
 	rsync altistats.db.tar --progress root@cgad.ski:/www/files/altistats.db.tar
-
-load-names:
-	sqlite3 altistats.db "DROP TABLE IF EXISTS names; CREATE TABLE names (vapor TEXT, name TEXT);"
-	sqlite3 altistats.db ".mode csv" ".import some_players.csv names"
