@@ -22,6 +22,7 @@ services:
       - "80:80"
     volumes:
       - /root/alti_home/recordings/:/usr/share/nginx/recordings/
+      - /root/files/:/usr/share/nginx/files/
     restart: unless-stopped
 
   site:
