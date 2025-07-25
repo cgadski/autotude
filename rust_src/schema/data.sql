@@ -53,6 +53,6 @@ CREATE TABLE kills (
 
 CREATE TABLE possession (
     replay_key INTEGER REFERENCES replays (replay_key),
-    tick INTEGER,
+    tick INTEGER
 
 );
