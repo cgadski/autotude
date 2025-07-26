@@ -93,17 +93,16 @@ fn main() -> Result<()> {
                 total_kills += dump_listener.kill_count;
                 processed_count += 1;
                 replay_key += 1;
-                pb.inc(1);
-                pb.set_message(format!(
-                    "Processed {} replays, {} chat messages, {} goals, {} kills",
-                    processed_count, total_chat_messages, total_goals, total_kills
-                ));
             }
             Err(e) => {
-                pb.set_message(format!("Error processing {}: {}", replay_stem, e));
-                pb.inc(1);
+                pb.println(format!("Error processing {}: {}", replay_stem, e));
             }
         }
+        pb.inc(1);
+        pb.set_message(format!(
+            "Processed {} replays, {} chat messages, {} goals, {} kills",
+            processed_count, total_chat_messages, total_goals, total_kills
+        ));
     }
 
     pb.finish_with_message(format!(
