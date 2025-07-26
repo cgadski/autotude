@@ -25,6 +25,21 @@ impl From<i32> for PlayerKey {
     }
 }
 
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub struct Loadout {
+    pub plane: i32,
+    pub red_perk: i32,
+    pub green_perk: Option<i32>,
+    pub blue_perk: Option<i32>,
+}
+
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub struct LoadoutState {
+    pub data: Loadout,
+    pub start_tick: i32,
+    pub ticks_alive: i32,
+}
+
 #[derive(Debug)]
 pub struct PlayerState {
     pub key: PlayerKey,
@@ -32,6 +47,7 @@ pub struct PlayerState {
     pub team: i32,
     pub nick: String,
     pub ticks_alive: i32,
+    pub loadout_history: Vec<LoadoutState>,
 }
 
 pub struct ReplayState {
@@ -71,6 +87,15 @@ impl IndexingListener {
         }
     }
 
+    fn adapt_loadout(plane: &GameObject) -> Loadout {
+        Loadout {
+            plane: plane.r#type() as i32,
+            red_perk: plane.red_perk() as i32,
+            green_perk: plane.green_perk as Option<i32>,
+            blue_perk: plane.blue_perk as Option<i32>,
+        }
+    }
+
     fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<()> {
         let player_key = if let Ok(k) = self.get_player_key(id) {
             k
@@ -84,6 +109,19 @@ impl IndexingListener {
             if team > 2 {
                 state.team = team as i32;
             }
+            let next_loadout = Self::adapt_loadout(plane);
+            let prev_loadout_state = state.loadout_history.last();
+            // if loadout changed, push new loadout state
+            if prev_loadout_state.is_none_or(|prev| prev.data != next_loadout) {
+                let new_loadout_state = LoadoutState {
+                    data: next_loadout,
+                    start_tick: self.state.current_tick as i32,
+                    ticks_alive: 0,
+                };
+                state.loadout_history.push(new_loadout_state);
+            }
+            // unwrap: we already checked and pushed to `loadout_history` via `if` above
+            state.loadout_history.last_mut().unwrap().ticks_alive += 1;
         }
 
         Ok(())
@@ -109,6 +147,7 @@ impl IndexingListener {
                 data: data.clone(),
                 team: 2, // spectator
                 ticks_alive: 0,
+                loadout_history: Vec::new(),
             };
 
             self.id_to_key.insert(id, key);
