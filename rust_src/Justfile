@@ -19,6 +19,10 @@ dump-all:
 load-names:
 		sqlite3 altistats.db "DROP TABLE IF EXISTS names; CREATE TABLE names (vapor TEXT, name TEXT);"
 		sqlite3 altistats.db ".mode csv" ".import some_players.csv names"
+		sqlite3 altistats.db "DROP TABLE IF EXISTS plane_names; CREATE TABLE plane_names (id INTEGER, name TEXT);"
+		sqlite3 altistats.db ".mode csv" ".import plane_names.csv plane_names"
+		sqlite3 altistats.db "DROP TABLE IF EXISTS perk_names; CREATE TABLE perk_names (id INTEGER, name TEXT);"
+		sqlite3 altistats.db ".mode csv" ".import perk_names.csv perk_names"
 
 load-views:
 	sqlite3 altistats.db < schema/views.sql

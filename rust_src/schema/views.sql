@@ -14,6 +14,30 @@ WHERE duration > 30 * 120 -- at least two minutes
 AND active_players.ct == 8 -- exactly 8 vapor ids in game
 AND map != "lobby_4ball";
 
+-- player display name := manual name (from `names` table), if it exists, or else the most frequent name by replay count
+DROP VIEW IF EXISTS player_display_names;
+CREATE VIEW player_display_names AS
+SELECT ranked_nicks.vapor, coalesce(names.name, ranked_nicks.nick) as name
+FROM names
+right join (
+	SELECT
+		vapor,
+		nick,
+		nick_count,
+		row_number() OVER (
+			PARTITION BY vapor
+			ORDER BY nick_count desc
+		) AS rank
+	FROM (
+		SELECT vapor, nick, count(*) AS nick_count
+		FROM players
+		GROUP BY vapor, nick
+	)
+	ORDER BY vapor, rank
+) AS ranked_nicks
+	ON names.vapor = ranked_nicks.vapor
+WHERE ranked_nicks.rank = 1;
+
 -- outcomes of ladder games, decided by team scoring last goal
 DROP VIEW IF EXISTS outcomes;
 CREATE VIEW outcomes AS
@@ -31,6 +55,41 @@ FROM (
     NATURAL JOIN goals
 )
 WHERE goal_idx = 1;
+
+-- timeline of pretty-printed player loadouts per game
+drop view if exists readable_loadouts;
+create view readable_loadouts as
+select
+	loadouts.replay_key,
+	player_display_names.name as name,
+	plane_names.name as plane,
+	red_name.name as red_perk,
+	green_name.name as green_perk, 
+	blue_name.name as blue_perk,
+	loadouts.ticks_alive / 30 / 60 as minutes_alive,
+	loadouts.ticks_alive,
+	loadouts.start_tick,
+	loadouts.end_tick,
+	player_display_names.vapor,
+	replays.stem
+from loadouts
+inner join players
+	on loadouts.player_key = players.player_key and loadouts.replay_key = players.replay_key
+inner join player_display_names
+	on players.vapor = player_display_names.vapor
+inner join replays
+	on players.replay_key = replays.replay_key
+inner join ladder_games
+	on replays.replay_key = ladder_games.replay_key
+left join plane_names
+	on loadouts.plane = plane_names.id
+left join perk_names red_name
+	on loadouts.red_perk = red_name.id
+left join perk_names green_name
+	on loadouts.green_perk = green_name.id
+left join perk_names blue_name
+	on loadouts.blue_perk = blue_name.id
+order by loadouts.replay_key, player_display_names.vapor, start_tick;
 
 -- kills between "named players" (with names in the `names` table)
 -- DROP TABLE IF EXISTS named_kills;
