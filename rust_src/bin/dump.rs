@@ -9,8 +9,12 @@ use alti_reader::{
 use anyhow::{anyhow, Result};
 use clap::Parser;
 use sqlite::State;
-use std::env;
-use std::path::PathBuf;
+use std::{
+    env,
+    sync::{atomic::AtomicI64, Arc},
+};
+use std::{path::PathBuf, sync::Mutex};
+use threadpool::ThreadPool;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -58,60 +62,83 @@ fn get_paths(args: &Args) -> Result<Vec<PathBuf>> {
     Ok(paths)
 }
 
+#[derive(Default, Debug, Clone, Copy)]
+struct Progress {
+    pub processed_count: i32,
+    pub total_chat_messages: usize,
+    pub total_goals: usize,
+    pub total_kills: usize,
+}
+
 fn main() -> Result<()> {
     let args = Args::parse();
 
-    let conn = sqlite::open(&args.db)?;
+    let conn = Arc::new(sqlite::Connection::open_thread_safe(&args.db)?);
     conn.execute("begin;")?;
     let paths = get_paths(&args)?;
 
     let pb = make_pb(paths.len());
-    let mut processed_count = 0;
-    let mut total_chat_messages = 0;
-    let mut total_goals = 0;
-    let mut total_kills = 0;
-    let mut replay_key = 1;
+    let progress = Arc::new(Mutex::new(Progress::default()));
+    let replay_key = Arc::new(AtomicI64::new(1));
 
+    let pool = ThreadPool::new(4);
     for path in paths {
-        let replay_stem = get_stem(&path)?;
+        let (conn, pb, progress, replay_key) = (
+            conn.clone(),
+            pb.clone(),
+            progress.clone(),
+            replay_key.clone(),
+        );
+        pool.execute(move || {
+            let replay_stem = get_stem(&path).expect("Error reading stem");
 
-        let listener = IndexingListener::new();
-        let mut dump_listener = DumpListener {
-            indexer: listener,
-            replay_stem: replay_stem.clone(),
-            conn: &conn,
-            chat_count: 0,
-            goal_count: 0,
-            kill_count: 0,
-            replay_key: replay_key,
-        };
+            let listener = IndexingListener::new();
+            let mut dump_listener = DumpListener {
+                indexer: listener,
+                replay_stem: replay_stem.clone(),
+                conn: &conn,
+                chat_count: 0,
+                goal_count: 0,
+                kill_count: 0,
+                replay_key: replay_key.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
+            };
 
-        match read_replay_file(&path, &mut dump_listener) {
-            Ok(()) => {
-                dump_listener.write_replay()?;
-                total_chat_messages += dump_listener.chat_count;
-                total_goals += dump_listener.goal_count;
-                total_kills += dump_listener.kill_count;
-                processed_count += 1;
-                replay_key += 1;
+            match read_replay_file(&path, &mut dump_listener) {
+                Ok(()) => {
+                    dump_listener.write_replay().expect("Error writing replay");
+                    let p: Progress = {
+                        let mut p = progress.lock().unwrap();
+                        p.total_chat_messages += dump_listener.chat_count;
+                        p.total_goals += dump_listener.goal_count;
+                        p.total_kills += dump_listener.kill_count;
+                        p.processed_count += 1;
+                        *p
+                    };
+                    pb.set_message(format!(
+                        "Processed {} replays, {} chat messages, {} goals, {} kills",
+                        p.processed_count, p.total_chat_messages, p.total_goals, p.total_kills
+                    ));
+                }
+                Err(e) => {
+                    pb.println(format!("Error processing {}: {}", replay_stem, e));
+                }
             }
-            Err(e) => {
-                pb.println(format!("Error processing {}: {}", replay_stem, e));
-            }
-        }
-        pb.inc(1);
-        pb.set_message(format!(
-            "Processed {} replays, {} chat messages, {} goals, {} kills",
-            processed_count, total_chat_messages, total_goals, total_kills
-        ));
+            pb.inc(1);
+        });
     }
+    pool.join();
 
+    let p = Arc::try_unwrap(progress)
+        .map_err(|_| anyhow!("Somehow, unwrapping Arc failed after joining all threads"))?
+        .into_inner()?;
     pb.finish_with_message(format!(
         "Complete. Processed {} replays, {} chat messages, {} goals, {} kills",
-        processed_count, total_chat_messages, total_goals, total_kills
+        p.processed_count, p.total_chat_messages, p.total_goals, p.total_kills
     ));
 
-    conn.execute("commit;")?;
+    Arc::try_unwrap(conn)
+        .map_err(|_| anyhow!("Somehow, unwrapping Arc failed after joining all threads"))?
+        .execute("commit;")?;
     eprintln!("Database saved to: {}", args.db);
 
     Ok(())
