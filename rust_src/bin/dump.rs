@@ -62,6 +62,7 @@ fn main() -> Result<()> {
     let args = Args::parse();
 
     let conn = sqlite::open(&args.db)?;
+    conn.execute("begin;")?;
     let paths = get_paths(&args)?;
 
     let pb = make_pb(paths.len());
@@ -110,6 +111,7 @@ fn main() -> Result<()> {
         processed_count, total_chat_messages, total_goals, total_kills
     ));
 
+    conn.execute("commit;")?;
     eprintln!("Database saved to: {}", args.db);
 
     Ok(())
