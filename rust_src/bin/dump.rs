@@ -81,7 +81,8 @@ fn main() -> Result<()> {
     let progress = Arc::new(Mutex::new(Progress::default()));
     let replay_key = Arc::new(AtomicI64::new(1));
 
-    let pool = ThreadPool::new(4);
+    const REPLAY_PROCESSING_WORKER_COUNT: usize = 50;
+    let pool = ThreadPool::new(REPLAY_PROCESSING_WORKER_COUNT);
     for path in paths {
         let (conn, pb, progress, replay_key) = (
             conn.clone(),
