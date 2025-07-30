@@ -50,12 +50,25 @@ pub struct PlayerState {
     pub loadout_history: Vec<LoadoutState>,
 }
 
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub enum Ball {
+    Possessed { player: PlayerKey },
+    Loose { x: i32, y: i32 },
+}
+
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub struct BallState {
+    pub data: Option<Ball>,
+    pub start_tick: i32,
+}
+
 pub struct ReplayState {
     pub server_name: Option<String>,
     pub datetime: Option<DateTime<chrono::FixedOffset>>,
     pub map_name: Option<String>,
     pub current_tick: usize,
     pub player_states: HashMap<PlayerKey, PlayerState>,
+    pub ball_history: Vec<BallState>,
 }
 
 impl ReplayState {
@@ -66,6 +79,7 @@ impl ReplayState {
             map_name: None,
             current_tick: 0,
             player_states: HashMap::new(),
+            ball_history: Vec::new(),
         }
     }
 }
@@ -96,13 +110,8 @@ impl IndexingListener {
         }
     }
 
-    fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<()> {
-        let player_key = if let Ok(k) = self.get_player_key(id) {
-            k
-        } else {
-            return Ok(());
-        };
-
+    fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<PlayerKey> {
+        let player_key = self.get_player_key(id)?;
         if let Some(state) = self.state.player_states.get_mut(&player_key) {
             state.ticks_alive += 1;
             let team = plane.team();
@@ -124,11 +133,20 @@ impl IndexingListener {
             state.loadout_history.last_mut().unwrap().ticks_alive += 1;
         }
 
-        Ok(())
+        Ok(player_key)
     }
 
-    fn on_ball(&mut self, _ball: &GameObject) -> Result<()> {
-        Ok(())
+    fn on_ball(&mut self, ball: &GameObject) -> Result<Ball> {
+        if ball.position_x.is_none() || ball.position_y.is_none() {
+            Err(anyhow!(format!(
+                "Bad premise: ball object had no position: {:?}",
+                ball
+            )))?
+        }
+        Ok(Ball::Loose {
+            x: ball.position_x() as i32,
+            y: ball.position_y() as i32,
+        })
     }
 
     fn on_set_player(&mut self, data: &SetPlayerEvent) -> Result<()> {
@@ -162,6 +180,19 @@ impl IndexingListener {
         Ok(())
     }
 
+    fn update_ball_state(&mut self, next_ball_data: Option<Ball>) -> Result<()> {
+        let prev_ball_state = self.state.ball_history.last();
+        // if ball data changed, push new ball state
+        if prev_ball_state.is_none_or(|state| state.data != next_ball_data) {
+            let new_ball_state = BallState {
+                data: next_ball_data,
+                start_tick: self.state.current_tick as i32,
+            };
+            self.state.ball_history.push(new_ball_state);
+        }
+        Ok(())
+    }
+
     pub fn get_player_key(&mut self, id: PlayerId) -> Result<PlayerKey> {
         self.id_to_key
             .get(&id)
@@ -174,17 +205,28 @@ impl ReplayListener for IndexingListener {
     fn on_update(&mut self, update: &Update) -> ReplayResult<()> {
         self.state.current_tick += 1;
 
+        let mut next_ball_data: Option<Ball> = None;
         for obj in update.objects.iter() {
             let is_plane = obj.r#type.map(|v| v < 5).unwrap_or(false);
             if is_plane {
                 let player_id = PlayerId(obj.owner());
-                self.on_plane(player_id, obj)?;
+                let player_key = self.on_plane(player_id, obj)?;
+                if obj.powerup() == ObjectType::Ball {
+                    if next_ball_data.is_some() {
+                        Err(anyhow!("Bad premise: multiple balls???"))?
+                    }
+                    next_ball_data = Some(Ball::Possessed { player: player_key })
+                }
             }
 
             if obj.r#type() == ObjectType::Ball {
-                self.on_ball(obj)?;
+                // multiple ball objects have been observed for a tick when the round is forcibly
+                // ended (overtime) exactly when a ball is lost, i think. whatever, just pick one
+                next_ball_data = Some(self.on_ball(obj)?);
             }
         }
+
+        Self::update_ball_state(self, next_ball_data)?;
 
         Ok(())
     }

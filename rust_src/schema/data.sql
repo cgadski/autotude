@@ -53,9 +53,13 @@ CREATE TABLE kills (
 
 CREATE TABLE possession (
     replay_key INTEGER REFERENCES replays (replay_key),
-    tick INTEGER
-
+    player_key INTEGER,
+    start_tick INTEGER,
+    end_tick INTEGER
 );
+
+CREATE INDEX idx_possession_replay ON possession (replay_key);
+CREATE INDEX idx_possession_player ON possession (player_key);
 
 CREATE TABLE loadouts (
     replay_key INTEGER REFERENCES replays (replay_key),
