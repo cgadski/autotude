@@ -176,6 +176,9 @@ impl<'a> DumpListener<'a> {
         let mut insert_player_stmt = self.conn.prepare(
             "INSERT INTO players (replay_key, player_key, nick, vapor, level, ticks_alive, team) VALUES (?, ?, ?, ?, ?, ?, ?)"
         )?;
+        let mut insert_spawn_stmt = self.conn.prepare(
+            "INSERT INTO spawns (replay_key, player_key, start_tick, end_tick) VALUES (?, ?, ?, ?)",
+        )?;
         let mut insert_loadout_stmt = self.conn.prepare(
             "INSERT INTO loadouts (replay_key, player_key, plane, red_perk, green_perk, blue_perk, start_tick, end_tick, ticks_alive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         )?;
@@ -200,6 +203,18 @@ impl<'a> DumpListener<'a> {
 
             while State::Done != insert_player_stmt.next()? {}
             insert_player_stmt.reset()?;
+
+            for spawn in player_state.spawns.iter() {
+                if spawn.data.is_alive {
+                    insert_spawn_stmt.bind((1, self.replay_key))?;
+                    insert_spawn_stmt.bind((2, player_key))?;
+                    insert_spawn_stmt.bind((3, spawn.start_tick as i64))?;
+                    insert_spawn_stmt.bind((4, spawn.end_tick as i64))?;
+
+                    while State::Done != insert_spawn_stmt.next()? {}
+                    insert_spawn_stmt.reset()?;
+                }
+            }
 
             let mut loadout_end_tick = state.current_tick;
             for loadout in player_state.loadout_history.iter().rev() {

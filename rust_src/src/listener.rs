@@ -1,9 +1,12 @@
+use crate::listener::state_timeline::StateTimeline;
 use crate::proto::game_event::Event;
 use crate::proto::{GameEvent, GameObject, ObjectType, RemovePlayerEvent, SetPlayerEvent, Update};
 use crate::replay::{ReplayListener, Result as ReplayResult};
 use anyhow::{anyhow, Result};
 use chrono::DateTime;
 use std::collections::HashMap;
+
+mod state_timeline;
 
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
 pub struct PlayerId(pub u32);
@@ -40,6 +43,11 @@ pub struct LoadoutState {
     pub ticks_alive: i32,
 }
 
+#[derive(Default, Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub struct Liveness {
+    pub is_alive: bool,
+}
+
 #[derive(Debug)]
 pub struct PlayerState {
     pub key: PlayerKey,
@@ -47,6 +55,7 @@ pub struct PlayerState {
     pub team: i32,
     pub nick: String,
     pub ticks_alive: i32,
+    pub spawns: StateTimeline<Liveness>,
     pub loadout_history: Vec<LoadoutState>,
 }
 
@@ -118,6 +127,7 @@ impl IndexingListener {
             if team > 2 {
                 state.team = team as i32;
             }
+            state.spawns.set(Liveness { is_alive: true })?;
             let next_loadout = Self::adapt_loadout(plane);
             let prev_loadout_state = state.loadout_history.last();
             // if loadout changed, push new loadout state
@@ -165,6 +175,7 @@ impl IndexingListener {
                 data: data.clone(),
                 team: 2, // spectator
                 ticks_alive: 0,
+                spawns: Default::default(),
                 loadout_history: Vec::new(),
             };
 
@@ -227,6 +238,10 @@ impl ReplayListener for IndexingListener {
         }
 
         Self::update_ball_state(self, next_ball_data)?;
+
+        for player in self.state.player_states.values_mut() {
+            player.spawns.end_tick(self.state.current_tick as i32);
+        }
 
         Ok(())
     }
