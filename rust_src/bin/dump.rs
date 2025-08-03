@@ -238,18 +238,16 @@ impl<'a> DumpListener<'a> {
             "INSERT INTO possession (replay_key, player_key, start_tick, end_tick) VALUES (?, ?, ?, ?)"
         )?;
 
-        let mut ball_end_tick = state.current_tick;
-        for ball in state.ball_history.iter().rev() {
+        for ball in state.ball.iter() {
             if let Some(Ball::Possessed { player }) = ball.data {
                 insert_possession_stmt.bind((1, self.replay_key))?;
                 insert_possession_stmt.bind((2, player.0 as i64))?;
                 insert_possession_stmt.bind((3, ball.start_tick as i64))?;
-                insert_possession_stmt.bind((4, ball_end_tick as i64))?;
+                insert_possession_stmt.bind((4, ball.end_tick as i64))?;
 
                 while State::Done != insert_possession_stmt.next()? {}
                 insert_possession_stmt.reset()?;
             }
-            ball_end_tick = ball.start_tick as usize;
         }
 
         Ok(())

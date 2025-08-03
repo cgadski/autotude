@@ -1,6 +1,6 @@
-use std::{cmp::Eq, default::Default, fmt::Debug};
+use std::{cmp::Eq, default::Default, error::Error, fmt::Debug};
 
-use anyhow::{bail, Result};
+use anyhow::Result;
 
 // `trait_alias` not stable: https://github.com/rust-lang/rust/issues/41517
 pub trait Data: Eq + Debug {}
@@ -26,15 +26,26 @@ pub struct State<T: Data> {
     pub end_tick: i32,
 }
 
+#[derive(Debug)]
+pub struct ConflictingDataError;
+
+impl Error for ConflictingDataError {}
+
+impl std::fmt::Display for ConflictingDataError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Multiple data for single tick to state timeline")
+    }
+}
+
 impl<T: Data + Default> StateTimeline<T> {
     pub fn new() -> Self {
         Self::default()
     }
 
     /// Set the state data for the current tick.
-    pub fn set(&mut self, data: T) -> Result<()> {
+    pub fn set(&mut self, data: T) -> Result<(), ConflictingDataError> {
         if self.next != T::default() && self.next != data {
-            bail!("Multiple data for single tick to state timeline");
+            return Err(ConflictingDataError);
         }
         self.next = data;
         Ok(())

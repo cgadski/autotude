@@ -1,8 +1,8 @@
-use crate::listener::state_timeline::StateTimeline;
+use crate::listener::state_timeline::{ConflictingDataError, StateTimeline};
 use crate::proto::game_event::Event;
 use crate::proto::{GameEvent, GameObject, ObjectType, RemovePlayerEvent, SetPlayerEvent, Update};
 use crate::replay::{ReplayListener, Result as ReplayResult};
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, bail, Result};
 use chrono::DateTime;
 use std::collections::HashMap;
 
@@ -65,19 +65,13 @@ pub enum Ball {
     Loose { x: i32, y: i32 },
 }
 
-#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
-pub struct BallState {
-    pub data: Option<Ball>,
-    pub start_tick: i32,
-}
-
 pub struct ReplayState {
     pub server_name: Option<String>,
     pub datetime: Option<DateTime<chrono::FixedOffset>>,
     pub map_name: Option<String>,
     pub current_tick: usize,
     pub player_states: HashMap<PlayerKey, PlayerState>,
-    pub ball_history: Vec<BallState>,
+    pub ball: StateTimeline<Option<Ball>>,
 }
 
 impl ReplayState {
@@ -88,7 +82,7 @@ impl ReplayState {
             map_name: None,
             current_tick: 0,
             player_states: HashMap::new(),
-            ball_history: Vec::new(),
+            ball: Default::default(),
         }
     }
 }
@@ -119,7 +113,7 @@ impl IndexingListener {
         }
     }
 
-    fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<PlayerKey> {
+    fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<()> {
         let player_key = self.get_player_key(id)?;
         if let Some(state) = self.state.player_states.get_mut(&player_key) {
             state.ticks_alive += 1;
@@ -128,6 +122,12 @@ impl IndexingListener {
                 state.team = team as i32;
             }
             state.spawns.set(Liveness { is_alive: true })?;
+            if plane.powerup() == ObjectType::Ball {
+                self.state
+                    .ball
+                    .set(Some(Ball::Possessed { player: player_key }))
+                    .map_err(|err| anyhow!(err).context("Bad premise: multiple balls???"))?;
+            }
             let next_loadout = Self::adapt_loadout(plane);
             let prev_loadout_state = state.loadout_history.last();
             // if loadout changed, push new loadout state
@@ -143,20 +143,26 @@ impl IndexingListener {
             state.loadout_history.last_mut().unwrap().ticks_alive += 1;
         }
 
-        Ok(player_key)
+        Ok(())
     }
 
-    fn on_ball(&mut self, ball: &GameObject) -> Result<Ball> {
+    fn on_ball(&mut self, ball: &GameObject) -> Result<()> {
         if ball.position_x.is_none() || ball.position_y.is_none() {
-            Err(anyhow!(format!(
-                "Bad premise: ball object had no position: {:?}",
-                ball
-            )))?
+            bail!("Bad premise: ball object had no position: {:?}", ball)
         }
-        Ok(Ball::Loose {
+        let ball = Ball::Loose {
             x: ball.position_x() as i32,
             y: ball.position_y() as i32,
-        })
+        };
+        match self.state.ball.set(Some(ball)) {
+            Ok(()) => Ok(()),
+            Err(ConflictingDataError) => {
+                // multiple ball objects have been observed for a tick when the round is
+                // forcibly ended (overtime) exactly when a ball is lost, i think. whatever,
+                // just ignore the error and leave it undefined which is used
+                Ok(())
+            }
+        }
     }
 
     fn on_set_player(&mut self, data: &SetPlayerEvent) -> Result<()> {
@@ -191,19 +197,6 @@ impl IndexingListener {
         Ok(())
     }
 
-    fn update_ball_state(&mut self, next_ball_data: Option<Ball>) -> Result<()> {
-        let prev_ball_state = self.state.ball_history.last();
-        // if ball data changed, push new ball state
-        if prev_ball_state.is_none_or(|state| state.data != next_ball_data) {
-            let new_ball_state = BallState {
-                data: next_ball_data,
-                start_tick: self.state.current_tick as i32,
-            };
-            self.state.ball_history.push(new_ball_state);
-        }
-        Ok(())
-    }
-
     pub fn get_player_key(&mut self, id: PlayerId) -> Result<PlayerKey> {
         self.id_to_key
             .get(&id)
@@ -216,32 +209,23 @@ impl ReplayListener for IndexingListener {
     fn on_update(&mut self, update: &Update) -> ReplayResult<()> {
         self.state.current_tick += 1;
 
-        let mut next_ball_data: Option<Ball> = None;
         for obj in update.objects.iter() {
             let is_plane = obj.r#type.map(|v| v < 5).unwrap_or(false);
             if is_plane {
                 let player_id = PlayerId(obj.owner());
-                let player_key = self.on_plane(player_id, obj)?;
-                if obj.powerup() == ObjectType::Ball {
-                    if next_ball_data.is_some() {
-                        Err(anyhow!("Bad premise: multiple balls???"))?
-                    }
-                    next_ball_data = Some(Ball::Possessed { player: player_key })
-                }
+                self.on_plane(player_id, obj)?;
             }
 
             if obj.r#type() == ObjectType::Ball {
-                // multiple ball objects have been observed for a tick when the round is forcibly
-                // ended (overtime) exactly when a ball is lost, i think. whatever, just pick one
-                next_ball_data = Some(self.on_ball(obj)?);
+                self.on_ball(obj)?;
             }
         }
 
-        Self::update_ball_state(self, next_ball_data)?;
-
+        let tick = self.state.current_tick as i32;
         for player in self.state.player_states.values_mut() {
-            player.spawns.end_tick(self.state.current_tick as i32);
+            player.spawns.end_tick(tick);
         }
+        self.state.ball.end_tick(tick);
 
         Ok(())
     }
