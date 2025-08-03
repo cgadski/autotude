@@ -6,7 +6,7 @@ use alti_reader::{
     replay::{read_replay_file, ReplayListener},
     IndexingListener,
 };
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
 use clap::Parser;
 use sqlite::State;
 use std::{
@@ -273,19 +273,18 @@ impl<'a> ReplayListener for DumpListener<'a> {
                     "INSERT INTO goals (replay_key, player_key, tick, team) VALUES (?, ?, ?, ?)",
                 )?;
 
-                let scorer_key = self.indexer.get_player_key(PlayerId(scorer))?;
-                let team = self
+                let scorer_key = self
                     .indexer
-                    .state
-                    .player_states
-                    .get(&scorer_key)
-                    .map(|p| p.team)
-                    .unwrap_or(0);
+                    .get_potentially_removed_player_key(PlayerId(scorer))?;
+                let scorer = scorer_key
+                    .map(|k| self.indexer.get_player(k))
+                    .transpose()
+                    .with_context(|| format!("Player id {:?}", scorer))?;
 
                 stmt.bind((1, self.replay_key))?;
-                stmt.bind((2, scorer_key.0 as i64))?;
+                stmt.bind((2, scorer_key.map(|k| k.0 as i64)))?;
                 stmt.bind((3, self.indexer.state.current_tick as i64))?;
-                stmt.bind((4, team as i64))?;
+                stmt.bind((4, scorer.map(|p| p.team as i64)))?;
 
                 while State::Done != stmt.next()? {}
                 self.goal_count += 1;
@@ -303,10 +302,14 @@ impl<'a> ReplayListener for DumpListener<'a> {
             if kill.who_killed.is_none() {
                 stmt.bind((2, sqlite::Value::Null))?;
             } else {
-                let killed_key = self
+                let killer_key = self
                     .indexer
-                    .get_potentially_removed_player_key(PlayerId(kill.who_killed()))?;
-                stmt.bind((2, killed_key.0 as i64))?;
+                    .get_potentially_removed_player_key(PlayerId(kill.who_killed()))?
+                    // kills by null player not yet observed, even when killer leaves before kill.
+                    // to represent kills by null we would need to differentiate them from crashes,
+                    // probably by introducing a dedicated crash table
+                    .ok_or(anyhow!("Unexpected kill by null player"))?;
+                stmt.bind((2, killer_key.0 as i64))?;
             }
             stmt.bind((3, died_key.0 as i64))?;
             stmt.bind((4, self.indexer.state.current_tick as i64))?;

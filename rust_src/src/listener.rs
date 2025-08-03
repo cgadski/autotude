@@ -2,11 +2,16 @@ use crate::listener::state_timeline::{ConflictingDataError, StateTimeline};
 use crate::proto::game_event::Event;
 use crate::proto::{GameEvent, GameObject, ObjectType, RemovePlayerEvent, SetPlayerEvent, Update};
 use crate::replay::{ReplayListener, Result as ReplayResult};
-use anyhow::{anyhow, bail, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use chrono::DateTime;
 use std::collections::HashMap;
 
 mod state_timeline;
+
+// null player is the scorer of goals after the real scorer leaves
+// (player id 4294967294 as null player observed in goal after tick 1951371 in
+// ad9b5b21-de93-434a-8735-765576c11047)
+const NULL_PLAYER: PlayerId = PlayerId(u32::MAX - 1);
 
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
 pub struct PlayerId(pub u32);
@@ -105,19 +110,20 @@ impl IndexingListener {
 
     fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<()> {
         let player_key = self.get_player_key(id)?;
-        if let Some(state) = self.state.player_states.get_mut(&player_key) {
-            state.ticks_alive += 1;
-            let team = plane.team();
-            if team > 2 {
-                state.team = team as i32;
-            }
-            state.spawns.set(Some(Self::adapt_loadout(plane)))?;
-            if plane.powerup() == ObjectType::Ball {
-                self.state
-                    .ball
-                    .set(Some(Ball::Possessed { player: player_key }))
-                    .map_err(|err| anyhow!(err).context("Bad premise: multiple balls???"))?;
-            }
+        let state = self
+            .get_player_mut(player_key)
+            .with_context(|| format!("Player id {:?}", id))?;
+        state.ticks_alive += 1;
+        let team = plane.team();
+        if team > 2 {
+            state.team = team as i32;
+        }
+        state.spawns.set(Some(Self::adapt_loadout(plane)))?;
+        if plane.powerup() == ObjectType::Ball {
+            self.state
+                .ball
+                .set(Some(Ball::Possessed { player: player_key }))
+                .with_context(|| "Bad premise: multiple balls???")?;
         }
 
         Ok(())
@@ -177,17 +183,56 @@ impl IndexingListener {
         Ok(())
     }
 
+    pub fn get_player(&self, key: PlayerKey) -> Result<&PlayerState> {
+        self.state.player_states.get(&key).ok_or_else(|| {
+            anyhow!(
+                "Player with key {:?} had no state at tick {}",
+                key,
+                self.state.current_tick
+            )
+        })
+    }
+
+    pub fn get_player_mut(&mut self, key: PlayerKey) -> Result<&mut PlayerState> {
+        self.state.player_states.get_mut(&key).ok_or_else(|| {
+            anyhow!(
+                "Player with key {:?} had no state at tick {}",
+                key,
+                self.state.current_tick
+            )
+        })
+    }
+
     pub fn get_player_key(&mut self, id: PlayerId) -> Result<PlayerKey> {
         self.id_to_key
             .get(&id)
-            .ok_or_else(|| anyhow!("Unregistered player id used."))
+            .ok_or_else(|| {
+                anyhow!(
+                    "Unregistered player id used, {:?}, at tick {}",
+                    id,
+                    self.state.current_tick
+                )
+            })
             .copied()
     }
 
-    pub fn get_potentially_removed_player_key(&mut self, id: PlayerId) -> Result<PlayerKey> {
-        match self.get_player_key(id) {
-            ok @ Ok(_) => ok,
-            Err(err) => self.removed_id_to_key.get(&id).ok_or(err).copied(),
+    pub fn get_potentially_removed_player_key(
+        &mut self,
+        id: PlayerId,
+    ) -> Result<Option<PlayerKey>> {
+        if id == NULL_PLAYER {
+            Ok(None)
+        } else {
+            // fallback: recall the previously removed player with the given id
+            match self.get_player_key(id) {
+                ok @ Ok(_) => ok.map(Some),
+                Err(err) => self
+                    .removed_id_to_key
+                    .get(&id)
+                    .copied()
+                    .map(Some)
+                    .ok_or(err),
+            }
         }
     }
 }
