@@ -303,7 +303,9 @@ impl<'a> ReplayListener for DumpListener<'a> {
             if kill.who_killed.is_none() {
                 stmt.bind((2, sqlite::Value::Null))?;
             } else {
-                let killed_key = self.indexer.get_player_key(PlayerId(kill.who_killed()))?;
+                let killed_key = self
+                    .indexer
+                    .get_potentially_removed_player_key(PlayerId(kill.who_killed()))?;
                 stmt.bind((2, killed_key.0 as i64))?;
             }
             stmt.bind((3, died_key.0 as i64))?;

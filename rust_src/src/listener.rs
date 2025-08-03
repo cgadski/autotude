@@ -80,6 +80,8 @@ pub struct IndexingListener {
     // mapping from altitude player IDs to our database keys
     next_player_key: i32,
     pub id_to_key: HashMap<PlayerId, PlayerKey>,
+    // players no longer in the server may still have an effect for a while, in particular kills
+    removed_id_to_key: HashMap<PlayerId, PlayerKey>,
 }
 
 impl IndexingListener {
@@ -88,6 +90,7 @@ impl IndexingListener {
             state: ReplayState::new(),
             next_player_key: 0,
             id_to_key: HashMap::new(),
+            removed_id_to_key: HashMap::new(),
         }
     }
 
@@ -142,6 +145,7 @@ impl IndexingListener {
     fn on_set_player(&mut self, data: &SetPlayerEvent) -> Result<()> {
         let id = PlayerId(data.id());
 
+        self.removed_id_to_key.remove(&id);
         // Start a new player record if no player was previously registered at this id
         if !self.id_to_key.contains_key(&id) {
             let name: &str = &data.name();
@@ -166,7 +170,10 @@ impl IndexingListener {
 
     fn on_remove_player(&mut self, data: &RemovePlayerEvent) -> Result<()> {
         let id: PlayerId = PlayerId(data.id());
-        self.id_to_key.remove(&id);
+        let key = self.id_to_key.remove(&id);
+        if let Some(key) = key {
+            self.removed_id_to_key.insert(id, key);
+        }
         Ok(())
     }
 
@@ -174,7 +181,14 @@ impl IndexingListener {
         self.id_to_key
             .get(&id)
             .ok_or_else(|| anyhow!("Unregistered player id used."))
-            .map(|x| x.clone())
+            .copied()
+    }
+
+    pub fn get_potentially_removed_player_key(&mut self, id: PlayerId) -> Result<PlayerKey> {
+        match self.get_player_key(id) {
+            ok @ Ok(_) => ok,
+            Err(err) => self.removed_id_to_key.get(&id).ok_or(err).copied(),
+        }
     }
 }
 
