@@ -11,7 +11,7 @@ games_per_player AS (
     WHERE team >= 3
     GROUP BY vapor
 )
-SELECT idx % 2, vapor, nick, n_games, date(max(started_at), 'unixepoch') AS last_used
+SELECT idx, vapor, nick, n_games, date(max(started_at), 'unixepoch') AS last_used
 FROM players
 NATURAL JOIN replays
 JOIN vapor_idx USING (vapor)

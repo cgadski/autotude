@@ -12,6 +12,7 @@ SELECT replay_key FROM replays
 NATURAL JOIN active_players
 WHERE duration > 30 * 120 -- at least two minutes
 AND active_players.ct == 8 -- exactly 8 vapor ids in game
+AND stem != "f6f0ad5e-860a-41bd-af9d-ffe7b30ab41c" -- game started recording late
 AND map != "lobby_4ball";
 
 -- player display name := manual name (from `names` table), if it exists, or else the most frequent name by replay count
@@ -95,7 +96,7 @@ select
 	player_display_names.name as name,
 	plane_names.name as plane,
 	red_name.name as red_perk,
-	green_name.name as green_perk, 
+	green_name.name as green_perk,
 	blue_name.name as blue_perk,
 	loadouts.ticks_alive / 30 / 60 as minutes_alive,
 	loadouts.ticks_alive,
@@ -123,8 +124,8 @@ left join perk_names blue_name
 order by loadouts.replay_key, player_display_names.vapor, start_tick;
 
 -- kills between "named players" (with names in the `names` table)
--- DROP TABLE IF EXISTS named_kills;
-CREATE TABLE IF NOT EXISTS named_kills AS
+DROP VIEW IF EXISTS named_kills;
+CREATE VIEW IF NOT EXISTS named_kills AS
 SELECT
     ladder_games.replay_key AS replay_key,
     killing_player.name AS who_killed,
@@ -142,6 +143,3 @@ JOIN players p1 ON
 JOIN names dying_player ON
     dying_player.vapor = p1.vapor
 WHERE kills.who_killed IS NOT NULL;
-
-CREATE INDEX IF NOT EXISTS idx_kill_killed ON named_kills (who_killed);
-CREATE INDEX IF NOT EXISTS idx_kill_died ON named_kills (who_died);
