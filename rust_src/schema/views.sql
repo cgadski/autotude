@@ -56,6 +56,37 @@ FROM (
 )
 WHERE goal_idx = 1;
 
+-- consecutively grouped loadouts (if two consecutive spawns have the same loadout, they have the same loadout row)
+drop view if exists loadouts;
+create view loadouts as
+with ranked_loadouts as (
+	select
+		spawns.*,
+		row_number() over (partition by replay_key, player_key order by start_tick) as rank_in_player_and_game,
+		row_number() over (partition by replay_key, player_key, plane, red_perk, green_perk, blue_perk order by start_tick) as rank_in_player_and_game_and_loadout
+	from spawns
+	order by replay_key, player_key
+)
+select
+	replay_key,
+	player_key,
+	plane,
+	red_perk,
+	green_perk,
+	blue_perk,
+	min(start_tick) as start_tick,
+	max(end_tick) as end_tick,
+	sum(end_tick - start_tick) as ticks_alive
+from ranked_loadouts
+group by
+	replay_key,
+	player_key,
+	plane,
+	red_perk,
+	green_perk,
+	blue_perk,
+	rank_in_player_and_game - rank_in_player_and_game_and_loadout;
+
 -- timeline of pretty-printed player loadouts per game
 drop view if exists readable_loadouts;
 create view readable_loadouts as

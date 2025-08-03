@@ -36,18 +36,6 @@ pub struct Loadout {
     pub blue_perk: Option<i32>,
 }
 
-#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
-pub struct LoadoutState {
-    pub data: Loadout,
-    pub start_tick: i32,
-    pub ticks_alive: i32,
-}
-
-#[derive(Default, Debug, Clone, Copy, Hash, Eq, PartialEq)]
-pub struct Liveness {
-    pub is_alive: bool,
-}
-
 #[derive(Debug)]
 pub struct PlayerState {
     pub key: PlayerKey,
@@ -55,8 +43,7 @@ pub struct PlayerState {
     pub team: i32,
     pub nick: String,
     pub ticks_alive: i32,
-    pub spawns: StateTimeline<Liveness>,
-    pub loadout_history: Vec<LoadoutState>,
+    pub spawns: StateTimeline<Option<Loadout>>,
 }
 
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
@@ -121,26 +108,13 @@ impl IndexingListener {
             if team > 2 {
                 state.team = team as i32;
             }
-            state.spawns.set(Liveness { is_alive: true })?;
+            state.spawns.set(Some(Self::adapt_loadout(plane)))?;
             if plane.powerup() == ObjectType::Ball {
                 self.state
                     .ball
                     .set(Some(Ball::Possessed { player: player_key }))
                     .map_err(|err| anyhow!(err).context("Bad premise: multiple balls???"))?;
             }
-            let next_loadout = Self::adapt_loadout(plane);
-            let prev_loadout_state = state.loadout_history.last();
-            // if loadout changed, push new loadout state
-            if prev_loadout_state.is_none_or(|prev| prev.data != next_loadout) {
-                let new_loadout_state = LoadoutState {
-                    data: next_loadout,
-                    start_tick: self.state.current_tick as i32,
-                    ticks_alive: 0,
-                };
-                state.loadout_history.push(new_loadout_state);
-            }
-            // unwrap: we already checked and pushed to `loadout_history` via `if` above
-            state.loadout_history.last_mut().unwrap().ticks_alive += 1;
         }
 
         Ok(())
@@ -182,7 +156,6 @@ impl IndexingListener {
                 team: 2, // spectator
                 ticks_alive: 0,
                 spawns: Default::default(),
-                loadout_history: Vec::new(),
             };
 
             self.id_to_key.insert(id, key);

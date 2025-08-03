@@ -64,25 +64,13 @@ CREATE INDEX idx_possession_player ON possession (player_key);
 CREATE TABLE spawns (
     replay_key INTEGER REFERENCES replays (replay_key),
     player_key INTEGER,
+    plane INTEGER,
+    red_perk INTEGER,
+    green_perk INTEGER,
+    blue_perk INTEGER,
     start_tick INTEGER,
     end_tick INTEGER
 );
 
 CREATE INDEX idx_spawns_replay ON spawns (replay_key);
 CREATE INDEX idx_spawns_player ON spawns (player_key);
-
-
-CREATE TABLE loadouts (
-    replay_key INTEGER REFERENCES replays (replay_key),
-    player_key INTEGER,
-    plane INTEGER,
-    red_perk INTEGER,
-    green_perk INTEGER,
-    blue_perk INTEGER,
-    start_tick INTEGER,
-    end_tick INTEGER,
-    ticks_alive INTEGER
-);
-
-CREATE INDEX idx_loadouts_replay ON loadouts (replay_key);
-CREATE INDEX idx_loadouts_player ON loadouts (player_key);

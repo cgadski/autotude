@@ -177,10 +177,7 @@ impl<'a> DumpListener<'a> {
             "INSERT INTO players (replay_key, player_key, nick, vapor, level, ticks_alive, team) VALUES (?, ?, ?, ?, ?, ?, ?)"
         )?;
         let mut insert_spawn_stmt = self.conn.prepare(
-            "INSERT INTO spawns (replay_key, player_key, start_tick, end_tick) VALUES (?, ?, ?, ?)",
-        )?;
-        let mut insert_loadout_stmt = self.conn.prepare(
-            "INSERT INTO loadouts (replay_key, player_key, plane, red_perk, green_perk, blue_perk, start_tick, end_tick, ticks_alive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO spawns (replay_key, player_key, plane, red_perk, green_perk, blue_perk, start_tick, end_tick) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         )?;
 
         for (_, player_state) in &state.player_states {
@@ -205,32 +202,19 @@ impl<'a> DumpListener<'a> {
             insert_player_stmt.reset()?;
 
             for spawn in player_state.spawns.iter() {
-                if spawn.data.is_alive {
+                if let Some(loadout) = spawn.data {
                     insert_spawn_stmt.bind((1, self.replay_key))?;
                     insert_spawn_stmt.bind((2, player_key))?;
-                    insert_spawn_stmt.bind((3, spawn.start_tick as i64))?;
-                    insert_spawn_stmt.bind((4, spawn.end_tick as i64))?;
+                    insert_spawn_stmt.bind((3, loadout.plane as i64))?;
+                    insert_spawn_stmt.bind((4, loadout.red_perk as i64))?;
+                    insert_spawn_stmt.bind((5, loadout.green_perk.map(i64::from)))?;
+                    insert_spawn_stmt.bind((6, loadout.blue_perk.map(i64::from)))?;
+                    insert_spawn_stmt.bind((7, spawn.start_tick as i64))?;
+                    insert_spawn_stmt.bind((8, spawn.end_tick as i64))?;
 
                     while State::Done != insert_spawn_stmt.next()? {}
                     insert_spawn_stmt.reset()?;
                 }
-            }
-
-            let mut loadout_end_tick = state.current_tick;
-            for loadout in player_state.loadout_history.iter().rev() {
-                insert_loadout_stmt.bind((1, self.replay_key))?;
-                insert_loadout_stmt.bind((2, player_key))?;
-                insert_loadout_stmt.bind((3, loadout.data.plane as i64))?;
-                insert_loadout_stmt.bind((4, loadout.data.red_perk as i64))?;
-                insert_loadout_stmt.bind((5, loadout.data.green_perk.map(i64::from)))?;
-                insert_loadout_stmt.bind((6, loadout.data.blue_perk.map(i64::from)))?;
-                insert_loadout_stmt.bind((7, loadout.start_tick as i64))?;
-                insert_loadout_stmt.bind((8, loadout_end_tick as i64))?;
-                insert_loadout_stmt.bind((9, loadout.ticks_alive as i64))?;
-                loadout_end_tick = loadout.start_tick as usize;
-
-                while State::Done != insert_loadout_stmt.next()? {}
-                insert_loadout_stmt.reset()?;
             }
         }
 
