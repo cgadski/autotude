@@ -20,8 +20,8 @@ JOIN n_goals USING (replay_key)
 WHERE duration > 30 * 120 -- at least two minutes
 AND active_players.ct == 8 -- exactly 8 vapor ids in game
 AND n_goals.ct > 0 -- a goal was scored
-AND stem != "f6f0ad5e-860a-41bd-af9d-ffe7b30ab41c" -- game started recording late
-AND map != "lobby_4ball";
+AND stem != 'f6f0ad5e-860a-41bd-af9d-ffe7b30ab41c' -- game started recording late
+AND map != 'lobby_4ball';
 
 -- player display name := manual name (from `names` table), if it exists, or else the most frequent name by replay count
 DROP VIEW IF EXISTS player_display_names;

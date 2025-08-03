@@ -38,8 +38,8 @@ z_stat AS (
 )
 SELECT
     name, n_games, n_team_scored,
-    printf("%.2f", empirical_prob) AS empirical_prob,
-    printf("%.2f", z_stat) AS z_stat
+    printf('%.2f', empirical_prob) AS empirical_prob,
+    printf('%.2f', z_stat) AS z_stat
 FROM z_stat
 WHERE n_games > 35
 ORDER BY z_stat.z_stat DESC;

@@ -32,6 +32,6 @@ stats AS (
 )
 SELECT
     name, n_games, n_kickoffs,
-    printf("%.2f", prop) AS prop
+    printf('%.2f', prop) AS prop
 FROM stats
 ORDER BY stats.prop DESC;

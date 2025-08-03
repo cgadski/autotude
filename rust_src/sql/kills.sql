@@ -10,7 +10,7 @@ player_deaths AS (
     FROM named_kills
     GROUP BY who_died
 )
-SELECT name, n_kills, n_deaths, printf("%.2f", CAST(n_kills AS REAL) / n_deaths) AS kd
+SELECT name, n_kills, n_deaths, printf('%.2f', CAST(n_kills AS REAL) / n_deaths) AS kd
 FROM (SELECT DISTINCT name FROM names)
 NATURAL JOIN player_kills
 NATURAL JOIN player_deaths

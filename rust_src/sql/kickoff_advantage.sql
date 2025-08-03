@@ -44,6 +44,6 @@ FROM map_stats
 )
 SELECT
     map, n_games, n_touch_scored,
-    printf("%.2f", z_stat) AS z_stat
+    printf('%.2f', z_stat) AS z_stat
 FROM z_stat
 ORDER BY z_stat.z_stat DESC;
