@@ -1,17 +1,25 @@
 -- subset of ladder games
-DROP VIEW IF EXISTS ladder_games;
-CREATE VIEW ladder_games AS
+DROP TABLE IF EXISTS ladder_games;
+CREATE TABLE ladder_games AS
 WITH active_players AS (
     SELECT replay_key, COUNT(DISTINCT vapor) AS ct
     FROM replays
     NATURAL JOIN players
     WHERE team >= 3
     GROUP BY stem
+),
+n_goals AS (
+    SELECT replay_key, COUNT() AS ct
+    FROM replays
+    NATURAL JOIN goals
+    GROUP BY replay_key
 )
 SELECT replay_key FROM replays
-NATURAL JOIN active_players
+JOIN active_players USING (replay_key)
+JOIN n_goals USING (replay_key)
 WHERE duration > 30 * 120 -- at least two minutes
 AND active_players.ct == 8 -- exactly 8 vapor ids in game
+AND n_goals.ct > 0 -- a goal was scored
 AND stem != "f6f0ad5e-860a-41bd-af9d-ffe7b30ab41c" -- game started recording late
 AND map != "lobby_4ball";
 
