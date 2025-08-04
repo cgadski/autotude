@@ -19,6 +19,16 @@ pub struct PlayerId(pub u32);
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
 pub struct PlayerKey(pub i32);
 
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub enum PlayerServerPresence {
+    /// Player is present in server
+    Present(PlayerKey),
+    /// Player was in server, but left
+    Absent(PlayerKey),
+    /// The fated "null player" is used by altitude when the player is truly unknown
+    NullPlayer,
+}
+
 // in-game player ID
 impl From<u32> for PlayerId {
     fn from(id: u32) -> Self {
@@ -84,7 +94,7 @@ pub struct IndexingListener {
 
     // mapping from altitude player IDs to our database keys
     next_player_key: i32,
-    pub id_to_key: HashMap<PlayerId, PlayerKey>,
+    id_to_key: HashMap<PlayerId, PlayerKey>,
     // players no longer in the server may still have an effect for a while, in particular kills
     removed_id_to_key: HashMap<PlayerId, PlayerKey>,
 }
@@ -109,23 +119,34 @@ impl IndexingListener {
     }
 
     fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<()> {
-        let player_key = self
+        let player_key = match self
             .get_player_key(id)
-            .with_context(|| format!("For plane: {:?}", plane))?;
-        let state = self
-            .get_player_mut(player_key)
-            .with_context(|| format!("Player id {:?}", id))?;
-        state.ticks_alive += 1;
-        let team = plane.team();
-        if team > 2 {
-            state.team = team as i32;
-        }
-        state.spawns.set(Some(Self::adapt_loadout(plane)))?;
-        if plane.powerup() == ObjectType::Ball {
-            self.state
-                .ball
-                .set(Some(Ball::Possessed { player: player_key }))
-                .with_context(|| "Bad premise: multiple balls???")?;
+            .with_context(|| format!("No player key for plane: {:?}", plane))?
+        {
+            PlayerServerPresence::Present(k) => Some(k),
+            // absent players should not have planes, but altitude sometimes bugs and retains
+            // owner-less planes: ignore them
+            PlayerServerPresence::Absent(_) => None,
+            PlayerServerPresence::NullPlayer => {
+                bail!("Unexpected plane owned by null player: {:?}", plane)
+            }
+        };
+        if let Some(player_key) = player_key {
+            let state = self
+                .get_player_mut(player_key)
+                .with_context(|| format!("Player id {:?}", id))?;
+            state.ticks_alive += 1;
+            let team = plane.team();
+            if team > 2 {
+                state.team = team as i32;
+            }
+            state.spawns.set(Some(Self::adapt_loadout(plane)))?;
+            if plane.powerup() == ObjectType::Ball {
+                self.state
+                    .ball
+                    .set(Some(Ball::Possessed { player: player_key }))
+                    .with_context(|| "Bad premise: multiple balls???")?;
+            }
         }
 
         Ok(())
@@ -205,36 +226,39 @@ impl IndexingListener {
         })
     }
 
-    pub fn get_player_key(&mut self, id: PlayerId) -> Result<PlayerKey> {
-        self.id_to_key
-            .get(&id)
-            .ok_or_else(|| {
-                anyhow!(
+    pub fn get_player_key(&mut self, id: PlayerId) -> Result<PlayerServerPresence> {
+        if id == NULL_PLAYER {
+            return Ok(PlayerServerPresence::NullPlayer);
+        }
+        match self.id_to_key.get(&id) {
+            Some(&k) => Ok(PlayerServerPresence::Present(k)),
+            // fallback: recall the previously removed player with the given id
+            None => match self.removed_id_to_key.get(&id) {
+                Some(&k) => Ok(PlayerServerPresence::Absent(k)),
+                None => Err(anyhow!(
                     "Unregistered player id used, {:?}, at tick {}",
                     id,
                     self.state.current_tick
-                )
-            })
-            .copied()
+                )),
+            },
+        }
     }
 
-    pub fn get_potentially_removed_player_key(
-        &mut self,
-        id: PlayerId,
-    ) -> Result<Option<PlayerKey>> {
-        if id == NULL_PLAYER {
-            Ok(None)
-        } else {
-            // fallback: recall the previously removed player with the given id
-            match self.get_player_key(id) {
-                ok @ Ok(_) => ok.map(Some),
-                Err(err) => self
-                    .removed_id_to_key
-                    .get(&id)
-                    .copied()
-                    .map(Some)
-                    .ok_or(err),
-            }
+    /// Return the [PlayerKey] of a player that must be in the server. Convenience method. Use
+    /// [Self::get_player_key] if the context does not guarantee that the player is present at the
+    /// time of the associating event.
+    pub fn get_present_player_key(&mut self, id: PlayerId) -> Result<PlayerKey> {
+        match self.get_player_key(id)? {
+            PlayerServerPresence::Present(k) => Ok(k),
+            PlayerServerPresence::Absent(k) => Err(anyhow!(
+                "Expected present player, but got absent player with key {} and id {}",
+                k.0,
+                id.0
+            )),
+            PlayerServerPresence::NullPlayer => Err(anyhow!(
+                "Expected present player, but got null player (id = {})",
+                id.0
+            )),
         }
     }
 }

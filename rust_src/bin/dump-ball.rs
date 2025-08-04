@@ -56,7 +56,7 @@ impl ReplayListener for BallDumpListener {
                 self.ball_pos_y.push(obj.position_y() as i32);
 
                 let id = PlayerId(obj.owner());
-                let key = self.idx.get_player_key(id)?;
+                let key = self.idx.get_present_player_key(id)?;
                 let nick: &String = &self.idx.state.player_states.get(&key).unwrap().nick;
                 if nick == "XX2" || nick == "> <8).G(u)ss [-fu] <" {
                     is_pro = true;

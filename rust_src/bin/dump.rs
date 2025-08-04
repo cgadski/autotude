@@ -1,12 +1,12 @@
 use alti_reader::{
     collect_replay_paths, get_stem,
-    listener::{Ball, PlayerId},
+    listener::{Ball, PlayerId, PlayerServerPresence},
     make_pb,
     proto::{game_event::Event, GameEvent, Update},
     replay::{read_replay_file, ReplayListener},
     IndexingListener,
 };
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use clap::Parser;
 use sqlite::State;
 use std::{
@@ -252,7 +252,7 @@ impl<'a> ReplayListener for DumpListener<'a> {
                 "INSERT INTO messages (replay_key, player_key, tick, chat_message) VALUES (?, ?, ?, ?)"
             )?;
 
-            let sender = self.indexer.get_player_key(PlayerId(chat.sender()));
+            let sender = self.indexer.get_present_player_key(PlayerId(chat.sender()));
 
             stmt.bind((1, self.replay_key))?;
             if let Ok(sender_key) = sender {
@@ -273,13 +273,17 @@ impl<'a> ReplayListener for DumpListener<'a> {
                     "INSERT INTO goals (replay_key, player_key, tick, team) VALUES (?, ?, ?, ?)",
                 )?;
 
-                let scorer_key = self
-                    .indexer
-                    .get_potentially_removed_player_key(PlayerId(scorer))?;
+                let scorer_key = match self.indexer.get_player_key(PlayerId(scorer))? {
+                    PlayerServerPresence::Present(k) => Some(k),
+                    // players can still score shortly after leaving (in practice, absent goals seem
+                    // always attributed to the null player, though)
+                    PlayerServerPresence::Absent(k) => Some(k),
+                    PlayerServerPresence::NullPlayer => None,
+                };
                 let scorer = scorer_key
                     .map(|k| self.indexer.get_player(k))
                     .transpose()
-                    .with_context(|| format!("Player id {:?}", scorer))?;
+                    .with_context(|| format!("No player state with id {:?} for goal", scorer))?;
 
                 stmt.bind((1, self.replay_key))?;
                 stmt.bind((2, scorer_key.map(|k| k.0 as i64)))?;
@@ -296,26 +300,40 @@ impl<'a> ReplayListener for DumpListener<'a> {
                 "INSERT INTO kills (replay_key, who_killed, who_died, tick) VALUES (?, ?, ?, ?)",
             )?;
 
-            stmt.bind((1, self.replay_key))?;
+            let died_key = match self.indexer.get_player_key(PlayerId(kill.who_died()))? {
+                PlayerServerPresence::Present(k) => Some(k),
+                // absent players should not have planes, but altitude sometimes bugs and retains
+                // owner-less planes: ignore them
+                PlayerServerPresence::Absent(_) => None,
+                PlayerServerPresence::NullPlayer => None,
+            };
+            if let Some(died_key) = died_key {
+                stmt.bind((1, self.replay_key))?;
 
-            let died_key = self.indexer.get_player_key(PlayerId(kill.who_died()))?;
-            if kill.who_killed.is_none() {
-                stmt.bind((2, sqlite::Value::Null))?;
-            } else {
-                let killer_key = self
-                    .indexer
-                    .get_potentially_removed_player_key(PlayerId(kill.who_killed()))?
-                    // kills by null player not yet observed, even when killer leaves before kill.
-                    // to represent kills by null we would need to differentiate them from crashes,
-                    // probably by introducing a dedicated crash table
-                    .ok_or(anyhow!("Unexpected kill by null player"))?;
-                stmt.bind((2, killer_key.0 as i64))?;
+                if kill.who_killed.is_none() {
+                    stmt.bind((2, sqlite::Value::Null))?;
+                } else {
+                    let killer_id = PlayerId(kill.who_killed());
+                    let killer_key = match self.indexer.get_player_key(killer_id)? {
+                        PlayerServerPresence::Present(k) => k,
+                        // players can still get kills shortly after leaving
+                        PlayerServerPresence::Absent(k) => k,
+                        // kills by null player not yet observed, even when killer leaves before
+                        // kill. to represent kills by null we would need to differentiate them
+                        // from crashes, probably by introducing a dedicated crash table
+                        PlayerServerPresence::NullPlayer => bail!(
+                            "Unexpected kill by null player at tick {}",
+                            self.indexer.state.current_tick
+                        ),
+                    };
+                    stmt.bind((2, killer_key.0 as i64))?;
+                }
+                stmt.bind((3, died_key.0 as i64))?;
+                stmt.bind((4, self.indexer.state.current_tick as i64))?;
+
+                while State::Done != stmt.next()? {}
+                self.kill_count += 1;
             }
-            stmt.bind((3, died_key.0 as i64))?;
-            stmt.bind((4, self.indexer.state.current_tick as i64))?;
-
-            while State::Done != stmt.next()? {}
-            self.kill_count += 1;
         }
 
         Ok(())
