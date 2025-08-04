@@ -109,7 +109,9 @@ impl IndexingListener {
     }
 
     fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<()> {
-        let player_key = self.get_player_key(id)?;
+        let player_key = self
+            .get_player_key(id)
+            .with_context(|| format!("For plane: {:?}", plane))?;
         let state = self
             .get_player_mut(player_key)
             .with_context(|| format!("Player id {:?}", id))?;

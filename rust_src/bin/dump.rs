@@ -121,7 +121,7 @@ fn main() -> Result<()> {
                     ));
                 }
                 Err(e) => {
-                    pb.println(format!("Error processing {}: {}", replay_stem, e));
+                    pb.println(format!("Error processing {}: {:#}", replay_stem, e));
                 }
             }
             pb.inc(1);

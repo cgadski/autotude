@@ -1,3 +1,4 @@
+use anyhow::Context;
 use flate2::read::GzDecoder;
 use prost::Message;
 use std::fs::File;
@@ -19,25 +20,33 @@ pub fn read_replay_file<P: AsRef<Path>, L: ReplayListener>(
 ) -> Result<()> {
     let mut file = File::open(path)?;
     let mut compressed = Vec::new();
-    file.read_to_end(&mut compressed)?;
+    file.read_to_end(&mut compressed)
+        .with_context(|| "Error reading replay file")?;
 
     let mut decoder = GzDecoder::new(&compressed[..]);
     let mut decompressed = Vec::new();
-    decoder.read_to_end(&mut decompressed)?;
+    decoder
+        .read_to_end(&mut decompressed)
+        .with_context(|| "Error decompressing replay")?;
 
     let mut buf = &decompressed[..];
     while !buf.is_empty() {
-        let len = prost::decode_length_delimiter(buf)?;
+        let len = prost::decode_length_delimiter(buf)
+            .with_context(|| "Error decoding protobuf length delimiter")?;
         let msg_bytes = &buf[prost::length_delimiter_len(len)..][..len];
-        let update = Update::decode(msg_bytes)?;
+        let update = Update::decode(msg_bytes).with_context(|| "Error decoding protobuf update")?;
 
         buf = &buf[prost::length_delimiter_len(len) + len..];
 
         for opt_event in &update.events {
-            listener.on_event(opt_event)?;
+            listener
+                .on_event(opt_event)
+                .with_context(|| format!("Error processing event: {:?}", opt_event))?;
         }
 
-        listener.on_update(&update)?;
+        listener
+            .on_update(&update)
+            .with_context(|| "Error processing update")?;
     }
 
     Ok(())
