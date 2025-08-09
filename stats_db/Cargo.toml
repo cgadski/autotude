@@ -4,16 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "index"
-path = "bin/index.rs"
-
-[[bin]]
 name = "index-lite"
 path = "bin/index-lite.rs"
-
-[[bin]]
-name = "dump-ball"
-path = "bin/dump-ball.rs"
 
 [[bin]]
 name = "dump"
@@ -23,7 +15,6 @@ path = "bin/dump.rs"
 prost = "0.12"
 prost-types = "0.12"
 bytes = "1.5"
-postgres = { version = "0.19", features = ["with-chrono-0_4"] }
 chrono = "0.4"
 walkdir = "2.4"
 flate2 = "1.0"

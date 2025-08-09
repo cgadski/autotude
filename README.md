@@ -7,8 +7,8 @@ This repository is my ongoing attempt to make Altitude a nice environment for re
 So far, we have:
 
 - `proto/`: A protobuf schema that can stream game state at around 12 kbps (raw) or 3 kbps (gzipped).
-- `rust_src/`: Various tools to extract features from replay files.
-- `hx_src/`: An in-browser replay viewer.
+- `stats_db/`: Tools to extract statistics from replay files and a bunch of statistics for use on [http://altistats.com].
+- `hx_src/`: An in-browser replay viewer, written in haxe.
 - A headless Altitude client that can connect to online servers and stream game state/accept controls from an external process.
 - `altistats.com/`: An [online database](http://altistats.com) of human replays, recorded using the headless client.
 - A "bot server" that can plays externally-controlled bots against each other at faster than realtime. (With two bots on a large map, the game can run at least 8 minutes of gameplay per realtime second.)

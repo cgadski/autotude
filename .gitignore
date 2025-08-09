@@ -7,7 +7,7 @@
 /etc/dev.env
 
 # rust stuff
-rust_src/target/
+stats_db/target/
 Cargo.lock
 
 # nix stuff
@@ -19,6 +19,7 @@ Cargo.lock
 /data/*.db*
 /data/polys
 /poly_src/
+recordings/
 
 # binaries
 /bin/
@@ -39,21 +40,9 @@ Cargo.lock
 site_src/index.csv
 site_src/.index.sql.swp
 /viewer/bin/
-/rust_src/proto/
+/stats_db/proto/
 
 # python
 __pycache__
 .ipynb_checkpoints
 .jupyter
-
-# aider
-.aider.tags.cache.v3
-.aider.chat.history.md
-.aider.input.history
-!.aiderignore
-recordings
-rust_src/ball_data.npz
-rust_src/all_chat.db
-rust_src/chat
-rust_src/chat_messages.db
-rust_src/chat.db

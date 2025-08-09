@@ -1,12 +1,13 @@
 .DELETE_ON_ERROR:
 
-all: java_gen/ data/polys
+all: copy_assets
 
 clean:
 	rm -rf bin/
 	rm -rf java_gen/ # java source gen
 	rm -rf poly_src/
 	rm -rf hx_src/autotude/proto/ # haxe source gen
+	rm -rf stats_db/proto/ # copies proto files
 
 PROTO_SRC = proto/
 PROTO_FILES = $(wildcard $(PROTO_SRC)*)
@@ -52,11 +53,11 @@ data/polys: bin/write_polys.n poly_src/
 	@wc -c $@
 
 # indexer
-bin/index bin/index-lite: rust_src/bin/* rust_src/src/** rust_src/Cargo.toml \
-	rust_src/proto/
+bin/dump bin/index-lite: stats_db/bin/* stats_db/src/** stats_db/Cargo.toml \
+	stats_db/proto/
 	mkdir -p $(@D)
-	cd rust_src && cargo build --release --bin index --bin index-lite
-	cp rust_src/target/release/index{,-lite} bin/
+	cd stats_db && cargo build --release --bin dump --bin index-lite
+	cp stats_db/target/release/{dump,index-lite} bin/
 
 # js source for viewer
 hx_src/out/viewer.js: hx_src/autotude/proto/ hx_src/build_viewer.hxml \
@@ -66,14 +67,14 @@ hx_src/out/viewer.js: hx_src/autotude/proto/ hx_src/build_viewer.hxml \
 	mkdir -p $(@D)
 	haxe hx_src/build_viewer.hxml
 
-.PHONY: docker_cp
+.PHONY: copy_assets
 
 # copy assets required to build sub-projects
-docker_cp: altistats.com/nginx/assets/ \
-	rust_src/proto/
+copy_assets: altistats.com/nginx/assets/ \
+	stats_db/proto/
 
 # proto files for rust
-rust_src/proto/: $(PROTO_FILES)
+stats_db/proto/: $(PROTO_FILES)
 	rm -rf $@
 	mkdir -p $@
 	cp $(PROTO_SRC)/* $@

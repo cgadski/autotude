@@ -53,7 +53,6 @@ dist:
 		hx_src/out/viewer.js
 	rsync -v --progress dist.tar root@cgad.ski:/www/autotude-dist.tar
 
-
 # Package and upload recordings
 dist-recordings:
 	tar -cf recordings.tar recordings/*

@@ -295,58 +295,9 @@ impl ReplayListener for IndexingListener {
                 self.state.server_name = load.server.clone();
                 self.state.datetime = crate::parse_datetime(load.datetime());
             }
-            Some(Event::Chat(_chat)) => {
-                // let player_id = PlayerId(chat.sender());
-                // let player_key = self.get_player_key(player_id).unwrap_or(PlayerKey(0));
-                // let stmt = self.conn.prepare(
-                //     "INSERT INTO chat (replay, tick, player, message)
-                //      VALUES ($1, $2, $3, $4)",
-                // )?;
-                // self.conn
-                //     .execute(
-                //         &stmt,
-                //         &[
-                //             &self.replay_key,
-                //             &(self.current_tick as i32),
-                //             &player_key.0,
-                //             &chat.message(),
-                //         ],
-                //     )
-                //     .or_else(|_| Err(anyhow!("Couldn't append chat record.")))?;
-            }
-            Some(Event::Goal(_goal)) => {
-                // if goal.who_scored.len() > 0 {
-                //     let player_id = PlayerId(goal.who_scored[0]);
-                //     let player_key = self.get_player_key(player_id)?;
-                //     let stmt = self
-                //         .conn
-                //         .prepare("INSERT INTO goals (replay, who_scored) VALUES ($1, $2)")?;
-                //     self.conn
-                //         .execute(&stmt, &[&self.replay_key, &player_key.0])
-                //         .or_else(|_| Err(anyhow!("Couldn't append goal record.")))?;
-                // }
-            }
-            Some(Event::Kill(_kill)) => {
-                // let who_killed = self
-                //     .get_player_key(PlayerId(kill.who_killed()))
-                //     .unwrap_or(PlayerKey(0));
-                // let who_died = self.get_player_key(PlayerId(kill.who_died()))?;
-                // let stmt = self.conn.prepare(
-                //     "INSERT INTO kills (tick, replay, who_killed, who_died)
-                //      VALUES ($1, $2, $3, $4)",
-                // )?;
-                // self.conn
-                //     .execute(
-                //         &stmt,
-                //         &[
-                //             &(self.current_tick as i32),
-                //             &self.replay_key,
-                //             &who_killed.0,
-                //             &who_died.0,
-                //         ],
-                //     )
-                //     .or_else(|_| Err(anyhow!("Couldn't append kill record.")))?;
-            }
+            Some(Event::Chat(_chat)) => {}
+            Some(Event::Goal(_goal)) => {}
+            Some(Event::Kill(_kill)) => {}
             Some(Event::SetPlayer(data)) => {
                 self.on_set_player(data)?;
             }

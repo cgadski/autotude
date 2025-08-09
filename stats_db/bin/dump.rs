@@ -10,6 +10,7 @@ use anyhow::{anyhow, bail, Context, Result};
 use clap::Parser;
 use sqlite::State;
 use std::{
+    collections::HashSet,
     env,
     sync::{atomic::AtomicI64, Arc},
 };
@@ -19,14 +20,42 @@ use threadpool::ThreadPool;
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    #[arg(long, default_value = "data.db")]
+    #[arg(long)]
     db: String,
 
     #[arg(long)]
     limit: Option<usize>,
 
+    #[arg(long, default_value = "5")]
+    workers: usize,
+
     #[arg(long)]
     stem: Option<String>,
+}
+
+fn mark_errored_stem(conn: &sqlite::Connection, stem: &str) -> Result<()> {
+    let mut stmt = conn.prepare("INSERT OR IGNORE INTO errored (stem) VALUES (?)")?;
+    stmt.bind((1, stem))?;
+    stmt.next()?;
+    Ok(())
+}
+
+fn init_replay_key(conn: &sqlite::Connection) -> Result<i64> {
+    let mut stmt = conn.prepare("SELECT coalesce(max(replay_key) + 1, 1) FROM replays")?;
+    stmt.next()?;
+    Ok(stmt.read::<i64, _>(0)?)
+}
+
+fn get_stems(query: &str, args: &Args) -> Result<HashSet<String>> {
+    let conn = sqlite::Connection::open(&args.db)?;
+    let mut existing_stems = HashSet::new();
+    let mut stmt = conn.prepare(query)?;
+    while let State::Row = stmt.next()? {
+        if let Ok(stem) = stmt.read::<String, _>(0) {
+            existing_stems.insert(stem);
+        }
+    }
+    Ok(existing_stems)
 }
 
 fn get_paths(args: &Args) -> Result<Vec<PathBuf>> {
@@ -37,12 +66,30 @@ fn get_paths(args: &Args) -> Result<Vec<PathBuf>> {
     eprintln!("Using replay directory: {}", replay_dir);
     let mut paths = collect_replay_paths(&base_path);
 
+    let existing_stems = get_stems("SELECT stem FROM replays", args)?;
+    let broken_stems = get_stems("SELECT stem FROM broken_replays", args)?;
+    let original_count = paths.len();
+    paths.retain(|p| {
+        if let Ok(path_stem) = get_stem(p) {
+            !existing_stems.contains(&path_stem) && !broken_stems.contains(&path_stem)
+        } else {
+            true
+        }
+    });
+    eprintln!(
+        "Found {} paths, {} in database, {} broken, {} to process",
+        original_count,
+        existing_stems.len(),
+        broken_stems.len(),
+        paths.len()
+    );
+
     if let Some(stem) = &args.stem {
         paths.retain(|p| {
             if let Ok(path_stem) = get_stem(p) {
                 path_stem == *stem
             } else {
-                false
+                true
             }
         });
         eprintln!("Filtering for stem: {}", stem);
@@ -55,8 +102,6 @@ fn get_paths(args: &Args) -> Result<Vec<PathBuf>> {
             total,
             paths.len()
         );
-    } else {
-        eprintln!("Found {} recordings", paths.len());
     }
 
     Ok(paths)
@@ -79,10 +124,9 @@ fn main() -> Result<()> {
 
     let pb = make_pb(paths.len());
     let progress = Arc::new(Mutex::new(Progress::default()));
-    let replay_key = Arc::new(AtomicI64::new(1));
+    let replay_key = Arc::new(AtomicI64::new(init_replay_key(&conn)?));
 
-    const REPLAY_PROCESSING_WORKER_COUNT: usize = 50;
-    let pool = ThreadPool::new(REPLAY_PROCESSING_WORKER_COUNT);
+    let pool = ThreadPool::new(args.workers);
     for path in paths {
         let (conn, pb, progress, replay_key) = (
             conn.clone(),
@@ -122,6 +166,12 @@ fn main() -> Result<()> {
                 }
                 Err(e) => {
                     pb.println(format!("Error processing {}: {:#}", replay_stem, e));
+                    if let Err(db_err) = mark_errored_stem(&conn, &replay_stem) {
+                        pb.println(format!(
+                            "Failed to record error for {}: {}",
+                            replay_stem, db_err
+                        ));
+                    }
                 }
             }
             pb.inc(1);

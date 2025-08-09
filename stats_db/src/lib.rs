@@ -4,11 +4,11 @@ pub mod proto {
 pub mod listener;
 pub mod replay;
 
+use chrono::DateTime;
 use indicatif::{ProgressBar, ProgressStyle};
 pub use listener::{IndexingListener, ReplayState};
 
 use anyhow::{anyhow, Result};
-use chrono::DateTime;
 use std::path::PathBuf;
 use walkdir::WalkDir;
 

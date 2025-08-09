@@ -1,0 +1,34 @@
+STATS_DB := env_var("STATS_DB")
+sqlite := "sqlite3 " + STATS_DB
+
+load-csv table_name schema:
+	{{sqlite}} "DROP TABLE IF EXISTS {{table_name}}; CREATE TABLE {{table_name}} ({{schema}});"
+	{{sqlite}} ".mode csv" ".import csv/{{table_name}}.csv {{table_name}}"
+
+load-schema:
+	([ ! -e {{STATS_DB}} ] && {{sqlite}} < schema.sql) || true
+
+load-csvs: \
+    (load-csv "named_players" "vapor TEXT, name TEXT") \
+    (load-csv "perk_names" "id INTEGER, name TEXT") \
+    (load-csv "plane_names" "id INTEGER, name TEXT") \
+    (load-csv "broken_replays" "stem TEXT")
+
+dump: load-schema load-csvs clear-errors
+	cargo run --release --bin dump -- --db {{STATS_DB}}
+	{{sqlite}} < views/game_meta.sql
+	{{sqlite}} "ANALYZE"
+
+load-views:
+	{{sqlite}} < views/ladder_games.sql
+	{{sqlite}} < views/names.sql
+	{{sqlite}} < views/loadouts.sql
+	{{sqlite}} < views/named_kills.sql
+	{{sqlite}} < views/game_teams.sql
+	python3 materialize_stats.py --db {{STATS_DB}} --stats-dir stats/
+
+clear-errors:
+	{{sqlite}} "DELETE FROM errored;"
+
+show-errors:
+	./show-errors.sh

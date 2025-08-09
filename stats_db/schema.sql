@@ -11,6 +11,8 @@ CREATE INDEX idx_replays_stem ON replays (stem);
 CREATE INDEX idx_replays_map ON replays (map);
 CREATE INDEX idx_replays_started_at ON replays (started_at);
 
+CREATE TABLE errored (stem TEXT PRIMARY KEY);
+
 CREATE TABLE players (
     replay_key INTEGER REFERENCES replays (replay_key),
     player_key INTEGER,
@@ -48,18 +50,16 @@ CREATE TABLE kills (
     who_killed INTEGER,
     who_died INTEGER,
     tick INTEGER,
-    PRIMARY KEY (replay_key, tick, who_killed, who_died)
+    PRIMARY KEY (replay_key, who_killed, who_died, tick)
 );
 
 CREATE TABLE possession (
     replay_key INTEGER REFERENCES replays (replay_key),
     player_key INTEGER,
     start_tick INTEGER,
-    end_tick INTEGER
+    end_tick INTEGER,
+    PRIMARY KEY (replay_key, player_key, start_tick)
 );
-
-CREATE INDEX idx_possession_replay ON possession (replay_key);
-CREATE INDEX idx_possession_player ON possession (player_key);
 
 CREATE TABLE spawns (
     replay_key INTEGER REFERENCES replays (replay_key),
@@ -69,8 +69,6 @@ CREATE TABLE spawns (
     green_perk INTEGER,
     blue_perk INTEGER,
     start_tick INTEGER,
-    end_tick INTEGER
+    end_tick INTEGER,
+    PRIMARY KEY (replay_key, player_key, start_tick)
 );
-
-CREATE INDEX idx_spawns_replay ON spawns (replay_key);
-CREATE INDEX idx_spawns_player ON spawns (player_key);
