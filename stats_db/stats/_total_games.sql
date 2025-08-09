@@ -1,3 +1,3 @@
 -- Ranked games
 SELECT count() AS stat
-FROM ladder_games;
+FROM ladder_games

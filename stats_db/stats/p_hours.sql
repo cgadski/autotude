@@ -7,4 +7,4 @@ NATURAL JOIN players
 JOIN names ON (names.vapor = players.vapor)
 WHERE team > 2
 GROUP BY name
-ORDER BY stat DESC;
+ORDER BY stat DESC

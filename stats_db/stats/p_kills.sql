@@ -4,4 +4,4 @@ SELECT
     count(*) AS stat
 FROM named_kills
 GROUP BY who_killed
-ORDER BY stat DESC;
+ORDER BY stat DESC

@@ -4,37 +4,88 @@ import os
 import sqlite3
 import sys
 from pathlib import Path
+from dataclasses import dataclass
+
+@dataclass
+class StatQuery:
+    stat_table: str
+    query_name: str
+    description: str
+    sql: str
+
+table_prefixes = [
+    ('_', 'global_stats'),
+    ('p_', 'player_stats'),
+]
+
+def read_query(sql_file: Path) -> StatQuery:
+    with open(sql_file, 'r') as f:
+        content = f.read().strip()
+
+    lines = content.split('\n')
+    description = ""
+    if lines and lines[0].startswith('--'):
+        description = lines[0][2:].strip()
+
+    filename = sql_file.stem
+    for prefix, table in table_prefixes:
+        if filename.startswith(prefix):
+            return StatQuery(
+                stat_table=table,
+                query_name=filename,
+                description=description,
+                sql=content
+            )
+
+    raise ValueError(f"No matching prefix for {filename}")
+
 
 class StatMaterializer:
     def __init__(self, db_path):
         self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS stats (type, table_name, display_name)")
+        self.cursor.executescript("""
+            DROP TABLE IF EXISTS stats;
+            CREATE TABLE stats (
+                stat_key INTEGER PRIMARY KEY,
+                query_name TEXT,
+                description TEXT
+            );
 
-    def materialize(self, sql_file, table_name):
+            DROP TABLE IF EXISTS global_stats;
+            CREATE TABLE global_stats (
+                stat_key INTEGER REFERENCES stats (stat_key),
+                stat
+            );
+
+            DROP TABLE IF EXISTS player_stats;
+            CREATE TABLE player_stats (
+                stat_key INTEGER REFERENCES stats (stat_key),
+                name,
+                stat
+            );
+        """)
+        self.next_stat_key = 1
+
+    def materialize(self, query_file, table_name):
         try:
-            with open(sql_file, 'r') as f:
-                content = f.read().strip()
+            stat = read_query(query_file)
+            stat_key = self.next_stat_key
+            self.next_stat_key += 1
 
-            display_name = ""
-            lines = content.split('\n')
-            if lines and lines[0].startswith('--'):
-                display_name = lines[0][2:].strip()
+            self.cursor.execute("INSERT INTO stats VALUES (?, ?, ?)",
+                              (stat_key, stat.query_name, stat.description))
 
-            query = content
-            self.cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
-            self.cursor.execute(f"CREATE TABLE {table_name} AS {query}")
-            self.cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
-            row_count = self.cursor.fetchone()[0]
+            self.cursor.execute(f"""
+                INSERT INTO {stat.stat_table}
+                SELECT {stat_key} AS stat_key, *
+                FROM ({stat.sql})
+            """)
 
-            self.cursor.execute("DELETE FROM stats WHERE table_name = ?", (table_name,))
-            self.cursor.execute("INSERT INTO stats (type, table_name, display_name) VALUES (?, ?, ?)",
-                              ("stat", table_name, display_name))
-
-            print(f"✓ {sql_file} ({row_count} rows)")
+            print(f"✓ {query_file}")
             return True
         except Exception as e:
-            print(f"✗ {sql_file}: {e}")
+            print(f"✗ {query_file}: {e}")
             return False
 
     def close(self):
