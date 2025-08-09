@@ -1,6 +1,5 @@
-import { loadSql, pool } from "$lib/db";
-import { getGlobalStats } from "$lib/stats";
-import type { GlobalStat } from "$lib/stats-format";
+import { pool, loadSql } from "$lib/db";
+import { getGlobalStats, type GlobalStat } from "$lib/stats";
 
 export type FrontpageData = {
   lastUpdate: string;
@@ -12,7 +11,7 @@ export type FrontpageData = {
   globalStats: GlobalStat[];
 };
 
-export async function load(): Promise<FrontpageData> {
+export async function getFrontpageData(): Promise<FrontpageData> {
   return {
     lastUpdate: (
       await pool.query("SELECT MAX(time) as last_update FROM listings")

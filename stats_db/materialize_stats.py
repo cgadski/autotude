@@ -5,12 +5,16 @@ import sqlite3
 import sys
 from pathlib import Path
 from dataclasses import dataclass
+from typing import List
+import json
 
 @dataclass
 class StatQuery:
+    key: str
     stat_table: str
     query_name: str
     description: str
+    attributes: List[str]
     sql: str
 
 table_prefixes = [
@@ -24,20 +28,27 @@ def read_query(sql_file: Path) -> StatQuery:
 
     lines = content.split('\n')
     description = ""
+    attributes = []
+
     if lines and lines[0].startswith('--'):
         description = lines[0][2:].strip()
 
-    filename = sql_file.stem
+    if len(lines) > 1 and lines[1].startswith('--'):
+        attributes = lines[1][2:].strip().split()
+
+    stem = sql_file.stem
     for prefix, table in table_prefixes:
-        if filename.startswith(prefix):
+        if stem.startswith(prefix):
             return StatQuery(
+                key=stem[len(prefix):],
                 stat_table=table,
-                query_name=filename,
+                query_name = stem,
                 description=description,
+                attributes=attributes,
                 sql=content
             )
 
-    raise ValueError(f"No matching prefix for {filename}")
+    raise ValueError(f"No matching prefix for {stem}")
 
 
 class StatMaterializer:
@@ -49,7 +60,8 @@ class StatMaterializer:
             CREATE TABLE stats (
                 stat_key INTEGER PRIMARY KEY,
                 query_name TEXT,
-                description TEXT
+                description TEXT,
+                attributes JSON
             );
 
             DROP TABLE IF EXISTS global_stats;
@@ -73,8 +85,10 @@ class StatMaterializer:
             stat_key = self.next_stat_key
             self.next_stat_key += 1
 
-            self.cursor.execute("INSERT INTO stats VALUES (?, ?, ?)",
-                              (stat_key, stat.query_name, stat.description))
+            self.cursor.execute(
+                "INSERT INTO stats VALUES (?, ?, ?, ?)",
+                (stat_key, stat.query_name, stat.description, json.dumps(stat.attributes))
+            )
 
             self.cursor.execute(f"""
                 INSERT INTO {stat.stat_table}

@@ -1,6 +1,6 @@
 <script lang="ts">
     import SiteHeader from "$lib/SiteHeader.svelte";
-    import { formatDuration } from "$lib";
+    import { formatStat } from "$lib";
     import * as d3 from "d3";
     import { onMount } from "svelte";
     import { invalidateAll } from "$app/navigation";
@@ -16,14 +16,12 @@
             const lastUpdate = new Date(data.lastUpdate);
             secondsAgo = Math.floor((new Date() - lastUpdate) / 1000);
 
-            // Auto-refresh data when it's been over 60 seconds
             if (secondsAgo > 60) {
                 invalidateAll();
             }
         }
     }
 
-    // Update timer every second
     onMount(() => {
         refreshInterval = setInterval(updateTimer, 1000) as unknown as number;
         updateTimer();
@@ -33,7 +31,6 @@
         };
     });
 
-    // Function to render the chart
     function renderChart() {
         if (
             !chartElement ||
@@ -42,7 +39,6 @@
         )
             return;
 
-        // Parse the data
         const chartData = data.listingsSeries
             .map((d) => ({
                 date: new Date(d.bin),
@@ -50,7 +46,6 @@
             }))
             .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-        // Set dimensions and margins with more top margin for the title
         const containerWidth = chartElement.clientWidth;
         const containerHeight = chartElement.clientHeight;
         const isMobile = containerWidth < 500;
@@ -66,10 +61,8 @@
         );
         const height = containerHeight - margin.top - margin.bottom;
 
-        // Clear any existing SVG
         d3.select(chartElement).selectAll("*").remove();
 
-        // Create SVG with responsive attributes
         const svg = d3
             .select(chartElement)
             .append("svg")
@@ -83,19 +76,16 @@
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        // X scale
         const x = d3
             .scaleTime()
             .domain(d3.extent(chartData, (d) => d.date) as [Date, Date])
             .range([0, width]);
 
-        // Y scale with padding at the top
         const maxPlayers = d3.max(chartData, (d) => d.players) || 10;
-        const yMax = Math.ceil(maxPlayers / 5) * 5; // Round up to nearest 5
+        const yMax = Math.ceil(maxPlayers / 5) * 5;
 
         const y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
-        // Add X axis with time increments based on screen size
         svg.append("g")
             .attr("transform", `translate(0,${height})`)
             .call(
@@ -105,13 +95,11 @@
                     .tickFormat((d) => d3.timeFormat("%Hh")(d) as string),
             );
 
-        // Add Y axis with ticks adjusted for screen size
         var ruleStep = isMobile ? 10 : 5;
         svg.append("g").call(
             d3.axisLeft(y).tickValues(d3.range(ruleStep, yMax + 5, ruleStep)),
         );
 
-        // Add Y axis label
         svg.append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", 0 - margin.left)
@@ -121,7 +109,6 @@
             .style("font-size", "12px")
             .text("Players");
 
-        // Add horizontal grid lines with spacing based on screen size
         svg.append("g")
             .attr("class", "grid-lines")
             .selectAll("line")
@@ -136,7 +123,6 @@
             .attr("stroke-width", 1)
             .attr("stroke-dasharray", "3,3");
 
-        // Add vertical day separator lines
         const days = d3.timeDay.range(
             d3.timeDay.floor(chartData[0].date),
             d3.timeDay.offset(
@@ -145,7 +131,6 @@
             ),
         );
 
-        // Add vertical lines for day boundaries
         svg.append("g")
             .attr("class", "day-separators")
             .selectAll("line")
@@ -160,7 +145,6 @@
             .attr("stroke-width", 1)
             .attr("stroke-dasharray", "3,3");
 
-        // Add day of week labels at the top
         svg.append("g")
             .attr("class", "day-labels")
             .selectAll("text")
@@ -174,7 +158,6 @@
             .style("fill", "#666")
             .text((d) => d3.timeFormat("%a")(d));
 
-        // Add a smooth line
         svg.append("path")
             .datum(chartData)
             .attr("fill", "none")
@@ -189,7 +172,6 @@
                     .curve(d3.curveCatmullRom.alpha(0.5)),
             );
 
-        // Add small points at each data point
         svg.selectAll("circle")
             .data(chartData)
             .enter()
@@ -200,7 +182,6 @@
             .attr("fill", "steelblue");
     }
 
-    // Set up resize observer to handle window resizing
     onMount(() => {
         renderChart();
 
@@ -219,20 +200,15 @@
         };
     });
 
-    $: stats = [
-        {
-            value: data.totals.n_vapors,
-            label: "players",
-        },
-        {
-            value: data.totals.hours,
-            label: "hours",
-        },
-        {
-            value: data.totals.n_replays,
-            label: "replays",
-        },
-    ];
+    const mainStatKeys = ["_total_games", "_total_time", "_total_players"];
+
+    const mainStats = data.globalStats.filter((stat) =>
+        mainStatKeys.includes(stat.query_name),
+    );
+
+    const miniStats = data.globalStats.filter(
+        (stat) => !mainStatKeys.includes(stat.query_name),
+    );
 </script>
 
 <SiteHeader navPage="home" />
@@ -270,18 +246,29 @@
 <section>
     <h2>Recording database</h2>
 
-    <div class="row cols-2 g-2">
-        {#each stats as stat}
+    <div class="row cols-2 g-2 mb-3">
+        {#each mainStats as stat}
             <div class="col">
                 <div class="card stats-card">
                     <div class="card-body text-center">
-                        <p class="h4 mb-0">{stat.value}</p>
-                        <p class="mb-0 small">{stat.label}</p>
+                        <p class="h4 mb-0">{formatStat(stat)}</p>
+                        <p class="mb-0 small">{stat.description}</p>
                     </div>
                 </div>
             </div>
         {/each}
     </div>
+
+    {#if miniStats.length > 0}
+        <div class="d-flex flex-wrap gap-2">
+            {#each miniStats as stat}
+                <div class="card p-2">
+                    {stat.description}:
+                    {formatStat(stat)}
+                </div>
+            {/each}
+        </div>
+    {/if}
 </section>
 
 <style>

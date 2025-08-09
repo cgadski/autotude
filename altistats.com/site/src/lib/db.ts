@@ -1,4 +1,5 @@
 import pg from "pg";
+import Database from "better-sqlite3";
 import { env } from "$env/dynamic/private";
 import { readFileSync } from "fs";
 import { join } from "path";
@@ -16,7 +17,7 @@ export type Game = {
   };
 };
 
-const pool = new pg.Pool({
+export const pool = new pg.Pool({
   user: env.POSTGRES_USER,
   password: env.POSTGRES_PASSWORD,
   host: env.POSTGRES_HOST,
@@ -29,30 +30,13 @@ const SQL_DIR =
     ? "/app/sql"
     : join(process.cwd(), "sql");
 
-function loadSql(filename: string): string {
+export function loadSql(filename: string): string {
   return readFileSync(join(SQL_DIR, filename), "utf-8");
 }
-
-export type Totals = {
-  n_vapors: number;
-  n_replays: number;
-  hours: number;
-};
 
 export type CalendarEntry = {
   date: string;
   count: number;
-};
-
-export type FrontpageData = {
-  lastUpdate: string;
-  listings: any[];
-  listingsSeries: Array<{
-    bin: string;
-    players: string;
-  }>;
-  totals: Totals;
-  calendarData: CalendarEntry[];
 };
 
 export async function getReplayCalendar(): Promise<CalendarEntry[]> {
@@ -95,36 +79,4 @@ export async function getPlayerInfo(vapor: string): Promise<any> {
 export async function getPlayerGamesByDate(vapor: string): Promise<any[]> {
   const result = await pool.query(loadSql("player_games_by_date.sql"), [vapor]);
   return result.rows;
-}
-
-export async function getFrontpageData(): Promise<FrontpageData> {
-  // Get last update time
-  const lastUpdateResult = await pool.query(
-    "SELECT MAX(time) as last_update FROM listings",
-  );
-  const lastUpdate = lastUpdateResult.rows[0]?.last_update;
-
-  // Get recent listings
-  const listingsResult = await pool.query(loadSql("listings.sql"));
-  const listings = listingsResult.rows;
-
-  // Get listings time series
-  const listingsSeriesResult = await pool.query(loadSql("listings_series.sql"));
-  const listingsSeries = listingsSeriesResult.rows;
-
-  // Get totals
-  const totalsResult = await pool.query("SELECT * FROM mv_totals");
-  const totals = totalsResult.rows[0];
-
-  // Get calendar data
-  const calendarResult = await pool.query(loadSql("replay_calendar.sql"));
-  const calendarData = calendarResult.rows;
-
-  return {
-    lastUpdate,
-    listings,
-    listingsSeries,
-    totals,
-    calendarData,
-  };
 }

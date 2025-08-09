@@ -1,18 +1,26 @@
-// place files you want to import through the `$lib` alias in this folder.
+export type Stat = {
+  query_name: string;
+  description: string;
+  stat: number;
+  attributes: string[];
+};
 
-export function formatDuration(dur: number): string {
-  const totalSeconds = dur / 30;
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = Math.floor(totalSeconds % 60);
+export function formatStat(stat: Stat): string {
+  if (stat.attributes.includes("duration")) {
+    const totalMinutes = stat.stat / (30 * 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.floor(totalMinutes % 60);
+    const seconds = Math.floor((totalMinutes % 1) * 60);
 
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  } else if (minutes > 0) {
-    return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
-  } else {
-    return `${seconds}s`;
+    const parts = [];
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0) parts.push(`${minutes}m`);
+    if (hours == 0) parts.push(`${seconds}s`);
+
+    return parts.join(" ") || "0s";
   }
+
+  return Math.round(stat.stat).toLocaleString();
 }
 
 export type NavPage = "home" | "player" | "date" | "map" | null;
