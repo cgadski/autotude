@@ -1,12 +1,21 @@
 <script lang="ts">
-    import { formatDuration } from "$lib";
-    import GameCard from "$lib/GameCard.svelte";
     import SiteHeader from "$lib/SiteHeader.svelte";
+    import { formatStat } from "$lib";
+    import GameCard from "$lib/GameCard.svelte";
 
     // @type {import('./$types').PageData}
     export let data;
 
-    // Format the date for display
+    const mainQueries = ["p_total_games", "p_time_played", "p_total_kills"];
+
+    const mainStats = data.stats.filter((stat) =>
+        mainQueries.includes(stat.query_name),
+    );
+
+    const miniStats = (data.stats || []).filter(
+        (stat) => !mainQueries.includes(stat.query_name),
+    );
+
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
         return date.toLocaleDateString("en-US", {
@@ -21,77 +30,58 @@
 <SiteHeader />
 
 <section>
-    <h2>Player: {data.player.nick}</h2>
+    <h2>Player: {data.name}</h2>
 
-    <div class="player-stats">
-        <div class="row cols-2 g-2">
+    <div class="row cols-2 g-2 mb-2">
+        {#each mainStats as stat}
             <div class="col">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <p class="h4 mb-0">{data.player.games}</p>
-                        <p class="mb-0 small">Games Played</p>
+                <a
+                    href="/index/player?stat={stat.query_name}"
+                    class="text-decoration-none"
+                >
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <p class="h4 mb-0">
+                                {formatStat(stat.stat, stat.attributes)}
+                            </p>
+                            <p class="mb-0 small">{stat.description}</p>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
-            <div class="col">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <p class="h4 mb-0">{data.player.days_played}</p>
-                        <p class="mb-0 small">Days Active</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <p class="h4 mb-0">
-                            {new Date(
-                                data.player.last_seen,
-                            ).toLocaleDateString()}
-                        </p>
-                        <p class="mb-0 small">Last Played</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {#if data.player.nicks.length > 1}
-        <h2>Nicknames</h2>
-        <div class="d-flex flex-wrap gap-2">
-            {#each data.player.nicks as nick}
-                <span class="badge bg-secondary">{nick}</span>
-            {/each}
-        </div>
-    {/if}
-</section>
-
-<section class="no-bg">
-    <h2>Games</h2>
-
-    {#if data.gamesByDate && data.gamesByDate.length > 0}
-        {#each data.gamesByDate as dateGroup}
-            <h6 class="date-header">
-                {formatDate(dateGroup.binned_date)}
-            </h6>
-            {#each dateGroup.games as game}
-                <GameCard {game} linkForm={true} />
-            {/each}
-            <div class="games-list"></div>
         {/each}
-    {:else}
-        <p class="text-muted">No games found for this player.</p>
+    </div>
+
+    {#if miniStats.length > 0}
+        <div class="d-flex flex-wrap gap-2">
+            {#each miniStats as stat}
+                <a
+                    href="/index/player?stat={stat.query_name}"
+                    class="text-decoration-none"
+                >
+                    <div class="card p-2">
+                        {stat.description}: {formatStat(
+                            stat.stat,
+                            stat.attributes,
+                        )}
+                    </div>
+                </a>
+            {/each}
+        </div>
     {/if}
+
+    <h2>Nicknames</h2>
+    <div class="d-flex flex-wrap gap-2">
+        {#each data.nicks as nick}
+            <span class="badge bg-secondary">{nick}</span>
+        {/each}
+    </div>
 </section>
 
-<style>
-    .date-header {
-        background-color: #f8f9fa;
-        padding: 0.5rem;
-        border-radius: 4px;
-        margin-bottom: 0.5rem;
-    }
+<section class="no-bg narrow">
+    <h2>Recent Games</h2>
 
-    .games-list {
-        margin-left: 1rem;
-    }
-</style>
+    {#each data.games as game}
+        <GameCard {game} linkForm={true} />
+    {/each}
+</section>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import SiteHeader from "$lib/SiteHeader.svelte";
-    import { formatStat } from "$lib";
+    import GameCard from "$lib/GameCard.svelte";
+    import { formatStat, formatFullDate } from "$lib";
     import * as d3 from "d3";
     import { onMount } from "svelte";
     import { invalidateAll } from "$app/navigation";
@@ -246,12 +247,14 @@
 <section>
     <h2>Recording database</h2>
 
-    <div class="row cols-2 g-2 mb-3">
+    <div class="row cols-2 g-2 mb-2">
         {#each mainStats as stat}
             <div class="col">
                 <div class="card stats-card">
                     <div class="card-body text-center">
-                        <p class="h4 mb-0">{formatStat(stat)}</p>
+                        <p class="h4 mb-0">
+                            {formatStat(stat.stat, stat.attributes)}
+                        </p>
                         <p class="mb-0 small">{stat.description}</p>
                     </div>
                 </div>
@@ -264,11 +267,18 @@
             {#each miniStats as stat}
                 <div class="card p-2">
                     {stat.description}:
-                    {formatStat(stat)}
+                    {formatStat(stat.stat, stat.attributes)}
                 </div>
             {/each}
         </div>
     {/if}
+</section>
+
+<section class="no-bg narrow">
+    <h2>Recent Games</h2>
+    {#each data.recentGames as game}
+        <GameCard {game} linkForm={true} />
+    {/each}
 </section>
 
 <style>

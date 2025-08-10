@@ -1,5 +1,5 @@
 -- Life expectancy
--- duration
+-- duration_fine
 SELECT
     name,
     avg(end_tick - start_tick) AS stat

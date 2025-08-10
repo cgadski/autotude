@@ -1,6 +1,6 @@
 import { loadSql, pool } from "$lib/db";
-import { getGlobalStats } from "$lib/stats";
-import type { GlobalStat } from "$lib/stats-format";
+import { getGlobalStats, getRecentGames } from "$lib/stats";
+import { type Stat } from "$lib";
 
 export type FrontpageData = {
   lastUpdate: string;
@@ -9,7 +9,8 @@ export type FrontpageData = {
     bin: string;
     players: string;
   }>;
-  globalStats: GlobalStat[];
+  globalStats: Stat[];
+  recentGames: any[];
 };
 
 export async function load(): Promise<FrontpageData> {
@@ -20,5 +21,6 @@ export async function load(): Promise<FrontpageData> {
     listings: (await pool.query(loadSql("listings.sql"))).rows,
     listingsSeries: (await pool.query(loadSql("listings_series.sql"))).rows,
     globalStats: await getGlobalStats(),
+    recentGames: await getRecentGames(),
   };
 }

@@ -1,21 +1,17 @@
-import { error } from '@sveltejs/kit';
-import { getPlayerInfo, getPlayerGamesByDate } from '$lib/db';
+import { error } from "@sveltejs/kit";
+import { getPlayerGames } from "$lib/stats";
+import { getPlayerNames, getStatsForPlayer } from "$lib/stats.js";
 
 export async function load({ params }) {
-    const vapor = params.vapor;
-    
-    // Get player info
-    const playerInfo = await getPlayerInfo(vapor);
-    
-    if (!playerInfo) {
-        throw error(404, 'Player not found');
-    }
-    
-    // Get player games grouped by date
-    const gamesByDate = await getPlayerGamesByDate(vapor);
-    
-    return {
-        player: playerInfo,
-        gamesByDate
-    };
+  const vapor = params.vapor;
+
+  let names = await getPlayerNames(vapor);
+  const games = await getPlayerGames(names.name);
+
+  return {
+    name: names.name,
+    nicks: names.nicks,
+    stats: await getStatsForPlayer(names.name),
+    games,
+  };
 }

@@ -29,6 +29,12 @@ section > h2:not(:first-child) {
     margin-top: 1rem;
 }
 
+section.narrow {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* Responsive adjustments */
 @media (max-width: 576px) {
     section > h2 {
