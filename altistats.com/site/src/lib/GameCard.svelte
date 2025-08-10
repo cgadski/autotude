@@ -8,118 +8,94 @@
 </script>
 
 {#if linkForm}
-    <a class="card-container clickable-card" href="/game/{game.stem}">
-        <div
-            class="card-head d-flex justify-content-between align-items-center"
-        >
-            <div class="time-cell">
+    <a class="game-card clickable" href="/game/{game.stem}">
+        <div class="game-header">
+            <div class="time">
                 {formatFullDate(game.started_at)}
             </div>
-            <div class="map-cell">
+            <div class="map">
                 {game.map}
             </div>
-            <div
-                class="duration-cell d-flex align-items-center justify-content-end"
-            >
-                <span>{formatStat(game.duration, ["duration"])}</span>
-                <i class="bi bi-chevron-right ms-2"></i>
+            <div class="duration">
+                {formatStat(game.duration, ["duration"])}
+                <i class="bi bi-chevron-right ms-1"></i>
             </div>
         </div>
 
         <div class="teams">
-            <div class="team team-3">
-                <div class="team-header">
-                    {#if game.winner === 3}
-                        <i class="bi bi-trophy-fill text-warning trophy"></i>
-                    {/if}
-                </div>
-                <div class="players-grid">
+            <div class="team team-red">
+                <div class="players">
                     {#each game.teams["3"] || [] as player, index}
-                        <span
-                            class="badge bg-danger bg-opacity-75 player-badge"
-                        >
-                            {player.nick}
-                        </span>
+                        {#if index > 0}<span class="separator">•</span>{/if}
+                        <span class="player">{player.nick}</span>
                     {/each}
+                </div>
+                <div class="trophy-space">
+                    {#if game.winner === 3}
+                        <i class="bi bi-trophy-fill trophy"></i>
+                    {/if}
                 </div>
             </div>
-            <div class="team team-4">
-                <div class="team-header">
-                    {#if game.winner === 4}
-                        <i class="bi bi-trophy-fill text-warning trophy"></i>
-                    {/if}
-                </div>
-                <div class="players-grid">
+
+            <div class="team team-blue">
+                <div class="players">
                     {#each game.teams["4"] || [] as player, index}
-                        <span
-                            class="badge bg-primary bg-opacity-75 player-badge"
-                        >
-                            {player.nick}
-                        </span>
+                        {#if index > 0}<span class="separator">•</span>{/if}
+                        <span class="player">{player.nick}</span>
                     {/each}
+                </div>
+                <div class="trophy-space">
+                    {#if game.winner === 4}
+                        <i class="bi bi-trophy-fill trophy"></i>
+                    {/if}
                 </div>
             </div>
         </div>
     </a>
 {:else}
-    <div class="card-container">
-        <div
-            class="card-head d-flex justify-content-between align-items-center"
-        >
-            <div class="time-cell">
+    <div class="game-card">
+        <div class="game-header">
+            <div class="time">
                 {formatFullDate(game.started_at)}
             </div>
-            <div class="map-cell">
+            <div class="map">
                 {game.map}
             </div>
-            <div
-                class="duration-cell d-flex align-items-center justify-content-end"
-            >
-                <span>{formatStat(game.duration, ["duration"])}</span>
+            <div class="duration">
+                {formatStat(game.duration, ["duration"])}
             </div>
         </div>
 
         <div class="teams">
-            <div class="team team-3">
-                <div class="team-header">
-                    {#if game.winner === 3}
-                        <i class="bi bi-trophy-fill text-warning trophy"></i>
-                    {/if}
-                </div>
-                <div class="players-grid">
+            <div class="team team-red">
+                <div class="players">
                     {#each game.teams["3"] || [] as player, index}
-                        <a
-                            href="/player/{player.vapor}"
-                            class="text-decoration-none"
-                        >
-                            <span
-                                class="badge bg-danger bg-opacity-75 player-badge"
-                            >
-                                {player.nick}
-                            </span>
+                        {#if index > 0}<span class="separator">•</span>{/if}
+                        <a href="/player/{player.vapor}" class="player-link">
+                            {player.nick}
                         </a>
                     {/each}
+                </div>
+                <div class="trophy-space">
+                    {#if game.winner === 3}
+                        <i class="bi bi-trophy-fill trophy"></i>
+                    {/if}
                 </div>
             </div>
-            <div class="team team-4">
-                <div class="team-header">
-                    {#if game.winner === 4}
-                        <i class="bi bi-trophy-fill text-warning trophy"></i>
-                    {/if}
-                </div>
-                <div class="players-grid">
+
+            <div class="team team-blue">
+                <div class="players">
                     {#each game.teams["4"] || [] as player, index}
-                        <a
-                            href="/player/{player.vapor}"
-                            class="text-decoration-none"
-                        >
-                            <span
-                                class="badge bg-primary bg-opacity-75 player-badge"
-                            >
-                                {player.nick}
-                            </span>
+                        {#if index > 0}<span class="separator">•</span>{/if}
+                        <a href="/player/{player.vapor}" class="player-link">
+                            {player.nick}
                         </a>
                     {/each}
+                </div>
+                <div class="trophy-space">
+                    {#if game.winner === 4}
+                        <i class="bi bi-trophy-fill trophy"></i>
+                    {/if}
                 </div>
             </div>
         </div>
@@ -127,113 +103,140 @@
 {/if}
 
 <style>
-    .teams {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.25rem;
-        padding: 0.25rem;
-    }
-
-    .team {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-
-    .team-header {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 1.5rem;
-    }
-
-    .trophy {
-        font-size: 1rem;
-    }
-
-    .players-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.25rem;
-    }
-
-    .player-badge {
-        display: inline-block;
-        margin: 0.1rem;
-        transition: opacity 0.2s;
-        font-size: 0.75rem;
-    }
-
-    .player-badge:hover {
-        opacity: 0.8;
-    }
-
-    .card-container {
-        margin-top: 0.5em;
-        border-radius: 6px;
-        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    .game-card {
+        margin: 0.5rem 0;
+        border-radius: 8px;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         background-color: white;
-        border: 1px solid #eaeaea;
+        border: 1px solid #e0e0e0;
         overflow: hidden;
     }
 
-    .card-head {
-        text-decoration: none;
-        color: inherit;
-        padding: 0.5rem;
-        background-color: white;
-        box-sizing: border-box;
-    }
-
-    .clickable-card {
-        transition: all 0.15s ease-in-out;
+    .clickable {
+        transition: all 0.15s ease;
         cursor: pointer;
         text-decoration: none;
         color: inherit;
         display: block;
     }
 
-    .clickable-card:hover {
-        background-color: #f8f9fa;
-        border-color: var(--bs-primary);
+    .clickable:hover {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
         color: inherit;
+        text-decoration: none;
     }
 
-    .clickable-card:hover .card-head {
-        background-color: transparent;
+    .game-header {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0.75rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 0.9rem;
     }
 
-    .time-cell,
-    .map-cell,
-    .duration-cell {
-        padding: 0 0.25rem;
-        overflow: hidden;
-    }
-
-    .time-cell {
-        width: 25%;
+    .time {
         color: #666;
+        flex: 0 0 auto;
+        margin-right: 0.75rem;
     }
 
-    .map-cell {
-        width: 50%;
+    .map {
         font-weight: 500;
+        flex: 1;
     }
 
-    .duration-cell {
-        width: 25%;
+    .duration {
+        color: #666;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        flex: 0 0 auto;
     }
 
+    .teams {
+        display: flex;
+    }
+
+    .team {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        min-height: 2.5rem;
+    }
+
+    .team-red {
+        background-color: rgba(220, 53, 69, 0.08);
+        border-right: 1px solid rgba(220, 53, 69, 0.2);
+    }
+
+    .team-blue {
+        background-color: rgba(13, 110, 253, 0.08);
+    }
+
+    .players {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 0.5rem;
+        align-items: center;
+    }
+
+    .separator {
+        color: #999;
+        font-size: 0.75rem;
+        margin: 0 0.1rem;
+    }
+
+    .player {
+        font-size: 0.85rem;
+        color: #333;
+    }
+
+    .player-link {
+        font-size: 0.85rem;
+        color: #333;
+        text-decoration: none;
+        transition: color 0.15s ease;
+    }
+
+    .player-link:hover {
+        color: #0066cc;
+        text-decoration: underline;
+    }
+
+    .trophy-space {
+        flex: 0 0 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 0.5rem;
+    }
+
+    .trophy {
+        color: #ffc107;
+        font-size: 1rem;
+    }
+
+    /* Mobile layout */
     @media (max-width: 576px) {
-        .time-cell {
-            width: 25%;
-        }
-        .map-cell {
-            width: 40%;
+        .teams {
+            flex-direction: column;
         }
 
-        .duration-cell {
-            width: 35%;
+        .team-red {
+            border-right: none;
+            border-bottom: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
+        .game-header {
+            font-size: 0.85rem;
+        }
+
+        .time {
+            margin-right: 0.5rem;
         }
     }
 </style>
