@@ -5,7 +5,7 @@ time_alive AS (
     SELECT name, cast(sum(ticks_alive) AS real) AS time_alive
     FROM ladder_games
     NATURAL JOIN players
-    NATURAL JOIN names
+    NATURAL JOIN handles
     GROUP BY name
 ),
 n_kills AS (

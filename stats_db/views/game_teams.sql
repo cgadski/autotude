@@ -15,10 +15,10 @@ WITH team_players AS (
             replay_key,
             team,
             vapor,
-            name AS nick
+            handle AS nick
         FROM ladder_games
         NATURAL JOIN players
-        NATURAL JOIN names
+        NATURAL JOIN handles
         WHERE team IN (2, 3, 4)
     )
     GROUP BY replay_key, team

@@ -20,6 +20,7 @@ class StatQuery:
 table_prefixes = [
     ('_', 'global_stats'),
     ('p_', 'player_stats'),
+    ('g_', 'game_stats'),
 ]
 
 def read_query(sql_file: Path) -> StatQuery:
@@ -67,6 +68,7 @@ class StatMaterializer:
             DROP TABLE IF EXISTS global_stats;
             CREATE TABLE global_stats (
                 stat_key INTEGER REFERENCES stats (stat_key),
+                time_bin DEFAULT null,
                 stat
             );
 
@@ -74,6 +76,15 @@ class StatMaterializer:
             CREATE TABLE player_stats (
                 stat_key INTEGER REFERENCES stats (stat_key),
                 name,
+                time_bin,
+                plane,
+                stat
+            );
+
+            DROP TABLE IF EXISTS game_stats;
+            CREATE TABLE game_stats (
+                stat_key INTEGER REFERENCES stats (stat_key),
+                replay_key,
                 stat
             );
         """)

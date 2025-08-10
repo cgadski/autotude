@@ -1,13 +1,13 @@
-DROP TABLE IF EXISTS names;
-CREATE TABLE names (
+DROP TABLE IF EXISTS handles;
+CREATE TABLE handles (
     vapor PRIMARY KEY,
-    name
+    handle
 );
 
-INSERT INTO names
+INSERT INTO handles
 SELECT
     ranked_nicks.vapor AS vapor,
-    coalesce(named_players.name, ranked_nicks.nick) AS name
+    coalesce(named_players.name, ranked_nicks.nick) AS handle
 FROM named_players
 RIGHT JOIN (
 	SELECT

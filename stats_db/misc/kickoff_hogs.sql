@@ -7,7 +7,7 @@ touch_ranks AS (
     NATURAL JOIN replays
     NATURAL JOIN possession
     NATURAL JOIN players
-    JOIN names USING (vapor)
+    JOIN handles USING (vapor)
 ),
 kickoff_stats AS (
     SELECT name, COUNT() AS n_kickoffs FROM touch_ranks
@@ -19,7 +19,7 @@ games_per_player AS (
     FROM ladder_games
     NATURAL JOIN replays
     NATURAL JOIN players
-    NATURAL JOIN names
+    NATURAL JOIN handles
     WHERE team >= 3
     GROUP BY name
 ),

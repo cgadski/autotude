@@ -2,22 +2,24 @@
 -- duration reverse
 WITH
 time_alive AS (
-    SELECT name, cast(sum(ticks_alive) AS real) AS time_alive
+    SELECT
+        handle,
+        cast(sum(ticks_alive) AS real) AS time_alive
     FROM ladder_games
     NATURAL JOIN players
-    NATURAL JOIN names
+    NATURAL JOIN handles
     GROUP BY name
 ),
 n_goals AS (
-    SELECT name, count() AS goals
+    SELECT handle, count() AS goals
     FROM ladder_games
     NATURAL JOIN goals
     NATURAL JOIN players
-    NATURAL JOIN names
+    NATURAL JOIN handles
     GROUP BY name
 )
 SELECT
-    name,
+    handle,
     time_alive / goals AS stat
 FROM time_alive
 JOIN n_goals USING (name)

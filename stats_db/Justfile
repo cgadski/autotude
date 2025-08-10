@@ -9,19 +9,21 @@ load-schema:
 	([ ! -e {{STATS_DB}} ] && {{sqlite}} < schema.sql) || true
 
 load-csvs: \
-    (load-csv "named_players" "vapor TEXT, name TEXT") \
+    (load-csv "handles" "vapor TEXT, handle TEXT") \
     (load-csv "perk_names" "id INTEGER, name TEXT") \
     (load-csv "plane_names" "id INTEGER, name TEXT") \
     (load-csv "broken_replays" "stem TEXT")
 
 dump: load-schema load-csvs clear-errors
-	cargo run --release --bin dump -- --db {{STATS_DB}}
+	# cargo run --release --bin dump -- --db {{STATS_DB}}
+	dump --db {{STATS_DB}}
 	{{sqlite}} < views/game_meta.sql
 	{{sqlite}} "ANALYZE"
 
 load-stats:
+	{{sqlite}} < views/time_bins.sql
 	{{sqlite}} < views/ladder_games.sql
-	{{sqlite}} < views/names.sql
+	{{sqlite}} < views/handles.sql
 	{{sqlite}} < views/loadouts.sql
 	{{sqlite}} < views/named_kills.sql
 	{{sqlite}} < views/game_teams.sql
@@ -33,3 +35,10 @@ clear-errors:
 
 show-errors:
 	./show-errors.sh
+
+query:
+	#!/bin/bash
+	query=$(ls stats/*.sql | sed 's|stats/||; s|\.sql||' | fzf --prompt="Select query: ")
+	if [ -n "$query" ]; then
+		{{sqlite}} -table < "stats/$query.sql"
+	fi

@@ -7,7 +7,7 @@ touch_ranks AS (
     NATURAL JOIN replays
     NATURAL JOIN possession
     NATURAL JOIN players
-    JOIN names USING (vapor)
+    JOIN handles USING (vapor)
 ),
 goal_ranks AS (
     SELECT

@@ -6,6 +6,6 @@ SELECT
 FROM ladder_games
 NATURAL JOIN spawns
 NATURAL JOIN players
-JOIN names ON (players.vapor = names.vapor)
+JOIN handles ON (players.vapor = handles.vapor)
 GROUP BY name
 ORDER BY stat
