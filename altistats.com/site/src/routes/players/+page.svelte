@@ -1,119 +1,101 @@
 <script lang="ts">
-    import NavLinks from "$lib/NavLinks.svelte";
     import SiteHeader from "$lib/SiteHeader.svelte";
-    import { formatStat } from "$lib";
-    import * as d3 from "d3";
+    import { formatStat, formatShortDate, type StatMeta } from "$lib";
     import { onMount } from "svelte";
 
     // @type {import('./$types').PageData}
     export let data;
 
     let histogramElement: HTMLElement;
-
-    function renderHistogram() {
-        if (!histogramElement || !data.players.length) return;
-
-        const containerWidth = histogramElement.clientWidth;
-        const margin = { top: 20, right: 30, bottom: 40, left: 60 };
-        const width = containerWidth - margin.left - margin.right;
-        const height = 200 - margin.top - margin.bottom;
-
-        // Clear previous chart
-        d3.select(histogramElement).selectAll("*").remove();
-
-        const svg = d3
-            .select(histogramElement)
-            .append("svg")
-            .attr("width", "100%")
-            .attr("height", height + margin.top + margin.bottom)
-            .attr(
-                "viewBox",
-                `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`,
-            )
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
-
-        // Get stat values
-        const values = data.players.map((p) => p.stat);
-
-        // Create histogram
-        const x = d3.scaleLinear().domain(d3.extent(values)).range([0, width]);
-
-        const histogram = d3
-            .histogram()
-            .value((d) => d)
-            .domain(x.domain())
-            .thresholds(x.ticks(40));
-
-        const bins = histogram(values);
-
-        const y = d3
-            .scaleLinear()
-            .range([height, 0])
-            .domain([0, d3.max(bins, (d) => d.length)]);
-
-        // Add bars
-        svg.selectAll("rect")
-            .data(bins)
-            .enter()
-            .append("rect")
-            .attr("x", 1)
-            .attr("transform", (d) => `translate(${x(d.x0)},${y(d.length)})`)
-            .attr("width", (d) => Math.max(0, x(d.x1) - x(d.x0) - 1))
-            .attr("height", (d) => height - y(d.length))
-            .style("fill", "steelblue")
-            .style("opacity", 0.7);
-
-        // Add axes
-        svg.append("g")
-            .attr("transform", `translate(0,${height})`)
-            .call(
-                d3
-                    .axisBottom(x)
-                    .tickFormat((d) =>
-                        formatStat(d, data.stat.attributes || []),
-                    ),
-            );
-
-        svg.append("g").call(d3.axisLeft(y));
-    }
+    import { renderHistogram } from "./histogram.js";
 
     onMount(() => {
-        renderHistogram();
+        if (histogramElement && !data.isNoneStat) {
+            renderHistogram(histogramElement, data);
+        }
     });
 
-    $: if (data.players) {
-        renderHistogram();
+    $: if (data.players && histogramElement && !data.isNoneStat) {
+        renderHistogram(histogramElement, data);
+    }
+
+    function statActive(meta: StatMeta) {
+        if (data.stat != null) {
+            return meta.query_name == data.stat.query_name;
+        }
+        return false;
+    }
+
+    function makeLinkUrl(opts: any): string {
+        return "/players";
+    }
+
+    function makeLinkClass(opts: any): string[] {
+        return ["filter-link"];
     }
 </script>
 
 <SiteHeader navPage="player" />
 
 <section>
-    <div class="d-flex flex-wrap gap-2">
-        {#each data.statTypes as statType}
-            <a
-                href="?stat={statType.query_name}"
-                class="btn {data.stat.query_name === statType.query_name
-                    ? 'btn-primary'
-                    : 'btn-outline-primary'}"
-            >
-                {statType.description}
-            </a>
-        {/each}
-    </div>
+    {JSON.stringify(data)}
 </section>
 
-<section class="no-bg">
-    <div bind:this={histogramElement}></div>
+<section>
+    <div>
+        <div class="filter-label">Stat:</div>
+        <div class="filter-options">
+            {#each data.statMetas as meta, index}
+                {#if index > 0}<span class="separator">•</span>{/if}
+                <a
+                    href={makeLinkUrl({ stat: meta })}
+                    class={makeLinkClass({ stat: meta })}
+                >
+                    {meta.description}
+                </a>
+            {/each}
+        </div>
+    </div>
+
+    {#if data.stat != null}
+        <div class="mt-2">
+            <div class="filter-label">Period:</div>
+            <div class="filter-options">
+                {#each ["All Time", "This Month", "Last Month", "2023", "2022", "2021"] as period, i}
+                    {#if i > 0}<span class="separator">•</span>{/if}
+                    <a href="/players" class="filter-link">
+                        {period}
+                    </a>
+                {/each}
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <div class="filter-label">Plane:</div>
+            <div class="filter-options">
+                {#each ["All Planes", "Loopy", "Bomber", "Whale", "Biplane", "Miranda"] as plane, i}
+                    {#if i > 0}<span class="separator">•</span>{/if}
+                    <a href="/players" class="filter-link">
+                        {plane}
+                    </a>
+                {/each}
+            </div>
+        </div>
+    {/if}
 </section>
+
+{#if data.stat != null}
+    <section class="no-bg">
+        <div bind:this={histogramElement}></div>
+    </section>
+{/if}
 
 <section class="narrow">
     <table class="table table-sm">
         <colgroup>
-            <col style="width: 60px;" />
             <col />
-            <col style="width: 120px;" />
+            <col />
+            <col />
         </colgroup>
         <tbody>
             {#each data.players as player, index}
@@ -123,12 +105,55 @@
                         <a href="/player/{player.vapor}">
                             {player.name}
                         </a>
+                        {#if data.isNoneStat && player.nicks}
+                            <small class="text-muted ms-2">
+                                ({player.nicks.join(", ")})
+                            </small>
+                        {/if}
                     </td>
                     <td class="text-end">
-                        {formatStat(player.stat, data.stat.attributes)}
+                        {#if data.stat != null}
+                            {formatShortDate(player.stat)}
+                        {:else}
+                            {formatStat(player.stat, data.stat.attributes)}
+                        {/if}
                     </td>
                 </tr>
             {/each}
         </tbody>
     </table>
 </section>
+
+<style>
+    .filter-label {
+        display: inline-block;
+        font-weight: 500;
+    }
+    .filter-options {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0em;
+        margin-left: 0.5em;
+    }
+    .filter-link {
+        color: #6c757d;
+        text-decoration: none;
+        border-radius: 3px;
+        padding: 0.1rem 0.15rem;
+    }
+    .filter-link:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+    .filter-link.active {
+        color: #0d6efd;
+        font-weight: 500;
+    }
+
+    .separator {
+        color: #999;
+        margin: 0 0.5em;
+        display: inline-flex;
+        align-items: center;
+    }
+</style>

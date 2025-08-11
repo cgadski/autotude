@@ -49,7 +49,7 @@ export function formatStat(stat: number, attributes: string[]): string {
   return Math.round(stat).toLocaleString();
 }
 
-export function formatFullDate(unixEpoch: number): string {
+export function formatDatetime(unixEpoch: number): string {
   const date = new Date(unixEpoch * 1000);
   const month = new Intl.DateTimeFormat("en", { month: "short" }).format(date);
   const day = date.getDate();
@@ -58,8 +58,17 @@ export function formatFullDate(unixEpoch: number): string {
   return `${month} ${day} ${hours}h${minutes}`;
 }
 
-export const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
+export const formatShortDate = (unixEpoch: number) => {
+  const date = new Date(unixEpoch * 1000);
+  return date.toLocaleDateString("en-GB", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+};
+
+export const formatDate = (unixEpoch: number) => {
+  const date = new Date(unixEpoch * 1000);
   return date.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",

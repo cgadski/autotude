@@ -15,6 +15,10 @@ export function getStatsDb(): Database.Database {
   return statsDb;
 }
 
+export function playersUrl(props: any) {
+  return;
+}
+
 export async function getGlobalStats(): Promise<Array<Stat>> {
   return getStatsDb()
     .prepare(
@@ -28,7 +32,7 @@ export async function getGlobalStats(): Promise<Array<Stat>> {
     .all();
 }
 
-export async function availablePlayerStats(): Promise<Array<StatMeta>> {
+export async function availableStats(): Promise<Array<StatMeta>> {
   return getStatsDb()
     .prepare(
       `
@@ -41,28 +45,31 @@ export async function availablePlayerStats(): Promise<Array<StatMeta>> {
       ORDER BY query_name
       `,
     )
-    .all();
+    .all()
+    .map((row: any) => ({
+      ...row,
+      attributes: JSON.parse(row.attributes),
+    }));
 }
 
-export async function getPlayerStat(
-  query_name: String,
-  attrs: String[],
-): Promise<Array<{ name: string; vapor: string; stat: any }>> {
-  let reverse = attrs.includes("reverse");
-  const orderDirection = reverse ? "ASC" : "DESC";
+export async function getHandles(): Promise<
+  Array<{
+    handle: string;
+    nicks: string[];
+    last_played: number;
+  }>
+> {
   return getStatsDb()
     .prepare(
       `
-      SELECT name, vapor, stat
-      FROM player_stats
-      NATURAL JOIN names
-      NATURAL JOIN stats
-      WHERE query_name = ?
-      GROUP BY name
-      ORDER BY stat ${orderDirection}
+      SELECT handle, nicks, started_at AS last_played
+      FROM other_nicks
+      NATURAL JOIN last_played
+      GROUP BY handle
+      ORDER BY last_played DESC
       `,
     )
-    .all(query_name);
+    .all();
 }
 
 export async function getPlayerGames(name: string): Promise<any[]> {

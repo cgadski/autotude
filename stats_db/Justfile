@@ -20,7 +20,7 @@ dump: load-schema load-csvs clear-errors
 	{{sqlite}} < views/game_meta.sql
 	{{sqlite}} "ANALYZE"
 
-load-stats:
+load-views:
 	{{sqlite}} < views/time_bins.sql
 	{{sqlite}} < views/ladder_games.sql
 	{{sqlite}} < views/handles.sql
@@ -28,6 +28,9 @@ load-stats:
 	{{sqlite}} < views/named_kills.sql
 	{{sqlite}} < views/game_teams.sql
 	{{sqlite}} < views/other_nicks.sql
+	{{sqlite}} < views/last_played.sql
+
+load-stats:
 	python3 materialize_stats.py --db {{STATS_DB}} --stats-dir stats/
 
 clear-errors:

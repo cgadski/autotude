@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { formatFullDate, formatStat } from "$lib";
+    import { formatDatetime, formatStat } from "$lib";
 
     import type { Game } from "$lib";
 
@@ -11,7 +11,7 @@
     <a class="game-card clickable" href="/game/{game.stem}">
         <div class="game-header">
             <div class="time">
-                {formatFullDate(game.started_at)}
+                {formatDatetime(game.started_at)}
             </div>
             <div class="map">
                 {game.map}
@@ -56,7 +56,7 @@
     <div class="game-card">
         <div class="game-header">
             <div class="time">
-                {formatFullDate(game.started_at)}
+                {formatDatetime(game.started_at)}
             </div>
             <div class="map">
                 {game.map}
