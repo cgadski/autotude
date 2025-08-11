@@ -210,7 +210,7 @@ impl<'a> DumpListener<'a> {
         let state = &self.indexer.state;
 
         let mut insert_replay_stmt = self.conn.prepare(
-            "INSERT INTO replays (replay_key, stem, map, server, duration, started_at) VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO replays (replay_key, stem, map, server, duration, started_at, version) VALUES (?, ?, ?, ?, ?, ?, ?)",
         )?;
 
         insert_replay_stmt.bind((1, self.replay_key))?;
@@ -219,6 +219,7 @@ impl<'a> DumpListener<'a> {
         insert_replay_stmt.bind((4, state.server_name.as_deref().unwrap_or("")))?;
         insert_replay_stmt.bind((5, state.current_tick as i64))?;
         insert_replay_stmt.bind((6, state.datetime.map(|dt| dt.timestamp()).unwrap_or(0)))?;
+        insert_replay_stmt.bind((7, state.version.as_deref().unwrap_or("")))?;
 
         while State::Done != insert_replay_stmt.next()? {}
         insert_replay_stmt.reset()?;

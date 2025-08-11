@@ -4,7 +4,8 @@ CREATE TABLE replays (
     map TEXT,
     server TEXT,
     duration INTEGER,
-    started_at INTEGER
+    started_at INTEGER,
+    version TEXT
 );
 
 CREATE INDEX idx_replays_stem ON replays (stem);

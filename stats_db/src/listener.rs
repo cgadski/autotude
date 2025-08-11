@@ -74,6 +74,7 @@ pub struct ReplayState {
     pub current_tick: usize,
     pub player_states: HashMap<PlayerKey, PlayerState>,
     pub ball: StateTimeline<Option<Ball>>,
+    pub version: Option<String>,
 }
 
 impl ReplayState {
@@ -85,6 +86,7 @@ impl ReplayState {
             current_tick: 0,
             player_states: HashMap::new(),
             ball: Default::default(),
+            version: None,
         }
     }
 }
@@ -294,6 +296,7 @@ impl ReplayListener for IndexingListener {
                 self.state.map_name = load.name.as_ref().map(|x| x.to_string());
                 self.state.server_name = load.server.clone();
                 self.state.datetime = crate::parse_datetime(load.datetime());
+                self.state.version = load.protocol_version.clone();
             }
             Some(Event::Chat(_chat)) => {}
             Some(Event::Goal(_goal)) => {}
