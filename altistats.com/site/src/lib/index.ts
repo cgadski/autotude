@@ -77,4 +77,4 @@ export const formatDate = (unixEpoch: number) => {
   });
 };
 
-export type NavPage = "home" | "players" | null;
+export type NavPage = "home" | "players" | "history" | null;

@@ -1,13 +1,28 @@
-function renderChart(data: any, chartElement: any) {
+import * as d3 from "d3";
+
+type ChartData = {
+  date: Date;
+  players: number;
+};
+
+type ListingSeriesData = {
+  bin: string;
+  players: string;
+};
+
+export function renderChart(
+  data: { listingsSeries: ListingSeriesData[] },
+  chartElement: HTMLElement,
+) {
   if (!chartElement || !data.listingsSeries || data.listingsSeries.length === 0)
     return;
 
-  const chartData = data.listingsSeries
-    .map((d) => ({
+  const chartData: ChartData[] = data.listingsSeries
+    .map((d: ListingSeriesData) => ({
       date: new Date(d.bin),
       players: +d.players,
     }))
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+    .sort((a: ChartData, b: ChartData) => a.date.getTime() - b.date.getTime());
 
   const containerWidth = chartElement.clientWidth;
   const containerHeight = chartElement.clientHeight;
@@ -38,10 +53,10 @@ function renderChart(data: any, chartElement: any) {
 
   const x = d3
     .scaleTime()
-    .domain(d3.extent(chartData, (d) => d.date) as [Date, Date])
+    .domain(d3.extent(chartData, (d: ChartData) => d.date) as [Date, Date])
     .range([0, width]);
 
-  const maxPlayers = d3.max(chartData, (d) => d.players) || 10;
+  const maxPlayers = d3.max(chartData, (d: ChartData) => d.players) || 10;
   const yMax = Math.ceil(maxPlayers / 5) * 5;
 
   const y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
@@ -53,7 +68,7 @@ function renderChart(data: any, chartElement: any) {
       d3
         .axisBottom(x)
         .ticks(d3.timeHour.every(isMobile ? 12 : 6))
-        .tickFormat((d) => d3.timeFormat("%Hh")(d) as string),
+        .tickFormat((d) => d3.timeFormat("%Hh")(d as Date) as string),
     );
 
   var ruleStep = isMobile ? 10 : 5;
@@ -140,8 +155,8 @@ function renderChart(data: any, chartElement: any) {
     .data(chartData)
     .enter()
     .append("circle")
-    .attr("cx", (d) => x(d.date))
-    .attr("cy", (d) => y(d.players))
+    .attr("cx", (d: ChartData) => x(d.date))
+    .attr("cy", (d: ChartData) => y(d.players))
     .attr("r", 2)
     .attr("fill", "steelblue");
 }

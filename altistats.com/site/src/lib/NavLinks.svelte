@@ -20,6 +20,13 @@
         >
             <i class="bi bi-person"></i> Players
         </a>
+        <a
+            class="nav-link d-flex align-items-center gap-1"
+            class:active={navPage === "history"}
+            href="/history"
+        >
+            <i class="bi bi-clock-history"></i> History
+        </a>
     </nav>
 </div>
 

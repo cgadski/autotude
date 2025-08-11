@@ -1,12 +1,18 @@
 <script lang="ts">
     import SiteHeader from "$lib/SiteHeader.svelte";
+    import StatLinks from "$lib/StatLinks.svelte";
     import { formatStat } from "$lib";
     import GameCard from "$lib/GameCard.svelte";
 
     // @type {import('./$types').PageData}
     export let data;
 
-    const mainQueries = ["p_total_games", "p_time_played", "p_total_kills"];
+    const mainQueries = [
+        "p_total_games",
+        "p_time_played",
+        "p_total_kills",
+        "p_total_goals",
+    ];
 
     const mainStats = data.stats.filter((stat) =>
         mainQueries.includes(stat.query_name),
@@ -15,6 +21,12 @@
     const miniStats = (data.stats || []).filter(
         (stat) => !mainQueries.includes(stat.query_name),
     );
+
+    $: miniStatItems = miniStats.map((stat) => ({
+        label: stat.description,
+        value: formatStat(stat.stat, stat.attributes),
+        href: `/players?stat=${stat.query_name}`,
+    }));
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
@@ -53,21 +65,7 @@
     </div>
 
     {#if miniStats.length > 0}
-        <div class="d-flex flex-wrap gap-2">
-            {#each miniStats as stat}
-                <a
-                    href="/players?stat={stat.query_name}"
-                    class="text-decoration-none"
-                >
-                    <div class="card p-2">
-                        {stat.description}: {formatStat(
-                            stat.stat,
-                            stat.attributes,
-                        )}
-                    </div>
-                </a>
-            {/each}
-        </div>
+        <StatLinks items={miniStatItems} />
     {/if}
 
     <h2>Nicknames</h2>

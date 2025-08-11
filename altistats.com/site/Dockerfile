@@ -14,7 +14,6 @@ WORKDIR /app
 
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
-COPY --from=builder /app/sql ./sql
 
 RUN npm install -g pnpm && pnpm install --frozen-lockfile --prod
 

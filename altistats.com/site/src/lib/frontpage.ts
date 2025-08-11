@@ -1,5 +1,6 @@
 import { pool, loadSql } from "$lib/db";
-import { getGlobalStats, type GlobalStat } from "$lib/stats";
+import { getGlobalStats } from "$lib/stats";
+import { type Stat } from "$lib";
 
 export type FrontpageData = {
   lastUpdate: string;
@@ -8,7 +9,7 @@ export type FrontpageData = {
     bin: string;
     players: string;
   }>;
-  globalStats: GlobalStat[];
+  globalStats: Stat[];
 };
 
 export async function getFrontpageData(): Promise<FrontpageData> {

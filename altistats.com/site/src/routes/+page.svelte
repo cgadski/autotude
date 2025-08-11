@@ -1,54 +1,59 @@
 <script lang="ts">
     import SiteHeader from "$lib/SiteHeader.svelte";
     import GameCard from "$lib/GameCard.svelte";
+    import StatLinks from "$lib/StatLinks.svelte";
     import { formatStat, formatDatetime } from "$lib";
-    import * as d3 from "d3";
+
     import { onMount } from "svelte";
     import { invalidateAll } from "$app/navigation";
+    import { goto } from "$app/navigation";
+    import { renderChart } from "./listing_chart";
 
     // @type {import('./$types').PageData}
     export let data;
-    // let secondsAgo = 0;
-    // let chartElement: HTMLElement;
-    // let refreshInterval: number;
+    let secondsAgo = 0;
+    let chartElement: HTMLElement;
+    let refreshInterval: number;
 
-    // function updateTimer() {
-    //     if (data.lastUpdate) {
-    //         const lastUpdate = new Date(data.lastUpdate);
-    //         secondsAgo = Math.floor((new Date() - lastUpdate) / 1000);
+    function updateTimer() {
+        if (data.lastUpdate) {
+            const lastUpdate = new Date(data.lastUpdate);
+            secondsAgo = Math.floor(
+                (new Date().getTime() - lastUpdate.getTime()) / 1000,
+            );
 
-    //         if (secondsAgo > 60) {
-    //             invalidateAll();
-    //         }
-    //     }
-    // }
+            if (secondsAgo > 60) {
+                invalidateAll();
+            }
+        }
+    }
 
-    // onMount(() => {
-    //     refreshInterval = setInterval(updateTimer, 1000) as unknown as number;
-    //     updateTimer();
+    onMount(() => {
+        refreshInterval = setInterval(updateTimer, 1000) as unknown as number;
+        updateTimer();
 
-    //     return () => {
-    //         clearInterval(refreshInterval);
-    //     };
-    // });
+        return () => {
+            clearInterval(refreshInterval);
+        };
+    });
 
-    // onMount(() => {
-    //     renderChart();
+    onMount(() => {
+        renderChart(data, chartElement);
 
-    //     const resizeObserver = new ResizeObserver(() => {
-    //         renderChart();
-    //     });
+        const resizeObserver = new ResizeObserver(() => {
+            renderChart(data, chartElement);
+        });
 
-    //     if (chartElement) {
-    //         resizeObserver.observe(chartElement);
-    //     }
+        if (chartElement) {
+            resizeObserver.observe(chartElement);
+        }
 
-    //     return () => {
-    //         if (chartElement) {
-    //             resizeObserver.unobserve(chartElement);
-    //         }
-    //     };
-    // });
+        return () => {
+            if (chartElement) {
+                resizeObserver.unobserve(chartElement);
+            }
+        };
+    });
 
     const mainStatKeys = ["_total_games", "_total_time", "_total_players"];
 
@@ -59,6 +64,14 @@
     const miniStats = data.globalStats.filter(
         (stat) => !mainStatKeys.includes(stat.query_name),
     );
+
+    $: miniStatItems = [
+        ...miniStats.map((stat) => ({
+            label: stat.description,
+            value: formatStat(stat.stat, stat.attributes),
+        })),
+        { label: "See history", href: "/history" },
+    ];
 </script>
 
 <SiteHeader navPage="home" />
@@ -83,14 +96,18 @@
             </div>
         {/each}
     </div>
-    <!-- <p class="text-muted small text-end mt-2 mb-0">
+    <p class="text-muted small text-end mt-2 mb-0">
         (Update from {secondsAgo} seconds ago)
-    </p> -->
+    </p>
 </section>
 
 <section>
     <h2>Past activity (3 days)</h2>
-    <div class="chart-container" bind:this={chartElement}></div>
+    <div
+        class="w-100 my-3"
+        style="height: 200px; box-sizing: border-box;"
+        bind:this={chartElement}
+    ></div>
 </section>
 
 <section>
@@ -112,14 +129,7 @@
     </div>
 
     {#if miniStats.length > 0}
-        <div class="d-flex flex-wrap gap-2">
-            {#each miniStats as stat}
-                <div class="card p-2">
-                    {stat.description}:
-                    {formatStat(stat.stat, stat.attributes)}
-                </div>
-            {/each}
-        </div>
+        <StatLinks items={miniStatItems} />
     {/if}
 </section>
 
@@ -131,16 +141,9 @@
 </section>
 
 <style>
-    .chart-container {
-        width: 100%;
-        height: 200px;
-        margin: 20px 0;
-        box-sizing: border-box;
-    }
-
     @media (max-width: 576px) {
-        .chart-container {
-            height: 150px;
+        :global(div[style*="height: 200px"]) {
+            height: 150px !important;
         }
     }
 </style>

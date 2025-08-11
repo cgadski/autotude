@@ -1,5 +1,6 @@
 <script lang="ts">
     import SiteHeader from "$lib/SiteHeader.svelte";
+    import StatLinks from "$lib/StatLinks.svelte";
     import { formatStat, formatShortDate, type StatMeta } from "$lib";
     import { onMount } from "svelte";
 
@@ -10,24 +11,27 @@
     import { renderHistogram } from "./histogram.js";
     import type { QueryParams } from "./+page.server.js";
 
-    function makeLink(override: {
-        stat?: string | null;
-        period?: string | null;
-        plane?: string | null;
-    }) {
+    function makeLinkItem(
+        override: {
+            stat?: string | null;
+            period?: string | null;
+            plane?: string | null;
+        },
+        label: string,
+    ) {
         const current = Object.assign({}, data.params);
         const modified = Object.assign({}, current, override);
 
         const urlParams = new URLSearchParams();
-        let defined = (x) => x !== null && x !== undefined;
+        let defined = (x: any) => x !== null && x !== undefined;
         if (defined(modified.stat)) {
-            urlParams.set("stat", modified.stat);
+            urlParams.set("stat", modified.stat || "");
         }
         if (defined(modified.period)) {
-            urlParams.set("period", modified.period);
+            urlParams.set("period", modified.period || "");
         }
         if (defined(modified.plane)) {
-            urlParams.set("plane", modified.plane);
+            urlParams.set("plane", modified.plane || "");
         }
         const queryString = urlParams.toString();
         const href = queryString ? `/players?${queryString}` : "/players";
@@ -35,10 +39,42 @@
         const isActive = JSON.stringify(current) === JSON.stringify(modified);
 
         return {
+            label,
             href,
-            class: `filter-link${isActive ? " active" : ""}`,
+            active: isActive,
         };
     }
+
+    $: statItems = [
+        makeLinkItem({ stat: null }, "None"),
+        ...data.statMetas.map((meta) =>
+            makeLinkItem({ stat: meta.query_name }, meta.description),
+        ),
+    ];
+
+    $: periodItems =
+        data.params.stat != null
+            ? [
+                  makeLinkItem({ period: null }, "All time"),
+                  ...data.timeBins.map((bin: any) =>
+                      makeLinkItem(
+                          { period: bin.time_bin_desc },
+                          bin.time_bin_desc,
+                      ),
+                  ),
+              ]
+            : [];
+
+    $: planeItems =
+        data.params.stat != null
+            ? [
+                  makeLinkItem({ plane: null }, "All planes"),
+                  ...["Loopy", "Bomber", "Whale", "Biplane", "Miranda"].map(
+                      (plane) =>
+                          makeLinkItem({ plane: plane.toLowerCase() }, plane),
+                  ),
+              ]
+            : [];
 
     // onMount(() => {
     //     if (histogramElement && !data.params.stat != null) {
@@ -58,44 +94,20 @@
 </section> -->
 
 <section>
-    <div>
-        <div class="filter-label">Stat:</div>
-        <div class="filter-options">
-            <a {...makeLink({ stat: null })}> None </a>
-            {#each data.statMetas as meta, index}
-                <span class="separator">•</span>
-                <a {...makeLink({ stat: meta.query_name })}>
-                    {meta.description}
-                </a>
-            {/each}
-        </div>
+    <div class="d-flex align-items-center">
+        <div class="fw-medium me-2">Stat:</div>
+        <StatLinks items={statItems} />
     </div>
 
     {#if data.params.stat != null}
-        <div class="mt-2">
-            <div class="filter-label">Period:</div>
-            <div class="filter-options">
-                <a {...makeLink({ period: null })}> All time </a>
-                {#each data.timeBins as bin, i}
-                    <span class="separator">•</span>
-                    <a {...makeLink({ period: bin.time_bin_desc })}>
-                        {bin.time_bin_desc}
-                    </a>
-                {/each}
-            </div>
+        <div class="mt-2 d-flex align-items-center">
+            <div class="fw-medium me-2">Period:</div>
+            <StatLinks items={periodItems} />
         </div>
 
-        <div class="mt-2">
-            <div class="filter-label">Plane:</div>
-            <div class="filter-options">
-                <a {...makeLink({ plane: null })}> All planes </a>
-                {#each ["Loopy", "Bomber", "Whale", "Biplane", "Miranda"] as plane, i}
-                    <span class="separator">•</span>
-                    <a {...makeLink({ plane: plane.toLowerCase() })}>
-                        {plane}
-                    </a>
-                {/each}
-            </div>
+        <div class="mt-2 d-flex align-items-center">
+            <div class="fw-medium me-2">Plane:</div>
+            <StatLinks items={planeItems} />
         </div>
     {/if}
 </section>
@@ -131,7 +143,10 @@
                         {#if data.params.stat == null}
                             {formatShortDate(player.stat)}
                         {:else}
-                            {formatStat(player.stat, data.stat.attributes)}
+                            {formatStat(
+                                player.stat,
+                                data.stat?.attributes || [],
+                            )}
                         {/if}
                     </td>
                 </tr>
@@ -141,38 +156,5 @@
 </section>
 
 <style>
-    .filter-label {
-        display: inline-block;
-        font-weight: 500;
-    }
-    .filter-options {
-        display: inline-flex;
-        flex-wrap: wrap;
-        gap: 0em;
-        margin-left: 0.5em;
-    }
-    .filter-link {
-        color: #6c757d;
-        text-decoration: none;
-        border-radius: 3px;
-        padding: 0.1rem 0.15rem;
-    }
-
-    .filter-link:hover {
-        background-color: #f8f9fa;
-        color: #495057;
-    }
-
-    .filter-link.active {
-        color: #0d6efd;
-        background-color: #f8f9fa;
-        /*font-weight: 500;*/
-    }
-
-    .separator {
-        color: #999;
-        margin: 0 0.5em;
-        display: inline-flex;
-        align-items: center;
-    }
+    /* No custom styles needed - using Bootstrap utility classes and StatLinks component */
 </style>
