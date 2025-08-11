@@ -1,9 +1,9 @@
 -- Win rate
 -- percentage
 SELECT
-    NULL AS plane,
-    NULL AS time_bin,
     handle,
+    NULL AS time_bin,
+    NULL AS plane,
     CAST(SUM(CASE WHEN game_meta.winner = players.team THEN 1 ELSE 0 END) AS REAL) / COUNT(*) AS stat
 FROM ladder_games
 NATURAL JOIN players

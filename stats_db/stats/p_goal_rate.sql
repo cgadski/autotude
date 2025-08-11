@@ -21,9 +21,9 @@ n_goals AS (
     GROUP BY handle
 )
 SELECT
+    handle,
     NULl AS time_bin,
     NULL AS plane,
-    handle,
     time_alive / goals AS stat
 FROM time_alive
 JOIN n_goals USING (handle)

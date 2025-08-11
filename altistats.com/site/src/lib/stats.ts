@@ -26,6 +26,7 @@ export async function getGlobalStats(): Promise<Array<Stat>> {
     SELECT query_name, description, stat, attributes
     FROM global_stats
     NATURAL JOIN stats
+    WHERE time_bin is NULL
     ORDER BY query_name
   `,
     )
@@ -82,8 +83,8 @@ export async function getPlayerGames(name: string): Promise<any[]> {
       my_games AS (
       SELECT
         DISTINCT replay_key
-        FROM ladder_games NATURAL JOIN players NATURAL JOIN names
-        WHERE name = ? AND team > 2
+        FROM ladder_games NATURAL JOIN players NATURAL JOIN handles
+        WHERE handle = ? AND team > 2
       )
       SELECT
         stem,
@@ -108,9 +109,7 @@ export async function getPlayerGames(name: string): Promise<any[]> {
 }
 
 export async function getRecentGames(): Promise<any[]> {
-  const db = getStatsDb();
-
-  const games = db
+  return getStatsDb()
     .prepare(
       `
       SELECT
@@ -127,12 +126,11 @@ export async function getRecentGames(): Promise<any[]> {
       LIMIT 10
       `,
     )
-    .all();
-
-  return games.map((game) => ({
-    ...game,
-    teams: JSON.parse(game.teams),
-  }));
+    .all()
+    .map((game) => ({
+      ...game,
+      teams: JSON.parse(game.teams),
+    }));
 }
 
 export async function getGame(stem: string): Promise<any | null> {
@@ -160,41 +158,5 @@ export async function getGame(stem: string): Promise<any | null> {
   return {
     ...game,
     teams: JSON.parse(game.teams),
-  };
-}
-
-export async function getStatsForPlayer(name: string): Promise<Stat[]> {
-  return getStatsDb()
-    .prepare(
-      `
-    SELECT query_name, description, stat, attributes
-    FROM player_stats
-    NATURAL JOIN stats
-    WHERE name = ?
-    ORDER BY stat DESC
-    `,
-    )
-    .all(name);
-}
-
-export async function getPlayerNames(vapor: string): Promise<any> {
-  const result = getStatsDb()
-    .prepare(
-      `
-    SELECT
-      n.vapor,
-      n.name,
-      nicks
-      FROM names n
-      JOIN other_nicks USING (vapor)
-      WHERE vapor = ?
-  `,
-    )
-    .get(vapor);
-
-  return {
-    vapor: result.vapor,
-    name: result.name,
-    nicks: JSON.parse(result.nicks),
   };
 }

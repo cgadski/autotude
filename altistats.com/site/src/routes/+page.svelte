@@ -8,47 +8,47 @@
 
     // @type {import('./$types').PageData}
     export let data;
-    let secondsAgo = 0;
-    let chartElement: HTMLElement;
-    let refreshInterval: number;
+    // let secondsAgo = 0;
+    // let chartElement: HTMLElement;
+    // let refreshInterval: number;
 
-    function updateTimer() {
-        if (data.lastUpdate) {
-            const lastUpdate = new Date(data.lastUpdate);
-            secondsAgo = Math.floor((new Date() - lastUpdate) / 1000);
+    // function updateTimer() {
+    //     if (data.lastUpdate) {
+    //         const lastUpdate = new Date(data.lastUpdate);
+    //         secondsAgo = Math.floor((new Date() - lastUpdate) / 1000);
 
-            if (secondsAgo > 60) {
-                invalidateAll();
-            }
-        }
-    }
+    //         if (secondsAgo > 60) {
+    //             invalidateAll();
+    //         }
+    //     }
+    // }
 
-    onMount(() => {
-        refreshInterval = setInterval(updateTimer, 1000) as unknown as number;
-        updateTimer();
+    // onMount(() => {
+    //     refreshInterval = setInterval(updateTimer, 1000) as unknown as number;
+    //     updateTimer();
 
-        return () => {
-            clearInterval(refreshInterval);
-        };
-    });
+    //     return () => {
+    //         clearInterval(refreshInterval);
+    //     };
+    // });
 
-    onMount(() => {
-        renderChart();
+    // onMount(() => {
+    //     renderChart();
 
-        const resizeObserver = new ResizeObserver(() => {
-            renderChart();
-        });
+    //     const resizeObserver = new ResizeObserver(() => {
+    //         renderChart();
+    //     });
 
-        if (chartElement) {
-            resizeObserver.observe(chartElement);
-        }
+    //     if (chartElement) {
+    //         resizeObserver.observe(chartElement);
+    //     }
 
-        return () => {
-            if (chartElement) {
-                resizeObserver.unobserve(chartElement);
-            }
-        };
-    });
+    //     return () => {
+    //         if (chartElement) {
+    //             resizeObserver.unobserve(chartElement);
+    //         }
+    //     };
+    // });
 
     const mainStatKeys = ["_total_games", "_total_time", "_total_players"];
 
@@ -83,9 +83,9 @@
             </div>
         {/each}
     </div>
-    <p class="text-muted small text-end mt-2 mb-0">
+    <!-- <p class="text-muted small text-end mt-2 mb-0">
         (Update from {secondsAgo} seconds ago)
-    </p>
+    </p> -->
 </section>
 
 <section>

@@ -1,8 +1,8 @@
 -- Total goals
 SELECT
-    NULL AS plane,
-    NULL AS time_bin,
     handle,
+    NULL AS time_bin,
+    NULL AS plane,
     count() AS stat
 FROM ladder_games
 NATURAL JOIN goals

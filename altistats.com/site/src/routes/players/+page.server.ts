@@ -23,19 +23,21 @@ export async function load({ url }) {
     .prepare(
       `
         SELECT time_bin, time_bin_desc
-        FROM time_bin_Desc
+        FROM time_bin_desc
+        ORDER BY time_bin_desc DESC
         `,
     )
     .all();
 
-  return {
+  const res = {
     params,
     statMetas,
     timeBins,
+    stat,
   };
 
-  if (query_name === "none") {
-    const handles = await getStatsDb()
+  if (params.stat == null) {
+    const players = await getStatsDb()
       .prepare(
         `
           SELECT handle, nicks, started_at AS last_played
@@ -47,39 +49,34 @@ export async function load({ url }) {
       )
       .all()
       .map((h: any) => ({
-        name: h.handle,
+        handle: h.handle,
         stat: h.last_played,
         nicks: JSON.parse(h.nicks),
       }));
 
     return {
-      stat,
-      period,
-      plane,
-      statMetas: statMetas,
-    };
-  } else {
-    const orderDirection = stat.attributes.includes("reverse") ? "ASC" : "DESC";
-    return getStatsDb()
-      .prepare(
-        `
-        SELECT handle, vapor, stat
-        FROM player_stats
-        NATURAL JOIN handles
-        NATURAL JOIN stats
-        WHERE query_name = ?
-        GROUP BY handle
-        ORDER BY stat ${orderDirection}
-        `,
-      )
-      .all(query_name);
-
-    return {
-      stat,
-      statMetas: statMetas,
-      period,
-      plane,
-      isNoneStat: query_name === "none",
+      ...res,
+      players,
     };
   }
+
+  if (stat == undefined) {
+    throw error(404, `Stat ${stat} not found`);
+  }
+
+  const players = await getStatsDb()
+    .prepare(
+      `
+        SELECT handle, stat
+        FROM player_stats
+        NATURAL JOIN stats
+        WHERE query_name = ?
+      `,
+    )
+    .all(stat.query_name);
+
+  return {
+    ...res,
+    players,
+  };
 }

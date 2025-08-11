@@ -1,9 +1,9 @@
 -- Time in-game
 -- duration
 SELECT
-    NULL AS plane,
-    NULL AS time_bin,
     handle,
+    NULL AS time_bin,
+    NULL AS plane,
     sum(ticks_alive) AS stat
 FROM ladder_games
 NATURAL JOIN players

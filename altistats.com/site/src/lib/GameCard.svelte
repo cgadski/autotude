@@ -71,7 +71,7 @@
                 <div class="players">
                     {#each game.teams["3"] || [] as player, index}
                         {#if index > 0}<span class="separator">•</span>{/if}
-                        <a href="/player/{player.vapor}" class="player-link">
+                        <a href="/player/{player.nick}" class="player-link">
                             {player.nick}
                         </a>
                     {/each}
@@ -87,7 +87,7 @@
                 <div class="players">
                     {#each game.teams["4"] || [] as player, index}
                         {#if index > 0}<span class="separator">•</span>{/if}
-                        <a href="/player/{player.vapor}" class="player-link">
+                        <a href="/player/{player.nick}" class="player-link">
                             {player.nick}
                         </a>
                     {/each}

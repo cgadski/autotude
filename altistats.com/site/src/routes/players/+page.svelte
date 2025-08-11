@@ -19,13 +19,14 @@
         const modified = Object.assign({}, current, override);
 
         const urlParams = new URLSearchParams();
-        if (modified.stat !== null) {
+        let defined = (x) => x !== null && x !== undefined;
+        if (defined(modified.stat)) {
             urlParams.set("stat", modified.stat);
         }
-        if (modified.period !== null) {
+        if (defined(modified.period)) {
             urlParams.set("period", modified.period);
         }
-        if (modified.plane !== null) {
+        if (defined(modified.plane)) {
             urlParams.set("plane", modified.plane);
         }
         const queryString = urlParams.toString();
@@ -39,22 +40,22 @@
         };
     }
 
-    onMount(() => {
-        if (histogramElement && !data.isNoneStat) {
-            renderHistogram(histogramElement, data);
-        }
-    });
+    // onMount(() => {
+    //     if (histogramElement && !data.params.stat != null) {
+    //         renderHistogram(histogramElement, data);
+    //     }
+    // });
 
-    $: if (data.players && histogramElement && !data.isNoneStat) {
-        renderHistogram(histogramElement, data);
-    }
+    // $: if (data.players && histogramElement && !data.params.stat != null) {
+    //     renderHistogram(histogramElement, data);
+    // }
 </script>
 
-<SiteHeader navPage="player" />
+<SiteHeader navPage="players" />
 
-<section>
+<!-- <section>
     {JSON.stringify(data)}
-</section>
+</section> -->
 
 <section>
     <div>
@@ -99,16 +100,16 @@
     {/if}
 </section>
 
-{#if data.stat != null}
+<!-- {#if data.stat != null}
     <section class="no-bg">
         <div bind:this={histogramElement}></div>
     </section>
-{/if}
+{/if} -->
 
 <section class="narrow">
     <table class="table table-sm">
         <colgroup>
-            <col />
+            <col style="width: 2em;" />
             <col />
             <col />
         </colgroup>
@@ -117,17 +118,17 @@
                 <tr>
                     <td class="text-muted">{index + 1}</td>
                     <td>
-                        <a href="/player/{player.vapor}">
-                            {player.name}
+                        <a href="/player/{player.handle}">
+                            {player.handle}
                         </a>
-                        {#if data.isNoneStat && player.nicks}
+                        {#if data.params.stat == null}
                             <small class="text-muted ms-2">
                                 ({player.nicks.join(", ")})
                             </small>
                         {/if}
                     </td>
                     <td class="text-end">
-                        {#if data.stat != null}
+                        {#if data.params.stat == null}
                             {formatShortDate(player.stat)}
                         {:else}
                             {formatStat(player.stat, data.stat.attributes)}

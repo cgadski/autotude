@@ -36,7 +36,7 @@
         {#each mainStats as stat}
             <div class="col">
                 <a
-                    href="/index/player?stat={stat.query_name}"
+                    href="/players?stat={stat.query_name}"
                     class="text-decoration-none"
                 >
                     <div class="card h-100">
@@ -56,7 +56,7 @@
         <div class="d-flex flex-wrap gap-2">
             {#each miniStats as stat}
                 <a
-                    href="/index/player?stat={stat.query_name}"
+                    href="/players?stat={stat.query_name}"
                     class="text-decoration-none"
                 >
                     <div class="card p-2">
