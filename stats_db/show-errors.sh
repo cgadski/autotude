@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ ! -f altistats.db ]; then
-	echo "Database altistats.db not found"
-	exit 1
-fi
-
-stems=$(sqlite3 altistats.db "SELECT stem FROM errored ORDER BY stem;")
+stems=$(sqlite3 stats.db "SELECT stem FROM errored ORDER BY stem;")
 if [ -z "$stems" ]; then
 	echo "No errors found in database"
 	exit 0
