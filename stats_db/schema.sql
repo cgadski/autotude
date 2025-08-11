@@ -73,3 +73,11 @@ CREATE TABLE spawns (
     end_tick INTEGER,
     PRIMARY KEY (replay_key, player_key, start_tick)
 );
+
+CREATE TABLE damage (
+    replay_key INTEGER REFERENCES replays (replay_key),
+    source_key INTEGER,
+    target_key INTEGER,
+    tick INTEGER,
+    amount INTEGER
+);

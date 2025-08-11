@@ -387,6 +387,47 @@ impl<'a> ReplayListener for DumpListener<'a> {
             }
         }
 
+        if let Some(Event::Damage(damage)) = &event.event {
+            if damage.source() == damage.target() {
+                return Ok(());
+            }
+
+            if damage.source() == 4294967295 {
+                return Ok(()); // sinister damage dealt by server
+            }
+
+            let mut stmt = self.conn.prepare(
+                "INSERT INTO damage (replay_key, source_key, target_key, tick, amount) VALUES (?, ?, ?, ?, ?)",
+            )?;
+
+            stmt.bind((1, self.replay_key))?;
+
+            let target_key = match self.indexer.get_player_key(PlayerId(damage.target()))? {
+                PlayerServerPresence::Present(k) => k,
+                PlayerServerPresence::Absent(k) => k,
+                PlayerServerPresence::NullPlayer => bail!(
+                    "Unexpected damage to non-existent player at tick {}",
+                    self.indexer.state.current_tick
+                ),
+            };
+
+            let source_key = match self.indexer.get_player_key(PlayerId(damage.source()))? {
+                PlayerServerPresence::Present(k) => k,
+                PlayerServerPresence::Absent(k) => k,
+                PlayerServerPresence::NullPlayer => bail!(
+                    "Unexpected damage from non-existent player at tick {}",
+                    self.indexer.state.current_tick
+                ),
+            };
+
+            stmt.bind((2, source_key.0 as i64))?;
+            stmt.bind((3, target_key.0 as i64))?;
+            stmt.bind((4, self.indexer.state.current_tick as i64))?;
+            stmt.bind((5, damage.amount() as i64))?;
+
+            while State::Done != stmt.next()? {}
+        }
+
         Ok(())
     }
 }
