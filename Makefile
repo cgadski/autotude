@@ -37,7 +37,7 @@ rl/lib/altitude_rl/proto/: $(PROTO_FILES)
 
 TOOL_SRC = $(wildcard hx_src/autotude/**)
 
-bin/write_polys.n: $(TOOL_SRC) hx_src/autotude/proto/
+bin/write_polys.n bin/replay_tool.n: $(TOOL_SRC) hx_src/autotude/proto/
 	haxe hx_src/build_tools.hxml
 
 # polys
