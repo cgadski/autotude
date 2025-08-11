@@ -15,8 +15,8 @@ load-csvs: \
     (load-csv "broken_replays" "stem TEXT")
 
 dump: load-schema load-csvs clear-errors
-	cargo run --release --bin dump -- --db {{STATS_DB}}
-	# dump --db {{STATS_DB}}
+	# cargo run --release --bin dump -- --db {{STATS_DB}}
+	dump --db {{STATS_DB}}
 	{{sqlite}} < views/game_meta.sql
 	{{sqlite}} "ANALYZE"
 
