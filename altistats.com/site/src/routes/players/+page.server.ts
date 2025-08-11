@@ -1,21 +1,25 @@
 import type { StatMeta } from "$lib";
-import {
-  getStatsDb,
-  getHandles,
-  getPlayerStat,
-  availableStats,
-} from "$lib/stats";
+import { getStatsDb, getHandles, availableStats } from "$lib/stats";
 import { error } from "@sveltejs/kit";
 
+export type QueryParams = {
+  stat: string | null;
+  period: string | null;
+  plane: string | null;
+};
+
 export async function load({ url }) {
-  const query_name = url.searchParams.get("stat");
-  const period = url.searchParams.get("period");
-  const plane = url.searchParams.get("plane");
+  const params: QueryParams = {
+    stat: url.searchParams.get("stat") || null,
+    period: url.searchParams.get("period") || null,
+    plane: url.searchParams.get("plane") || null,
+  };
 
+  // Get all available stats
   const statMetas = await availableStats();
-  const stat = statMetas.find((s) => s.query_name === query_name);
+  const stat = statMetas.find((s) => s.query_name === params.stat);
 
-  const time_bins = await getStatsDb()
+  const timeBins = await getStatsDb()
     .prepare(
       `
         SELECT time_bin, time_bin_desc
@@ -24,11 +28,10 @@ export async function load({ url }) {
     )
     .all();
 
-  let res = {
-    stat,
-    period,
-    plane,
+  return {
+    params,
     statMetas,
+    timeBins,
   };
 
   if (query_name === "none") {

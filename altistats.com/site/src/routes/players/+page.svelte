@@ -8,6 +8,36 @@
 
     let histogramElement: HTMLElement;
     import { renderHistogram } from "./histogram.js";
+    import type { QueryParams } from "./+page.server.js";
+
+    function makeLink(override: {
+        stat?: string | null;
+        period?: string | null;
+        plane?: string | null;
+    }) {
+        const current = Object.assign({}, data.params);
+        const modified = Object.assign({}, current, override);
+
+        const urlParams = new URLSearchParams();
+        if (modified.stat !== null) {
+            urlParams.set("stat", modified.stat);
+        }
+        if (modified.period !== null) {
+            urlParams.set("period", modified.period);
+        }
+        if (modified.plane !== null) {
+            urlParams.set("plane", modified.plane);
+        }
+        const queryString = urlParams.toString();
+        const href = queryString ? `/players?${queryString}` : "/players";
+
+        const isActive = JSON.stringify(current) === JSON.stringify(modified);
+
+        return {
+            href,
+            class: `filter-link${isActive ? " active" : ""}`,
+        };
+    }
 
     onMount(() => {
         if (histogramElement && !data.isNoneStat) {
@@ -17,21 +47,6 @@
 
     $: if (data.players && histogramElement && !data.isNoneStat) {
         renderHistogram(histogramElement, data);
-    }
-
-    function statActive(meta: StatMeta) {
-        if (data.stat != null) {
-            return meta.query_name == data.stat.query_name;
-        }
-        return false;
-    }
-
-    function makeLinkUrl(opts: any): string {
-        return "/players";
-    }
-
-    function makeLinkClass(opts: any): string[] {
-        return ["filter-link"];
     }
 </script>
 
@@ -45,26 +60,25 @@
     <div>
         <div class="filter-label">Stat:</div>
         <div class="filter-options">
+            <a {...makeLink({ stat: null })}> None </a>
             {#each data.statMetas as meta, index}
-                {#if index > 0}<span class="separator">•</span>{/if}
-                <a
-                    href={makeLinkUrl({ stat: meta })}
-                    class={makeLinkClass({ stat: meta })}
-                >
+                <span class="separator">•</span>
+                <a {...makeLink({ stat: meta.query_name })}>
                     {meta.description}
                 </a>
             {/each}
         </div>
     </div>
 
-    {#if data.stat != null}
+    {#if data.params.stat != null}
         <div class="mt-2">
             <div class="filter-label">Period:</div>
             <div class="filter-options">
-                {#each ["All Time", "This Month", "Last Month", "2023", "2022", "2021"] as period, i}
-                    {#if i > 0}<span class="separator">•</span>{/if}
-                    <a href="/players" class="filter-link">
-                        {period}
+                <a {...makeLink({ period: null })}> All time </a>
+                {#each data.timeBins as bin, i}
+                    <span class="separator">•</span>
+                    <a {...makeLink({ period: bin.time_bin_desc })}>
+                        {bin.time_bin_desc}
                     </a>
                 {/each}
             </div>
@@ -73,9 +87,10 @@
         <div class="mt-2">
             <div class="filter-label">Plane:</div>
             <div class="filter-options">
-                {#each ["All Planes", "Loopy", "Bomber", "Whale", "Biplane", "Miranda"] as plane, i}
-                    {#if i > 0}<span class="separator">•</span>{/if}
-                    <a href="/players" class="filter-link">
+                <a {...makeLink({ plane: null })}> All planes </a>
+                {#each ["Loopy", "Bomber", "Whale", "Biplane", "Miranda"] as plane, i}
+                    <span class="separator">•</span>
+                    <a {...makeLink({ plane: plane.toLowerCase() })}>
                         {plane}
                     </a>
                 {/each}
@@ -141,13 +156,16 @@
         border-radius: 3px;
         padding: 0.1rem 0.15rem;
     }
+
     .filter-link:hover {
         background-color: #f8f9fa;
         color: #495057;
     }
+
     .filter-link.active {
         color: #0d6efd;
-        font-weight: 500;
+        background-color: #f8f9fa;
+        /*font-weight: 500;*/
     }
 
     .separator {
