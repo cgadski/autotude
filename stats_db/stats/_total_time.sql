@@ -1,4 +1,6 @@
 -- Gameplay time
 -- duration
-SELECT sum(duration) FROM ladder_games
+SELECT time_bin, sum(duration)
+FROM ladder_games
 NATURAL JOIN replays
+NATURAL JOIN time_bins

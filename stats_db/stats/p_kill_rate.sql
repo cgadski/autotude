@@ -2,23 +2,25 @@
 -- duration_fine reverse
 WITH
 time_alive AS (
-    SELECT name, cast(sum(ticks_alive) AS real) AS time_alive
+    SELECT handle, cast(sum(ticks_alive) AS real) AS time_alive
     FROM ladder_games
     NATURAL JOIN players
     NATURAL JOIN handles
-    GROUP BY name
+    GROUP BY handle
 ),
 n_kills AS (
-    SELECT who_killed AS name, count() AS kills
+    SELECT who_killed AS handle, count() AS kills
     FROM ladder_games
     NATURAL JOIN named_kills
-    GROUP BY name
+    GROUP BY handle
 )
 SELECT
-    name,
+    handle,
+    NULL AS time_bin,
+    NULL AS plane,
     time_alive / kills AS stat
 FROM time_alive
-JOIN n_kills USING (name)
+JOIN n_kills USING (handle)
 WHERE kills > 1000
-GROUP BY name
+GROUP BY handle
 ORDER BY stat

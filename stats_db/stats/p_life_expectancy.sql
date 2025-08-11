@@ -1,11 +1,13 @@
 -- Life expectancy
 -- duration_fine
 SELECT
-    name,
+    NULL AS plane,
+    NULL AS time_bin,
+    handle,
     avg(end_tick - start_tick) AS stat
 FROM ladder_games
 NATURAL JOIN spawns
 NATURAL JOIN players
-JOIN handles ON (players.vapor = handles.vapor)
-GROUP BY name
+NATURAL JOIN handles
+GROUP BY handle
 ORDER BY stat

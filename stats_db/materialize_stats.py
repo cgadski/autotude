@@ -75,7 +75,7 @@ class StatMaterializer:
             DROP TABLE IF EXISTS player_stats;
             CREATE TABLE player_stats (
                 stat_key INTEGER REFERENCES stats (stat_key),
-                name,
+                handle,
                 time_bin,
                 plane,
                 stat

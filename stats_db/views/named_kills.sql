@@ -3,8 +3,8 @@ DROP VIEW IF EXISTS named_kills;
 CREATE VIEW IF NOT EXISTS named_kills AS
 SELECT
     ladder_games.replay_key AS replay_key,
-    killing_player.name AS who_killed,
-    dying_player.name AS who_died
+    killing_player.handle AS who_killed,
+    dying_player.handle AS who_died
 FROM ladder_games
 JOIN kills USING (replay_key)
 LEFT JOIN players p0 ON
