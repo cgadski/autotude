@@ -54,6 +54,11 @@ message MetaEvent {
     optional string data = 1;
 }
 
+message ScoreUpdateEvent {
+    optional uint32 team = 1;
+    optional uint32 points = 2;
+}
+
 message GameEvent {
     oneof event {
         ChatEvent chat = 1;
@@ -64,5 +69,6 @@ message GameEvent {
         KillEvent kill = 7;
         DamageEvent damage = 8;
         MetaEvent meta = 9;
+        ScoreUpdateEvent score_update = 10;
     }
 }

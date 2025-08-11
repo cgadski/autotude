@@ -127,6 +127,8 @@ message GameObject {
 
     optional uint32 emp_for = 44; // ticks remaining
     optional uint32 acid_for = 45; // ticks remaining
+    optional uint32 emp_source = 61;
+    optional uint32 acid_source = 62;
     optional bool stalled = 54;
 
     optional sint32 spin = 46; // degrees
