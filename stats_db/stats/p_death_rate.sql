@@ -1,8 +1,8 @@
--- Time alive per kill
--- duration_fine reverse
+-- Time per death
+-- duration_fine
 WITH
-n_kills AS (
-    SELECT who_killed AS handle, count() AS kills
+n_deaths AS (
+    SELECT who_died AS handle, count() AS kills
     FROM ladder_games
     NATURAL JOIN named_kills
     GROUP BY handle

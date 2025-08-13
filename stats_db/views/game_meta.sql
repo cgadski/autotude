@@ -9,6 +9,7 @@ CREATE TABLE game_meta (
     start_messages, -- server message counts
     stop_messages,
     restart_messages,
+    player_messages,
     next_key, -- next replay on same server
     prev_key, -- previous replay on same server
     winner -- last team that scored
@@ -49,6 +50,14 @@ restart_messages AS (
     FROM replays NATURAL JOIN messages
     WHERE player_key IS NULL
     AND chat_message = 'Game has been restarted.'
+    GROUP BY replay_key
+),
+player_messages AS (
+    SELECT
+        replay_key,
+        count() AS player_messages
+    FROM replays NATURAL JOIN messages
+    WHERE player_key IS NOT NULL
     GROUP BY replay_key
 ),
 n_players AS (
@@ -94,6 +103,7 @@ SELECT
     coalesce(start_messages, 0) AS start_messages,
     coalesce(stop_messages, 0) AS stop_messages,
     coalesce(restart_messages, 0) AS restart_messages,
+    coalesce(player_messages, 0) AS player_messages,
     a.next AS next_key,
     b.replay_key AS prev_key,
     winner
@@ -103,6 +113,7 @@ NATURAL JOIN n_goals
 NATURAL LEFT JOIN start_messages
 NATURAL LEFT JOIN stop_messages
 NATURAL LEFT JOIN restart_messages
+NATURAL LEFT JOIN player_messages
 LEFT JOIN consecutive a ON (r.replay_key = a.replay_key)
 LEFT JOIN consecutive b ON (r.replay_key = b.next)
 NATURAL LEFT JOIN winner;

@@ -1,4 +1,4 @@
--- Time alive per goal
+-- Time per goal
 -- duration reverse
 WITH
 time_alive AS (

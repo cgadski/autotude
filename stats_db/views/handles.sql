@@ -1,10 +1,14 @@
 DROP TABLE IF EXISTS handles;
 CREATE TABLE handles (
-    vapor PRIMARY KEY,
+    handle_key INTEGER PRIMARY KEY,
+    vapor,
     handle
 );
 
-INSERT INTO handles
+CREATE INDEX idx_handles_vapor ON handles (vapor);
+CREATE INDEX idx_handles_handle ON handles (handle);
+
+INSERT INTO handles (vapor, handle)
 SELECT
     ranked_nicks.vapor AS vapor,
     coalesce(custom_handles.handle, ranked_nicks.nick) AS handle

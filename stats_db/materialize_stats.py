@@ -7,6 +7,8 @@ from pathlib import Path
 from dataclasses import dataclass
 from typing import List
 import json
+import time
+from typing import Optional
 
 @dataclass
 class StatQuery:
@@ -19,11 +21,12 @@ class StatQuery:
 
 table_prefixes = [
     ('_', 'global_stats'),
-    ('p_', 'player_stats'),
-    ('g_', 'game_stats'),
+    ('h_', 'historical_stats'),
+    # ('hp_', 'historical_player_stats'),
+    # ('p_', 'player_stats'),
 ]
 
-def read_query(sql_file: Path) -> StatQuery:
+def read_query(sql_file: Path) -> Optional[StatQuery]:
     with open(sql_file, 'r') as f:
         content = f.read().strip()
 
@@ -49,7 +52,7 @@ def read_query(sql_file: Path) -> StatQuery:
                 sql=content
             )
 
-    raise ValueError(f"No matching prefix for {stem}")
+    return None
 
 
 class StatMaterializer:
@@ -68,7 +71,21 @@ class StatMaterializer:
             DROP TABLE IF EXISTS global_stats;
             CREATE TABLE global_stats (
                 stat_key INTEGER REFERENCES stats (stat_key),
-                time_bin DEFAULT null,
+                stat
+            );
+
+            DROP TABLE IF EXISTS historical_stats;
+            CREATE TABLE historical_stats (
+                stat_key INTEGER REFERENCES stats (stat_key),
+                time_bin,
+                stat
+            );
+
+            DROP TABLE IF EXISTS historical_player_stats;
+            CREATE TABLE historical_player_stats (
+                stat_key INTEGER REFERENCES stats (stat_key),
+                handle,
+                time_bin,
                 stat
             );
 
@@ -80,19 +97,16 @@ class StatMaterializer:
                 plane,
                 stat
             );
-
-            DROP TABLE IF EXISTS game_stats;
-            CREATE TABLE game_stats (
-                stat_key INTEGER REFERENCES stats (stat_key),
-                replay_key,
-                stat
-            );
         """)
         self.next_stat_key = 1
 
     def materialize(self, query_file, table_name):
+        start_time = time.time()
         try:
             stat = read_query(query_file)
+            if stat is None:
+                print(f"skipping {query_file}")
+                return False
             stat_key = self.next_stat_key
             self.next_stat_key += 1
 
@@ -107,10 +121,12 @@ class StatMaterializer:
                 FROM ({stat.sql})
             """)
 
-            print(f"✓ {query_file}")
+            elapsed = time.time() - start_time
+            print(f"✓ {query_file} ({elapsed:.2f}s)")
             return True
         except Exception as e:
-            print(f"✗ {query_file}: {e}")
+            elapsed = time.time() - start_time
+            print(f"✗ {query_file}: {e} ({elapsed:.2f}s)")
             return False
 
     def close(self):
