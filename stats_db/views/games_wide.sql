@@ -1,6 +1,6 @@
 -- bunch of relatively simple metadata about a game
-DROP TABLE IF EXISTS game_meta;
-CREATE TABLE game_meta (
+DROP TABLE IF EXISTS games_wide;
+CREATE TABLE games_wide (
     replay_key INTEGER PRIMARY KEY REFERENCES replays (replay_key),
     n_left, -- number of players on each team
     n_right,
@@ -15,7 +15,7 @@ CREATE TABLE game_meta (
     winner -- last team that scored
 );
 
-INSERT INTO game_meta
+INSERT INTO games_wide
 WITH
 consecutive AS (
 	SELECT

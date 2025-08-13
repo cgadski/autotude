@@ -5,9 +5,9 @@ CREATE TABLE ladder_games (
 
 INSERT INTO ladder_games
 SELECT a.replay_key
-FROM game_meta a
-LEFT JOIN game_meta next ON (next.replay_key = a.next_key)
-JOIN game_meta prev ON (prev.replay_key = a.prev_key)
+FROM games_wide a
+LEFT JOIN games_wide next ON (next.replay_key = a.next_key)
+JOIN games_wide prev ON (prev.replay_key = a.prev_key)
 WHERE
 -- conditions for a game to be a ladder game:
 (prev.start_messages > 0 OR a.restart_messages > 0) -- started

@@ -82,7 +82,7 @@ export async function load({ setHeaders }): Promise<FrontpageData> {
           winner
         FROM game_teams
         NATURAL JOIN ladder_games
-        NATURAL JOIN game_meta
+        NATURAL JOIN games_wide
         ORDER BY started_at DESC
         LIMIT 5
         `,

@@ -1,19 +1,58 @@
 -- Time per death
 -- duration_fine
 WITH
-n_deaths AS (
-    SELECT who_died AS handle, count() AS kills
-    FROM ladder_games
-    NATURAL JOIN named_kills
-    GROUP BY handle
+tbl AS (
+    SELECT
+        handle_key,
+        time_bin,
+        plane,
+        time_alive,
+        deaths
+    FROM players_wide
+    WHERE deaths > 0
 )
+-- Specific month and plane
 SELECT
-    handle,
+    handle_key,
+    time_bin,
+    plane,
+    time_alive / deaths AS stat
+FROM tbl
+WHERE deaths > 0
+
+UNION ALL
+
+-- All-time for specific plane
+SELECT
+    handle_key,
+    NULL AS time_bin,
+    plane,
+    sum(time_alive) / sum(deaths) AS stat
+FROM tbl
+GROUP BY handle_key, plane
+HAVING sum(deaths) > 0
+
+UNION ALL
+
+-- Specific month across all planes
+SELECT
+    handle_key,
+    time_bin,
+    NULL AS plane,
+    sum(time_alive) / sum(deaths) AS stat
+FROM tbl
+GROUP BY handle_key, time_bin
+HAVING sum(deaths) > 0
+
+UNION ALL
+
+-- All-time across all planes
+SELECT
+    handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    time_alive / kills AS stat
-FROM time_alive
-JOIN n_kills USING (handle)
-WHERE kills > 1000
-GROUP BY handle
+    sum(time_alive) / sum(deaths) AS stat
+FROM tbl
+GROUP BY handle_key
+HAVING sum(deaths) > 0
 ORDER BY stat

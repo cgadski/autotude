@@ -1,24 +1,21 @@
--- Time per goal
--- duration reverse
+-- Time by player, month, and plane
+-- duration
 WITH
 tbl AS (
     SELECT
         handle_key,
         time_bin,
         plane,
-        time_alive,
-        goals
+        time_alive AS stat
     FROM players_wide
-    WHERE goals > 0
 )
 -- Specific month and plane
 SELECT
     handle_key,
     time_bin,
     plane,
-    time_alive / goals AS stat
+    stat
 FROM tbl
-WHERE goals > 0
 
 UNION ALL
 
@@ -27,10 +24,9 @@ SELECT
     handle_key,
     NULL AS time_bin,
     plane,
-    sum(time_alive) / sum(goals) AS stat
+    sum(stat) AS stat
 FROM tbl
 GROUP BY handle_key, plane
-HAVING sum(goals) > 0
 
 UNION ALL
 
@@ -39,10 +35,9 @@ SELECT
     handle_key,
     time_bin,
     NULL AS plane,
-    sum(time_alive) / sum(goals) AS stat
+    sum(stat) AS stat
 FROM tbl
 GROUP BY handle_key, time_bin
-HAVING sum(goals) > 0
 
 UNION ALL
 
@@ -51,8 +46,7 @@ SELECT
     handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    sum(time_alive) / sum(goals) AS stat
+    sum(stat) AS stat
 FROM tbl
 GROUP BY handle_key
-HAVING sum(goals) > 0
-ORDER BY stat
+ORDER BY stat DESC

@@ -22,8 +22,8 @@ class StatQuery:
 table_prefixes = [
     ('_', 'global_stats'),
     ('h_', 'historical_stats'),
-    # ('hp_', 'historical_player_stats'),
-    # ('p_', 'player_stats'),
+    ('hp_', 'historical_player_stats'),
+    ('p_', 'player_stats'),
 ]
 
 def read_query(sql_file: Path) -> Optional[StatQuery]:

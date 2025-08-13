@@ -95,7 +95,7 @@ export async function getPlayerGames(name: string): Promise<any[]> {
         winner
       FROM game_teams
       NATURAL JOIN my_games
-      NATURAL JOIN game_meta
+      NATURAL JOIN games_wide
       ORDER BY started_at DESC
       LIMIT 10
       `,
@@ -121,7 +121,7 @@ export async function getRecentGames(): Promise<any[]> {
         winner
       FROM game_teams
       NATURAL JOIN ladder_games
-      NATURAL JOIN game_meta
+      NATURAL JOIN games_wide
       ORDER BY started_at DESC
       LIMIT 10
       `,
@@ -147,7 +147,7 @@ export async function getGame(stem: string): Promise<any | null> {
         gt.duration,
         gm.winner
       FROM game_teams gt
-      LEFT JOIN game_meta gm ON gm.replay_key = gt.replay_key
+      LEFT JOIN games_wide gm ON gm.replay_key = gt.replay_key
       WHERE gt.stem = ?
       `,
     )
