@@ -23,8 +23,8 @@ Front page stats are just the numbers displayed on the front page.
 Historical stats are binned over month?.
 
 - `h_games`
-- `h_time`
 - `h_players`
+- `h_time`
 
 Historical player stats are binned over (player, month?):
 
@@ -32,3 +32,8 @@ Historical player stats are binned over (player, month?):
 - `hp_time`
 
 Player stats are binned over (player, month?, plane?):
+
+- `p_death_rate`
+- `p_goal_rate`
+- `p_kill_rate`
+- `p_win_rate`
