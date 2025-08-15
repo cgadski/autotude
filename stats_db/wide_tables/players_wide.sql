@@ -1,10 +1,12 @@
-DROP TABLE IF EXISTS players_meta;
-CREATE TABLE players_meta (
+-- bunch of features computed for each player row
+DROP TABLE IF EXISTS players_wide;
+CREATE TABLE players_wide (
     replay_key INTEGER REFERENCES replays (replay_key),
     player_key INTEGER,
     team INTEGER,
     handle_key INTEGER REFERENCES handles (handle_key),
     time_bin INTEGER,
+    nick INTEGER,
     plane INTEGER,
     time_alive REAL,
     kills INTEGER,
@@ -13,9 +15,9 @@ CREATE TABLE players_meta (
     PRIMARY KEY (replay_key, player_key)
 );
 
-CREATE INDEX idx_players_meta_handle_key ON players_meta (handle_key);
+CREATE INDEX idx_players_wide_handle_key ON players_wide (handle_key);
 
-INSERT INTO players_meta
+INSERT INTO players_wide
 WITH plane_usage AS (
     SELECT
         replay_key,
@@ -26,7 +28,7 @@ WITH plane_usage AS (
             PARTITION BY spawns.replay_key, spawns.player_key
             ORDER BY sum(spawns.end_tick - spawns.start_tick) DESC
         ) AS usage_rank
-    FROM ladder_games
+    FROM replays
     NATURAL JOIN spawns
     GROUP BY replay_key, player_key, plane
 ),
@@ -42,11 +44,9 @@ time_alive AS (
     SELECT
         spawns.replay_key,
         spawns.player_key,
-        up.plane,
-        sum(CASE WHEN spawns.plane = up.plane THEN spawns.end_tick - spawns.start_tick ELSE 0 END) AS time_alive
+        sum(spawns.end_tick - spawns.start_tick) AS time_alive
     FROM spawns
-    JOIN used_planes up USING (replay_key, player_key)
-    GROUP BY spawns.replay_key, spawns.player_key, up.plane
+    GROUP BY spawns.replay_key, spawns.player_key
 ),
 kill_tallies AS (
     SELECT
@@ -73,16 +73,16 @@ SELECT
     team,
     handle_key,
     time_bin,
+    nick,
     plane,
-    time_alive,
+    coalesce(time_alive, 0) AS time_alive,
     coalesce(kills, 0) AS kills,
     coalesce(deaths, 0) AS deaths,
     coalesce(goals, 0) AS goals
-FROM ladder_games
+FROM replays_wide
 NATURAL JOIN players p
-NATURAL JOIN handles
-NATURAL JOIN time_bins
-NATURAL JOIN used_planes
-NATURAL JOIN time_alive
+NATURAL JOIN vapor_handle
+NATURAL LEFT JOIN used_planes
+NATURAL LEFT JOIN time_alive
 NATURAL LEFT JOIN kill_tallies
 NATURAL LEFT JOIN goal_tallies;

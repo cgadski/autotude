@@ -1,7 +1,19 @@
--- bunch of relatively simple metadata about a game
-DROP TABLE IF EXISTS games_wide;
-CREATE TABLE games_wide (
+DROP TABLE IF EXISTS time_bin_desc;
+CREATE TABLE time_bin_desc (
+    time_bin INTEGER PRIMARY KEY,
+    time_bin_desc TEXT UNIQUE
+);
+
+INSERT INTO time_bin_desc (time_bin_desc)
+SELECT DISTINCT strftime("%Y-%m", started_at, 'unixepoch')
+FROM replays
+ORDER BY started_at;
+
+-- bunch of features computed for each game
+DROP TABLE IF EXISTS replays_wide;
+CREATE TABLE replays_wide (
     replay_key INTEGER PRIMARY KEY REFERENCES replays (replay_key),
+    time_bin, -- time bin this replay belongs to
     n_left, -- number of players on each team
     n_right,
     n_spec,
@@ -15,8 +27,16 @@ CREATE TABLE games_wide (
     winner -- last team that scored
 );
 
-INSERT INTO games_wide
+INSERT INTO replays_wide
 WITH
+time_bin AS (
+    SELECT
+        replay_key,
+        time_bin
+    FROM replays
+    JOIN time_bin_desc
+    ON time_bin_desc = strftime('%Y-%m', started_at, 'unixepoch')
+),
 consecutive AS (
 	SELECT
 		replay_key,
@@ -96,6 +116,7 @@ winner AS (
 )
 SELECT
     r.replay_key,
+    time_bin,
     n_left,
     n_right,
     n_spec,
@@ -108,6 +129,7 @@ SELECT
     b.replay_key AS prev_key,
     winner
 FROM replays r
+NATURAL JOIN time_bin
 NATURAL JOIN n_players
 NATURAL JOIN n_goals
 NATURAL LEFT JOIN start_messages

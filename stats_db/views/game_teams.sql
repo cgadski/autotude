@@ -5,19 +5,15 @@ WITH team_players AS (
         replay_key,
         team,
         json_group_array(
-            json_object(
-                'nick', nick,
-                'vapor', vapor
-            )
+            handle
         ) AS players_json
     FROM (
         SELECT DISTINCT
             replay_key,
             team,
-            vapor,
-            handle AS nick
+            handle
         FROM ladder_games
-        NATURAL JOIN players
+        NATURAL JOIN players_wide
         NATURAL JOIN handles
         WHERE team IN (2, 3, 4)
     )

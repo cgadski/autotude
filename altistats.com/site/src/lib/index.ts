@@ -16,8 +16,7 @@ export type Game = {
   winner: number;
   teams: {
     [key: string]: Array<{
-      nick: string;
-      vapor: string;
+      handle: string;
     }>;
   };
 };
@@ -29,7 +28,7 @@ export function formatStat(stat: number, attributes: string[]): string {
 
   if (attributes.includes("duration_fine")) {
     const seconds = stat / 30;
-    return `${seconds.toFixed(2)} s`;
+    return `${seconds.toFixed(1)}s`;
   }
 
   if (attributes.includes("duration")) {

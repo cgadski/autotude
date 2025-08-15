@@ -15,22 +15,25 @@ export function getStatsDb(): Database.Database {
   return statsDb;
 }
 
-export function playersUrl(props: any) {
-  return;
-}
-
-export async function getGlobalStats(): Promise<Array<Stat>> {
+export async function query(
+  query: string,
+  options: {
+    args?: any[];
+    parse?: string[];
+  } = {},
+) {
+  const { args = [], parse: parsedColumns = [] } = options;
   return getStatsDb()
-    .prepare(
-      `
-    SELECT query_name, description, stat, attributes
-    FROM global_stats
-    NATURAL JOIN stats
-    WHERE time_bin is NULL
-    ORDER BY query_name
-  `,
-    )
-    .all();
+    .prepare(query)
+    .all(...args)
+    .map((row: any) => {
+      parsedColumns.forEach((column) => {
+        if (row[column]) {
+          row[column] = JSON.parse(row[column]);
+        }
+      });
+      return row;
+    });
 }
 
 export async function availableStats(): Promise<Array<StatMeta>> {
@@ -95,7 +98,7 @@ export async function getPlayerGames(name: string): Promise<any[]> {
         winner
       FROM game_teams
       NATURAL JOIN my_games
-      NATURAL JOIN games_wide
+      NATURAL JOIN replays_wide
       ORDER BY started_at DESC
       LIMIT 10
       `,
@@ -121,7 +124,7 @@ export async function getRecentGames(): Promise<any[]> {
         winner
       FROM game_teams
       NATURAL JOIN ladder_games
-      NATURAL JOIN games_wide
+      NATURAL JOIN replays_wide
       ORDER BY started_at DESC
       LIMIT 10
       `,
@@ -147,7 +150,7 @@ export async function getGame(stem: string): Promise<any | null> {
         gt.duration,
         gm.winner
       FROM game_teams gt
-      LEFT JOIN games_wide gm ON gm.replay_key = gt.replay_key
+      LEFT JOIN replays_wide gm ON gm.replay_key = gt.replay_key
       WHERE gt.stem = ?
       `,
     )

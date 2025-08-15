@@ -1,4 +1,4 @@
--- Time alive per kill
+-- Time per kill
 -- duration_fine reverse
 WITH
 tbl AS (
@@ -6,53 +6,53 @@ tbl AS (
         handle_key,
         time_bin,
         plane,
-        time_alive,
-        kills
+        sum(kills) AS kills,
+        sum(time_alive) AS time_alive
     FROM players_wide
-    WHERE kills > 0
+    NATURAL JOIN ladder_games
+    WHERE team > 2
+    GROUP BY handle_key, time_bin, plane
 )
--- Specific month and plane
+
+-- handle, time, plane
 SELECT
     handle_key,
     time_bin,
     plane,
-    time_alive / kills AS stat
+    kills / time_alive AS stat,
+    null AS detail
 FROM tbl
-WHERE kills > 0
 
 UNION ALL
 
--- All-time for specific plane
-SELECT
-    handle_key,
-    NULL AS time_bin,
-    plane,
-    sum(time_alive) / sum(kills) AS stat
-FROM tbl
-GROUP BY handle_key, plane
-HAVING sum(kills) > 0
-
-UNION ALL
-
--- Specific month across all planes
+-- handle, time
 SELECT
     handle_key,
     time_bin,
     NULL AS plane,
-    sum(time_alive) / sum(kills) AS stat
-FROM tbl
-GROUP BY handle_key, time_bin
-HAVING sum(kills) > 0
+    sum(time_alive) / sum(kills) AS stat,
+    null AS detail
+FROM tbl GROUP BY handle_key, time_bin
 
 UNION ALL
 
--- All-time across all planes
+-- handle, plane
+SELECT
+    handle_key,
+    NULL AS time_bin,
+    plane,
+    sum(time_alive) / sum(kills) AS stat,
+    null AS detail
+FROM tbl GROUP BY handle_key, plane
+
+UNION ALL
+
+-- handle
 SELECT
     handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    sum(time_alive) / sum(kills) AS stat
+    sum(time_alive) / sum(kills) AS stat,
+    null AS detail
 FROM tbl
 GROUP BY handle_key
-HAVING sum(kills) > 0
-ORDER BY stat

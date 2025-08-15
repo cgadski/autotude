@@ -1,3 +1,4 @@
+-- Total kills
 SELECT sum(kills)
-FROM kill_tallies
+FROM players_wide
 NATURAL JOIN ladder_games

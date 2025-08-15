@@ -1,5 +1,5 @@
 import type { StatMeta } from "$lib";
-import { getStatsDb, getHandles, availableStats } from "$lib/stats";
+import { getStatsDb, getHandles, availableStats, query } from "$lib/stats";
 import { error } from "@sveltejs/kit";
 
 export type QueryParams = {
@@ -15,19 +15,17 @@ export async function load({ url }) {
     plane: url.searchParams.get("plane") || null,
   };
 
-  // Get all available stats
   const statMetas = await availableStats();
   const stat = statMetas.find((s) => s.query_name === params.stat);
 
-  const timeBins = await getStatsDb()
-    .prepare(
+  const timeBins: Array<{ time_bin: number; time_bin_desc: string }> =
+    await query(
       `
         SELECT time_bin, time_bin_desc
         FROM time_bin_desc
         ORDER BY time_bin_desc DESC
         `,
-    )
-    .all();
+    );
 
   const res = {
     params,
@@ -37,26 +35,24 @@ export async function load({ url }) {
   };
 
   if (params.stat == null) {
-    const players = await getStatsDb()
-      .prepare(
-        `
-          SELECT handle, nicks, started_at AS last_played
-          FROM other_nicks
-          NATURAL JOIN last_played
-          GROUP BY handle
-          ORDER BY last_played DESC
-          `,
-      )
-      .all()
-      .map((h: any) => ({
-        handle: h.handle,
-        stat: h.last_played,
-        nicks: JSON.parse(h.nicks),
-      }));
-
     return {
       ...res,
-      players,
+      players: await query(
+        `
+          SELECT handle, nicks, max(started_at) AS last_played
+          FROM players_wide
+          NATURAL JOIN ladder_games
+          JOIN replays USING (replay_key)
+          JOIN handle_nicks USING (handle_key)
+          JOIN handles USING (handle_key)
+          WHERE team > 2
+          GROUP BY handle_key
+          ORDER BY last_played DESC
+        `,
+        {
+          parse: ["nicks"],
+        },
+      ),
     };
   }
 
@@ -64,19 +60,42 @@ export async function load({ url }) {
     throw error(404, `Stat ${stat} not found`);
   }
 
-  const players = await getStatsDb()
-    .prepare(
-      `
-        SELECT handle, stat
-        FROM player_stats
-        NATURAL JOIN stats
-        WHERE query_name = ?
-      `,
-    )
-    .all(stat.query_name);
+  const timeBinIndex = params.period
+    ? timeBins.find((tb) => tb.time_bin_desc === params.period)?.time_bin
+    : null;
+
+  const planes = ["loopy", "bomber", "whale", "biplane", "miranda"];
+  const planeIndex = params.plane
+    ? planes.findIndex((p) => p === params.plane)
+    : null;
+
+  const planeCondition = planeIndex !== null ? "plane = ?" : "plane IS NULL";
+  const timeBinCondition =
+    timeBinIndex !== null ? "time_bin = ?" : "time_bin IS NULL";
+
+  const statReversed = stat.attributes.includes("reverse") ? "ASC" : "DESC";
+
+  const args: any[] = [params.stat];
+  if (planeIndex !== null) args.push(planeIndex);
+  if (timeBinIndex !== null) args.push(timeBinIndex);
 
   return {
     ...res,
-    players,
+    timeBinIndex,
+    players: await query(
+      `
+        SELECT handle, stat, detail
+        FROM player_stats
+        NATURAL JOIN stats
+        NATURAL JOIN handles
+        WHERE query_name = ?
+        AND ${planeCondition}
+        AND ${timeBinCondition}
+        ORDER BY stat ${statReversed}
+      `,
+      {
+        args,
+      },
+    ),
   };
 }

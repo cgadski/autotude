@@ -1,8 +1,5 @@
 import { env } from "$env/dynamic/private";
 import pg from "pg";
-import { readFileSync } from "fs";
-import { join } from "path";
-import { getGlobalStats } from "$lib/stats";
 import { getStatsDb } from "$lib/stats";
 import { type Stat } from "$lib";
 
@@ -58,6 +55,23 @@ GROUP BY bin
 ORDER BY bin ASC;
 `;
 
+async function getGlobalStats(): Promise<Array<Stat>> {
+  return getStatsDb()
+    .prepare(
+      `
+    SELECT query_name, description, stat, attributes
+    FROM global_stats
+    NATURAL JOIN stats
+    ORDER BY query_name
+  `,
+    )
+    .all()
+    .map((m: any) => ({
+      ...m,
+      attributes: JSON.parse(m.attributes),
+    }));
+}
+
 export type FrontpageData = {
   lastUpdate: string;
   listings: any[];
@@ -82,7 +96,7 @@ export async function load({ setHeaders }): Promise<FrontpageData> {
           winner
         FROM game_teams
         NATURAL JOIN ladder_games
-        NATURAL JOIN games_wide
+        NATURAL JOIN replays_wide
         ORDER BY started_at DESC
         LIMIT 5
         `,
@@ -101,7 +115,6 @@ export async function load({ setHeaders }): Promise<FrontpageData> {
       getGlobalStats(),
     ]);
 
-  // Set cache headers for 30 seconds
   setHeaders({
     "Cache-Control": "public, max-age=30",
   });

@@ -6,53 +6,52 @@ tbl AS (
         handle_key,
         time_bin,
         plane,
-        time_alive,
-        deaths
+        cast(sum(deaths) AS REAL) AS deaths,
+        cast(sum(time_alive) AS REAL) AS time_alive
     FROM players_wide
-    WHERE deaths > 0
+    NATURAL JOIN ladder_games
+    WHERE team > 2
+    GROUP BY handle_key, time_bin, plane
 )
--- Specific month and plane
+
+-- handle, time, plane
 SELECT
     handle_key,
     time_bin,
     plane,
-    time_alive / deaths AS stat
-FROM tbl
-WHERE deaths > 0
+    sum(time_alive) / sum(deaths) AS stat,
+    cast(cast(sum(deaths) as int) as text) || ' deaths' AS detail
+FROM tbl GROUP BY handle_key, time_bin, plane
 
 UNION ALL
 
--- All-time for specific plane
-SELECT
-    handle_key,
-    NULL AS time_bin,
-    plane,
-    sum(time_alive) / sum(deaths) AS stat
-FROM tbl
-GROUP BY handle_key, plane
-HAVING sum(deaths) > 0
-
-UNION ALL
-
--- Specific month across all planes
+-- handle, time
 SELECT
     handle_key,
     time_bin,
     NULL AS plane,
-    sum(time_alive) / sum(deaths) AS stat
-FROM tbl
-GROUP BY handle_key, time_bin
-HAVING sum(deaths) > 0
+    sum(time_alive) / sum(deaths) AS stat,
+    cast(cast(sum(deaths) as int) as text) || ' deaths' AS detail
+FROM tbl GROUP BY handle_key, time_bin
 
 UNION ALL
 
--- All-time across all planes
+-- handle, plane
+SELECT
+    handle_key,
+    NULL AS time_bin,
+    plane,
+    sum(time_alive) / sum(deaths) AS stat,
+    cast(cast(sum(deaths) as int) as text) || ' deaths' AS detail
+FROM tbl GROUP BY handle_key, plane
+
+UNION ALL
+
+-- handle
 SELECT
     handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    sum(time_alive) / sum(deaths) AS stat
-FROM tbl
-GROUP BY handle_key
-HAVING sum(deaths) > 0
-ORDER BY stat
+    sum(time_alive) / sum(deaths) AS stat,
+    cast(cast(sum(deaths) as int) as text) || ' deaths' AS detail
+FROM tbl GROUP BY handle_key

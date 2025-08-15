@@ -3,57 +3,67 @@
 WITH
 tbl AS (
     SELECT
-        pw.handle_key,
-        pw.time_bin,
-        pw.plane,
-        SUM(CASE WHEN games_wide.winner = pw.team THEN 1 ELSE 0 END) AS wins,
-        COUNT(*) AS games
-    FROM players_wide pw
-    JOIN games_wide USING (replay_key)
-    GROUP BY pw.handle_key, pw.time_bin, pw.plane
+        replay_key,
+        handle_key,
+        r.time_bin,
+        plane,
+        1. AS n_games,
+        iif(p.team = r.winner, 1., 0.) AS wins
+    FROM players_wide p
+    NATURAL JOIN handles
+    JOIN replays_wide r USING (replay_key)
+    JOIN ladder_games USING (replay_key)
+    WHERE p.team > 2
+    GROUP BY replay_key, handle_key
 )
--- Specific month and plane
+
+-- handle, time, plane
 SELECT
     handle_key,
     time_bin,
     plane,
-    CAST(wins AS REAL) / games AS stat
-FROM tbl
-WHERE games > 0
+    sum(wins) / sum(n_games) AS stat,
+    cast(cast(sum(wins) as int) as text) || '/' ||
+    cast(cast(sum(n_games) as int) as text) AS detail
+FROM tbl GROUP BY handle_key, time_bin, plane
+HAVING sum(n_games) >= 20
 
 UNION ALL
 
--- All-time for specific plane
-SELECT
-    handle_key,
-    NULL AS time_bin,
-    plane,
-    CAST(sum(wins) AS REAL) / sum(games) AS stat
-FROM tbl
-GROUP BY handle_key, plane
-HAVING sum(games) > 0
-
-UNION ALL
-
--- Specific month across all planes
+-- handle, time
 SELECT
     handle_key,
     time_bin,
     NULL AS plane,
-    CAST(sum(wins) AS REAL) / sum(games) AS stat
-FROM tbl
-GROUP BY handle_key, time_bin
-HAVING sum(games) > 0
+    sum(wins) / sum(n_games) AS stat,
+    cast(cast(sum(wins) as int) as text) || '/' ||
+    cast(cast(sum(n_games) as int) as text) AS detail
+FROM tbl GROUP BY handle_key, time_bin
+HAVING sum(n_games) >= 25
 
 UNION ALL
 
--- All-time across all planes
+-- handle, plane
+SELECT
+    handle_key,
+    NULL AS time_bin,
+    plane,
+    sum(wins) / sum(n_games) AS stat,
+    cast(cast(sum(wins) as int) as text) || '/' ||
+    cast(cast(sum(n_games) as int) as text) AS detail
+FROM tbl GROUP BY handle_key, plane
+HAVING sum(n_games) >= 50
+
+UNION ALL
+
+-- handle
 SELECT
     handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    CAST(sum(wins) AS REAL) / sum(games) AS stat
+    sum(wins) / sum(n_games) AS stat,
+    cast(cast(sum(wins) as int) as text) || '/' ||
+    cast(cast(sum(n_games) as int) as text) AS detail
 FROM tbl
 GROUP BY handle_key
-HAVING sum(games) > 0
-ORDER BY stat DESC
+HAVING sum(n_games) >= 100

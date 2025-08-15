@@ -1,11 +1,10 @@
 <script lang="ts">
+    export let data;
+
     import SiteHeader from "$lib/SiteHeader.svelte";
     import StatLinks from "$lib/StatLinks.svelte";
     import { formatStat, formatShortDate, type StatMeta } from "$lib";
     import { onMount } from "svelte";
-
-    // @type {import('./$types').PageData}
-    export let data;
 
     let histogramElement: HTMLElement;
     import { renderHistogram } from "./histogram.js";
@@ -141,12 +140,15 @@
                     </td>
                     <td class="text-end">
                         {#if data.params.stat == null}
-                            {formatShortDate(player.stat)}
+                            {formatShortDate(player.last_played)}
                         {:else}
                             {formatStat(
                                 player.stat,
                                 data.stat?.attributes || [],
                             )}
+                            <span class="text-muted">
+                                ({player.detail})
+                            </span>
                         {/if}
                     </td>
                 </tr>
@@ -154,7 +156,3 @@
         </tbody>
     </table>
 </section>
-
-<style>
-    /* No custom styles needed - using Bootstrap utility classes and StatLinks component */
-</style>

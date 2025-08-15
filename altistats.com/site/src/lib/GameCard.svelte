@@ -25,9 +25,9 @@
         <div class="teams">
             <div class="team team-red">
                 <div class="players">
-                    {#each game.teams["3"] || [] as player, index}
+                    {#each game.teams["3"] || [] as handle, index}
                         {#if index > 0}<span class="separator">•</span>{/if}
-                        <span class="player">{player.nick}</span>
+                        <span class="player">{handle}</span>
                     {/each}
                 </div>
                 <div class="trophy-space">
@@ -39,9 +39,9 @@
 
             <div class="team team-blue">
                 <div class="players">
-                    {#each game.teams["4"] || [] as player, index}
+                    {#each game.teams["4"] || [] as handle, index}
                         {#if index > 0}<span class="separator">•</span>{/if}
-                        <span class="player">{player.nick}</span>
+                        <span class="player">{handle}</span>
                     {/each}
                 </div>
                 <div class="trophy-space">
@@ -69,10 +69,10 @@
         <div class="teams">
             <div class="team team-red">
                 <div class="players">
-                    {#each game.teams["3"] || [] as player, index}
+                    {#each game.teams["3"] || [] as handle, index}
                         {#if index > 0}<span class="separator">•</span>{/if}
-                        <a href="/player/{player.nick}" class="player-link">
-                            {player.nick}
+                        <a href="/player/{handle}" class="player-link">
+                            {handle}
                         </a>
                     {/each}
                 </div>
@@ -85,10 +85,10 @@
 
             <div class="team team-blue">
                 <div class="players">
-                    {#each game.teams["4"] || [] as player, index}
+                    {#each game.teams["4"] || [] as handle, index}
                         {#if index > 0}<span class="separator">•</span>{/if}
-                        <a href="/player/{player.nick}" class="player-link">
-                            {player.nick}
+                        <a href="/player/{handle}" class="player-link">
+                            {handle}
                         </a>
                     {/each}
                 </div>

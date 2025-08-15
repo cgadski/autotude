@@ -55,23 +55,10 @@
         };
     });
 
-    const mainStatKeys = ["_total_games", "_total_time", "_total_players"];
-
-    const mainStats = data.globalStats.filter((stat) =>
-        mainStatKeys.includes(stat.query_name),
-    );
-
-    const miniStats = data.globalStats.filter(
-        (stat) => !mainStatKeys.includes(stat.query_name),
-    );
-
-    $: miniStatItems = [
-        ...miniStats.map((stat) => ({
-            label: stat.description,
-            value: formatStat(stat.stat, stat.attributes),
-        })),
-        { label: "See history", href: "/history" },
-    ];
+    let statLinks = data.globalStats.map((m) => ({
+        label: m.description,
+        value: formatStat(m.stat, m.attributes),
+    }));
 </script>
 
 <SiteHeader navPage="home" />
@@ -113,7 +100,9 @@
 <section>
     <h2>Recording database</h2>
 
-    <div class="row cols-2 g-2 mb-2">
+    <!-- {JSON.stringify(data.globalStats)} -->
+
+    <!-- <div class="row cols-2 g-2 mb-2">
         {#each mainStats as stat}
             <div class="col">
                 <div class="card stats-card">
@@ -126,11 +115,9 @@
                 </div>
             </div>
         {/each}
-    </div>
+    </div> -->
 
-    {#if miniStats.length > 0}
-        <StatLinks items={miniStatItems} />
-    {/if}
+    <StatLinks items={statLinks} />
 </section>
 
 <section class="no-bg narrow">

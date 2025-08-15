@@ -84,7 +84,7 @@ class StatMaterializer:
             DROP TABLE IF EXISTS historical_player_stats;
             CREATE TABLE historical_player_stats (
                 stat_key INTEGER REFERENCES stats (stat_key),
-                handle,
+                handle_key,
                 time_bin,
                 stat
             );
@@ -92,10 +92,11 @@ class StatMaterializer:
             DROP TABLE IF EXISTS player_stats;
             CREATE TABLE player_stats (
                 stat_key INTEGER REFERENCES stats (stat_key),
-                handle,
+                handle_key,
                 time_bin,
                 plane,
-                stat
+                stat,
+                detail
             );
         """)
         self.next_stat_key = 1
