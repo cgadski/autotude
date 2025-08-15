@@ -15,9 +15,7 @@ export type Game = {
   duration: number;
   winner: number;
   teams: {
-    [key: string]: Array<{
-      handle: string;
-    }>;
+    [key: string]: Array<string>;
   };
 };
 

@@ -3,6 +3,8 @@
     import StatLinks from "$lib/StatLinks.svelte";
     import { formatStat } from "$lib";
     import GameCard from "$lib/GameCard.svelte";
+    import HorizontalList from "$lib/HorizontalList.svelte";
+    import GameCardSmall from "$lib/GameCardSmall.svelte";
 
     // @type {import('./$types').PageData}
     export let data;
@@ -36,13 +38,7 @@
 
     <div class="d-flex align-items-center">
         <div class="fw-medium me-2">Nicknames:</div>
-        <StatLinks
-            items={data.nicks.map((n) => ({
-                label: "asdf",
-                value: "asdf",
-            }))}
-        />
-        <!-- {data.nicks.join(", ")} -->
+        <HorizontalList items={data.nicks} let:item>{item}</HorizontalList>
     </div>
 
     <!-- <div class="row cols-2 g-2 mb-2">
@@ -67,26 +63,15 @@
 </section>
 
 <section>
-    <StatLinks
-        items={[
-            { label: "stat 1", href: "#" },
-            { label: "stat 1", href: "#" },
-            { label: "stat 1", href: "#" },
-        ]}
-    />
-
-    <StatLinks
-        items={data.stats.map((s: any) => ({
-            label: s.description,
-            value: formatStat(s.stat, s.attributes),
-        }))}
-    />
+    <HorizontalList items={data.stats} let:item>
+        {item.description}: {formatStat(item.stat, item.attributes)}
+    </HorizontalList>
 </section>
 
-<!-- <section class="no-bg narrow">
+<section class="no-bg narrow">
     <h2>Recent Games</h2>
 
     {#each data.games as game}
-        <GameCard {game} linkForm={true} />
+        <GameCardSmall {game} handle={data.handle} />
     {/each}
-</section> -->
+</section>

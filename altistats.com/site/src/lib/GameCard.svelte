@@ -71,7 +71,10 @@
                 <div class="players">
                     {#each game.teams["3"] || [] as handle, index}
                         {#if index > 0}<span class="separator">•</span>{/if}
-                        <a href="/player/{handle}" class="player-link">
+                        <a
+                            href="/player/{encodeURIComponent(handle)}"
+                            class="player-link"
+                        >
                             {handle}
                         </a>
                     {/each}
@@ -87,7 +90,10 @@
                 <div class="players">
                     {#each game.teams["4"] || [] as handle, index}
                         {#if index > 0}<span class="separator">•</span>{/if}
-                        <a href="/player/{handle}" class="player-link">
+                        <a
+                            href="/player/{encodeURIComponent(handle)}"
+                            class="player-link"
+                        >
                             {handle}
                         </a>
                     {/each}

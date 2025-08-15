@@ -6,8 +6,8 @@
     {#each items as item, index}
         {#if index > 0}
             <span
-                class="border-grey border-end border-1 mx-2"
-                style="height: 1rem;"
+                class="border-end border-1 mx-2"
+                style="height: 1rem; border-color: rgb(0, 0, 0, 0.175) !important;"
             ></span>
         {/if}
         <slot {item} {index} />

@@ -70,6 +70,25 @@ export async function load({ params }) {
     `,
       { args: [handle], parse: ["attributes"] },
     ),
-    // games,
+    games: await query(
+      `
+      WITH player_games AS (
+        SELECT DISTINCT replay_key
+        FROM ladder_games
+        NATURAL JOIN replays
+        NATURAL JOIN players_wide
+        NATURAL JOIN handles
+        WHERE handle = ? AND team > 2
+      )
+      SELECT started_at, map, stem, duration, winner, teams
+      FROM player_games
+      NATURAL JOIN replays
+      NATURAL JOIN replays_wide
+      NATURAL JOIN game_teams
+      ORDER BY started_at DESC
+      LIMIT 20
+      `,
+      { args: [handle], parse: ["teams"] },
+    ),
   };
 }
