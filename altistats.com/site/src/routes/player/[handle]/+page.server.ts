@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit";
 import { getPlayerGames } from "$lib/stats";
-import { getStatsDb } from "$lib/stats.js";
-import type { Stat } from "$lib";
+import { query } from "$lib/stats.js";
+// import type { Stat } from "$lib";
 
 async function getStatsForPlayer(name: string): Promise<Stat[]> {
   return getStatsDb()
@@ -39,15 +39,37 @@ async function getPlayerNames(handle: string): Promise<any> {
 }
 
 export async function load({ params }) {
-  const vapor = params.handle;
+  const handle = params.handle;
 
-  let names = await getPlayerNames(vapor);
-  const games = await getPlayerGames(names.name);
+  // let names = await getPlayerNames(vapor);
+  // const games = await getPlayerGames(names.name);
 
   return {
-    name: names.name,
-    nicks: names.nicks,
-    stats: await getStatsForPlayer(names.name),
-    games,
+    handle: params.handle,
+    nicks: (
+      await query(
+        `
+        SELECT nicks
+        FROM handles
+        NATURAL JOIN handle_nicks
+        WHERE handle = ?
+        `,
+        { args: [handle], parse: ["nicks"] },
+      )
+    )[0].nicks,
+    stats: await query(
+      `
+    SELECT query_name, description, stat, attributes
+    FROM player_stats
+    NATURAL JOIN stats
+    NATURAL JOIN handles
+    WHERE handle = ?
+    AND plane is null
+    AND time_bin is null
+    ORDER BY stat DESC
+    `,
+      { args: [handle], parse: ["attributes"] },
+    ),
+    // games,
   };
 }

@@ -7,44 +7,45 @@
     // @type {import('./$types').PageData}
     export let data;
 
-    const mainQueries = [
-        "p_total_games",
-        "p_time_played",
-        "p_total_kills",
-        "p_total_goals",
-    ];
+    // const mainQueries = [
+    //     "p_total_games",
+    //     "p_time_played",
+    //     "p_total_kills",
+    //     "p_total_goals",
+    // ];
 
-    const mainStats = data.stats.filter((stat) =>
-        mainQueries.includes(stat.query_name),
-    );
+    // const mainStats = data.stats.filter((stat) =>
+    //     mainQueries.includes(stat.query_name),
+    // );
 
-    const miniStats = (data.stats || []).filter(
-        (stat) => !mainQueries.includes(stat.query_name),
-    );
+    // const miniStats = (data.stats || []).filter(
+    //     (stat) => !mainQueries.includes(stat.query_name),
+    // );
 
-    $: miniStatItems = miniStats.map((stat) => ({
-        label: stat.description,
-        value: formatStat(stat.stat, stat.attributes),
-        href: `/players?stat=${stat.query_name}`,
-    }));
-
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
-    };
+    // $: miniStatItems = miniStats.map((stat) => ({
+    //     label: stat.description,
+    //     value: formatStat(stat.stat, stat.attributes),
+    //     href: `/players?stat=${stat.query_name}`,
+    // }));
 </script>
 
 <SiteHeader />
 
 <section>
-    <h2>Player: {data.name}</h2>
+    <h2>Player: {data.handle}</h2>
 
-    <div class="row cols-2 g-2 mb-2">
+    <div class="d-flex align-items-center">
+        <div class="fw-medium me-2">Nicknames:</div>
+        <StatLinks
+            items={data.nicks.map((n) => ({
+                label: "asdf",
+                value: "asdf",
+            }))}
+        />
+        <!-- {data.nicks.join(", ")} -->
+    </div>
+
+    <!-- <div class="row cols-2 g-2 mb-2">
         {#each mainStats as stat}
             <div class="col">
                 <a
@@ -62,24 +63,30 @@
                 </a>
             </div>
         {/each}
-    </div>
-
-    {#if miniStats.length > 0}
-        <StatLinks items={miniStatItems} />
-    {/if}
-
-    <h2>Nicknames</h2>
-    <div class="d-flex flex-wrap gap-2">
-        {#each data.nicks as nick}
-            <span class="badge bg-secondary">{nick}</span>
-        {/each}
-    </div>
+    </div> -->
 </section>
 
-<section class="no-bg narrow">
+<section>
+    <StatLinks
+        items={[
+            { label: "stat 1", href: "#" },
+            { label: "stat 1", href: "#" },
+            { label: "stat 1", href: "#" },
+        ]}
+    />
+
+    <StatLinks
+        items={data.stats.map((s: any) => ({
+            label: s.description,
+            value: formatStat(s.stat, s.attributes),
+        }))}
+    />
+</section>
+
+<!-- <section class="no-bg narrow">
     <h2>Recent Games</h2>
 
     {#each data.games as game}
         <GameCard {game} linkForm={true} />
     {/each}
-</section>
+</section> -->

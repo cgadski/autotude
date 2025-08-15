@@ -3,12 +3,39 @@
 
     import SiteHeader from "$lib/SiteHeader.svelte";
     import StatLinks from "$lib/StatLinks.svelte";
-    import { formatStat, formatShortDate, type StatMeta } from "$lib";
+    import {
+        formatStat,
+        formatShortDate,
+        type StatMeta,
+        formatTimeAgo,
+    } from "$lib";
     import { onMount } from "svelte";
+    import PlayersTable from "./PlayersTable.svelte";
 
     let histogramElement: HTMLElement;
     import { renderHistogram } from "./histogram.js";
     import type { QueryParams } from "./+page.server.js";
+    import LinkList from "$lib/LinkList.svelte";
+
+    $: recentPlayers =
+        data.stat == null
+            ? data.players.filter((player) => {
+                  const now = Date.now();
+                  const playerTime = player.last_played * 1000;
+                  const diffHours = (now - playerTime) / (1000 * 60 * 60);
+                  return diffHours < 48;
+              })
+            : [];
+
+    $: olderPlayers =
+        data.stat == null
+            ? data.players.filter((player) => {
+                  const now = Date.now();
+                  const playerTime = player.last_played * 1000;
+                  const diffHours = (now - playerTime) / (1000 * 60 * 60);
+                  return diffHours >= 48;
+              })
+            : [];
 
     function makeLinkItem(
         override: {
@@ -88,25 +115,21 @@
 
 <SiteHeader navPage="players" />
 
-<!-- <section>
-    {JSON.stringify(data)}
-</section> -->
-
 <section>
     <div class="d-flex align-items-center">
         <div class="fw-medium me-2">Stat:</div>
-        <StatLinks items={statItems} />
+        <LinkList items={statItems} />
     </div>
 
     {#if data.params.stat != null}
         <div class="mt-2 d-flex align-items-center">
             <div class="fw-medium me-2">Period:</div>
-            <StatLinks items={periodItems} />
+            <LinkList items={periodItems} />
         </div>
 
         <div class="mt-2 d-flex align-items-center">
             <div class="fw-medium me-2">Plane:</div>
-            <StatLinks items={planeItems} />
+            <LinkList items={planeItems} />
         </div>
     {/if}
 </section>
@@ -117,31 +140,43 @@
     </section>
 {/if} -->
 
-<section class="narrow">
-    <table class="table table-sm">
-        <colgroup>
-            <col style="width: 2em;" />
-            <col />
-            <col />
-        </colgroup>
-        <tbody>
-            {#each data.players as player, index}
-                <tr>
-                    <td class="text-muted">{index + 1}</td>
-                    <td>
-                        <a href="/player/{player.handle}">
-                            {player.handle}
-                        </a>
-                        {#if data.params.stat == null}
-                            <small class="text-muted ms-2">
-                                ({player.nicks.join(", ")})
-                            </small>
-                        {/if}
-                    </td>
-                    <td class="text-end">
-                        {#if data.params.stat == null}
-                            {formatShortDate(player.last_played)}
-                        {:else}
+{#if data.stat == null}
+    {#if recentPlayers.length > 0}
+        <section class="narrow">
+            <h2>
+                {recentPlayers.length} recent players
+                <span class="text-muted">(played in last 48 hours)</span>
+            </h2>
+            <PlayersTable players={recentPlayers} />
+        </section>
+    {/if}
+
+    {#if olderPlayers.length > 0}
+        <section class="narrow">
+            <h2>{olderPlayers.length} players</h2>
+            <PlayersTable players={olderPlayers} absoluteTime={true} />
+        </section>
+    {/if}
+{/if}
+
+{#if data.stat != null}
+    <section class="narrow">
+        <table class="table table-sm">
+            <colgroup>
+                <col style="width: 2em;" />
+                <col />
+                <col />
+            </colgroup>
+            <tbody>
+                {#each data.players as player, index}
+                    <tr>
+                        <td class="text-muted">{index + 1}</td>
+                        <td>
+                            <a href="/player/{player.handle}">
+                                {player.handle}
+                            </a>
+                        </td>
+                        <td class="text-end">
                             {formatStat(
                                 player.stat,
                                 data.stat?.attributes || [],
@@ -149,10 +184,10 @@
                             <span class="text-muted">
                                 ({player.detail})
                             </span>
-                        {/if}
-                    </td>
-                </tr>
-            {/each}
-        </tbody>
-    </table>
-</section>
+                        </td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+    </section>
+{/if}

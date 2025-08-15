@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS last_played;
 CREATE TABLE last_played (
     handle_key INTEGER PRIMARY KEY REFERENCES handles (handle_key),
-    started_at
+    last_played
 );
 
 INSERT INTO last_played

@@ -39,14 +39,10 @@ export async function load({ url }) {
       ...res,
       players: await query(
         `
-          SELECT handle, nicks, max(started_at) AS last_played
-          FROM players_wide
-          NATURAL JOIN ladder_games
-          JOIN replays USING (replay_key)
-          JOIN handle_nicks USING (handle_key)
-          JOIN handles USING (handle_key)
-          WHERE team > 2
-          GROUP BY handle_key
+          SELECT handle, nicks, last_played
+          FROM last_played
+          NATURAL JOIN handle_nicks
+          NATURAL JOIN handles
           ORDER BY last_played DESC
         `,
         {

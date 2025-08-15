@@ -1,16 +1,13 @@
 <script lang="ts">
+    export let data;
+
     import SiteHeader from "$lib/SiteHeader.svelte";
-    import GameCard from "$lib/GameCard.svelte";
-    import StatLinks from "$lib/StatLinks.svelte";
-    import { formatStat, formatDatetime } from "$lib";
+    import GameCardSmall from "$lib/GameCardSmall.svelte";
 
     import { onMount } from "svelte";
     import { invalidateAll } from "$app/navigation";
-    import { goto } from "$app/navigation";
     import { renderChart } from "./listing_chart";
 
-    // @type {import('./$types').PageData}
-    export let data;
     let secondsAgo = 0;
     let chartElement: HTMLElement;
     let refreshInterval: number;
@@ -54,11 +51,6 @@
             }
         };
     });
-
-    let statLinks = data.globalStats.map((m) => ({
-        label: m.description,
-        value: formatStat(m.stat, m.attributes),
-    }));
 </script>
 
 <SiteHeader navPage="home" />
@@ -97,33 +89,11 @@
     ></div>
 </section>
 
-<section>
-    <h2>Recording database</h2>
-
-    <!-- {JSON.stringify(data.globalStats)} -->
-
-    <!-- <div class="row cols-2 g-2 mb-2">
-        {#each mainStats as stat}
-            <div class="col">
-                <div class="card stats-card">
-                    <div class="card-body text-center">
-                        <p class="h4 mb-0">
-                            {formatStat(stat.stat, stat.attributes)}
-                        </p>
-                        <p class="mb-0 small">{stat.description}</p>
-                    </div>
-                </div>
-            </div>
-        {/each}
-    </div> -->
-
-    <StatLinks items={statLinks} />
-</section>
-
 <section class="no-bg narrow">
     <h2>Recent Games</h2>
+    <!-- {JSON.stringify(data.recentGames)} -->
     {#each data.recentGames as game}
-        <GameCard {game} linkForm={true} />
+        <GameCardSmall {game} linkForm={true} />
     {/each}
 </section>
 

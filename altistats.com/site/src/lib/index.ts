@@ -66,6 +66,21 @@ export const formatShortDate = (unixEpoch: number) => {
   });
 };
 
+export const formatTimeAgo = (unixEpoch: number) => {
+  const now = Date.now();
+  const timestamp = unixEpoch * 1000;
+  const diffMs = now - timestamp;
+
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+  if (days === 0) {
+    return hours === 1 ? "1h ago" : `${hours}h ago`;
+  } else {
+    return `${days}d ${hours}h ago`;
+  }
+};
+
 export const formatDate = (unixEpoch: number) => {
   const date = new Date(unixEpoch * 1000);
   return date.toLocaleDateString("en-US", {

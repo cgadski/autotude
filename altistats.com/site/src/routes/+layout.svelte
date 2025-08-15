@@ -1,8 +1,8 @@
 <script>
-    import "$lib/styles/global.css";
     import "$lib/styles/components.css";
     import "bootstrap/dist/css/bootstrap.min.css";
     import "bootstrap-icons/font/bootstrap-icons.css";
+    import "$lib/styles/global.css";
 </script>
 
 <div class="container py-4 px-3">

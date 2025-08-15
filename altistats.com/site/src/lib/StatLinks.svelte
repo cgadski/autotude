@@ -7,7 +7,7 @@
     }> = [];
 </script>
 
-<div class="d-flex flex-wrap align-items-center">
+<div class="lh-lg d-flex flex-wrap align-items-center">
     {#each items as item, index}
         {#if index > 0}
             <span class="border-end border-2 mx-2" style="height: 1rem;"></span>
@@ -15,10 +15,9 @@
         {#if item.href}
             <a
                 href={item.href}
-                class="text-decoration-underline text-primary px-1 rounded {item.active
+                class="px-1 text-primary rounded {item.active
                     ? 'bg-primary text-white'
-                    : ''}"
-                style="line-height: 1.4;"
+                    : 'text-decoration-underline'}"
             >
                 <span
                     class="fw-medium {item.active
@@ -35,10 +34,11 @@
                 {/if}
             </a>
         {:else}
-            <span class="text-muted px-1" style="line-height: 1.4;">
-                <span class="fw-medium">{item.label}</span>
+            <span class="fw-medium">{item.label}:</span>
+            <span class="ms-1 font-muted">
                 {#if item.value}
-                    ({item.value}){/if}
+                    {item.value}
+                {/if}
             </span>
         {/if}
     {/each}

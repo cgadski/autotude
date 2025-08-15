@@ -55,23 +55,6 @@ GROUP BY bin
 ORDER BY bin ASC;
 `;
 
-async function getGlobalStats(): Promise<Array<Stat>> {
-  return getStatsDb()
-    .prepare(
-      `
-    SELECT query_name, description, stat, attributes
-    FROM global_stats
-    NATURAL JOIN stats
-    ORDER BY query_name
-  `,
-    )
-    .all()
-    .map((m: any) => ({
-      ...m,
-      attributes: JSON.parse(m.attributes),
-    }));
-}
-
 export type FrontpageData = {
   lastUpdate: string;
   listings: any[];
@@ -98,7 +81,7 @@ export async function load({ setHeaders }): Promise<FrontpageData> {
         NATURAL JOIN ladder_games
         NATURAL JOIN replays_wide
         ORDER BY started_at DESC
-        LIMIT 5
+        LIMIT 20
         `,
     )
     .all()
@@ -107,12 +90,11 @@ export async function load({ setHeaders }): Promise<FrontpageData> {
       teams: JSON.parse(game.teams),
     }));
 
-  const [lastUpdateResult, listingsResult, listingsSeriesResult, globalStats] =
+  const [lastUpdateResult, listingsResult, listingsSeriesResult] =
     await Promise.all([
       pool.query("SELECT MAX(time) as last_update FROM listings"),
       pool.query(LISTINGS_SQL),
       pool.query(LISTINGS_SERIES_SQL),
-      getGlobalStats(),
     ]);
 
   setHeaders({
@@ -123,7 +105,6 @@ export async function load({ setHeaders }): Promise<FrontpageData> {
     lastUpdate: lastUpdateResult.rows[0]?.last_update || "",
     listings: listingsResult.rows,
     listingsSeries: listingsSeriesResult.rows,
-    globalStats,
     recentGames,
   };
 }
