@@ -8,6 +8,7 @@
         formatShortDate,
         type StatMeta,
         formatTimeAgo,
+        renderStat,
     } from "$lib";
     import { onMount } from "svelte";
     import PlayersTable from "./PlayersTable.svelte";
@@ -19,22 +20,12 @@
 
     $: recentPlayers =
         data.stat == null
-            ? data.players.filter((player) => {
-                  const now = Date.now();
-                  const playerTime = player.last_played * 1000;
-                  const diffHours = (now - playerTime) / (1000 * 60 * 60);
-                  return diffHours < 48;
-              })
+            ? data.players.filter((player) => !player.is_older)
             : [];
 
     $: olderPlayers =
         data.stat == null
-            ? data.players.filter((player) => {
-                  const now = Date.now();
-                  const playerTime = player.last_played * 1000;
-                  const diffHours = (now - playerTime) / (1000 * 60 * 60);
-                  return diffHours >= 48;
-              })
+            ? data.players.filter((player) => player.is_older)
             : [];
 
     function makeLinkItem(
@@ -165,10 +156,9 @@
             <colgroup>
                 <col style="width: 2em;" />
                 <col />
-                <col />
             </colgroup>
             <tbody>
-                {#each data.players as player, index}
+                {#each data.playerStats as player, index}
                     <tr>
                         <td class="text-muted">{index + 1}</td>
                         <td>
@@ -177,13 +167,7 @@
                             </a>
                         </td>
                         <td class="text-end">
-                            {formatStat(
-                                player.stat,
-                                data.stat?.attributes || [],
-                            )}
-                            <span class="text-muted">
-                                ({player.detail})
-                            </span>
+                            {renderStat(player.repr)}
                         </td>
                     </tr>
                 {/each}

@@ -1,3 +1,4 @@
+import { planes as planeList, type StatMeta } from "$lib";
 import { getStatsDb, availableStats, query } from "$lib/stats";
 import { error } from "@sveltejs/kit";
 
@@ -6,6 +7,50 @@ export type QueryParams = {
   period: string | null;
   plane: string | null;
 };
+
+type TimeBin = {
+  time_bin: number;
+  time_bin_desc: string;
+};
+
+async function getPlayerStats(
+  params: QueryParams,
+  timeBins: TimeBin[],
+  statAttributes: string[],
+) {
+  const timeBinIndex = params.period
+    ? timeBins.find((tb) => tb.time_bin_desc === params.period)?.time_bin
+    : null;
+
+  const planeIndex = params.plane
+    ? planeList.findIndex((p) => p === params.plane)
+    : null;
+
+  const planeCondition = planeIndex !== null ? "plane = ?" : "plane IS NULL";
+  const timeBinCondition =
+    timeBinIndex !== null ? "time_bin = ?" : "time_bin IS NULL";
+
+  const statReversed = statAttributes.includes("reverse") ? "ASC" : "DESC";
+
+  const args: any[] = [params.stat];
+  if (planeIndex !== null) args.push(planeIndex);
+  if (timeBinIndex !== null) args.push(timeBinIndex);
+
+  return query(
+    `
+      SELECT handle, stat, repr
+      FROM player_stats
+      NATURAL JOIN stats
+      NATURAL JOIN handles
+      WHERE query_name = ?
+      AND ${planeCondition}
+      AND ${timeBinCondition}
+      AND NOT hidden
+      ORDER BY stat ${statReversed}
+    `,
+    { args },
+  );
+}
 
 export async function load({ url }) {
   const params: QueryParams = {
@@ -38,7 +83,8 @@ export async function load({ url }) {
       ...res,
       players: await query(
         `
-          SELECT handle, nicks, last_played
+          SELECT handle, nicks, last_played,
+                 datetime('now') >= datetime(last_played, 'unixepoch', '+48 hours') as is_older
           FROM last_played
           NATURAL JOIN handle_nicks
           NATURAL JOIN handles
@@ -55,42 +101,8 @@ export async function load({ url }) {
     throw error(404, `Stat ${stat} not found`);
   }
 
-  const timeBinIndex = params.period
-    ? timeBins.find((tb) => tb.time_bin_desc === params.period)?.time_bin
-    : null;
-
-  const planes = ["loopy", "bomber", "whale", "biplane", "miranda"];
-  const planeIndex = params.plane
-    ? planes.findIndex((p) => p === params.plane)
-    : null;
-
-  const planeCondition = planeIndex !== null ? "plane = ?" : "plane IS NULL";
-  const timeBinCondition =
-    timeBinIndex !== null ? "time_bin = ?" : "time_bin IS NULL";
-
-  const statReversed = stat.attributes.includes("reverse") ? "ASC" : "DESC";
-
-  const args: any[] = [params.stat];
-  if (planeIndex !== null) args.push(planeIndex);
-  if (timeBinIndex !== null) args.push(timeBinIndex);
-
   return {
     ...res,
-    timeBinIndex,
-    players: await query(
-      `
-        SELECT handle, stat, detail
-        FROM player_stats
-        NATURAL JOIN stats
-        NATURAL JOIN handles
-        WHERE query_name = ?
-        AND ${planeCondition}
-        AND ${timeBinCondition}
-        ORDER BY stat ${statReversed}
-      `,
-      {
-        args,
-      },
-    ),
+    playerStats: await getPlayerStats(params, timeBins, stat.attributes),
   };
 }

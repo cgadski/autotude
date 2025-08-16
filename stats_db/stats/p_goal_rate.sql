@@ -20,7 +20,7 @@ SELECT
     time_bin,
     plane,
     goals / time_alive AS stat,
-    null AS detail
+    false AS hidden
 FROM tbl
 
 UNION ALL
@@ -31,7 +31,7 @@ SELECT
     time_bin,
     NULL AS plane,
     sum(time_alive) / sum(goals) AS stat,
-    null AS detail
+    false AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
 UNION ALL
@@ -42,7 +42,7 @@ SELECT
     NULL AS time_bin,
     plane,
     sum(time_alive) / sum(goals) AS stat,
-    null AS detail
+    false AS hidden
 FROM tbl GROUP BY handle_key, plane
 
 UNION ALL
@@ -53,6 +53,6 @@ SELECT
     NULL AS time_bin,
     NULL AS plane,
     sum(time_alive) / sum(goals) AS stat,
-    null AS detail
+    false AS hidden
 FROM tbl
 GROUP BY handle_key

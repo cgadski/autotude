@@ -19,8 +19,9 @@ SELECT
     handle_key,
     time_bin,
     plane,
-    sum(time_alive) / sum(deaths) AS stat,
-    cast(cast(sum(deaths) as int) as text) || ' deaths' AS detail
+    sum(time_alive) / sum(deaths) || ' | '
+    || sum(deaths) || ' deaths',
+    false AS hidden
 FROM tbl GROUP BY handle_key, time_bin, plane
 
 UNION ALL
@@ -31,7 +32,7 @@ SELECT
     time_bin,
     NULL AS plane,
     sum(time_alive) / sum(deaths) AS stat,
-    cast(cast(sum(deaths) as int) as text) || ' deaths' AS detail
+    false AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
 UNION ALL
@@ -42,7 +43,7 @@ SELECT
     NULL AS time_bin,
     plane,
     sum(time_alive) / sum(deaths) AS stat,
-    cast(cast(sum(deaths) as int) as text) || ' deaths' AS detail
+    false AS hidden
 FROM tbl GROUP BY handle_key, plane
 
 UNION ALL
@@ -53,5 +54,5 @@ SELECT
     NULL AS time_bin,
     NULL AS plane,
     sum(time_alive) / sum(deaths) AS stat,
-    cast(cast(sum(deaths) as int) as text) || ' deaths' AS detail
+    false AS hidden
 FROM tbl GROUP BY handle_key

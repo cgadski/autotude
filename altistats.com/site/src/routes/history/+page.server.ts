@@ -1,30 +1,14 @@
 import { query } from "$lib/stats";
 
-export type HistoryData = {
-  selectedStat: string;
-  periodBreakdown: Array<{
-    time_bin: string | null;
-    time_bin_desc: string | null;
-    stat: number;
-  }>;
-  availableStats: Array<{
-    query_name: string;
-    description: string;
-    attributes: string[];
-    total: number;
-  }>;
-};
-
 export async function load({ params }) {
   return {
     globalStats: await query(
       `
-      SELECT query_name, description, stat, attributes
+      SELECT query_name, description, stat
       FROM global_stats
       NATURAL JOIN stats
       ORDER BY query_name
     `,
-      { parsed: ["attributes"] },
     ),
   };
 }

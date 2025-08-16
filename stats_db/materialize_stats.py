@@ -81,7 +81,8 @@ class StatMaterializer:
                 time_bin,
                 plane,
                 stat,
-                detail
+                repr,
+                hidden
             );
         """)
         self.next_stat_key = 1

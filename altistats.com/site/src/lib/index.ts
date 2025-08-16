@@ -90,3 +90,67 @@ export const formatDate = (unixEpoch: number) => {
 };
 
 export type NavPage = "home" | "players" | "history" | null;
+
+export const planes = ["loopy", "bomber", "whale", "biplane", "miranda"];
+
+type StatTransform = {
+  value: number;
+  repr: string;
+};
+
+const statRules: Array<(word: string) => StatTransform | null> = [
+  // durations
+  (part: string) => {
+    const durationMatch = part.match(/^(\d+(?:\.\d+)?)d$/);
+    if (!durationMatch) return null;
+
+    const value = parseFloat(durationMatch[1]);
+    const totalMinutes = value / (30 * 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.floor(totalMinutes % 60);
+    const seconds = Math.floor((totalMinutes % 1) * 60);
+
+    const parts = [];
+    if (hours > 0) parts.push(`${hours}h`);
+    parts.push(`${minutes}m`);
+    if (hours == 0) parts.push(`${seconds}s`);
+
+    return {
+      value,
+      repr: parts.join(" ") || "0s",
+    };
+  },
+];
+
+export function statValue(stat: string | number): number | null {
+  if (typeof stat === "number") {
+    return stat;
+  }
+  const firstWord = stat.split(/\s+/)[0];
+  for (let rule of statRules) {
+    let val = rule(firstWord);
+    if (val?.value != null) {
+      return val.value;
+    }
+  }
+  return null;
+}
+
+export function renderStat(stat: string | number): string {
+  if (typeof stat === "number") {
+    return stat.toLocaleString();
+  }
+
+  return stat
+    .split(/\s+/)
+    .map((word) => {
+      for (let rule of statRules) {
+        let val = rule(word);
+        if (val) {
+          return val.repr;
+        }
+      }
+      return word;
+    })
+    .join(" ");
+}

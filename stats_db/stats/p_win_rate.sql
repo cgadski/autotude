@@ -36,8 +36,7 @@ SELECT
     time_bin,
     NULL AS plane,
     sum(wins) / sum(n_games) AS stat,
-    cast(cast(sum(wins) as int) as text) || '/' ||
-    cast(cast(sum(n_games) as int) as text) AS detail
+    false AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 HAVING sum(n_games) >= 25
 
@@ -49,8 +48,7 @@ SELECT
     NULL AS time_bin,
     plane,
     sum(wins) / sum(n_games) AS stat,
-    cast(cast(sum(wins) as int) as text) || '/' ||
-    cast(cast(sum(n_games) as int) as text) AS detail
+    false AS hidden
 FROM tbl GROUP BY handle_key, plane
 HAVING sum(n_games) >= 50
 
@@ -62,8 +60,7 @@ SELECT
     NULL AS time_bin,
     NULL AS plane,
     sum(wins) / sum(n_games) AS stat,
-    cast(cast(sum(wins) as int) as text) || '/' ||
-    cast(cast(sum(n_games) as int) as text) AS detail
+    false AS hidden
 FROM tbl
 GROUP BY handle_key
 HAVING sum(n_games) >= 100

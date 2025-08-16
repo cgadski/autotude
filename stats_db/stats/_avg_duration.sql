@@ -1,6 +1,4 @@
 -- Average game length
--- attributes: duration
-SELECT
-    avg(duration) AS stat
+SELECT avg(duration) || 'd' AS stat
 FROM ladder_games
 NATURAL JOIN replays
