@@ -37,7 +37,7 @@ export function formatStat(stat: number, attributes: string[]): string {
 
     const parts = [];
     if (hours > 0) parts.push(`${hours}h`);
-    if (minutes > 0) parts.push(`${minutes}m`);
+    parts.push(`${minutes}m`);
     if (hours == 0) parts.push(`${seconds}s`);
 
     return parts.join(" ") || "0s";

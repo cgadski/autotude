@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { formatTimeAgo } from "$lib";
+    import { formatDatetime, formatTimeAgo } from "$lib";
 
     import type { Game } from "$lib";
     import HorizontalList from "./HorizontalList.svelte";
@@ -8,7 +8,7 @@
     export let handle: string | null = null;
 </script>
 
-<div class="card mb-3">
+<div class="card">
     <a
         href="/game/{game.stem}"
         class="card-header d-flex align-items-center py-2 text-decoration-none"
@@ -17,7 +17,7 @@
             {game.map}
         </div>
         <div class="small flex-fill">
-            {formatTimeAgo(game.started_at)}
+            {formatDatetime(game.started_at)}
         </div>
         <i class="bi bi-arrow-right"></i>
     </a>

@@ -1,5 +1,4 @@
-import type { StatMeta } from "$lib";
-import { getStatsDb, getHandles, availableStats, query } from "$lib/stats";
+import { getStatsDb, availableStats, query } from "$lib/stats";
 import { error } from "@sveltejs/kit";
 
 export type QueryParams = {

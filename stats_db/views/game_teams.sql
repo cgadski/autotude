@@ -18,21 +18,9 @@ WITH team_players AS (
         WHERE team IN (2, 3, 4)
     )
     GROUP BY replay_key, team
-),
-teams_aggregated AS (
-    SELECT
-        replay_key,
-        json_group_object(team, json(players_json)) AS teams
-    FROM team_players
-    GROUP BY replay_key
 )
 SELECT
-    r.replay_key,
-    r.started_at,
-    r.map,
-    r.stem,
-    r.duration,
-    coalesce(t.teams, '{}') AS teams
-FROM ladder_games lg
-JOIN replays r USING (replay_key)
-LEFT JOIN teams_aggregated t USING (replay_key);
+    replay_key,
+    json_group_object(team, json(players_json)) AS teams
+FROM team_players
+GROUP BY replay_key;

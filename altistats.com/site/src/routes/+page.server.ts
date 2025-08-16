@@ -77,9 +77,10 @@ export async function load({ setHeaders }): Promise<FrontpageData> {
           started_at,
           duration,
           winner
-        FROM game_teams
+        FROM replays
         NATURAL JOIN ladder_games
         NATURAL JOIN replays_wide
+        NATURAL JOIN game_teams
         ORDER BY started_at DESC
         LIMIT 20
         `,

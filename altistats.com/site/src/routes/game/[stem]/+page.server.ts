@@ -1,14 +1,24 @@
-import { getGame } from "$lib/stats";
+import { query } from "$lib/stats";
 import { error } from "@sveltejs/kit";
 
 export async function load({ params }) {
-  const game = await getGame(params.stem);
-
-  if (!game) {
-    throw error(404, "Game not found");
-  }
+  const { stem } = params;
 
   return {
-    game,
+    game: await query(
+      `
+      SELECT
+        gt.stem,
+        gt.map,
+        gt.teams,
+        gt.started_at,
+        gt.duration,
+        gm.winner
+      FROM game_teams gt
+      LEFT JOIN replays_wide gm ON gm.replay_key = gt.replay_key
+      WHERE gt.stem = ?
+      `,
+      { args: [stem] },
+    ),
   };
 }

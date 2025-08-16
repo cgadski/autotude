@@ -1,7 +1,21 @@
 import { query } from "$lib/stats.js";
+import { error } from "@sveltejs/kit";
 
 export async function load({ params }) {
   const handle = params.handle;
+  console.log({ handle: handle });
+  const handleKey = (
+    await query(
+      `
+    SELECT handle_key FROM handles WHERE handle = ?
+    `,
+      { args: [handle] },
+    )
+  )[0]?.handle_key;
+
+  if (handleKey === null) {
+    throw error(404, `Handle ${handle} not found.`);
+  }
 
   return {
     handle: params.handle,
@@ -9,11 +23,10 @@ export async function load({ params }) {
       await query(
         `
         SELECT nicks
-        FROM handles
-        NATURAL JOIN handle_nicks
-        WHERE handle = ?
+        FROM handle_nicks
+        WHERE handle_key = ?
         `,
-        { args: [handle], parse: ["nicks"] },
+        { args: [handleKey], parse: ["nicks"] },
       )
     )[0].nicks,
     stats: await query(
@@ -21,33 +34,54 @@ export async function load({ params }) {
       SELECT query_name, description, stat, attributes
       FROM player_stats
       NATURAL JOIN stats
-      NATURAL JOIN handles
-      WHERE handle = ?
+      WHERE handle_key = ?
       AND plane is null
       AND time_bin is null
       ORDER BY stat DESC
     `,
-      { args: [handle], parse: ["attributes"] },
+      { args: [handleKey], parse: ["attributes"] },
     ),
-    games: await query(
+    gamesByDay: await query(
       `
-      WITH player_games AS (
-        SELECT DISTINCT replay_key
+      WITH
+      days AS (
+        SELECT date('now', '-12 hours', '-' || column1 || ' days', 'utc') as day_bin
+        FROM (VALUES (0), (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), (11), (12), (13), (14), (15), (16), (17), (18), (19), (20), (21), (22))
+      ),
+      player_games AS (
+        SELECT replay_key, started_at, stem, day_bin, winner, team, duration
         FROM ladder_games
         NATURAL JOIN replays
+        NATURAL JOIN replays_wide
         NATURAL JOIN players_wide
-        NATURAL JOIN handles
-        WHERE handle = ? AND team > 2
+        WHERE handle_key = ?
+        AND team > 2
+        AND day_bin IN days
+        GROUP BY replay_key
+      ),
+      games_by_day AS (
+        SELECT day_bin,
+          json_group_array(
+            json_object(
+              'stem', stem,
+              'winner', winner,
+              'playerTeam', team
+            )
+          ) AS games,
+          sum(duration) AS time
+        FROM (
+          SELECT * FROM player_games
+          WHERE day_bin IN days
+          ORDER BY day_bin, started_at
+        )
+        GROUP BY day_bin
       )
-      SELECT started_at, map, stem, duration, winner, teams
-      FROM player_games
-      NATURAL JOIN replays
-      NATURAL JOIN replays_wide
-      NATURAL JOIN game_teams
-      ORDER BY started_at DESC
-      LIMIT 20
+      SELECT day_bin,
+        coalesce(games, json_array()) AS games,
+        time
+      FROM days LEFT JOIN games_by_day USING (day_bin)
       `,
-      { args: [handle], parse: ["teams"] },
+      { args: [handleKey], parse: ["games"] },
     ),
   };
 }

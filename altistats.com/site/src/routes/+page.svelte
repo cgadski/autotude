@@ -91,9 +91,11 @@
 
 <section class="no-bg narrow">
     <h2>Recent Games</h2>
-    <!-- {JSON.stringify(data.recentGames)} -->
+
     {#each data.recentGames as game}
-        <GameCardSmall {game} linkForm={true} />
+        <div class="mb-3">
+            <GameCardSmall {game} linkForm={true} />
+        </div>
     {/each}
 </section>
 
