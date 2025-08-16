@@ -1,18 +1,5 @@
 -- Time played
 -- duration
-WITH
-tbl AS (
-    SELECT
-        handle_key,
-        time_bin,
-        plane,
-        sum(duration) AS time_played
-    FROM players_wide
-    NATURAL JOIN ladder_games
-    NATURAL JOIN replays
-    WHERE team > 2
-    GROUP BY handle_key, time_bin, plane
-)
 
 -- handle, time, plane
 SELECT

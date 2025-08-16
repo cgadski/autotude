@@ -1,48 +1,7 @@
-import { error } from "@sveltejs/kit";
-import { getPlayerGames } from "$lib/stats";
 import { query } from "$lib/stats.js";
-// import type { Stat } from "$lib";
-
-async function getStatsForPlayer(name: string): Promise<Stat[]> {
-  return getStatsDb()
-    .prepare(
-      `
-    SELECT query_name, description, stat, attributes
-    FROM player_stats
-    NATURAL JOIN stats
-    WHERE handle = ?
-    ORDER BY stat DESC
-    `,
-    )
-    .all(name);
-}
-
-async function getPlayerNames(handle: string): Promise<any> {
-  const result = getStatsDb()
-    .prepare(
-      `
-    SELECT
-      vapor,
-      handle,
-      nicks
-      FROM other_nicks
-      WHERE handle = ?
-  `,
-    )
-    .get(handle);
-
-  return {
-    vapor: result.vapor,
-    name: result.handle,
-    nicks: JSON.parse(result.nicks),
-  };
-}
 
 export async function load({ params }) {
   const handle = params.handle;
-
-  // let names = await getPlayerNames(vapor);
-  // const games = await getPlayerGames(names.name);
 
   return {
     handle: params.handle,
@@ -59,14 +18,14 @@ export async function load({ params }) {
     )[0].nicks,
     stats: await query(
       `
-    SELECT query_name, description, stat, attributes
-    FROM player_stats
-    NATURAL JOIN stats
-    NATURAL JOIN handles
-    WHERE handle = ?
-    AND plane is null
-    AND time_bin is null
-    ORDER BY stat DESC
+      SELECT query_name, description, stat, attributes
+      FROM player_stats
+      NATURAL JOIN stats
+      NATURAL JOIN handles
+      WHERE handle = ?
+      AND plane is null
+      AND time_bin is null
+      ORDER BY stat DESC
     `,
       { args: [handle], parse: ["attributes"] },
     ),

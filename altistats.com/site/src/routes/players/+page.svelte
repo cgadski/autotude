@@ -116,22 +116,22 @@
 <SiteHeader navPage="players" />
 
 <section>
-    <div class="d-flex align-items-center">
-        <div class="fw-medium me-2">Stat:</div>
-        <LinkList items={statItems} />
-    </div>
-
-    {#if data.params.stat != null}
-        <div class="mt-2 d-flex align-items-center">
-            <div class="fw-medium me-2">Period:</div>
-            <LinkList items={periodItems} />
-        </div>
-
-        <div class="mt-2 d-flex align-items-center">
-            <div class="fw-medium me-2">Plane:</div>
-            <LinkList items={planeItems} />
-        </div>
-    {/if}
+    <dl>
+        <dt>Stat</dt>
+        <dd>
+            <LinkList items={statItems} />
+        </dd>
+        {#if data.params.stat != null}
+            <dt>Period</dt>
+            <dd>
+                <LinkList items={periodItems} />
+            </dd>
+            <dt>Plane</dt>
+            <dd>
+                <LinkList items={planeItems} />
+            </dd>
+        {/if}
+    </dl>
 </section>
 
 <!-- {#if data.stat != null}

@@ -74,21 +74,6 @@ class StatMaterializer:
                 stat
             );
 
-            DROP TABLE IF EXISTS historical_stats;
-            CREATE TABLE historical_stats (
-                stat_key INTEGER REFERENCES stats (stat_key),
-                time_bin,
-                stat
-            );
-
-            DROP TABLE IF EXISTS historical_player_stats;
-            CREATE TABLE historical_player_stats (
-                stat_key INTEGER REFERENCES stats (stat_key),
-                handle_key,
-                time_bin,
-                stat
-            );
-
             DROP TABLE IF EXISTS player_stats;
             CREATE TABLE player_stats (
                 stat_key INTEGER REFERENCES stats (stat_key),

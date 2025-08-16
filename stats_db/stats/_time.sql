@@ -1,5 +1,5 @@
 -- Total game time
--- duration
+-- attributes: duration
 SELECT sum(duration) AS stat
 FROM ladder_games
 NATURAL JOIN replays
