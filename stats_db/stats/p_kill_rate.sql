@@ -1,12 +1,9 @@
--- Time per kill
-WITH
-tbl AS (
+-- Kills/10
+WITH tbl AS (
     SELECT
         handle_key,
         time_bin,
-        plane,
-        sum(kills) AS kills,
-        sum(time_alive) AS time_alive
+        plane
     FROM players_wide
     NATURAL JOIN ladder_games
     WHERE team > 2
@@ -18,7 +15,8 @@ SELECT
     handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    format('%.2f', kills / (time_alive / (30 * 60 * 10))) AS stat,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl
 GROUP BY handle_key
@@ -30,7 +28,8 @@ SELECT
     handle_key,
     time_bin,
     NULL AS plane,
-    sum(time_alive) / sum(kills) AS stat,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
@@ -41,7 +40,8 @@ SELECT
     handle_key,
     NULL AS time_bin,
     plane,
-    sum(time_alive) / sum(kills) AS stat,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl GROUP BY handle_key, plane
 
@@ -52,6 +52,7 @@ SELECT
     handle_key,
     time_bin,
     plane,
-    kills / time_alive AS stat,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl

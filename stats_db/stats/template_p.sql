@@ -1,10 +1,22 @@
--- Stat name
+-- KD ratio
+WITH tbl AS (
+    SELECT
+        handle_key,
+        time_bin,
+        plane
+    FROM players_wide
+    NATURAL JOIN ladder_games
+    WHERE team > 2
+    GROUP BY handle_key, time_bin, plane
+)
+
 -- handle
 SELECT
     handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    'stat' AS stat,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl
 GROUP BY handle_key
@@ -16,7 +28,8 @@ SELECT
     handle_key,
     time_bin,
     NULL AS plane,
-    'stat' AS stat,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
@@ -27,7 +40,8 @@ SELECT
     handle_key,
     NULL AS time_bin,
     plane,
-    'stat' AS stat,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl GROUP BY handle_key, plane
 
@@ -38,6 +52,7 @@ SELECT
     handle_key,
     time_bin,
     plane,
-    'stat' AS stat,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl

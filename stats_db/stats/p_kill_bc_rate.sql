@@ -1,4 +1,4 @@
--- Deaths/10
+-- BC kills/10
 WITH tbl AS (
     SELECT
         handle_key,

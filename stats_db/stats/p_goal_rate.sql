@@ -1,27 +1,25 @@
--- Time per goal
--- duration reverse
-WITH
-tbl AS (
+-- Goals/10
+WITH tbl AS (
     SELECT
         handle_key,
         time_bin,
-        plane,
-        cast(sum(goals) AS REAL) AS goals,
-        cast(sum(time_alive) AS REAL) AS time_alive
+        plane
     FROM players_wide
     NATURAL JOIN ladder_games
     WHERE team > 2
     GROUP BY handle_key, time_bin, plane
 )
 
--- handle, time, plane
+-- handle
 SELECT
     handle_key,
-    time_bin,
-    plane,
-    goals / time_alive AS stat,
+    NULL AS time_bin,
+    NULL AS plane,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl
+GROUP BY handle_key
 
 UNION ALL
 
@@ -30,7 +28,8 @@ SELECT
     handle_key,
     time_bin,
     NULL AS plane,
-    sum(time_alive) / sum(goals) AS stat,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
@@ -41,18 +40,19 @@ SELECT
     handle_key,
     NULL AS time_bin,
     plane,
-    sum(time_alive) / sum(goals) AS stat,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl GROUP BY handle_key, plane
 
 UNION ALL
 
--- handle
+-- handle, time, plane
 SELECT
     handle_key,
-    NULL AS time_bin,
-    NULL AS plane,
-    sum(time_alive) / sum(goals) AS stat,
+    time_bin,
+    plane,
+    0 AS stat,
+    'stat' AS repr,
     false AS hidden
 FROM tbl
-GROUP BY handle_key

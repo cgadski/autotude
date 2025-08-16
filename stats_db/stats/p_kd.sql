@@ -1,4 +1,4 @@
--- KD ratio
+-- KD
 WITH tbl AS (
     SELECT
         handle_key,
@@ -17,7 +17,7 @@ SELECT
     NULL AS time_bin,
     NULL AS plane,
     sum(kills) / sum(deaths) AS stat,
-    format('%.3f', sum(kills) / sum(deaths)) ||
+    format('%.2f', sum(kills) / sum(deaths)) ||
     ' | ' || cast(sum(kills) AS int) || ' : ' || cast(sum(deaths) AS int)
     AS repr,
     sum(kills) < 1000 AS hidden
@@ -32,7 +32,7 @@ SELECT
     time_bin,
     NULL AS plane,
     sum(kills) / sum(deaths) AS stat,
-    format('%.3f', sum(kills) / sum(deaths)) ||
+    format('%.2f', sum(kills) / sum(deaths)) ||
     ' | ' || cast(sum(kills) AS int) || ' : ' || cast(sum(deaths) AS int)
     AS repr,
     sum(kills) < 250 AS hidden
@@ -46,7 +46,7 @@ SELECT
     NULL AS time_bin,
     plane,
     sum(kills) / sum(deaths) AS stat,
-    format('%.3f', sum(kills) / sum(deaths)) ||
+    format('%.2f', sum(kills) / sum(deaths)) ||
     ' | ' || cast(sum(kills) AS int) || ' : ' || cast(sum(deaths) AS int)
     AS repr,
     sum(kills) < 250 AS hidden
@@ -59,7 +59,9 @@ SELECT
     handle_key,
     time_bin,
     plane,
-    0 AS stat,
-    'stat' AS repr,
+    sum(kills) / sum(deaths) AS stat,
+    format('%.2f', sum(kills) / sum(deaths)) ||
+    ' | ' || cast(sum(kills) AS int) || ' : ' || cast(sum(deaths) AS int)
+    AS repr,
     false AS hidden
 FROM tbl

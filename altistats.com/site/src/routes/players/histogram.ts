@@ -54,6 +54,20 @@ export function renderHistogram(element: HTMLElement, data: any): void {
   // Clear previous chart
   d3.select(element).selectAll("*").remove();
 
+  // Create tooltip
+  const tooltip = d3
+    .select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("background", "rgba(0, 0, 0, 0.8)")
+    .style("color", "white")
+    .style("padding", "8px 12px")
+    .style("border-radius", "4px")
+    .style("font-size", "12px")
+    .style("pointer-events", "none")
+    .style("opacity", 0)
+    .style("z-index", "1000");
+
   // Extract stat values
   const statValues = data.playerStats
     .map((player: any) => player.stat)
@@ -135,26 +149,36 @@ export function renderHistogram(element: HTMLElement, data: any): void {
 
     // Just show jittered dots without violin
     g.selectAll(".dot")
-      .data(statValues)
+      .data(data.playerStats)
       .enter()
       .append("circle")
       .attr("class", "dot")
-      .attr("cx", (d) => xScale(d))
+      .attr("cx", (d) => xScale(d.stat))
       .attr("cy", height * 0.5 + (Math.random() - 0.5) * 15) // Add some jitter
       .attr("r", 3)
       .attr("fill", "#4A90E2")
       .attr("opacity", 0.7)
       .attr("stroke", "#fff")
-      .attr("stroke-width", 1);
+      .attr("stroke-width", 1)
+      .on("mouseover", function (event, d) {
+        // Find other players with similar values (within 2% of range)
+        const range = xScale.domain()[1] - xScale.domain()[0];
+        const tolerance = range * 0.02;
+        const nearbyPlayers = data.playerStats.filter(
+          (p: any) => Math.abs(p.stat - d.stat) <= tolerance,
+        );
 
-    // Add center line
-    g.append("line")
-      .attr("x1", 0)
-      .attr("x2", width)
-      .attr("y1", height * 0.5)
-      .attr("y2", height * 0.5)
-      .attr("stroke", "#ddd")
-      .attr("stroke-width", 1);
+        const names = nearbyPlayers.map((p: any) => p.handle).join(", ");
+
+        tooltip
+          .style("opacity", 1)
+          .html(`${names}`)
+          .style("left", event.pageX + 10 + "px")
+          .style("top", event.pageY - 10 + "px");
+      })
+      .on("mouseout", function () {
+        tooltip.style("opacity", 0);
+      });
 
     // Add x-axis
     g.append("g")
@@ -205,28 +229,38 @@ export function renderHistogram(element: HTMLElement, data: any): void {
     .attr("stroke-width", 1)
     .attr("d", lineBottom);
 
-  // Draw the center line
-  g.append("line")
-    .attr("x1", 0)
-    .attr("x2", width)
-    .attr("y1", centerY)
-    .attr("y2", centerY)
-    .attr("stroke", "#ddd")
-    .attr("stroke-width", 1);
-
   // Add dots for each data point with jitter
   g.selectAll(".dot")
-    .data(statValues)
+    .data(data.playerStats)
     .enter()
     .append("circle")
     .attr("class", "dot")
-    .attr("cx", (d) => xScale(d))
+    .attr("cx", (d) => xScale(d.stat))
     .attr("cy", () => centerY + (Math.random() - 0.5) * 12) // Add vertical jitter
     .attr("r", 4)
     .attr("fill", "#4A90E2")
     .attr("opacity", 0.6) // Reduced opacity for better overlapping visibility
     .attr("stroke", "#fff")
-    .attr("stroke-width", 1);
+    .attr("stroke-width", 1)
+    .on("mouseover", function (event, d) {
+      // Find other players with similar values (within 2% of range)
+      const range = xScale.domain()[1] - xScale.domain()[0];
+      const tolerance = range * 0.02;
+      const nearbyPlayers = data.playerStats.filter(
+        (p: any) => Math.abs(p.stat - d.stat) <= tolerance,
+      );
+
+      const names = nearbyPlayers.map((p: any) => p.handle).join(", ");
+
+      tooltip
+        .style("opacity", 1)
+        .html(`${names}`)
+        .style("left", event.pageX + 10 + "px")
+        .style("top", event.pageY - 10 + "px");
+    })
+    .on("mouseout", function () {
+      tooltip.style("opacity", 0);
+    });
 
   // Add x-axis
   g.append("g")
