@@ -49,7 +49,7 @@ SELECT
     format('%.3f', sum(kills) / sum(deaths)) ||
     ' | ' || cast(sum(kills) AS int) || ' : ' || cast(sum(deaths) AS int)
     AS repr,
-    false AS hidden
+    sum(kills) < 250 AS hidden
 FROM tbl GROUP BY handle_key, plane
 
 UNION ALL

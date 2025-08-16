@@ -150,6 +150,13 @@ export function renderStat(stat: string | number): string {
           return val.repr;
         }
       }
+
+      // Check if word is a number and format with commas
+      const numberMatch = word.match(/^\d+$/);
+      if (numberMatch) {
+        return parseInt(word).toLocaleString();
+      }
+
       return word;
     })
     .join(" ");

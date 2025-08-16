@@ -93,15 +93,15 @@
               ]
             : [];
 
-    // onMount(() => {
-    //     if (histogramElement && !data.params.stat != null) {
-    //         renderHistogram(histogramElement, data);
-    //     }
-    // });
+    onMount(() => {
+        if (histogramElement && data.params.stat != null) {
+            renderHistogram(histogramElement, data);
+        }
+    });
 
-    // $: if (data.players && histogramElement && !data.params.stat != null) {
-    //     renderHistogram(histogramElement, data);
-    // }
+    $: if (data.playerStats && histogramElement && data.params.stat != null) {
+        renderHistogram(histogramElement, data);
+    }
 </script>
 
 <SiteHeader navPage="players" />
@@ -125,11 +125,11 @@
     </dl>
 </section>
 
-<!-- {#if data.stat != null}
-    <section class="no-bg">
-        <div bind:this={histogramElement}></div>
+{#if data.params.stat != null}
+    <section class="no-bg" style="width: 100%; max-width: none;">
+        <div bind:this={histogramElement} style="width: 100%;"></div>
     </section>
-{/if} -->
+{/if}
 
 {#if data.stat == null}
     {#if recentPlayers.length > 0}
@@ -156,6 +156,8 @@
             <colgroup>
                 <col style="width: 2em;" />
                 <col />
+                <col style="width: 1%; white-space: nowrap;" />
+                <col style="width: 1%; white-space: nowrap;" />
             </colgroup>
             <tbody>
                 {#each data.playerStats as player, index}
@@ -166,9 +168,27 @@
                                 {player.handle}
                             </a>
                         </td>
-                        <td class="text-end">
-                            {renderStat(player.repr)}
-                        </td>
+                        {#if player.repr.includes("|")}
+                            {@const [mainStat, details] = player.repr.split(
+                                "|",
+                                2,
+                            )}
+                            <td class="text-end text-nowrap align-baseline">
+                                {renderStat(mainStat)}
+                            </td>
+                            <td
+                                class="text-muted text-nowrap align-baseline small"
+                            >
+                                {renderStat(details)}
+                            </td>
+                        {:else}
+                            <td
+                                class="text-end text-nowrap align-baseline"
+                                colspan="2"
+                            >
+                                {renderStat(player.repr)}
+                            </td>
+                        {/if}
                     </tr>
                 {/each}
             </tbody>
