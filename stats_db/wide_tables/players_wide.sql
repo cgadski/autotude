@@ -54,7 +54,7 @@ SELECT
     team,
     sum(end_tick - start_tick) AS time_alive,
     min(start_tick) AS start_tick,
-    lead(start_tick, 1) OVER (PARTITION BY replay_key, handle_key ORDER BY start_tick) AS end_tick
+    lead(min(start_tick), 1) OVER (PARTITION BY replay_key, handle_key ORDER BY start_tick) AS end_tick -- in sqlite, window functions happen after group by. (don't know if this is actually in the manual lmao)
 FROM spawns_wide
 GROUP BY replay_key, handle_key, spawn_group;
 
@@ -103,10 +103,4 @@ FROM spawn_groups sg
 JOIN replays_wide USING (replay_key)
 LEFT JOIN kill_tallies ON (sg.rowid = kill_tallies.rowid)
 LEFT JOIN goal_tallies ON (sg.rowid = goal_tallies.rowid)
-ORDER BY start_tick;
-
-SELECT replay_key, handle, player_key, plane, red_perk, green_perk, blue_perk, start_tick, end_tick, time_alive, kills, deaths, goals
-FROM players_wide
-NATURAL JOIN handles
-WHERE replay_key = 8848
 ORDER BY start_tick;
