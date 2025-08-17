@@ -1,6 +1,6 @@
 <script lang="ts">
     import SiteHeader from "$lib/SiteHeader.svelte";
-    import { formatStat } from "$lib";
+    import { formatDuration, planes } from "$lib";
     import HorizontalList from "$lib/HorizontalList.svelte";
     import GameCardSmall from "$lib/GameCardSmall.svelte";
 
@@ -42,10 +42,10 @@
         <dd>
             <HorizontalList items={data.nicks} let:item>{item}</HorizontalList>
         </dd>
-        <dt>Career stats</dt>
+        <dt>Time played</dt>
         <dd>
-            <HorizontalList items={data.stats} let:item>
-                {item.description}: {formatStat(item.stat, item.attributes)}
+            <HorizontalList items={data.timeAlive} let:item>
+                {planes[item.plane]}: {formatDuration(item.time_alive)}
             </HorizontalList>
         </dd>
     </dl>
@@ -77,7 +77,7 @@
                     <td class="text-center align-middle">
                         {#if day.games.length > 0}
                             <div class="fw-medium">
-                                {formatStat(day.time, ["duration"])}
+                                {formatDuration(day.time)}
                             </div>
                             <div class="small text-muted">
                                 {day.games.length} game{day.games.length !== 1

@@ -29,6 +29,15 @@ export async function load({ params }) {
         { args: [handleKey], parse: ["nicks"] },
       )
     )[0].nicks,
+    timeAlive: await query(
+      `
+      SELECT plane, sum(time_alive) AS time_alive
+      FROM time_alive
+      WHERE handle_key = ?
+      GROUP BY plane
+      `,
+      { args: [handleKey] },
+    ),
     stats: await query(
       `
       SELECT query_name, description, stat, attributes

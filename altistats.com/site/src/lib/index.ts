@@ -19,31 +19,23 @@ export type Game = {
   };
 };
 
-export function formatStat(stat: number, attributes: string[]): string {
-  if (attributes.includes("percentage")) {
-    return `${(stat * 100).toFixed(1)}%`;
-  }
+export function formatDuration(d: number): string {
+  const totalMinutes = d / (30 * 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = Math.floor(totalMinutes % 60);
+  const seconds = Math.floor((totalMinutes % 1) * 60);
 
-  if (attributes.includes("duration_fine")) {
-    const seconds = stat / 30;
-    return `${seconds.toFixed(1)}s`;
-  }
+  const parts = [];
+  if (hours > 0) parts.push(`${hours}h`);
+  parts.push(`${minutes}m`);
+  if (hours == 0) parts.push(`${seconds}s`);
 
-  if (attributes.includes("duration")) {
-    const totalMinutes = stat / (30 * 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.floor(totalMinutes % 60);
-    const seconds = Math.floor((totalMinutes % 1) * 60);
+  return parts.join(" ") || "0s";
+}
 
-    const parts = [];
-    if (hours > 0) parts.push(`${hours}h`);
-    parts.push(`${minutes}m`);
-    if (hours == 0) parts.push(`${seconds}s`);
-
-    return parts.join(" ") || "0s";
-  }
-
-  return Math.round(stat).toLocaleString();
+export function formatDurationFine(d: number): string {
+  const seconds = d / 30;
+  return `${seconds.toFixed(1)}s`;
 }
 
 export function formatDatetime(unixEpoch: number): string {
@@ -91,7 +83,7 @@ export const formatDate = (unixEpoch: number) => {
 
 export type NavPage = "home" | "players" | "history" | null;
 
-export const planes = ["loopy", "bomber", "whale", "biplane", "miranda"];
+export const planes = ["Loopy", "Bomber", "Whale", "Biplane", "Miranda"];
 
 type StatTransform = {
   value: number;

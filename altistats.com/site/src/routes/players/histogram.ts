@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { formatStat, renderStat } from "$lib";
+import { renderStat } from "$lib";
 
 // Configuration for stat-specific visualization parameters
 const STAT_CONFIG: Record<

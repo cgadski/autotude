@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { formatDatetime, formatStat } from "$lib";
+    import { formatDatetime, formatDuration } from "$lib";
 
     import type { Game } from "$lib";
 
@@ -17,7 +17,7 @@
                 {game.map}
             </div>
             <div class="duration">
-                {formatStat(game.duration, ["duration"])}
+                {formatDuration(game.duration)}
                 <i class="bi bi-chevron-right ms-1"></i>
             </div>
         </div>
@@ -62,7 +62,7 @@
                 {game.map}
             </div>
             <div class="duration">
-                {formatStat(game.duration, ["duration"])}
+                {formatDuration(game.duration)}
             </div>
         </div>
 

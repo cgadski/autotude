@@ -4,7 +4,6 @@
     import SiteHeader from "$lib/SiteHeader.svelte";
     import StatLinks from "$lib/StatLinks.svelte";
     import {
-        formatStat,
         formatShortDate,
         type StatMeta,
         formatTimeAgo,

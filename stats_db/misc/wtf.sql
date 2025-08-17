@@ -1,4 +1,6 @@
-SELECT replays.stem, map, started_at, teams
-FROM replays
-JOIN game_teams USING (replay_key)
-WHERE stem = 'e49c1df7-d9e5-4eff-9c04-9590660e7e6e'
+SELECT handle, nicks, last_played,
+        datetime('now') >= datetime(last_played, 'unixepoch', '+48 hours') as is_older
+FROM last_played
+NATURAL JOIN handle_nicks
+NATURAL JOIN handles
+ORDER BY last_played DESC
