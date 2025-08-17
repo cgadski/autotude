@@ -13,6 +13,12 @@ CREATE TABLE vapor_handle (
 );
 CREATE INDEX IF NOT EXISTS idx_vapor_handle_handle ON vapor_handle (handle_key);
 
+DROP TABLE IF EXISTS handle_nicks;
+CREATE TABLE handle_nicks (
+    handle_key INTEGER PRIMARY KEY REFERENCES handles (handle_key),
+    nicks JSON
+);
+
 DROP TABLE IF EXISTS player_key_handle;
 CREATE TABLE player_key_handle (
     replay_key INTEGER REFERENCES replays (replay_key),
@@ -63,3 +69,15 @@ INSERT INTO player_key_handle
 SELECT replay_key, player_key, handle_key
 FROM players
 NATURAL JOIN vapor_handle;
+
+INSERT INTO handle_nicks
+SELECT
+    handle_key,
+    json_group_array(nick) AS nicks
+FROM (
+    SELECT DISTINCT handle_key, nick
+    FROM players NATURAL JOIN replays
+    NATURAL JOIN player_key_handle
+    ORDER BY handle_key, started_at DESC
+)
+GROUP BY handle_key;

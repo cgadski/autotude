@@ -1,13 +1,6 @@
-DROP TABLE IF EXISTS last_played;
-CREATE TABLE last_played (
-    handle_key INTEGER PRIMARY KEY REFERENCES handles (handle_key),
-    last_played
-);
-
-INSERT INTO last_played
-SELECT handle_key, max(started_at)
-FROM ladder_games
+DROP VIEW IF EXISTS last_played;
+CREATE VIEW last_played AS
+SELECT handle_key, max(replays.started_at)
+FROM players_wide
 NATURAL JOIN replays
-NATURAL JOIN players_wide
-WHERE team > 2
 GROUP BY handle_key;

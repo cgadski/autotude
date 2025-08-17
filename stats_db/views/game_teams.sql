@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS game_teams;
-CREATE TABLE game_teams AS
+DROP VIEW IF EXISTS game_teams;
+CREATE VIEW game_teams AS
 WITH team_players AS (
     SELECT
         replay_key,
@@ -15,7 +15,6 @@ WITH team_players AS (
         FROM ladder_games
         NATURAL JOIN players_wide
         NATURAL JOIN handles
-        WHERE team IN (2, 3, 4)
     )
     GROUP BY replay_key, team
 )

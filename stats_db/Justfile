@@ -17,16 +17,15 @@ load-csvs: \
 dump: load-schema load-csvs clear-errors
 	# cargo run --release --bin dump -- --db {{STATS_DB}}
 	dump --db {{STATS_DB}}
-	{{sqlite}} < views/handles.sql
-	{{sqlite}} < wide_tables/replays_wide.sql
-	{{sqlite}} < wide_tables/players_wide.sql
+	{{sqlite}} < tables/handles.sql
+	{{sqlite}} < tables/replays_wide.sql
+	{{sqlite}} < tables/ladder_games.sql
+	{{sqlite}} < tables/players_wide.sql
+	{{sqlite}} < tables/time_alive.sql
 	{{sqlite}} "ANALYZE"
 
 load-views:
-	{{sqlite}} < views/ladder_games.sql
-	{{sqlite}} < views/loadouts.sql
 	{{sqlite}} < views/game_teams.sql
-	{{sqlite}} < views/handle_nicks.sql
 	{{sqlite}} < views/last_played.sql
 
 load-stats:
