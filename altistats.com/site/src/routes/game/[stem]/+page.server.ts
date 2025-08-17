@@ -1,24 +1,25 @@
-import { query } from "$lib/stats";
+import { queryOne } from "$lib/stats";
 import { error } from "@sveltejs/kit";
 
 export async function load({ params }) {
   const { stem } = params;
 
   return {
-    game: await query(
+    game: await queryOne(
       `
       SELECT
-        gt.stem,
-        gt.map,
-        gt.teams,
-        gt.started_at,
-        gt.duration,
-        gm.winner
-      FROM game_teams gt
-      LEFT JOIN replays_wide gm ON gm.replay_key = gt.replay_key
-      WHERE gt.stem = ?
+        stem,
+        map,
+        teams,
+        started_at,
+        duration,
+        winner
+      FROM replays
+      NATURAL JOIN replays_wide
+      NATURAL JOIN game_teams
+      WHERE stem = ?
       `,
-      { args: [stem] },
+      { args: [stem], parse: ["teams"] },
     ),
   };
 }

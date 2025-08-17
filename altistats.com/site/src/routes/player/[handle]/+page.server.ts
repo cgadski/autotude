@@ -29,14 +29,43 @@ export async function load({ params }) {
         { args: [handleKey], parse: ["nicks"] },
       )
     )[0].nicks,
-    timeAlive: await query(
+    timeAliveByMonth: await query(
       `
-      SELECT plane, sum(time_alive) AS time_alive
-      FROM time_alive
-      WHERE handle_key = ?
-      GROUP BY plane
+      WITH monthly_totals AS (
+        SELECT
+          time_bin_desc,
+          sum(time_alive) as total_time
+        FROM time_alive
+        NATURAL JOIN time_bin_desc
+        WHERE handle_key = ?
+        GROUP BY time_bin_desc
+      ),
+      planes AS (
+        SELECT 0 as plane UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4
+      ),
+      month_plane_combinations AS (
+        SELECT mt.time_bin_desc, p.plane, mt.total_time
+        FROM monthly_totals mt
+        CROSS JOIN planes p
+      )
+      SELECT
+        mpc.time_bin_desc,
+        mpc.plane,
+        coalesce(ta.time_alive, 0) as time_alive,
+        mpc.total_time,
+        CASE
+          WHEN mpc.total_time > 0 THEN CAST(coalesce(ta.time_alive, 0) AS REAL) / mpc.total_time
+          ELSE 0
+        END as proportion
+      FROM month_plane_combinations mpc
+      LEFT JOIN time_alive ta ON (
+        ta.handle_key = ?
+        AND ta.time_bin = (SELECT time_bin FROM time_bin_desc WHERE time_bin_desc = mpc.time_bin_desc)
+        AND ta.plane = mpc.plane
+      )
+      ORDER BY mpc.time_bin_desc DESC, mpc.plane
       `,
-      { args: [handleKey] },
+      { args: [handleKey, handleKey] },
     ),
     stats: await query(
       `

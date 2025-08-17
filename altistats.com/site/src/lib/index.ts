@@ -33,6 +33,12 @@ export function formatDuration(d: number): string {
   return parts.join(" ") || "0s";
 }
 
+export function formatDurationCoarse(d: number): string {
+  const totalMinutes = d / (30 * 60);
+  const hours = totalMinutes / 60;
+  return `${hours.toFixed(1)}h`;
+}
+
 export function formatDurationFine(d: number): string {
   const seconds = d / 30;
   return `${seconds.toFixed(1)}s`;

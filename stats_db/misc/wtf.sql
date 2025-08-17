@@ -1,6 +1,11 @@
-SELECT handle, nicks, last_played,
-        datetime('now') >= datetime(last_played, 'unixepoch', '+48 hours') as is_older
-FROM last_played
-NATURAL JOIN handle_nicks
-NATURAL JOIN handles
-ORDER BY last_played DESC
+SELECT
+r.stem,
+map,
+teams
+-- started_at,
+-- duration,
+-- winner
+FROM replays r
+JOIN replays_wide USING (replay_key)
+NATURAL JOIN game_teams
+WHERE r.stem = '815900b1-55a5-435e-8409-afd7ce18df59'

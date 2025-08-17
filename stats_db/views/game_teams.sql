@@ -12,8 +12,7 @@ WITH team_players AS (
             replay_key,
             team,
             handle
-        FROM ladder_games
-        NATURAL JOIN players_wide
+        FROM players_wide
         NATURAL JOIN handles
     )
     GROUP BY replay_key, team
