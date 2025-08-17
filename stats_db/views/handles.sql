@@ -4,7 +4,6 @@ CREATE TABLE handles (
     handle,
     automatic
 );
-
 CREATE INDEX IF NOT EXISTS idx_handles_handle ON handles (handle);
 
 DROP TABLE IF EXISTS vapor_handle;
@@ -12,8 +11,15 @@ CREATE TABLE vapor_handle (
     vapor TEXT PRIMARY KEY,
     handle_key REFERENCES handles (handle_key)
 );
-
 CREATE INDEX IF NOT EXISTS idx_vapor_handle_handle ON vapor_handle (handle_key);
+
+DROP TABLE IF EXISTS player_key_handle;
+CREATE TABLE player_key_handle (
+    replay_key INTEGER REFERENCES replays (replay_key),
+    player_key INTEGER,
+    handle_key INTEGER REFERENCES handles (handle_key),
+    PRIMARY KEY (replay_key, player_key)
+);
 
 DROP VIEW IF EXISTS handles_tbl;
 CREATE VIEW handles_tbl
@@ -52,3 +58,8 @@ INSERT INTO vapor_handle
 SELECT vapor, handle_key
 FROM handles_tbl
 NATURAL JOIN handles;
+
+INSERT INTO player_key_handle
+SELECT replay_key, player_key, handle_key
+FROM players
+NATURAL JOIN vapor_handle;
