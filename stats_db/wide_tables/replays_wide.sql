@@ -117,7 +117,6 @@ winner AS (
 )
 SELECT
     r.replay_key,
-    stem,
     time_bin,
     date(datetime(r.started_at, 'unixepoch'), '-12 hours') as day_bin,
     n_left,

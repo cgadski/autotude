@@ -6,13 +6,8 @@ const STAT_CONFIG: Record<
   string,
   { min?: number; max?: number; bandwidth?: number }
 > = {
-  // Example configurations - adjust based on your actual stats
   p_kd: { min: 0.2, max: 2, bandwidth: 0.2 },
-  deaths: { min: 0, max: 30, bandwidth: 1.5 },
-  score: { min: 0, max: 10000, bandwidth: 500 },
-  playtime: { min: 0, max: 7200, bandwidth: 300 }, // assuming playtime in seconds
-  winrate: { min: 0, max: 1, bandwidth: 0.05 }, // assuming winrate as decimal 0-1
-  // Add more stats as needed
+  p_win_rate: { min: 0, max: 1, bandwidth: 0.1 },
 };
 
 // Simple kernel density estimation

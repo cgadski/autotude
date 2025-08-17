@@ -2,12 +2,15 @@
 WITH tbl AS (
     SELECT
         handle_key,
-        time_bin,
-        plane
-    FROM players_wide
-    NATURAL JOIN ladder_games
+        replays_wide.time_bin,
+        plane,
+        cast(count() AS real) AS n_games ,
+        cast(count() FILTER (WHERE winner = team) AS real) AS n_wins
+    FROM (SELECT * FROM players_wide GROUP BY replay_key, handle_key)
+    JOIN ladder_games USING (replay_key)
+    JOIN replays_wide USING (replay_key)
     WHERE team > 2
-    GROUP BY handle_key, time_bin, plane
+    GROUP BY handle_key, replays_wide.time_bin, plane
 )
 
 -- handle
@@ -15,9 +18,10 @@ SELECT
     handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
+    sum(n_wins) / sum(n_games) AS stat,
+    format("%.2f", sum(n_wins) / sum(n_games))
+    || ' | ' || sum(n_wins) || '/' || sum(n_games) AS repr,
+    sum(n_games) < 100 AS hidden
 FROM tbl
 GROUP BY handle_key
 
@@ -28,9 +32,10 @@ SELECT
     handle_key,
     time_bin,
     NULL AS plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
+    sum(n_wins) / sum(n_games) AS stat,
+    format("%.2f", sum(n_wins) / sum(n_games))
+    || ' | ' || sum(n_wins) || '/' || sum(n_games) AS repr,
+    sum(n_games) < 25 AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
 UNION ALL
@@ -40,9 +45,10 @@ SELECT
     handle_key,
     NULL AS time_bin,
     plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
+    sum(n_wins) / sum(n_games) AS stat,
+    format("%.2f", sum(n_wins) / sum(n_games))
+    || ' | ' || sum(n_wins) || '/' || sum(n_games) AS repr,
+    sum(n_games) < 50 AS hidden
 FROM tbl GROUP BY handle_key, plane
 
 UNION ALL
