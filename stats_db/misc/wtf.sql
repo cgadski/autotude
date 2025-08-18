@@ -1,11 +1,8 @@
-SELECT
-r.stem,
-map,
-teams
--- started_at,
--- duration,
--- winner
-FROM replays r
-JOIN replays_wide USING (replay_key)
-NATURAL JOIN game_teams
-WHERE r.stem = '815900b1-55a5-435e-8409-afd7ce18df59'
+SELECT time_bin, handle, stat, repr
+FROM player_stats
+NATURAL JOIN stats
+NATURAL JOIN handles
+WHERE query_name = 'p_death_rate'
+AND plane = 1
+-- AND time_bin is not null
+-- AND NOT hidden

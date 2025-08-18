@@ -76,8 +76,7 @@
             ? [
                   makeLinkItem({ plane: null }, "All planes"),
                   ...["Loopy", "Bomber", "Whale", "Biplane", "Miranda"].map(
-                      (plane) =>
-                          makeLinkItem({ plane: plane.toLowerCase() }, plane),
+                      (plane) => makeLinkItem({ plane: plane }, plane),
                   ),
               ]
             : [];

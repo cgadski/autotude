@@ -7,8 +7,6 @@ WITH tbl AS (
         cast(sum(kills) AS REAL) AS kills,
         cast(sum(deaths) AS REAL) AS deaths
     FROM players_wide
-    NATURAL JOIN ladder_games
-    WHERE team > 2
     GROUP BY handle_key, time_bin, plane
 )
 -- handle

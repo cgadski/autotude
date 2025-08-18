@@ -1,4 +1,4 @@
--- BC kills/10
+-- T/BC kill
 WITH tbl AS (
     SELECT
         handle_key,

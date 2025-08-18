@@ -8,6 +8,8 @@ const STAT_CONFIG: Record<
 > = {
   p_kd: { min: 0.2, max: 2, bandwidth: 0.2 },
   p_win_rate: { min: 0, max: 1, bandwidth: 0.1 },
+  p_death_rate: { min: 8, max: 40, bandwidth: 3 },
+  p_goal_rate: { min: 0, max: 6, bandwidth: 0.5 },
 };
 
 // Simple kernel density estimation

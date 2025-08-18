@@ -1,4 +1,4 @@
--- Kills/10
+-- T/kill
 WITH tbl AS (
     SELECT
         handle_key,
