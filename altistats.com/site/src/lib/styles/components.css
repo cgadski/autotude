@@ -35,6 +35,10 @@ section.narrow {
     margin-right: auto;
 }
 
+section.no-bg table {
+    --bs-table-bg: transparent !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 576px) {
     section > h2 {

@@ -17,16 +17,6 @@
     import type { QueryParams } from "./+page.server.js";
     import LinkList from "$lib/LinkList.svelte";
 
-    $: recentPlayers =
-        data.stat == null
-            ? data.players.filter((player) => !player.is_older)
-            : [];
-
-    $: olderPlayers =
-        data.stat == null
-            ? data.players.filter((player) => player.is_older)
-            : [];
-
     function makeLinkItem(
         override: {
             stat?: string | null;
@@ -131,22 +121,16 @@
 {/if}
 
 {#if data.stat == null}
-    {#if recentPlayers.length > 0}
-        <section class="narrow">
-            <h2>
-                {recentPlayers.length} recent players
-                <span class="text-muted">(played in last 48 hours)</span>
-            </h2>
-            <PlayersTable players={recentPlayers} />
-        </section>
-    {/if}
-
-    {#if olderPlayers.length > 0}
-        <section class="narrow">
-            <h2>{olderPlayers.length} players</h2>
-            <PlayersTable players={olderPlayers} absoluteTime={true} />
-        </section>
-    {/if}
+    {@const recent = data.players.filter((p) => !p.is_older).length}
+    <section class="narrow">
+        <h2>
+            {data.players.length} players
+            <span class="text-muted">
+                ({recent} played in last 48 hours)
+            </span>
+        </h2>
+        <PlayersTable players={data.players} />
+    </section>
 {/if}
 
 {#if data.stat != null}

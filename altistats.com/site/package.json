@@ -31,6 +31,7 @@
     "bootstrap-icons": "^1.11.3",
     "calendarize": "^1.1.1",
     "d3": "^7.9.0",
+    "fuse.js": "^7.1.0",
     "pg": "^8.13.3"
   },
   "pnpm": {

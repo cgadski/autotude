@@ -9,6 +9,7 @@ export type Stat = StatMeta & {
 };
 
 export type Game = {
+  day_bin: string;
   started_at: number;
   map: string;
   stem: string;
