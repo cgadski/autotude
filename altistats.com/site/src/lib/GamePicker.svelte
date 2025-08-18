@@ -5,7 +5,6 @@
 
     export let games: Game[];
     export let selectedGame: string | null = null;
-    export let handle: string | null = null;
 
     function selectGame(stem: string) {
         selectedGame = selectedGame === stem ? null : stem;
@@ -82,22 +81,7 @@
                                     {game}
                                     selected={selectedGame === game.stem}
                                 >
-                                    <!-- Default game square if no slot content provided -->
-                                    <div
-                                        class="default-square"
-                                        class:win={game.winner ==
-                                            (game.teams["3"]?.includes(
-                                                handle || "",
-                                            )
-                                                ? 3
-                                                : 4)}
-                                        class:loss={game.winner !=
-                                            (game.teams["3"]?.includes(
-                                                handle || "",
-                                            )
-                                                ? 3
-                                                : 4)}
-                                    ></div>
+                                    <div class="default-square"></div>
                                 </slot>
                             </button>
                         {/each}
@@ -107,7 +91,7 @@
             {#if isSelectedGameInDay(dayGames) && selectedGameData}
                 <tr>
                     <td colspan="3" class="pb-3 px-3">
-                        <GameCardSmall game={selectedGameData} {handle} />
+                        <GameCardSmall game={selectedGameData} />
                     </td>
                 </tr>
             {/if}
@@ -119,51 +103,6 @@
     .game-cell {
         vertical-align: middle;
         padding: 0.5rem;
-    }
-
-    .game-container {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .game-square {
-        width: 18px;
-        height: 18px;
-        border: 1px solid transparent;
-        border-radius: 2px;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        padding: 0;
-        margin: 0;
-        background: none;
-    }
-
-    .game-square:hover {
-        transform: scale(1.15);
-        border-color: #ffffff;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    }
-
-    .game-square.selected {
-        border-color: #0d6efd;
-        border-width: 2px;
-        box-shadow: 0 0 0 1px #0d6efd;
-    }
-
-    .default-square {
-        width: 100%;
-        height: 100%;
-        border-radius: 2px;
-    }
-
-    .default-square.win {
-        background-color: #a3d5a3;
-    }
-
-    .default-square.loss {
-        background-color: #f5a3a3;
     }
 
     .transparent-border {

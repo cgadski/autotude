@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS replays_wide;
 CREATE TABLE replays_wide (
     replay_key INTEGER PRIMARY KEY REFERENCES replays (replay_key),
     time_bin, -- time bin this replay belongs to
-    day_bin TEXT, -- day bin where each "day" starts at noon GMT
+    day_bin TEXT, -- day bin where each "day" starts at noon UTC
     n_left, -- number of players on each team
     n_right,
     n_spec,
@@ -118,7 +118,7 @@ winner AS (
 SELECT
     r.replay_key,
     time_bin,
-    date(datetime(r.started_at, 'unixepoch'), '-12 hours') as day_bin,
+    date(datetime(r.started_at, 'unixepoch'), '-12 hours', 'utc') as day_bin,
     n_left,
     n_right,
     n_spec,

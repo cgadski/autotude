@@ -3,6 +3,8 @@
 
     import SiteHeader from "$lib/SiteHeader.svelte";
     import GameCardSmall from "$lib/GameCardSmall.svelte";
+    import GamePicker from "$lib/GamePicker.svelte";
+    import HandlePicker from "$lib/HandlePicker.svelte";
 
     import { onMount } from "svelte";
     import { renderChart } from "./listing_chart";
@@ -12,6 +14,18 @@
     let refreshInterval: number;
     let listingsData: any = null;
     let loading = true;
+    let selectedGame: string | null = null;
+    let selectedHandles: string[] = [];
+
+    function checkPlayersInGame(game: any, handles: string[]): boolean {
+        if (!handles.length || !game.teams) return false;
+
+        const team3Players = game.teams["3"] || [];
+        const team4Players = game.teams["4"] || [];
+        const allPlayers = [...team3Players, ...team4Players];
+
+        return handles.every((handle) => allPlayers.includes(handle));
+    }
 
     async function fetchListingsData() {
         try {
@@ -134,19 +148,38 @@
 </section>
 
 <section class="no-bg narrow">
-    <h2>Recent Games</h2>
+    <h2>Games this week</h2>
 
-    {#each data.recentGames as game}
-        <div class="mb-3">
-            <GameCardSmall {game} />
+    <HandlePicker handles={data.handles} bind:selectedHandles />
+
+    <GamePicker games={data.recentGames} bind:selectedGame let:game>
+        <div
+            class="game-square-content"
+            class:team-3={game.winner === 3}
+            class:team-4={game.winner === 4}
+        >
+            {#if selectedHandles.length > 0 && checkPlayersInGame(game, selectedHandles)}
+                <div class="player-indicator"></div>
+            {/if}
         </div>
-    {/each}
+    </GamePicker>
 </section>
 
 <style>
-    @media (max-width: 576px) {
-        :global(div[style*="height: 200px"]) {
-            height: 150px !important;
-        }
+    .game-square-content {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .player-indicator {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background-color: black;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 </style>

@@ -59,34 +59,17 @@
         </dd>
     </dl>
 
-    <GamePicker
-        games={data.games}
-        bind:selectedGame
-        handle={data.handle}
-        let:game
-    >
+    <GamePicker games={data.games} bind:selectedGame let:game>
         <div
             class="game-square-content"
-            class:win={game.winner ==
+            class:win={game.winner ===
                 (game.teams["3"]?.includes(data.handle) ? 3 : 4)}
-            class:loss={game.winner !=
+            class:loss={game.winner !==
                 (game.teams["3"]?.includes(data.handle) ? 3 : 4)}
         ></div>
     </GamePicker>
 </section>
 
 <style>
-    .game-square-content {
-        width: 100%;
-        height: 100%;
-        border-radius: 2px;
-    }
-
-    .game-square-content.win {
-        background-color: #a3d5a3;
-    }
-
-    .game-square-content.loss {
-        background-color: #f5a3a3;
-    }
+    /* Styles moved to components.css */
 </style>

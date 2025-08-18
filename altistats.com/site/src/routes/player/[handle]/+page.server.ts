@@ -63,7 +63,7 @@ export async function load({ params }) {
         WHERE handle_key = ?
         AND team > 2
       )
-      AND date(started_at, 'unixepoch', '-12 hours', 'utc') >= date('now', '-14 days', 'utc')
+      AND day_bin >= date('now', '-14 days', 'utc')
       ORDER BY started_at DESC
       `,
       { args: [handleKey], parse: ["teams"] },
