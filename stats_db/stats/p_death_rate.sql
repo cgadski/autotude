@@ -1,4 +1,4 @@
--- T/death
+-- T/D
 WITH tbl AS (
     SELECT
         handle_key,

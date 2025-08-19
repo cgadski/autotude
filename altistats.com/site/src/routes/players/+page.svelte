@@ -11,11 +11,14 @@
     } from "$lib";
     import { onMount } from "svelte";
     import PlayersTable from "./PlayersTable.svelte";
+    import HandlePicker from "$lib/HandlePicker.svelte";
 
     let histogramElement: HTMLElement;
-    import { renderHistogram } from "./histogram.js";
+    import { renderHistogram } from "./histogram.ts";
     import type { QueryParams } from "./+page.server.js";
     import LinkList from "$lib/LinkList.svelte";
+
+    let selectedHandles: string[] = [];
 
     function makeLinkItem(
         override: {
@@ -81,14 +84,22 @@
               ]
             : [];
 
+    // Extract all handles for the HandlePicker
+    $: allHandles = data.playerStats
+        ? data.playerStats.map((p) => p.handle)
+        : data.players
+          ? data.players.map((p) => p.handle)
+          : [];
+
     onMount(() => {
         if (histogramElement && data.params.stat != null) {
-            renderHistogram(histogramElement, data);
+            renderHistogram(histogramElement, data, selectedHandles);
         }
     });
 
-    $: if (data.playerStats && histogramElement && data.params.stat != null) {
-        renderHistogram(histogramElement, data);
+    // Consolidated reactive rendering - triggers when any dependency changes
+    $: if (histogramElement && data.params.stat != null && data.playerStats) {
+        renderHistogram(histogramElement, data, selectedHandles);
     }
 </script>
 
@@ -114,8 +125,11 @@
 </section>
 
 {#if data.params.stat != null}
-    <section class="no-bg" style="width: 100%; max-width: none;">
-        <div bind:this={histogramElement} style="width: 100%;"></div>
+    <section class="no-bg">
+        <div
+            bind:this={histogramElement}
+            style="width: 100%; height: auto;"
+        ></div>
     </section>
 {/if}
 
@@ -134,6 +148,12 @@
 
 {#if data.stat != null}
     <section class="narrow">
+        <HandlePicker
+            handles={allHandles}
+            handleDescription="Showing players:"
+            bind:selectedHandles
+        />
+
         <table class="table table-sm">
             <colgroup>
                 <col style="width: 2em;" />
@@ -143,10 +163,19 @@
             </colgroup>
             <tbody>
                 {#each data.playerStats as player, index}
-                    <tr>
+                    <tr
+                        class={selectedHandles.includes(player.handle)
+                            ? "table-warning"
+                            : ""}
+                    >
                         <td class="text-muted">{index + 1}</td>
                         <td>
-                            <a href="/player/{player.handle}">
+                            <a
+                                href="/player/{player.handle}"
+                                class={selectedHandles.includes(player.handle)
+                                    ? "fw-bold"
+                                    : ""}
+                            >
                                 {player.handle}
                             </a>
                         </td>

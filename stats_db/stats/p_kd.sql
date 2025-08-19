@@ -1,4 +1,4 @@
--- KD
+-- K/D
 WITH tbl AS (
     SELECT
         handle_key,

@@ -1,12 +1,12 @@
--- Possession
+-- Pos
 WITH tbl AS (
     SELECT
         handle_key,
         time_bin,
-        plane
+        plane,
+        cast(sum(time_alive) AS real) AS time_alive,
+        cast(sum(time_with_ball) AS real) AS time_with_ball
     FROM players_wide
-    NATURAL JOIN ladder_games
-    WHERE team > 2
     GROUP BY handle_key, time_bin, plane
 )
 
@@ -15,9 +15,11 @@ SELECT
     handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
+    sum(time_with_ball) / sum(time_alive) AS stat,
+    format('%.2f', sum(time_with_ball) / sum(time_alive))
+    || ' | ' || sum(time_with_ball) || 'd : '
+    || sum(time_alive) || 'dc' AS repr,
+    sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl
 GROUP BY handle_key
 
@@ -28,9 +30,11 @@ SELECT
     handle_key,
     time_bin,
     NULL AS plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
+    sum(time_with_ball) / sum(time_alive) AS stat,
+    format('%.2f', sum(time_with_ball) / sum(time_alive))
+    || ' | ' || sum(time_with_ball) || 'd : '
+    || sum(time_alive) || 'dc' AS repr,
+    sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
 UNION ALL
@@ -40,9 +44,11 @@ SELECT
     handle_key,
     NULL AS time_bin,
     plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
+    sum(time_with_ball) / sum(time_alive) AS stat,
+    format('%.2f', sum(time_with_ball) / sum(time_alive))
+    || ' | ' || sum(time_with_ball) || 'd : '
+    || sum(time_alive) || 'dc' AS repr,
+    sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl GROUP BY handle_key, plane
 
 UNION ALL
@@ -52,7 +58,9 @@ SELECT
     handle_key,
     time_bin,
     plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
-FROM tbl
+    sum(time_with_ball) / sum(time_alive) AS stat,
+    format('%.2f', sum(time_with_ball) / sum(time_alive))
+    || ' | ' || sum(time_with_ball) || 'd : '
+    || sum(time_alive) || 'dc' AS repr,
+    sum(time_alive) < 30 * 60 * 60 AS hidden
+FROM tbl GROUP BY handle_key, time_bin, plane

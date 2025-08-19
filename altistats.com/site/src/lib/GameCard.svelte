@@ -4,109 +4,52 @@
     import type { Game } from "$lib";
 
     export let game: Game;
-    export let linkForm;
 </script>
 
-{#if linkForm}
-    <a class="game-card clickable" href="/game/{game.stem}">
-        <div class="game-header">
-            <div class="time">
-                {formatDatetime(game.started_at)}
+<a class="game-card clickable" href="/game/{game.stem}">
+    <div class="game-header">
+        <div class="time">
+            {formatDatetime(game.started_at)}
+        </div>
+        <div class="map">
+            {game.map}
+        </div>
+        <div class="duration">
+            {formatDuration(game.duration)}
+            <i class="bi bi-chevron-right ms-1"></i>
+        </div>
+    </div>
+
+    <div class="teams">
+        <div class="team team-red">
+            <div class="players">
+                {#each game.teams["3"] || [] as handle, index}
+                    {#if index > 0}<span class="separator">•</span>{/if}
+                    <span class="player">{handle}</span>
+                {/each}
             </div>
-            <div class="map">
-                {game.map}
-            </div>
-            <div class="duration">
-                {formatDuration(game.duration)}
-                <i class="bi bi-chevron-right ms-1"></i>
+            <div class="trophy-space">
+                {#if game.winner === 3}
+                    <i class="bi bi-trophy-fill trophy"></i>
+                {/if}
             </div>
         </div>
 
-        <div class="teams">
-            <div class="team team-red">
-                <div class="players">
-                    {#each game.teams["3"] || [] as handle, index}
-                        {#if index > 0}<span class="separator">•</span>{/if}
-                        <span class="player">{handle}</span>
-                    {/each}
-                </div>
-                <div class="trophy-space">
-                    {#if game.winner === 3}
-                        <i class="bi bi-trophy-fill trophy"></i>
-                    {/if}
-                </div>
+        <div class="team team-blue">
+            <div class="players">
+                {#each game.teams["4"] || [] as handle, index}
+                    {#if index > 0}<span class="separator">•</span>{/if}
+                    <span class="player">{handle}</span>
+                {/each}
             </div>
-
-            <div class="team team-blue">
-                <div class="players">
-                    {#each game.teams["4"] || [] as handle, index}
-                        {#if index > 0}<span class="separator">•</span>{/if}
-                        <span class="player">{handle}</span>
-                    {/each}
-                </div>
-                <div class="trophy-space">
-                    {#if game.winner === 4}
-                        <i class="bi bi-trophy-fill trophy"></i>
-                    {/if}
-                </div>
-            </div>
-        </div>
-    </a>
-{:else}
-    <div class="game-card">
-        <div class="game-header">
-            <div class="time">
-                {formatDatetime(game.started_at)}
-            </div>
-            <div class="map">
-                {game.map}
-            </div>
-            <div class="duration">
-                {formatDuration(game.duration)}
-            </div>
-        </div>
-
-        <div class="teams">
-            <div class="team team-red">
-                <div class="players">
-                    {#each game.teams["3"] || [] as handle, index}
-                        {#if index > 0}<span class="separator">•</span>{/if}
-                        <a
-                            href="/player/{encodeURIComponent(handle)}"
-                            class="player-link"
-                        >
-                            {handle}
-                        </a>
-                    {/each}
-                </div>
-                <div class="trophy-space">
-                    {#if game.winner === 3}
-                        <i class="bi bi-trophy-fill trophy"></i>
-                    {/if}
-                </div>
-            </div>
-
-            <div class="team team-blue">
-                <div class="players">
-                    {#each game.teams["4"] || [] as handle, index}
-                        {#if index > 0}<span class="separator">•</span>{/if}
-                        <a
-                            href="/player/{encodeURIComponent(handle)}"
-                            class="player-link"
-                        >
-                            {handle}
-                        </a>
-                    {/each}
-                </div>
-                <div class="trophy-space">
-                    {#if game.winner === 4}
-                        <i class="bi bi-trophy-fill trophy"></i>
-                    {/if}
-                </div>
+            <div class="trophy-space">
+                {#if game.winner === 4}
+                    <i class="bi bi-trophy-fill trophy"></i>
+                {/if}
             </div>
         </div>
     </div>
-{/if}
+</a>
 
 <style>
     .game-card {

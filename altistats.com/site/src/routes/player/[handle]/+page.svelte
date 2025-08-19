@@ -5,17 +5,9 @@
     import GamePicker from "$lib/GamePicker.svelte";
     import LinkList from "$lib/LinkList.svelte";
 
-    // @type {import('./$types').PageData}
     export let data;
 
     let selectedGame: string | null = null;
-
-    // Debug the games data
-    $: console.log("Games data:", {
-        gamesCount: data.games?.length || 0,
-        firstGame: data.games?.[0],
-        sampleStems: data.games?.slice(0, 3).map((g) => g.stem),
-    });
 </script>
 
 <SiteHeader />

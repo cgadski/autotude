@@ -1,12 +1,13 @@
--- T/kill
+-- T/K
+-- reverse
 WITH tbl AS (
     SELECT
         handle_key,
         time_bin,
-        plane
+        plane,
+        sum(kills) as kills,
+        sum(time_alive) as time_alive
     FROM players_wide
-    NATURAL JOIN ladder_games
-    WHERE team > 2
     GROUP BY handle_key, time_bin, plane
 )
 
@@ -15,9 +16,10 @@ SELECT
     handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
+    sum(time_alive) / (sum(kills) * 30) AS stat,
+    (sum(time_alive) / sum(kills)) || 'df '
+   || ' | ' || sum(time_alive) || 'dc : ' || sum(kills) AS repr,
+    sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl
 GROUP BY handle_key
 
@@ -28,9 +30,10 @@ SELECT
     handle_key,
     time_bin,
     NULL AS plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
+    sum(time_alive) / (sum(kills) * 30) AS stat,
+    (sum(time_alive) / sum(kills)) || 'df '
+   || ' | ' || sum(time_alive) || 'dc : ' || sum(kills) AS repr,
+    sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
 UNION ALL
@@ -40,9 +43,10 @@ SELECT
     handle_key,
     NULL AS time_bin,
     plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
+    sum(time_alive) / (sum(kills) * 30) AS stat,
+    (sum(time_alive) / sum(kills)) || 'df '
+   || ' | ' || sum(time_alive) || 'dc : ' || sum(kills) AS repr,
+    sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl GROUP BY handle_key, plane
 
 UNION ALL
@@ -52,7 +56,8 @@ SELECT
     handle_key,
     time_bin,
     plane,
-    0 AS stat,
-    'stat' AS repr,
-    false AS hidden
-FROM tbl
+    sum(time_alive) / (sum(kills) * 30) AS stat,
+    (sum(time_alive) / sum(kills)) || 'df '
+    || ' | ' || sum(time_alive) || 'dc : ' || sum(kills) AS repr,
+    sum(time_alive) < 30 * 60 * 60 AS hidden
+FROM tbl GROUP BY handle_key, time_bin, plane

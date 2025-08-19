@@ -3,11 +3,7 @@
     import SiteHeader from "$lib/SiteHeader.svelte";
     import type { Game } from "$lib/db";
 
-    /* @type {import('./$types').PageData} */
-    export let data: {
-        game: Game;
-    };
-
+    export let data;
     let game = data.game;
 </script>
 

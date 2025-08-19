@@ -4,6 +4,7 @@
 
     export let handles: string[] = [];
     export let selectedHandles: string[] = [];
+    export let handleDescription: string = "Showing games with:";
 
     let searchTerm = "";
     let results: string[] = [];
@@ -90,7 +91,7 @@
 
 {#if selectedHandles.length > 0}
     <div class="mb-3 d-flex align-items-center">
-        <span class="fw-medium me-2">Showing games with:</span>
+        <span class="fw-medium me-2">{handleDescription}</span>
         <div class="flex-grow-1">
             <HorizontalList items={selectedHandles}>
                 <svelte:fragment let:item let:index>
@@ -107,10 +108,10 @@
             </HorizontalList>
         </div>
         <button
-            class="btn btn-sm btn-outline-secondary ms-2"
+            class="btn btn-sm btn-outline-secondary"
             on:click={clearAllSelections}
         >
-            Clear All
+            Clear all
         </button>
     </div>
 {/if}

@@ -20,7 +20,8 @@ CREATE TABLE players_wide (
     time_alive REAL, -- time player was alive
     kills INTEGER,
     deaths INTEGER,
-    goals INTEGER
+    goals INTEGER,
+    time_with_ball INTEGER
 );
 
 CREATE INDEX idx_players_wide_handle ON players_wide (handle_key, plane);
@@ -84,6 +85,19 @@ goal_tallies AS (
         coalesce(goals.tick < sg.end_tick, true)
     )
     GROUP BY sg.rowid
+),
+time_with_ball AS (
+    SELECT
+        sg.rowid,
+        sum(p.end_tick - p.start_tick) AS time_with_ball
+    FROM spawn_groups sg
+    JOIN possession p ON (
+        p.replay_key = sg.replay_key AND
+        p.player_key = sg.player_key AND
+        p.start_tick >= sg.start_tick AND
+        coalesce(p.start_tick < sg.end_tick, true)
+    )
+    GROUP BY sg.rowid
 )
 SELECT
     -- loadout characteristics
@@ -98,9 +112,11 @@ SELECT
     time_alive,
     coalesce(kills, 0) AS kills,
     coalesce(deaths, 0) AS deaths,
-    coalesce(goals, 0) AS goals
+    coalesce(goals, 0) AS goals,
+    coalesce(time_with_ball, 0) AS time_with_ball
 FROM spawn_groups sg
 JOIN replays_wide USING (replay_key)
 LEFT JOIN kill_tallies ON (sg.rowid = kill_tallies.rowid)
 LEFT JOIN goal_tallies ON (sg.rowid = goal_tallies.rowid)
+LEFT JOIN time_with_ball ON (sg.rowid = time_with_ball.rowid)
 ORDER BY start_tick;

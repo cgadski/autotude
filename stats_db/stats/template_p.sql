@@ -55,4 +55,4 @@ SELECT
     0 AS stat,
     'stat' AS repr,
     false AS hidden
-FROM tbl
+FROM tbl GROUP BY handle_key, time_bin, plane

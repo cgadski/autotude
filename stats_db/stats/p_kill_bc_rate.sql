@@ -1,4 +1,4 @@
--- T/BC kill
+-- T/BK
 WITH tbl AS (
     SELECT
         handle_key,
