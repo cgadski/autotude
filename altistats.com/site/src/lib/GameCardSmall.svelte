@@ -32,7 +32,7 @@
                     <HorizontalList items={game.teams["3"]} let:item>
                         <a
                             href="/player/{encodeURIComponent(item)}"
-                            class="text-decoration-none text-dark small"
+                            class="small"
                             class:fw-bold={item === handle}
                         >
                             {item}
@@ -56,7 +56,7 @@
                     <HorizontalList items={game.teams["4"]} let:item>
                         <a
                             href="/player/{encodeURIComponent(item)}"
-                            class="text-decoration-none text-dark small"
+                            class="small"
                             class:fw-bold={item === handle}
                         >
                             {item}

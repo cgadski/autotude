@@ -1,4 +1,4 @@
--- K/D
+-- Kills/deaths
 WITH tbl AS (
     SELECT
         handle_key,

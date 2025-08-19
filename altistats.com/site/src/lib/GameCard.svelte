@@ -6,186 +6,77 @@
     export let game: Game;
 </script>
 
-<a class="game-card clickable" href="/game/{game.stem}">
-    <div class="game-header">
-        <div class="time">
-            {formatDatetime(game.started_at)}
-        </div>
-        <div class="map">
+<div class="card">
+    <div class="card-header d-flex align-items-center py-2">
+        <div class="fw-medium me-3">
             {game.map}
         </div>
-        <div class="duration">
+        <div class="small me-3">
+            {formatDatetime(game.started_at)}
+        </div>
+        <div class="small text-muted ms-auto">
             {formatDuration(game.duration)}
-            <i class="bi bi-chevron-right ms-1"></i>
         </div>
     </div>
 
-    <div class="teams">
-        <div class="team team-red">
-            <div class="players">
-                {#each game.teams["3"] || [] as handle, index}
-                    {#if index > 0}<span class="separator">•</span>{/if}
-                    <span class="player">{handle}</span>
-                {/each}
-            </div>
-            <div class="trophy-space">
+    <div class="row g-0">
+        <div class="col-12 col-sm-6">
+            <div
+                class="p-2 bg-danger bg-opacity-10 border-end border-danger border-opacity-25 position-relative"
+            >
                 {#if game.winner === 3}
-                    <i class="bi bi-trophy-fill trophy"></i>
+                    <i class="bi bi-trophy-fill text-warning trophy-position"
+                    ></i>
                 {/if}
+                {#each game.teams["3"] || [] as handle}
+                    <div class="d-flex justify-content-between py-1">
+                        <a href="/player/{encodeURIComponent(handle)}"
+                            >{handle}</a
+                        >
+                        <span class="small text-muted">
+                            <!-- Plane info will go here -->
+                        </span>
+                    </div>
+                {/each}
             </div>
         </div>
 
-        <div class="team team-blue">
-            <div class="players">
-                {#each game.teams["4"] || [] as handle, index}
-                    {#if index > 0}<span class="separator">•</span>{/if}
-                    <span class="player">{handle}</span>
-                {/each}
-            </div>
-            <div class="trophy-space">
+        <div class="col-12 col-sm-6">
+            <div class="p-2 bg-primary bg-opacity-10 position-relative">
                 {#if game.winner === 4}
-                    <i class="bi bi-trophy-fill trophy"></i>
+                    <i class="bi bi-trophy-fill text-warning trophy-position"
+                    ></i>
                 {/if}
+                {#each game.teams["4"] || [] as handle}
+                    <div class="d-flex justify-content-between py-1">
+                        <a href="/player/{encodeURIComponent(handle)}"
+                            >{handle}</a
+                        >
+                        <span class="small text-muted">
+                            <!-- Plane info will go here -->
+                        </span>
+                    </div>
+                {/each}
             </div>
         </div>
     </div>
-</a>
+</div>
 
 <style>
-    .game-card {
-        margin: 0.5rem 0;
-        border-radius: 8px;
-        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-        background-color: white;
-        border: 1px solid #e0e0e0;
-        overflow: hidden;
+    .card {
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
     }
 
-    .clickable {
-        transition: all 0.15s ease;
-        cursor: pointer;
-        text-decoration: none;
-        color: inherit;
-        display: block;
+    .trophy-position {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
     }
 
-    .clickable:hover {
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-        transform: translateY(-1px);
-        color: inherit;
-        text-decoration: none;
-    }
-
-    .game-header {
-        display: flex;
-        align-items: center;
-        padding: 0.5rem 0.75rem;
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #e0e0e0;
-        font-size: 0.9rem;
-    }
-
-    .time {
-        color: #666;
-        flex: 0 0 auto;
-        margin-right: 0.75rem;
-    }
-
-    .map {
-        font-weight: 500;
-        flex: 1;
-    }
-
-    .duration {
-        color: #666;
-        font-size: 0.85rem;
-        display: flex;
-        align-items: center;
-        flex: 0 0 auto;
-    }
-
-    .teams {
-        display: flex;
-    }
-
-    .team {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        padding: 0.5rem;
-        min-height: 2.5rem;
-    }
-
-    .team-red {
-        background-color: rgba(220, 53, 69, 0.08);
-        border-right: 1px solid rgba(220, 53, 69, 0.2);
-    }
-
-    .team-blue {
-        background-color: rgba(13, 110, 253, 0.08);
-    }
-
-    .players {
-        flex: 1;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.25rem 0.5rem;
-        align-items: center;
-    }
-
-    .separator {
-        color: #999;
-        font-size: 0.75rem;
-        margin: 0 0.1rem;
-    }
-
-    .player {
-        font-size: 0.85rem;
-        color: #333;
-    }
-
-    .player-link {
-        font-size: 0.85rem;
-        color: #333;
-        text-decoration: none;
-        transition: color 0.15s ease;
-    }
-
-    .player-link:hover {
-        color: #0066cc;
-        text-decoration: underline;
-    }
-
-    .trophy-space {
-        flex: 0 0 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: 0.5rem;
-    }
-
-    .trophy {
-        color: #ffc107;
-        font-size: 1rem;
-    }
-
-    /* Mobile layout */
-    @media (max-width: 576px) {
-        .teams {
-            flex-direction: column;
-        }
-
-        .team-red {
-            border-right: none;
-            border-bottom: 1px solid rgba(220, 53, 69, 0.2);
-        }
-
-        .game-header {
-            font-size: 0.85rem;
-        }
-
-        .time {
-            margin-right: 0.5rem;
+    @media (max-width: 575.98px) {
+        .border-end {
+            border-right: none !important;
+            border-bottom: 1px solid rgba(220, 53, 69, 0.25) !important;
         }
     }
 </style>

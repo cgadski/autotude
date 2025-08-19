@@ -1,4 +1,4 @@
--- T/BK
+-- Time/bc kill
 WITH tbl AS (
     SELECT
         handle_key,

@@ -1,4 +1,4 @@
--- G/10P
+-- Goals/10 pos
 WITH tbl AS (
     SELECT
         handle_key,

@@ -1,4 +1,4 @@
--- T/K
+-- Time/kill
 -- reverse
 WITH tbl AS (
     SELECT

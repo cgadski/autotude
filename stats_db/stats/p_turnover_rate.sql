@@ -1,4 +1,4 @@
--- T/Turn
+-- Time/turnover
 WITH tbl AS (
     SELECT
         handle_key,
