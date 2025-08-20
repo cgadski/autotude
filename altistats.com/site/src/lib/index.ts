@@ -45,6 +45,14 @@ export function formatDurationFine(d: number): string {
   return `${seconds.toFixed(1)}s`;
 }
 
+export function formatTimestamp(d: number) {
+  const totalSeconds = d / 30;
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export function formatDatetime(unixEpoch: number): string {
   const date = new Date(unixEpoch * 1000);
   const month = new Intl.DateTimeFormat("en", { month: "short" }).format(date);
@@ -54,16 +62,16 @@ export function formatDatetime(unixEpoch: number): string {
   return `${month} ${day} ${hours}h${minutes}`;
 }
 
-export const formatShortDate = (unixEpoch: number) => {
+export function formatShortDate(unixEpoch: number) {
   const date = new Date(unixEpoch * 1000);
   return date.toLocaleDateString("en-GB", {
     year: "numeric",
     month: "numeric",
     day: "numeric",
   });
-};
+}
 
-export const formatTimeAgo = (unixEpoch: number) => {
+export function formatTimeAgo(unixEpoch: number) {
   const now = Date.now();
   const timestamp = unixEpoch * 1000;
   const diffMs = now - timestamp;
@@ -76,7 +84,7 @@ export const formatTimeAgo = (unixEpoch: number) => {
   } else {
     return `${days}d ${hours}h ago`;
   }
-};
+}
 
 export const formatDate = (unixEpoch: number) => {
   const date = new Date(unixEpoch * 1000);
