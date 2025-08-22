@@ -58,7 +58,8 @@ SELECT
     handle_key,
     time_bin,
     plane,
-    0 AS stat,
-    'stat' AS repr,
+    sum(n_wins) / sum(n_games) AS stat,
+    format("%.2f", sum(n_wins) / sum(n_games))
+    || ' | ' || sum(n_wins) || '/' || sum(n_games) AS repr,
     false AS hidden
-FROM tbl
+FROM tbl GROUP BY handle_key, time_bin, plane
