@@ -19,5 +19,14 @@ export async function load({ setHeaders }) {
       `,
       { parse: ["teams"] },
     ),
+    gameTimestamps: await query(
+      `
+      SELECT started_at
+      FROM ladder_games
+      NATURAL JOIN replays
+      WHERE started_at >= unixepoch('now', '-61 days')
+      ORDER BY started_at
+      `,
+    ),
   };
 }

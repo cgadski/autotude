@@ -8,9 +8,11 @@
 
     import { onMount } from "svelte";
     import { renderChart } from "./listing_chart";
+    import { renderGameScatterChart } from "./game_scatter_chart";
 
     let secondsAgo = 0;
     let chartElement: HTMLElement;
+    let gameScatterElement: HTMLElement;
     let refreshInterval: number;
     let listingsData: any = null;
     let loading = true;
@@ -85,6 +87,34 @@
             }
         };
     });
+
+    onMount(() => {
+        const renderGameScatterWithData = () => {
+            if (data.gameTimestamps && gameScatterElement) {
+                renderGameScatterChart(
+                    { gameTimestamps: data.gameTimestamps },
+                    gameScatterElement,
+                    60, // Show 60 days of data
+                );
+            }
+        };
+
+        renderGameScatterWithData();
+
+        const resizeObserver = new ResizeObserver(() => {
+            renderGameScatterWithData();
+        });
+
+        if (gameScatterElement) {
+            resizeObserver.observe(gameScatterElement);
+        }
+
+        return () => {
+            if (gameScatterElement) {
+                resizeObserver.unobserve(gameScatterElement);
+            }
+        };
+    });
 </script>
 
 <SiteHeader navPage="home" />
@@ -128,23 +158,12 @@
 </section>
 
 <section>
-    <h2>Past activity (3 days)</h2>
-    {#if loading}
-        <div
-            class="d-flex justify-content-center align-items-center my-3"
-            style="height: 200px;"
-        >
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    {:else}
-        <div
-            class="w-100 my-3"
-            style="height: 200px; box-sizing: border-box;"
-            bind:this={chartElement}
-        ></div>
-    {/if}
+    <h2>Game activity (60 days, centered on local midnight)</h2>
+    <div
+        class="w-100 my-3"
+        style="height: 400px; box-sizing: border-box;"
+        bind:this={gameScatterElement}
+    ></div>
 </section>
 
 <section class="no-bg narrow">
