@@ -21,10 +21,11 @@ export async function load({ setHeaders }) {
     ),
     gameTimestamps: await query(
       `
-      SELECT started_at
+      SELECT started_at, duration, day_bin
       FROM ladder_games
       NATURAL JOIN replays
-      WHERE started_at >= unixepoch('now', '-61 days')
+      NATURAL JOIN replays_wide
+      WHERE day_bin >= date('now', '-360 days')
       ORDER BY started_at
       `,
     ),

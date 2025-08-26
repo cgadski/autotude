@@ -7,12 +7,10 @@
     import HandlePicker from "$lib/HandlePicker.svelte";
 
     import { onMount } from "svelte";
-    import { renderChart } from "./listing_chart";
-    import { renderGameScatterChart } from "./game_scatter_chart";
+    import { getGameRuns, renderScheduleChart } from "./schedule_chart";
 
     let secondsAgo = 0;
-    let chartElement: HTMLElement;
-    let gameScatterElement: HTMLElement;
+    let scheduleElement: HTMLElement;
     let refreshInterval: number;
     let listingsData: any = null;
     let loading = true;
@@ -65,53 +63,29 @@
     });
 
     onMount(() => {
-        const renderChartWithData = () => {
-            if (listingsData && chartElement) {
-                renderChart(listingsData, chartElement);
-            }
-        };
-
-        renderChartWithData();
-
-        const resizeObserver = new ResizeObserver(() => {
-            renderChartWithData();
-        });
-
-        if (chartElement) {
-            resizeObserver.observe(chartElement);
-        }
-
-        return () => {
-            if (chartElement) {
-                resizeObserver.unobserve(chartElement);
-            }
-        };
-    });
-
-    onMount(() => {
-        const renderGameScatterWithData = () => {
-            if (data.gameTimestamps && gameScatterElement) {
-                renderGameScatterChart(
+        const render = () => {
+            if (data.gameTimestamps && scheduleElement) {
+                renderScheduleChart(
                     { gameTimestamps: data.gameTimestamps },
-                    gameScatterElement,
+                    scheduleElement,
                     60, // Show 60 days of data
                 );
             }
         };
 
-        renderGameScatterWithData();
+        render();
 
         const resizeObserver = new ResizeObserver(() => {
-            renderGameScatterWithData();
+            render();
         });
 
-        if (gameScatterElement) {
-            resizeObserver.observe(gameScatterElement);
+        if (scheduleElement) {
+            resizeObserver.observe(scheduleElement);
         }
 
         return () => {
-            if (gameScatterElement) {
-                resizeObserver.unobserve(gameScatterElement);
+            if (scheduleElement) {
+                resizeObserver.unobserve(scheduleElement);
             }
         };
     });
@@ -157,13 +131,8 @@
     {/if}
 </section>
 
-<section>
-    <h2>Game activity (60 days, centered on local midnight)</h2>
-    <div
-        class="w-100 my-3"
-        style="height: 400px; box-sizing: border-box;"
-        bind:this={gameScatterElement}
-    ></div>
+<section class="narrow">
+    <div class="w-100" bind:this={scheduleElement}></div>
 </section>
 
 <section class="no-bg narrow">
