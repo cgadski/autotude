@@ -2,30 +2,15 @@
     export let data;
 
     import SiteHeader from "$lib/SiteHeader.svelte";
-    import GameCardSmall from "$lib/GameCardSmall.svelte";
-    import GamePicker from "$lib/GamePicker.svelte";
-    import HandlePicker from "$lib/HandlePicker.svelte";
-
     import { onMount } from "svelte";
     import { getGameRuns, renderScheduleChart } from "./schedule_chart";
+    import { renderStat } from "$lib";
 
     let secondsAgo = 0;
     let scheduleElement: HTMLElement;
     let refreshInterval: number;
     let listingsData: any = null;
     let loading = true;
-    let selectedGame: string | null = null;
-    let selectedHandles: string[] = [];
-
-    function areHandlesInGame(game: any, handles: string[]): boolean {
-        if (!handles.length || !game.teams) return false;
-
-        const team3Players = game.teams["3"] || [];
-        const team4Players = game.teams["4"] || [];
-        const allPlayers = [...team3Players, ...team4Players];
-
-        return handles.every((handle) => allPlayers.includes(handle));
-    }
 
     async function fetchListingsData() {
         try {
@@ -136,39 +121,18 @@
     <div class="w-100" bind:this={scheduleElement}></div>
 </section>
 
-<section class="no-bg narrow">
-    <h2>Games this week</h2>
-
-    <HandlePicker handles={data.handles} bind:selectedHandles />
-
-    <GamePicker games={data.recentGames} bind:selectedGame let:game>
-        <div
-            class="game-square-content"
-            class:team-3={game.winner === 3}
-            class:team-4={game.winner === 4}
-        >
-            {#if selectedHandles.length > 0 && areHandlesInGame(game, selectedHandles)}
-                <div class="player-indicator"></div>
-            {/if}
-        </div>
-    </GamePicker>
+<section class="">
+    <h2>Game database</h2>
+    <div class="row g-3">
+        {#each data.globalStats as item}
+            <div class="col-auto">
+                <div class="card">
+                    <div class="card-body py-2 px-3">
+                        <div class="text-muted small">{item.description}</div>
+                        <div class="fw-bold">{renderStat(item.stat)}</div>
+                    </div>
+                </div>
+            </div>
+        {/each}
+    </div>
 </section>
-
-<style>
-    .game-square-content {
-        width: 100%;
-        height: 100%;
-        position: relative;
-    }
-
-    .player-indicator {
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background-color: black;
-        border-radius: 50%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-</style>

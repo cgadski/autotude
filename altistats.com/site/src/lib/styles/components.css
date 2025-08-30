@@ -70,8 +70,8 @@ section.no-bg table {
 }
 
 .game-square {
-    height: 24px;
-    width: 24px;
+    height: 36px;
+    width: 36px;
     border: 1px solid transparent;
     border-radius: 2px;
     cursor: pointer;

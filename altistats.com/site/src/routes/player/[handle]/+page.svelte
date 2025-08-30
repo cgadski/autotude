@@ -1,5 +1,6 @@
 <script lang="ts">
     import { planes } from "$lib";
+    import VerticalList from "$lib/VerticalList.svelte";
 
     export let data;
 
@@ -72,7 +73,7 @@
                 });
             }
         }
-        return planeData.sort((a, b) => b.n_games - a.n_games);
+        return planeData.sort((a, b) => a.plane - b.plane);
     }
 
     $: maxGameFraction = Math.max(
@@ -80,11 +81,11 @@
     );
 </script>
 
-{#each monthlyData as monthData}
-    <div class="d-flex flex-wrap align-items-center gap-1 month-group">
-        <div class="fw-bold text-nowrap" style="min-width: 80px;">
-            {formatMonth(monthData.month)}
-        </div>
+<VerticalList items={monthlyData} let:item={monthData}>
+    <td class="text-end align-middle fw-bold" style="width: 6em;">
+        {formatMonth(monthData.month)}
+    </td>
+    <td class="align-middle d-flex flex-wrap gap-1">
         {#each getPlanesSortedByGames(monthData.planes) as { plane, n_games, n_won, game_fraction }}
             <span class="plane-pill">
                 <span
@@ -101,22 +102,10 @@
                 </span>
             </span>
         {/each}
-    </div>
-{/each}
+    </td>
+</VerticalList>
 
 <style>
-    .month-group {
-        padding-bottom: 0.5rem;
-        margin-bottom: 0.5rem;
-        border-bottom: 1px solid #eee;
-    }
-
-    .month-group:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-        margin-bottom: 0;
-    }
-
     .plane-pill {
         background: linear-gradient(to right, #f8f9fa, #ffffff);
         border: 1px solid #e9ecef;

@@ -10,7 +10,6 @@
     let results: string[] = [];
     let fuse: Fuse<string>;
 
-    // Initialize Fuse.js when handles data is available
     $: if (handles && handles.length) {
         const options = {
             includeScore: true,
@@ -19,17 +18,14 @@
         fuse = new Fuse(handles, options);
     }
 
-    // Update search results when search term changes
     $: {
         if (searchTerm && fuse) {
             const searchResults = fuse.search(searchTerm);
-            // Filter out already selected handles
             results = searchResults
                 .map((result) => result.item)
                 .filter((handle) => !selectedHandles.includes(handle))
                 .slice(0, 10);
         } else {
-            // Show no results when search term is empty
             results = [];
         }
     }

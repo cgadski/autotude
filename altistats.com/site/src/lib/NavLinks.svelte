@@ -25,7 +25,7 @@
             class:active={navPage === "history"}
             href="/history"
         >
-            <i class="bi bi-clock-history"></i> History
+            <i class="bi bi-database"></i> Games
         </a>
     </nav>
 </div>

@@ -13,7 +13,6 @@ const STAT_CONFIG: Record<
   p_goal_rate: { min: 0, max: 6, bandwidth: 0.5 },
   p_possession: { min: 0, max: 0.4, bandwidth: 0.05 },
   p_possession_goal_rate: { min: 0, max: 35, bandwidth: 3 },
-  p_total_time: { min: 0, max: 200, bandwidth: 20 },
 };
 
 // Simple kernel density estimation

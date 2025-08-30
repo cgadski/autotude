@@ -18,12 +18,10 @@
     <a
         href={item.href}
         on:click={(e) => handleClick(e, item.href)}
-        class="px-1 text-primary rounded {item.active
+        class="px-1 text-primary rounded fw-medium {item.active
             ? 'bg-primary text-white text-decoration-none'
-            : ''}"
+            : 'text-primary'}"
     >
-        <span class="fw-medium {item.active ? 'text-white' : 'text-primary'}"
-            >{item.label}</span
-        >
+        {item.label}
     </a>
 </HorizontalList>

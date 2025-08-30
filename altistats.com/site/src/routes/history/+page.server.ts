@@ -1,67 +1,55 @@
 import { query } from "$lib/stats";
 
-export async function load({ params }) {
-  return {
-    globalStats: await query(
-      `
-      SELECT query_name, description, stat
-      FROM global_stats
-      NATURAL JOIN stats
-      ORDER BY query_name
+export type QueryParams = {
+  period: string | null;
+};
+
+type TimeBin = {
+  time_bin: number;
+  time_bin_desc: string;
+};
+
+async function getGamesForPeriod(timeBinIndex: number | null) {
+  if (timeBinIndex === null) {
+    return [];
+  }
+
+  return query(
+    `
+    SELECT *
+      FROM ladder_games
+      NATURAL JOIN replays_wide
+      NATURAL JOIN replays
+      NATURAL JOIN game_teams
+      WHERE time_bin = ?
+      ORDER BY started_at DESC
     `,
-    ),
-  };
+    { args: [timeBinIndex], parse: ["teams"] },
+  );
 }
 
-// export async function load({ url }): Promise<HistoryData> {
-//   const globalStats = await getGlobalStats();
-//   const availableStats = getStatsDb()
-//     .prepare(
-//       `
-//       SELECT DISTINCT query_name, description, attributes
-//       FROM stats
-//       NATURAL JOIN global_stats
-//       ORDER BY query_name
-//       `,
-//     )
-//     .all()
-//     .map((row: any) => {
-//       const globalStat = globalStats.find(
-//         (gs) => gs.query_name === row.query_name,
-//       );
-//       return {
-//         ...row,
-//         attributes: JSON.parse(row.attributes),
-//         total: globalStat?.stat || 0,
-//       };
-//     });
+export async function load({ url }) {
+  const timeBins: TimeBin[] = await query(
+    `SELECT time_bin, time_bin_desc FROM time_bin_desc ORDER BY time_bin DESC`,
+  );
 
-//   const selectedStat =
-//     url.searchParams.get("stat") ||
-//     availableStats[0]?.query_name ||
-//     "_total_games";
+  const params: QueryParams = {
+    period:
+      url.searchParams.get("period") || timeBins[0]?.time_bin_desc || null,
+  };
 
-//   // Get period breakdown for the selected stat using materialized stats
-//   const periodBreakdownQuery = `
-//     SELECT
-//       time_bin,
-//       time_bin_desc,
-//       stat
-//     FROM global_stats
-//     NATURAL JOIN stats
-//     LEFT JOIN time_bin_desc USING (time_bin)
-//     WHERE query_name = ?
-//       AND time_bin IS NOT NULL
-//     ORDER BY time_bin ASC
-//   `;
+  const timeBinIndex = params.period
+    ? timeBins.find((tb) => tb.time_bin_desc === params.period)?.time_bin
+    : null;
 
-//   const periodBreakdown = getStatsDb()
-//     .prepare(periodBreakdownQuery)
-//     .all(selectedStat);
-
-//   return {
-//     selectedStat,
-//     periodBreakdown,
-//     availableStats,
-//   };
-// }
+  return {
+    params,
+    timeBins,
+    handles: (
+      await query(
+        "SELECT DISTINCT handle FROM handles NATURAL JOIN players_wide",
+      )
+    ).map((h) => h.handle),
+    games: await getGamesForPeriod(timeBinIndex),
+  };
+}
