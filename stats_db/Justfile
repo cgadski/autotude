@@ -27,6 +27,8 @@ dump: load-schema load-csvs clear-errors
 load-views:
 	{{sqlite}} < views/game_teams.sql
 	{{sqlite}} < views/last_played.sql
+	{{sqlite}} < views/primary_planes.sql
+	{{sqlite}} < views/monthly_activity.sql
 
 load-stats:
 	python3 materialize_stats.py --db {{STATS_DB}} --stats-dir stats/
