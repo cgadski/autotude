@@ -25,7 +25,7 @@ export async function load({ setHeaders }) {
       FROM ladder_games
       NATURAL JOIN replays
       NATURAL JOIN replays_wide
-      WHERE day_bin >= date('now', '-360 days')
+      WHERE day_bin >= date('now', '-90 days')
       ORDER BY started_at
       `,
     ),

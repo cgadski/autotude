@@ -17,7 +17,7 @@
     let selectedGame: string | null = null;
     let selectedHandles: string[] = [];
 
-    function checkPlayersInGame(game: any, handles: string[]): boolean {
+    function areHandlesInGame(game: any, handles: string[]): boolean {
         if (!handles.length || !game.teams) return false;
 
         const team3Players = game.teams["3"] || [];
@@ -68,7 +68,6 @@
                 renderScheduleChart(
                     { gameTimestamps: data.gameTimestamps },
                     scheduleElement,
-                    60, // Show 60 days of data
                 );
             }
         };
@@ -94,7 +93,7 @@
 <SiteHeader navPage="home" />
 
 <section>
-    <h2>Active servers</h2>
+    <h2>Server listing <span class="text-muted">(live)</span></h2>
     {#if loading}
         <div class="d-flex justify-content-center py-3">
             <div class="spinner-border text-primary" role="status">
@@ -131,7 +130,9 @@
     {/if}
 </section>
 
-<section class="narrow">
+<section>
+    <h2>Ranked activity <span class="text-muted">(last 3 months)</span></h2>
+
     <div class="w-100" bind:this={scheduleElement}></div>
 </section>
 
@@ -146,7 +147,7 @@
             class:team-3={game.winner === 3}
             class:team-4={game.winner === 4}
         >
-            {#if selectedHandles.length > 0 && checkPlayersInGame(game, selectedHandles)}
+            {#if selectedHandles.length > 0 && areHandlesInGame(game, selectedHandles)}
                 <div class="player-indicator"></div>
             {/if}
         </div>

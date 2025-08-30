@@ -68,11 +68,11 @@ export function renderScheduleChart(
   const runs = getGameRuns(data.gameTimestamps);
   if (runs.length === 0) return;
 
-  const margin = { top: 20, right: 30, bottom: 40, left: 80 };
+  const margin = { top: 20, right: 30, bottom: 40, left: 50 };
   const width =
     element.clientWidth - margin.left - margin.right ||
     960 - margin.left - margin.right;
-  const height = 900 - margin.top - margin.bottom;
+  const height = 400 - margin.top - margin.bottom;
 
   const runsByDay = d3.group(runs, (d) => d.day_bin);
 
@@ -174,45 +174,6 @@ export function renderScheduleChart(
     .attr("stroke", "#f00")
     .attr("stroke-dasharray", "2,2")
     .attr("opacity", 0.9);
-
-  // Add time label for current time
-  svg
-    .append("text")
-    .attr("x", xScale(normalizedCurrentTime) + 2)
-    .attr("y", -5)
-    .attr("text-anchor", "start")
-    .attr("font-size", "10px")
-    .attr("fill", "#f00")
-    .text("Now");
-
-  months.forEach((month) => {
-    const monthDays = daysByMonth.get(month) || [];
-    const firstDayOfMonth = monthDays[0];
-    const y = yScale(firstDayOfMonth) || 0;
-
-    svg
-      .append("line")
-      .attr("x1", 0)
-      .attr("x2", width)
-      .attr("y1", y)
-      .attr("y2", y)
-      .attr("stroke", "#ddd")
-      .attr("stroke-width", 1)
-      .attr("opacity", 0.5);
-
-    // Add month label
-    svg
-      .append("text")
-      .attr("x", -margin.left + 5)
-      .attr("y", y - 5)
-      .attr("text-anchor", "start")
-      .attr("font-size", "11px")
-      .attr("font-weight", "bold")
-      .attr("fill", "#888")
-      .text(
-        new Date(month + "-01").toLocaleString("default", { month: "short" }),
-      );
-  });
 
   days.forEach((day) => {
     const dayRuns = runsByDay.get(day) || [];
