@@ -21,13 +21,13 @@ dump: load-schema load-csvs clear-errors
 	{{sqlite}} < tables/replays_wide.sql
 	{{sqlite}} < tables/ladder_games.sql
 	{{sqlite}} < tables/players_wide.sql
+	{{sqlite}} < tables/players_short.sql
 	{{sqlite}} < tables/time_alive.sql
 	{{sqlite}} "ANALYZE"
 
 load-views:
 	{{sqlite}} < views/game_teams.sql
 	{{sqlite}} < views/last_played.sql
-	{{sqlite}} < views/primary_planes.sql
 	{{sqlite}} < views/monthly_activity.sql
 
 load-stats:
