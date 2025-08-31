@@ -1,4 +1,4 @@
-CREATE TABLE time_bin_desc (
+CREATE TABLE IF NOT EXISTS time_bin_desc (
     time_bin INTEGER PRIMARY KEY,
     time_bin_desc TEXT UNIQUE
 );
@@ -26,13 +26,23 @@ CREATE TABLE IF NOT EXISTS replays_wide (
     winner -- last team that scored
 );
 
+CREATE TEMP TABLE replays_fresh AS
+SELECT r.*
+FROM replays r
+LEFT JOIN replays_wide rw USING (replay_key)
+WHERE (
+    rw.replay_key is null
+    OR rw.next_key is null
+    AND server != ''
+);
+
 INSERT OR REPLACE INTO replays_wide
 WITH
 time_bin AS (
     SELECT
         replay_key,
         time_bin
-    FROM replays
+    FROM replays_fresh
     JOIN time_bin_desc
     ON time_bin_desc = strftime('%Y-%m', started_at, 'unixepoch')
 ),
@@ -47,7 +57,7 @@ stop_messages AS (
     SELECT
         replay_key,
         count() AS stop_messages
-    FROM replays NATURAL JOIN messages
+    FROM replays_fresh NATURAL JOIN messages
     WHERE player_key IS NULL
     AND (chat_message = 'Players agreed to stop game.'
     OR chat_message LIKE 'Game stopped by %')
@@ -57,7 +67,7 @@ start_messages AS (
     SELECT
         replay_key,
         count() AS start_messages
-    FROM replays NATURAL JOIN messages
+    FROM replays_fresh NATURAL JOIN messages
     WHERE player_key IS NULL
     AND chat_message LIKE 'Start Ranked vote passed with %'
     GROUP BY replay_key
@@ -66,7 +76,7 @@ restart_messages AS (
     SELECT
         replay_key,
         count() AS restart_messages
-    FROM replays NATURAL JOIN messages
+    FROM replays_fresh NATURAL JOIN messages
     WHERE player_key IS NULL
     AND chat_message = 'Game has been restarted.'
     GROUP BY replay_key
@@ -75,7 +85,7 @@ player_messages AS (
     SELECT
         replay_key,
         count() AS player_messages
-    FROM replays NATURAL JOIN messages
+    FROM replays_fresh NATURAL JOIN messages
     WHERE player_key IS NOT NULL
     GROUP BY replay_key
 ),
@@ -85,7 +95,7 @@ n_players AS (
         count(DISTINCT VAPOR) FILTER (WHERE team = 3) AS n_left,
         count(DISTINCT VAPOR) FILTER (WHERE team = 4) AS n_right,
         count(DISTINCT VAPOR) FILTER (WHERE team = 2) AS n_spec
-    FROM replays
+    FROM replays_fresh
     NATURAL JOIN players
     GROUP BY replay_key
 ),
@@ -93,7 +103,7 @@ n_goals AS (
     SELECT
         replay_key,
         count() FILTER (WHERE player_key IS NOT NULL) AS n_goals
-    FROM replays
+    FROM replays_fresh
     LEFT JOIN goals USING (replay_key)
     GROUP BY replay_key
 ),
@@ -108,7 +118,7 @@ winner AS (
             row_number() OVER (
                 PARTITION BY replay_key ORDER BY tick DESC
             ) AS goal_idx
-        FROM replays
+        FROM replays_fresh
         NATURAL JOIN goals
     )
     WHERE goal_idx = 1
@@ -117,9 +127,9 @@ SELECT
     r.replay_key,
     time_bin,
     date(datetime(r.started_at, 'unixepoch'), '-12 hours', 'utc') as day_bin,
-    n_left,
-    n_right,
-    n_spec,
+    coalesce(n_left, 0),
+    coalesce(n_right, 0),
+    coalesce(n_spec, 0),
     n_goals,
     coalesce(start_messages, 0) AS start_messages,
     coalesce(stop_messages, 0) AS stop_messages,
@@ -128,9 +138,9 @@ SELECT
     a.next AS next_key,
     b.replay_key AS prev_key,
     winner
-FROM replays r
+FROM replays_fresh r
 NATURAL JOIN time_bin
-NATURAL JOIN n_players
+NATURAL LEFT JOIN n_players
 NATURAL JOIN n_goals
 NATURAL LEFT JOIN start_messages
 NATURAL LEFT JOIN stop_messages
