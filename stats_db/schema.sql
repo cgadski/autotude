@@ -1,3 +1,5 @@
+PRAGMA journal_mode=WAL;
+
 CREATE TABLE replays (
     replay_key INTEGER PRIMARY KEY,
     stem TEXT,
