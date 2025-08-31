@@ -12,7 +12,8 @@ load-csvs: \
     (load-csv "custom_handles" "vapor TEXT, handle TEXT") \
     (load-csv "perk_names" "id INTEGER, name TEXT") \
     (load-csv "plane_names" "id INTEGER, name TEXT") \
-    (load-csv "broken_replays" "stem TEXT")
+    (load-csv "broken_replays" "stem TEXT") \
+    (load-csv "stat_order" "query_name TEXT")
 
 dump: load-schema load-csvs clear-errors
 	# cargo run --release --bin dump -- --db {{STATS_DB}}

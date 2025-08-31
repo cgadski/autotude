@@ -21,8 +21,6 @@ class StatQuery:
 
 table_prefixes = [
     ('_', 'global_stats'),
-    ('h_', 'historical_stats'),
-    ('hp_', 'historical_player_stats'),
     ('p_', 'player_stats'),
 ]
 
@@ -60,13 +58,22 @@ class StatMaterializer:
         self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
         self.cursor.executescript("""
-            DROP TABLE IF EXISTS stats;
-            CREATE TABLE stats (
+            DROP TABLE IF EXISTS stats_raw;
+            CREATE TABLE stats_raw (
                 stat_key INTEGER PRIMARY KEY,
                 query_name TEXT,
                 description TEXT,
                 attributes JSON
             );
+
+            DROP VIEW IF EXISTS stats;
+            CREATE VIEW stats AS
+            SELECT
+                stats_raw.*,
+                coalesce(stat_order.rowid, 100) AS stat_order
+            FROM stats_raw
+            LEFT JOIN stat_order USING (query_name)
+            ORDER BY stat_order;
 
             DROP TABLE IF EXISTS global_stats;
             CREATE TABLE global_stats (
@@ -98,7 +105,7 @@ class StatMaterializer:
             self.next_stat_key += 1
 
             self.cursor.execute(
-                "INSERT INTO stats VALUES (?, ?, ?, ?)",
+                "INSERT INTO stats_raw VALUES (?, ?, ?, ?)",
                 (stat_key, stat.query_name, stat.description, json.dumps(stat.attributes))
             )
 
