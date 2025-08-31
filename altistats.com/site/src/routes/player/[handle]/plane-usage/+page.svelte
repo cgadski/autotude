@@ -43,13 +43,6 @@
         "randa.png",
     ];
 
-    function formatMonth(monthDesc: string): string {
-        return new Date(monthDesc + "-01").toLocaleDateString("en-US", {
-            month: "short",
-            year: "numeric",
-        });
-    }
-
     function getPlanesSortedByGames(
         planesMap: Map<
             number,
@@ -73,7 +66,7 @@
                 });
             }
         }
-        return planeData.sort((a, b) => a.plane - b.plane);
+        return planeData.sort((a, b) => b.n_games - a.n_games);
     }
 
     $: maxGameFraction = Math.max(
@@ -82,26 +75,29 @@
 </script>
 
 <VerticalList items={monthlyData} let:item={monthData}>
-    <td class="text-end align-middle fw-bold" style="width: 6em;">
-        {formatMonth(monthData.month)}
+    <td class="text-end align-middle" style="width: 4em;">
+        {monthData.month}
     </td>
-    <td class="align-middle d-flex flex-wrap gap-1">
-        {#each getPlanesSortedByGames(monthData.planes) as { plane, n_games, n_won, game_fraction }}
-            <span class="plane-pill">
-                <span
-                    class="pill-background"
-                    style="width: {(game_fraction / maxGameFraction) * 100}%;"
-                ></span>
-                <img
-                    src="/images/{planeImages[plane]}"
-                    alt={planes[plane]}
-                    class="plane-image"
-                />
-                <span class="game-count">
-                    {n_games}
+    <td class="p-0">
+        <div class="d-flex flex-wrap gap-1 p-1">
+            {#each getPlanesSortedByGames(monthData.planes) as { plane, n_games, n_won, game_fraction }}
+                <span class="plane-pill">
+                    <span
+                        class="pill-background"
+                        style="width: {(game_fraction / maxGameFraction) *
+                            100}%;"
+                    ></span>
+                    <img
+                        src="/images/{planeImages[plane]}"
+                        alt={planes[plane]}
+                        class="plane-image"
+                    />
+                    <span class="game-count">
+                        {n_games}
+                    </span>
                 </span>
-            </span>
-        {/each}
+            {/each}
+        </div>
     </td>
 </VerticalList>
 

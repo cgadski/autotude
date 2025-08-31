@@ -18,6 +18,14 @@
         selectedDay = null;
         selectedGame = null;
     }
+
+    // Create a lookup map for game counts per month
+    $: gameCountsMap = new Map(
+        data.gameCountsByMonth.map((item) => [
+            item.time_bin_desc,
+            item.game_count,
+        ]),
+    );
 </script>
 
 <SiteHeader navPage="history" />
@@ -33,6 +41,8 @@
                     label: row.time_bin_desc,
                     href: `?period=${row.time_bin_desc}`,
                     active: data.params.period === row.time_bin_desc,
+                    info:
+                        gameCountsMap.get(row.time_bin_desc)?.toString() || "0",
                 }))}
             />
         </dd>

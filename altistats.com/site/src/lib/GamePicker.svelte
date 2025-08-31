@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { generateCalendarDays } from "$lib";
+    import { generateCalendarDays, formatTime } from "$lib";
     import GameCard from "$lib/GameCard.svelte";
+    import HorizontalList from "$lib/HorizontalList.svelte";
     import type { Game } from "$lib";
     import { onMount } from "svelte";
 
@@ -112,6 +113,19 @@
             selectedDay = lastDay;
         }
     }
+
+    function dayGameCount(day: string) {
+        if (selectedHandles.length > 0) {
+            let games = getPlayerGamesForDay(day).length;
+            if (games > 0) {
+                return games;
+            } else {
+                return "";
+            }
+        } else {
+            return getGamesForDay(day).length;
+        }
+    }
 </script>
 
 {#snippet marker()}
@@ -134,9 +148,7 @@
         ></div>
         {#if hasGames(day)}
             <span class="position-absolute top-0 start-0 ps-1 text-dark small">
-                {selectedHandles.length > 0
-                    ? getPlayerGamesForDay(day).length
-                    : getGamesForDay(day).length}
+                {dayGameCount(day)}
             </span>
         {/if}
         {#if shouldMarkDay(day)}
@@ -201,9 +213,23 @@
                     )}
                 </strong>
                 <div class="small text-muted">
-                    {selectedDayGames.length} game{selectedDayGames.length !== 1
-                        ? "s"
-                        : ""}
+                    <HorizontalList
+                        items={[
+                            `${selectedDayGames.length} game${selectedDayGames.length !== 1 ? "s" : ""}`,
+                            ...(selectedDayGames.length > 0
+                                ? [
+                                      selectedDayGames.length > 1
+                                          ? `${formatTime(selectedDayGames[0].started_at)} - ${formatTime(selectedDayGames[selectedDayGames.length - 1].started_at)}`
+                                          : formatTime(
+                                                selectedDayGames[0].started_at,
+                                            ),
+                                  ]
+                                : []),
+                        ]}
+                        let:item
+                    >
+                        {item}
+                    </HorizontalList>
                 </div>
             </div>
             <div class="d-flex flex-wrap gap-1 mb-3">

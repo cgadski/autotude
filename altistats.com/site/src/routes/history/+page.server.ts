@@ -42,6 +42,17 @@ export async function load({ url }) {
     ? timeBins.find((tb) => tb.time_bin_desc === params.period)?.time_bin
     : null;
 
+  const gameCountsByMonth = await query(
+    `
+    SELECT time_bin_desc, COUNT(*) as game_count
+    FROM replays_wide
+    NATURAL JOIN ladder_games
+    NATURAL JOIN time_bin_desc
+    GROUP BY time_bin
+    ORDER BY time_bin DESC
+    `,
+  );
+
   return {
     params,
     timeBins,
@@ -51,5 +62,6 @@ export async function load({ url }) {
       )
     ).map((h) => h.handle),
     games: await getGamesForPeriod(timeBinIndex),
+    gameCountsByMonth,
   };
 }

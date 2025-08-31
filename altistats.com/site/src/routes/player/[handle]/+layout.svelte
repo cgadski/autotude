@@ -40,7 +40,7 @@
         <HorizontalList items={data.nicks} let:item>{item}</HorizontalList>
     </div>
 
-    <div class="row g-3">
+    <div class="row g-2">
         <div class="col-auto">
             <div class="card">
                 <div class="card-body py-2 px-3">
@@ -78,7 +78,7 @@
 </section>
 
 <section>
-    <dl>
+    <dl class="mb-0">
         <dt>View</dt>
         <dd>
             <LinkList items={viewItems} />

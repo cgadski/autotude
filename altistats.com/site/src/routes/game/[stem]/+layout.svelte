@@ -2,6 +2,7 @@
     import SiteHeader from "$lib/SiteHeader.svelte";
     import LinkList from "$lib/LinkList.svelte";
     import { page } from "$app/stores";
+    import { formatTimestamp } from "$lib";
 
     export let data;
 
@@ -49,9 +50,7 @@
             })}
         </div>
         <div class="text-muted ms-auto">
-            {Math.floor(data.game.duration / 60)}:{(data.game.duration % 60)
-                .toString()
-                .padStart(2, "0")}
+            {formatTimestamp(data.game.duration)}
         </div>
     </div>
 

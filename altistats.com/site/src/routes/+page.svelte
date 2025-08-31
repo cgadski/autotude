@@ -115,7 +115,7 @@
     {/if}
 </section>
 
-<section>
+<section class="narrow">
     <h2>Ranked activity <span class="text-muted">(last 3 months)</span></h2>
 
     <div class="w-100" bind:this={scheduleElement}></div>
@@ -123,7 +123,7 @@
 
 <section class="">
     <h2>Game database</h2>
-    <div class="row g-3">
+    <div class="row g-2">
         {#each data.globalStats as item}
             <div class="col-auto">
                 <div class="card">

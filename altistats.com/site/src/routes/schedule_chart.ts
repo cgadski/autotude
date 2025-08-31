@@ -117,12 +117,20 @@ export function renderScheduleChart(
     return `${Math.floor(localHour)}:00`;
   };
 
+  // Determine number of ticks based on screen width
+  const isMobile = width < 600;
+  const tickCount = isMobile ? 5 : 14; // Every 3rd hour on mobile (15 hours / 3 = 5 ticks)
+  const gridTicks = isMobile ? xScale.ticks(5) : xScale.ticks(14);
+
   // Create bottom x-axis
-  const xAxisBottom = d3.axisBottom(xScale).ticks(14).tickFormat(formatHour);
+  const xAxisBottom = d3
+    .axisBottom(xScale)
+    .ticks(tickCount)
+    .tickFormat(formatHour);
   svg.append("g").attr("transform", `translate(0,${height})`).call(xAxisBottom);
 
   // Create top x-axis
-  const xAxisTop = d3.axisTop(xScale).ticks(14).tickFormat(formatHour);
+  const xAxisTop = d3.axisTop(xScale).ticks(tickCount).tickFormat(formatHour);
   svg.append("g").call(xAxisTop);
 
   // Add vertical grid lines for hours
@@ -130,7 +138,7 @@ export function renderScheduleChart(
     .append("g")
     .attr("class", "grid-hours")
     .selectAll("line")
-    .data(xScale.ticks(14))
+    .data(gridTicks)
     .enter()
     .append("line")
     .attr("x1", (d) => xScale(d))

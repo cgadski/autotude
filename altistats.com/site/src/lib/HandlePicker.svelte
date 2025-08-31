@@ -4,7 +4,7 @@
 
     export let handles: string[] = [];
     export let selectedHandles: string[] = [];
-    export let handleDescription: string = "Showing games with:";
+    export let handleDescription: string = "Marking games with:";
 
     let searchTerm = "";
     let results: string[] = [];
@@ -56,10 +56,13 @@
 </script>
 
 <div class="input-group mb-3">
+    <span class="input-group-text">
+        <i class="bi bi-search"></i>
+    </span>
     <input
         type="text"
         class="form-control"
-        placeholder="Search for player..."
+        placeholder="Filter by handle..."
         bind:value={searchTerm}
         on:keydown={handleKeydown}
     />

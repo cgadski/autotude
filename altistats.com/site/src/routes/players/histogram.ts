@@ -164,10 +164,7 @@ export function renderHistogram(
   data: any,
   selectedHandles: string[] = [],
 ): void {
-  console.log("renderHistogram called", { element, data });
-
   if (!element || !data?.playerStats?.length) {
-    console.log("Missing element or data, returning early");
     return;
   }
 
@@ -191,8 +188,6 @@ export function renderHistogram(
     .style("pointer-events", "none")
     .style("opacity", 0)
     .style("z-index", "1000");
-
-  console.log("Tooltip created:", tooltip.node());
 
   // Extract stat values
   const statValues = data.playerStats
@@ -265,14 +260,9 @@ export function renderHistogram(
   }
 
   const maxDensity = d3.max(density, (d) => d[1]) || 0;
-  console.log(
-    `Using bandwidth: ${bandwidth}, density range: ${d3.extent(density, (d) => d[1])}, max: ${maxDensity}`,
-  );
 
   // If density is too flat, use a simple histogram approach instead
   if (maxDensity < 0.001) {
-    console.log("Density too flat, falling back to jittered dots");
-
     // Generate consistent jitter positions
     const jitterMap = generateConsistentJitter(
       data.playerStats,
@@ -371,9 +361,6 @@ export function renderHistogram(
       .attr("transform", `translate(0,${height})`)
       .call(d3.axisBottom(xScale).tickFormat((d) => renderStat(d)));
 
-    console.log(
-      `Jittered dot plot rendered with ${statValues.length} data points`,
-    );
     return;
   }
 
@@ -506,8 +493,6 @@ export function renderHistogram(
   g.append("g")
     .attr("transform", `translate(0,${height})`)
     .call(d3.axisBottom(xScale).tickFormat((d) => renderStat(d)));
-
-  console.log(`Violin plot rendered with ${statValues.length} data points`);
 
   // Clean up previous resize handler
   if (currentResizeHandler) {

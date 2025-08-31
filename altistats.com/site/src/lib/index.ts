@@ -62,6 +62,13 @@ export function formatDatetime(unixEpoch: number): string {
   return `${month} ${day} ${hours}h${minutes}`;
 }
 
+export function formatTime(unixEpoch: number): string {
+  const date = new Date(unixEpoch * 1000);
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
 export function formatShortDate(unixEpoch: number) {
   const date = new Date(unixEpoch * 1000);
   return date.toLocaleDateString("en-GB", {
