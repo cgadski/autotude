@@ -22,7 +22,7 @@ async function getGamesForPeriod(timeBinIndex: number | null) {
       NATURAL JOIN replays
       NATURAL JOIN game_teams
       WHERE time_bin = ?
-      ORDER BY started_at DESC
+      ORDER BY started_at
     `,
     { args: [timeBinIndex], parse: ["teams"] },
   );

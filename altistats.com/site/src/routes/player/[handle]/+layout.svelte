@@ -1,22 +1,22 @@
 <script lang="ts">
     import SiteHeader from "$lib/SiteHeader.svelte";
-    import { formatDate } from "$lib";
+    import { formatDate, renderStat } from "$lib";
     import HorizontalList from "$lib/HorizontalList.svelte";
+    import LinkList from "$lib/LinkList.svelte";
     import { page } from "$app/stores";
-    import { goto } from "$app/navigation";
 
     export let data;
 
     const views = [
         {
-            name: "Activity",
+            name: "Games",
             path: `/player/${data.handle}`,
             routeId: "/player/[handle]",
         },
         {
-            name: "Games",
-            path: `/player/${data.handle}/games`,
-            routeId: "/player/[handle]/games",
+            name: "Plane usage",
+            path: `/player/${data.handle}/plane-usage`,
+            routeId: "/player/[handle]/plane-usage",
         },
         {
             name: "Stats",
@@ -25,11 +25,11 @@
         },
     ];
 
-    $: currentView = views.find((view) => view.routeId === $page.route.id);
-
-    function navigateTo(path: string) {
-        goto(path, { noScroll: true });
-    }
+    $: viewItems = views.map((view) => ({
+        label: view.name,
+        href: view.path,
+        active: view.routeId === $page.route.id,
+    }));
 </script>
 
 <SiteHeader />
@@ -62,7 +62,7 @@
             <div class="card">
                 <div class="card-body py-2 px-3">
                     <div class="text-muted small">Total games</div>
-                    <div class="fw-bold">1,234</div>
+                    <div class="fw-bold">{renderStat(data.nPlayed)}</div>
                 </div>
             </div>
         </div>
@@ -78,18 +78,12 @@
 </section>
 
 <section>
-    <div class="btn-group mb-3" role="group">
-        {#each views as view}
-            <button
-                type="button"
-                class="btn btn-outline-primary"
-                class:active={currentView?.routeId === view.routeId}
-                on:click={() => navigateTo(view.path)}
-            >
-                {view.name}
-            </button>
-        {/each}
-    </div>
+    <dl>
+        <dt>View</dt>
+        <dd>
+            <LinkList items={viewItems} />
+        </dd>
+    </dl>
 
     <slot />
 </section>

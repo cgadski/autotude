@@ -5,9 +5,9 @@ export async function load({ setHeaders }) {
     globalStats: await query(
       `
       SELECT query_name, description, stat
-      FROM global_stats
-      NATURAL JOIN stats
-      ORDER BY query_name
+      FROM stats
+      NATURAL JOIN global_stats
+      ORDER BY stat_order
     `,
     ),
     gameTimestamps: await query(

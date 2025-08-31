@@ -16,11 +16,10 @@ SELECT
     handle_key,
     NULL AS time_bin,
     NULL AS plane,
-    sum(time_alive) / sum(game_duration) AS stat,
-    format('%.2f', sum(time_alive) / sum(game_duration)) || ' | ' || sum(time_alive) || 'd ' || sum(game_duration) || 'd' AS repr,
-    sum(time_alive) < 30 * 60 * 60 AS hidden
-FROM tbl
-GROUP BY handle_key
+    sum(time_alive) / (30 * 60 * 60) AS stat,
+    sum(time_alive) || "d" AS repr,
+    false AS hidden
+FROM tbl GROUP BY handle_key
 
 UNION ALL
 
@@ -31,7 +30,7 @@ SELECT
     NULL AS plane,
     sum(time_alive) / (30 * 60 * 60) AS stat,
     sum(time_alive) || "d" AS repr,
-    sum(time_alive) < 30 * 60 * 60 AS hidden
+    false AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
 UNION ALL
@@ -43,7 +42,7 @@ SELECT
     plane,
     sum(time_alive) / (30 * 60 * 60) AS stat,
     sum(time_alive) || "d" AS repr,
-    sum(time_alive) < 30 * 60 * 60 AS hidden
+    false AS hidden
 FROM tbl GROUP BY handle_key, plane
 
 UNION ALL
@@ -55,5 +54,5 @@ SELECT
     plane,
     sum(time_alive) / (30 * 60 * 60) AS stat,
     sum(time_alive) || "d" AS repr,
-    sum(time_alive) < 30 * 60 * 60 AS hidden
+    false AS hidden
 FROM tbl GROUP BY handle_key, time_bin, plane

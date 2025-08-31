@@ -1,4 +1,4 @@
-import { query, queryOne } from "$lib/stats.js";
+import { query, queryOne, queryValue } from "$lib/stats.js";
 import { error } from "@sveltejs/kit";
 
 export async function load({ params }) {
@@ -20,25 +20,29 @@ export async function load({ params }) {
   return {
     handle: params.handle,
     handleKey,
-    lastPlayed: (
-      await queryOne(
-        `
+    lastPlayed: await queryValue(
+      `
       SELECT last_played FROM last_played
       WHERE handle_key = ?
       `,
-        { args: [handleKey] },
-      )
-    )?.last_played,
-    nicks: (
-      await queryOne(
-        `
+      { args: [handleKey] },
+    ),
+    nicks: await queryValue(
+      `
         SELECT nicks
         FROM handle_nicks
         WHERE handle_key = ?
         `,
-        { args: [handleKey], parse: ["nicks"] },
-      )
-    ).nicks,
+      { args: [handleKey], parse: ["nicks"] },
+    ),
+    nPlayed: await queryValue(
+      `
+      SELECT count()
+      FROM players_short
+      WHERE handle_key = ?
+      `,
+      { args: [handleKey] },
+    ),
     stats: await query(
       `
       SELECT query_name, description, stat, attributes

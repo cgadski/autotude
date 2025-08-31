@@ -39,77 +39,18 @@ section.no-bg table {
     --bs-table-bg: transparent !important;
 }
 
-/* Game squares */
-.game-square-content {
-    width: 100%;
-    height: 100%;
-    border-radius: 2px;
-}
-
-.game-square-content.win {
-    background-color: #a3d5a3;
-}
-
-.game-square-content.loss {
-    background-color: #f5a3a3;
-}
-
-.game-square-content.team-3 {
-    background-color: rgba(220, 53, 69, 0.25);
-}
-
-.game-square-content.team-4 {
-    background-color: rgba(13, 110, 253, 0.25);
-}
-
-.game-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px;
-}
-
-.game-square {
-    height: 36px;
-    width: 36px;
-    border: 1px solid transparent;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    padding: 0;
-    margin: 0;
-    background: none;
-}
-
-/*.game-square:hover {
-    transform: scale(1.15);
-    border-color: #ffffff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}*/
-
-.game-square.selected {
-    border-color: #0d6efd;
-    border-width: 3px;
-    /*box-shadow: 0 0 0 1px #0d6efd;*/
-}
-
-.default-square {
-    width: 100%;
-    height: 100%;
-    border-radius: 2px;
-}
-
-.default-square.win {
-    background-color: #a3d5a3;
-}
-
-.default-square.loss {
-    background-color: #f5a3a3;
-}
-
 /* Responsive adjustments */
 @media (max-width: 576px) {
     section > h2 {
         font-size: 1.1rem;
     }
+}
+
+/* Team background colors */
+.team-red {
+    background-color: #fef2f2;
+}
+
+.team-blue {
+    background-color: #eff6ff;
 }

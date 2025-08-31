@@ -1,11 +1,12 @@
-_avg_duration
 _games
+_time
+_avg_duration
 _goals
 _kills
-_time
 p_kill_rate
 p_death_rate
 p_kd
+p_goal_rate
 p_possession
 p_possession_goals
 p_turnovers

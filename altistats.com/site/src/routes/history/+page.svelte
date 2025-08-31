@@ -1,7 +1,7 @@
 <script lang="ts">
     export let data;
     import HorizontalList from "$lib/HorizontalList.svelte";
-    import GameCardSmall from "$lib/GameCardSmall.svelte";
+    import GameCard from "$lib/GameCard.svelte";
     import GamePicker from "$lib/GamePicker.svelte";
     import HandlePicker from "$lib/HandlePicker.svelte";
 
@@ -23,6 +23,8 @@
 <SiteHeader navPage="history" />
 
 <section>
+    <HandlePicker handles={data.handles} bind:selectedHandles />
+
     <dl>
         <dt>Month</dt>
         <dd>
@@ -35,8 +37,6 @@
             />
         </dd>
     </dl>
-
-    <HandlePicker handles={data.handles} bind:selectedHandles />
 
     <GamePicker
         month={data.params.period || data.timeBins[0]?.time_bin_desc || ""}

@@ -158,3 +158,21 @@ export function renderStat(stat: string | number): string {
     })
     .join(" ");
 }
+
+export function generateCalendarDays(period: string) {
+  // period is yyyy-mm
+  const [year, monthNum] = period.split("-").map(Number);
+  const firstDay = new Date(year, monthNum - 1, 1);
+  const daysCount = new Date(year, monthNum, 0).getDate();
+
+  return [
+    ...Array(firstDay.getDay()).fill(null),
+    ...Array.from(
+      { length: daysCount },
+      (_, i) =>
+        new Date(Date.UTC(year, monthNum - 1, i + 1))
+          .toISOString()
+          .split("T")[0],
+    ),
+  ];
+}

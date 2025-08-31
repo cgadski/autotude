@@ -92,7 +92,9 @@
             <HorizontalList items={selectedHandles}>
                 <svelte:fragment let:item let:index>
                     <div class="d-flex align-items-center">
-                        <span>{item}</span>
+                        <a href="/player/{encodeURIComponent(item)}">
+                            {item}
+                        </a>
                         <button
                             class="btn text-danger p-0 ms-2"
                             on:click={() => removeHandle(item)}

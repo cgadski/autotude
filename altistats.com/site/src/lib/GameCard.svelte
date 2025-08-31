@@ -1,77 +1,87 @@
 <script lang="ts">
-    import { formatDatetime, formatDuration } from "$lib";
+    import { formatDatetime, formatTimeAgo } from "$lib";
 
     import type { Game } from "$lib";
+    import HorizontalList from "./HorizontalList.svelte";
 
     export let game: Game;
+    export let handle: string | null = null;
+    export let handles: string[] = [];
+
+    // If handle is provided, add it to handles array for backward compatibility
+    $: highlightHandles = handle ? [handle, ...handles] : handles;
 </script>
 
 <div class="card">
-    <div class="card-header d-flex align-items-center py-2">
+    <a
+        href="/game/{game.stem}"
+        class="card-header d-flex align-items-center py-2 text-decoration-none"
+    >
         <div class="fw-medium me-3">
             {game.map}
         </div>
-        <div class="small me-3">
+        <div class="small flex-fill">
             {formatDatetime(game.started_at)}
         </div>
-        <div class="small text-muted ms-auto">
-            {formatDuration(game.duration)}
-        </div>
-    </div>
+        <i class="bi bi-arrow-right"></i>
+    </a>
 
     <div class="row g-0">
         <div class="col-12 col-sm-6">
             <div
-                class="p-2 bg-danger bg-opacity-10 border-end border-danger border-opacity-25 position-relative"
+                class="p-2 team-red border-end border-danger border-opacity-25 d-flex align-items-center"
+                style="min-height: 2.5rem;"
             >
-                {#if game.winner === 3}
-                    <i class="bi bi-trophy-fill text-warning trophy-position"
-                    ></i>
-                {/if}
-                {#each game.teams["3"] || [] as handle}
-                    <div class="d-flex justify-content-between py-1">
-                        <a href="/player/{encodeURIComponent(handle)}"
-                            >{handle}</a
+                <div class="flex-fill">
+                    <HorizontalList items={game.teams["3"]} let:item>
+                        <a
+                            href="/player/{encodeURIComponent(item)}"
+                            class="small"
+                            class:fw-bold={highlightHandles.includes(item)}
                         >
-                        <span class="small text-muted">
-                            <!-- Plane info will go here -->
-                        </span>
-                    </div>
-                {/each}
+                            {item}
+                        </a>
+                    </HorizontalList>
+                </div>
+                <div class="ms-2">
+                    {#if game.winner === 3}
+                        <i class="bi bi-trophy-fill text-warning"></i>
+                    {/if}
+                </div>
             </div>
         </div>
 
         <div class="col-12 col-sm-6">
-            <div class="p-2 bg-primary bg-opacity-10 position-relative">
-                {#if game.winner === 4}
-                    <i class="bi bi-trophy-fill text-warning trophy-position"
-                    ></i>
-                {/if}
-                {#each game.teams["4"] || [] as handle}
-                    <div class="d-flex justify-content-between py-1">
-                        <a href="/player/{encodeURIComponent(handle)}"
-                            >{handle}</a
+            <div
+                class="p-2 team-blue d-flex align-items-center"
+                style="min-height: 2.5rem;"
+            >
+                <div class="flex-fill">
+                    <HorizontalList items={game.teams["4"]} let:item>
+                        <a
+                            href="/player/{encodeURIComponent(item)}"
+                            class="small"
+                            class:fw-bold={highlightHandles.includes(item)}
                         >
-                        <span class="small text-muted">
-                            <!-- Plane info will go here -->
-                        </span>
-                    </div>
-                {/each}
+                            {item}
+                        </a>
+                    </HorizontalList>
+                </div>
+                <div class="ms-2">
+                    {#if game.winner === 4}
+                        <i class="bi bi-trophy-fill text-warning"></i>
+                    {/if}
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    .card {
-        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .trophy-position {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-    }
+    /*a:hover {
+        color: #0066cc !important;
+        text-decoration: underline !important;
+    }*/
 
     @media (max-width: 575.98px) {
         .border-end {

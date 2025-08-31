@@ -1,5 +1,5 @@
 import { planes as planeList, type StatMeta } from "$lib";
-import { getStatsDb, availableStats, query } from "$lib/stats";
+import { getStatsDb, playerStats, query } from "$lib/stats";
 import { error } from "@sveltejs/kit";
 
 export type QueryParams = {
@@ -59,7 +59,7 @@ export async function load({ url }) {
     plane: url.searchParams.get("plane") || null,
   };
 
-  const statMetas = await availableStats();
+  const statMetas = await playerStats();
   const stat = statMetas.find((s) => s.query_name === params.stat);
 
   const timeBins: Array<{ time_bin: number; time_bin_desc: string }> =

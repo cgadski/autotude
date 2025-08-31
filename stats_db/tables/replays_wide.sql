@@ -1,17 +1,15 @@
-DROP TABLE IF EXISTS time_bin_desc;
 CREATE TABLE time_bin_desc (
     time_bin INTEGER PRIMARY KEY,
     time_bin_desc TEXT UNIQUE
 );
 
-INSERT INTO time_bin_desc (time_bin_desc)
+INSERT OR IGNORE INTO time_bin_desc (time_bin_desc)
 SELECT DISTINCT strftime("%Y-%m", started_at, 'unixepoch')
 FROM replays
 ORDER BY started_at;
 
 -- bunch of features computed for each game
-DROP TABLE IF EXISTS replays_wide;
-CREATE TABLE replays_wide (
+CREATE TABLE IF NOT EXISTS replays_wide (
     replay_key INTEGER PRIMARY KEY REFERENCES replays (replay_key),
     time_bin, -- time bin this replay belongs to
     day_bin TEXT, -- day bin where each "day" starts at noon UTC
@@ -28,7 +26,7 @@ CREATE TABLE replays_wide (
     winner -- last team that scored
 );
 
-INSERT INTO replays_wide
+INSERT OR REPLACE INTO replays_wide
 WITH
 time_bin AS (
     SELECT

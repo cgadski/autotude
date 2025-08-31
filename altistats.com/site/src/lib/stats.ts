@@ -47,17 +47,26 @@ export async function queryOne(
   return (await query(queryStr, options))[0];
 }
 
-export async function availableStats(): Promise<Array<StatMeta>> {
+export async function queryValue(
+  queryStr: string,
+  options: {
+    args?: any[];
+    parse?: string[];
+  } = {},
+) {
+  let row = (await query(queryStr, options))[0];
+  if (row != undefined) {
+    return Object.values(row)[0];
+  }
+}
+
+export async function playerStats(): Promise<Array<StatMeta>> {
   return getStatsDb()
     .prepare(
       `
       SELECT DISTINCT query_name, description, attributes
       FROM stats
-      WHERE stat_key IN (
-        SELECT DISTINCT stat_key
-        FROM player_stats
-      )
-      ORDER BY query_name
+      WHERE query_name LIKE 'p_%'
       `,
     )
     .all()

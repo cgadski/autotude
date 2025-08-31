@@ -1,59 +1,23 @@
-import { query, queryOne } from "$lib/stats";
-import { error } from "@sveltejs/kit";
+import { query } from "$lib/stats";
 
-export async function load({ params }) {
+export async function load({ params, parent }) {
   const { stem } = params;
+  await parent();
 
   return {
-    game: await queryOne(
+    players: await query(
       `
       SELECT
-        stem,
-        map,
-        teams,
-        started_at,
-        duration,
-        winner
-      FROM replays
-      NATURAL JOIN replays_wide
-      NATURAL JOIN game_teams
-      WHERE stem = ?
-      `,
-      { args: [stem], parse: ["teams"] },
-    ),
-    timeline: await query(
-      `
-      SELECT
-        'possession' AS event_type,
         handle,
         team,
-        p.start_tick AS tick,
-        p.end_tick - p.start_tick AS duration
-      FROM replays
-      JOIN possession p USING (replay_key)
-      NATURAL JOIN player_key_handle
+        plane
+      FROM players_short
       NATURAL JOIN handles
-      JOIN players_wide USING (replay_key, handle_key)
+      NATURAL JOIN replays
       WHERE stem = ?
-      GROUP BY p.rowid
-
-      UNION ALL
-
-      SELECT
-        'goal' AS event_type,
-        handle,
-        team,
-        tick,
-        null AS duration
-      FROM replays
-      JOIN goals g USING (replay_key)
-      NATURAL JOIN player_key_handle
-      NATURAL JOIN handles
-      WHERE stem = ?
-
-      ORDER BY tick
+      ORDER BY team, handle
       `,
-      { args: [stem, stem] },
+      { args: [stem] },
     ),
   };
 }
