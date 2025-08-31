@@ -1,6 +1,7 @@
 *.tar
 *.db
 *.db-*
+chat.txt
 
 # environment variables
 /etc/secrets.env
