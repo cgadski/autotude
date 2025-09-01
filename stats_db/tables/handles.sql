@@ -1,3 +1,4 @@
+-- List of handles and their integer keys
 DROP TABLE IF EXISTS handles;
 CREATE TABLE handles (
     handle_key INTEGER PRIMARY KEY,
@@ -6,19 +7,22 @@ CREATE TABLE handles (
 );
 CREATE INDEX IF NOT EXISTS idx_handles_handle ON handles (handle);
 
+-- Map from vapor ids to handles
 DROP TABLE IF EXISTS vapor_handle;
 CREATE TABLE vapor_handle (
-    vapor TEXT PRIMARY KEY,
+    vapor_key REFERENCES vapors (vapor_key),
     handle_key REFERENCES handles (handle_key)
 );
 CREATE INDEX IF NOT EXISTS idx_vapor_handle_handle ON vapor_handle (handle_key);
 
+-- Pre-computed list of nicks used by each handle
 DROP TABLE IF EXISTS handle_nicks;
 CREATE TABLE handle_nicks (
     handle_key INTEGER PRIMARY KEY REFERENCES handles (handle_key),
     nicks JSON
 );
 
+-- Shortcut relation from (replay_key, player_key) -> handle_key
 DROP TABLE IF EXISTS player_key_handle;
 CREATE TABLE player_key_handle (
     replay_key INTEGER REFERENCES replays (replay_key),
@@ -27,12 +31,14 @@ CREATE TABLE player_key_handle (
     PRIMARY KEY (replay_key, player_key)
 );
 
-DROP VIEW IF EXISTS handles_tbl;
-CREATE VIEW handles_tbl
+-- Logic to generate handles for players, either by using their manually
+-- specified handle in custom_handles.csv or by taking their most used nickname.
+-- A handle is "automatic" in the second case, and gets an underscore prepended
+-- to avoid collisions with non-automatic handles.
+CREATE TEMP TABLE handles_tbl
 AS SELECT
-    ranked_nicks.vapor AS vapor,
-    coalesce(custom_handles.handle, '_' || ranked_nicks.nick)
-    AS handle,
+    vapor_key,
+    coalesce(custom_handles.handle, '_' || ranked_nicks.nick) AS handle,
     custom_handles.handle IS NULL AS automatic
 FROM custom_handles
 RIGHT JOIN (
@@ -52,8 +58,12 @@ RIGHT JOIN (
 	ORDER BY vapor, rank
 ) AS ranked_nicks
 	ON custom_handles.vapor = ranked_nicks.vapor
+JOIN vapors ON (ranked_nicks.vapor = vapors.vapor)
 WHERE ranked_nicks.rank = 1
 AND ranked_nicks.vapor != '';
+
+SELECT 'Assigned handles for ' || count() || ' vapors'
+FROM handles_tbl;
 
 INSERT INTO handles (handle, automatic)
 SELECT handle, automatic FROM handles_tbl
@@ -61,14 +71,15 @@ GROUP BY handle
 ORDER BY automatic, handle;
 
 INSERT INTO vapor_handle
-SELECT vapor, handle_key
+SELECT vapor_key, handle_key
 FROM handles_tbl
 NATURAL JOIN handles;
 
 INSERT INTO player_key_handle
 SELECT replay_key, player_key, handle_key
 FROM players
-NATURAL JOIN vapor_handle;
+JOIN vapors USING (vapor)
+JOIN vapor_handle USING (vapor_key);
 
 INSERT INTO handle_nicks
 SELECT

@@ -1,12 +1,22 @@
-CREATE TABLE IF NOT EXISTS time_bin_desc (
+-- days/months of games
+CREATE TEMP VIEW time_bins AS
+SELECT
+    replay_key,
+    strftime('%Y-%m', started_at, 'unixepoch', '-12 hours', 'utc')
+    AS time_bin_desc,
+    date(started_at, 'unixepoch', '-12 hours', 'utc')
+    AS day_bin
+FROM replays;
+
+DROP TABLE IF EXISTS time_bin_desc;
+CREATE TABLE time_bin_desc (
     time_bin INTEGER PRIMARY KEY,
     time_bin_desc TEXT UNIQUE
 );
 
-INSERT OR IGNORE INTO time_bin_desc (time_bin_desc)
-SELECT DISTINCT strftime("%Y-%m", started_at, 'unixepoch')
-FROM replays
-ORDER BY started_at;
+INSERT INTO time_bin_desc (time_bin_desc)
+SELECT DISTINCT time_bin_desc
+FROM time_bins ORDER BY day_bin;
 
 -- bunch of features computed for each game
 CREATE TABLE IF NOT EXISTS replays_wide (
@@ -38,13 +48,13 @@ WHERE (
 
 INSERT OR REPLACE INTO replays_wide
 WITH
-time_bin AS (
+time_bin_codes AS (
     SELECT
         replay_key,
         time_bin
     FROM replays_fresh
-    JOIN time_bin_desc
-    ON time_bin_desc = strftime('%Y-%m', started_at, 'unixepoch')
+    JOIN time_bins USING (replay_key)
+    JOIN time_bin_desc USING (time_bin)
 ),
 consecutive AS (
 	SELECT
@@ -126,7 +136,7 @@ winner AS (
 SELECT
     r.replay_key,
     time_bin,
-    date(datetime(r.started_at, 'unixepoch'), '-12 hours', 'utc') as day_bin,
+    day_bin,
     coalesce(n_left, 0),
     coalesce(n_right, 0),
     coalesce(n_spec, 0),
@@ -139,7 +149,8 @@ SELECT
     b.replay_key AS prev_key,
     winner
 FROM replays_fresh r
-NATURAL JOIN time_bin
+JOIN time_bins USING (replay_key)
+JOIN time_bin_desc USING (time_bin_desc)
 NATURAL LEFT JOIN n_players
 NATURAL JOIN n_goals
 NATURAL LEFT JOIN start_messages
