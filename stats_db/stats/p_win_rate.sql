@@ -19,7 +19,7 @@ SELECT
     NULL AS time_bin,
     NULL AS plane,
     sum(n_wins) / sum(n_games) AS stat,
-    format("%.2f", sum(n_wins) / sum(n_games))
+    printf("%.2f", sum(n_wins) / sum(n_games))
     || ' | ' || sum(n_wins) || '/' || sum(n_games) AS repr,
     sum(n_games) < 100 AS hidden
 FROM tbl
@@ -33,7 +33,7 @@ SELECT
     time_bin,
     NULL AS plane,
     sum(n_wins) / sum(n_games) AS stat,
-    format("%.2f", sum(n_wins) / sum(n_games))
+    printf("%.2f", sum(n_wins) / sum(n_games))
     || ' | ' || sum(n_wins) || '/' || sum(n_games) AS repr,
     sum(n_games) < 25 AS hidden
 FROM tbl GROUP BY handle_key, time_bin
@@ -46,7 +46,7 @@ SELECT
     NULL AS time_bin,
     plane,
     sum(n_wins) / sum(n_games) AS stat,
-    format("%.2f", sum(n_wins) / sum(n_games))
+    printf("%.2f", sum(n_wins) / sum(n_games))
     || ' | ' || sum(n_wins) || '/' || sum(n_games) AS repr,
     sum(n_games) < 50 AS hidden
 FROM tbl GROUP BY handle_key, plane
@@ -59,7 +59,7 @@ SELECT
     time_bin,
     plane,
     sum(n_wins) / sum(n_games) AS stat,
-    format("%.2f", sum(n_wins) / sum(n_games))
+    printf("%.2f", sum(n_wins) / sum(n_games))
     || ' | ' || sum(n_wins) || '/' || sum(n_games) AS repr,
     false AS hidden
 FROM tbl GROUP BY handle_key, time_bin, plane

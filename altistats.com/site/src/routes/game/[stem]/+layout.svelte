@@ -68,5 +68,9 @@
         </dd>
     </dl>
 
+    <div class="text-center text-muted py-2">
+        <p>work in progress</p>
+    </div>
+
     <slot />
 </section>

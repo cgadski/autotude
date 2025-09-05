@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-stems=$(sqlite3 stats.db "SELECT stem FROM errored ORDER BY stem;")
+stems=$(sqlite3 "${STATS_DB:-stats.db}" "SELECT stem FROM errored ORDER BY stem;")
 if [ -z "$stems" ]; then
 	echo "No errors found in database"
 	exit 0

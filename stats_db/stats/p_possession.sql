@@ -16,7 +16,7 @@ SELECT
     NULL AS time_bin,
     NULL AS plane,
     sum(time_with_ball) / sum(time_alive) AS stat,
-    format('%.2f', sum(time_with_ball) / sum(time_alive))
+    printf('%.2f', sum(time_with_ball) / sum(time_alive))
     || ' | ' || sum(time_with_ball) || 'd : '
     || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
@@ -31,7 +31,7 @@ SELECT
     time_bin,
     NULL AS plane,
     sum(time_with_ball) / sum(time_alive) AS stat,
-    format('%.2f', sum(time_with_ball) / sum(time_alive))
+    printf('%.2f', sum(time_with_ball) / sum(time_alive))
     || ' | ' || sum(time_with_ball) || 'd : '
     || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
@@ -45,7 +45,7 @@ SELECT
     NULL AS time_bin,
     plane,
     sum(time_with_ball) / sum(time_alive) AS stat,
-    format('%.2f', sum(time_with_ball) / sum(time_alive))
+    printf('%.2f', sum(time_with_ball) / sum(time_alive))
     || ' | ' || sum(time_with_ball) || 'd : '
     || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
@@ -59,7 +59,7 @@ SELECT
     time_bin,
     plane,
     sum(time_with_ball) / sum(time_alive) AS stat,
-    format('%.2f', sum(time_with_ball) / sum(time_alive))
+    printf('%.2f', sum(time_with_ball) / sum(time_alive))
     || ' | ' || sum(time_with_ball) || 'd : '
     || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden

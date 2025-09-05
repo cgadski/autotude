@@ -4,11 +4,8 @@ WITH tbl AS (
         handle_key,
         time_bin,
         plane,
-        sum(time_alive) AS time_alive,
-        cast(sum(duration) AS real) AS game_duration
-    FROM players_wide
-    JOIN replays USING (replay_key)
-    GROUP BY handle_key, time_bin, plane
+        time_alive
+    FROM time_alive
 )
 
 -- handle

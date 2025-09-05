@@ -14,7 +14,7 @@
 <div class="row g-3">
     <div class="col-12 col-md-6">
         <div class="team-red p-3 rounded">
-            <table class="table table-sm mb-0">
+            <table class="table table-sm mb-0 no-bg">
                 <thead>
                     <tr>
                         <th>Player</th>
@@ -43,7 +43,7 @@
 
     <div class="col-12 col-md-6">
         <div class="team-blue p-3 rounded">
-            <table class="table table-sm mb-0">
+            <table class="table table-sm mb-0 no-bg">
                 <thead>
                     <tr>
                         <th>Player</th>

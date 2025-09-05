@@ -1,22 +1,8 @@
 set dotenv-load
 
-# Index replays into our database
-index:
-	# make -C .. bin/index
-	index --replays ${REPLAY_DIR} \
-		--out "host=altistats.com user=root password=${PGPASSWORD} dbname=altistats" \
-		--progress
-
-update-views:
-	cat sql/views.sql | psql
-
 dev:
 	docker context use default
-	docker compose -f dev.yml up --remove-orphans --build
-
-# Run a query from site/sql/
-query file *args:
-    psql -f site/sql/{{file}}.sql {{args}}
+	docker compose -f dev.yml up -d --remove-orphans --build
 
 # Docker compose
 
@@ -25,6 +11,10 @@ up:
 	docker --host "ssh://root@altistats.com" compose -f prod.yml up -d --build
 
 docker_plat := "--platform=linux/amd64"
+
+upload-stats:
+	docker build {{docker_plat}} -t magneticduck/stats_db:latest ../stats_db
+	docker push magneticduck/stats_db:latest
 
 upload-site:
 	docker build {{docker_plat}} -t magneticduck/altistats:latest site

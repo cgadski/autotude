@@ -116,11 +116,11 @@ class StatMaterializer:
             """)
 
             elapsed = time.time() - start_time
-            print(f"✓ {query_file} ({elapsed:.2f}s)")
+            print(f"  ✓ {query_file} ({elapsed:.2f}s)")
             return True
         except Exception as e:
             elapsed = time.time() - start_time
-            print(f"✗ {query_file}: {e} ({elapsed:.2f}s)")
+            print(f"  ✗ {query_file}: {e} ({elapsed:.2f}s)")
             return False
 
     def close(self):

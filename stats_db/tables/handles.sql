@@ -40,8 +40,7 @@ AS SELECT
     vapor_key,
     coalesce(custom_handles.handle, '_' || ranked_nicks.nick) AS handle,
     custom_handles.handle IS NULL AS automatic
-FROM custom_handles
-RIGHT JOIN (
+FROM (
 	SELECT
 		vapor,
 		nick,
@@ -57,7 +56,8 @@ RIGHT JOIN (
 	)
 	ORDER BY vapor, rank
 ) AS ranked_nicks
-	ON custom_handles.vapor = ranked_nicks.vapor
+LEFT JOIN custom_handles
+    ON custom_handles.vapor = ranked_nicks.vapor
 JOIN vapors ON (ranked_nicks.vapor = vapors.vapor)
 WHERE ranked_nicks.rank = 1
 AND ranked_nicks.vapor != '';

@@ -18,21 +18,37 @@ services:
 
   # site:
   #   build: site
+  #   volumes:
+  #     - ../stats_db/:/app/stats_db
   #   environment:
+  #     STATS_DB: /app/stats_db/stats.db
   #     <<: *db-env
   #   ports:
   #     - "3000:3000"
 
-  bot:
+  # bot:
+  #   build:
+  #     context: ../java_dist/
+  #     dockerfile: botclient.Dockerfile
+  #   deploy:
+  #     mode: global
+  #   volumes:
+  #     - ../alti_home/:/app
+  #   environment:
+  #     JAVA_OPTS: -Xmx512m
+  #     ALTI_HOME: /app
+  #     BOT_CONFIG: /app/client_configs/test.xml
+  #     <<: *db-env
+
+  stats_db:
     build:
-      context: ../java_dist/
-      dockerfile: botclient.Dockerfile
-    deploy:
-      mode: global
+      context: ../stats_db/
+      dockerfile: Dockerfile
     volumes:
-      - ../alti_home/:/app
+      - ${REPLAY_DIR}:/app/replays:ro
+      - ../stats_db/:/app/stats_db
     environment:
-      JAVA_OPTS: -Xmx512m
-      ALTI_HOME: /app
-      BOT_CONFIG: /app/client_configs/test.xml
-      <<: *db-env
+      REPLAY_DIR: /app/replays/
+      STATS_DB: /app/stats_db/stats.db
+      STATS_INTERVAL: 60
+    restart: unless-stopped

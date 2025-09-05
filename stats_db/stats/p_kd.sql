@@ -15,7 +15,7 @@ SELECT
     NULL AS time_bin,
     NULL AS plane,
     sum(kills) / sum(deaths) AS stat,
-    format('%.2f', sum(kills) / sum(deaths)) ||
+    printf('%.2f', sum(kills) / sum(deaths)) ||
     ' | ' || cast(sum(kills) AS int) || ' : ' || cast(sum(deaths) AS int)
     AS repr,
     sum(kills) < 1000 AS hidden
@@ -30,7 +30,7 @@ SELECT
     time_bin,
     NULL AS plane,
     sum(kills) / sum(deaths) AS stat,
-    format('%.2f', sum(kills) / sum(deaths)) ||
+    printf('%.2f', sum(kills) / sum(deaths)) ||
     ' | ' || cast(sum(kills) AS int) || '#G : ' || cast(sum(deaths) AS int)
     || '#R'
     AS repr,
@@ -45,7 +45,7 @@ SELECT
     NULL AS time_bin,
     plane,
     sum(kills) / sum(deaths) AS stat,
-    format('%.2f', sum(kills) / sum(deaths)) ||
+    printf('%.2f', sum(kills) / sum(deaths)) ||
     ' | ' || cast(sum(kills) AS int) || ' : ' || cast(sum(deaths) AS int)
     AS repr,
     sum(kills) < 250 AS hidden
@@ -59,7 +59,7 @@ SELECT
     time_bin,
     plane,
     sum(kills) / sum(deaths) AS stat,
-    format('%.2f', sum(kills) / sum(deaths)) ||
+    printf('%.2f', sum(kills) / sum(deaths)) ||
     ' | ' || cast(sum(kills) AS int) || ' : ' || cast(sum(deaths) AS int)
     AS repr,
     false AS hidden

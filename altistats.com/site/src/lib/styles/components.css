@@ -35,7 +35,7 @@ section.narrow {
     margin-right: auto;
 }
 
-section.no-bg table {
+table.no-bg {
     --bs-table-bg: transparent !important;
 }
 
