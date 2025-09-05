@@ -22,8 +22,8 @@
         </a>
         <a
             class="nav-link d-flex align-items-center gap-1"
-            class:active={navPage === "history"}
-            href="/history"
+            class:active={navPage === "games"}
+            href="/games"
         >
             <i class="bi bi-database"></i> Games
         </a>

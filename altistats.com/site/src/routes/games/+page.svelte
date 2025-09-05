@@ -28,7 +28,20 @@
     );
 </script>
 
-<SiteHeader navPage="history" />
+<SiteHeader navPage="games" />
+
+<section class="no-bg pt-0">
+    <div class="d-flex flex-wrap gap-1">
+        {#each data.globalStats as item}
+            <div class="card">
+                <div class="card-body py-2 px-3">
+                    <div class="text-muted small">{item.description}</div>
+                    <div class="fw-bold">{renderStat(item.stat)}</div>
+                </div>
+            </div>
+        {/each}
+    </div>
+</section>
 
 <section>
     <HandlePicker handles={data.handles} bind:selectedHandles />

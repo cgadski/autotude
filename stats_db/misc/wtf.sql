@@ -1,6 +1,5 @@
-SELECT stem, primary_planes.*
-FROM primary_planes
-NATURAL JOIN replays
-WHERE handle_key = 45
-AND time_bin = 7
-AND plane = 4;
+UPDATE players_wide
+SET handle_key = (
+    SELECT vh.handle_key FROM vapor_handle vh
+    WHERE vh.vapor_key = players_wide.vapor_key
+);

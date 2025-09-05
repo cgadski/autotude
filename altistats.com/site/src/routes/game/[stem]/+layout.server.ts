@@ -12,6 +12,7 @@ export async function load({ params }) {
       teams,
       started_at,
       duration,
+      version,
       winner
     FROM replays
     NATURAL JOIN replays_wide
@@ -22,11 +23,11 @@ export async function load({ params }) {
   );
 
   if (!game) {
-    throw error(404, 'Game not found');
+    throw error(404, "Game not found");
   }
 
   return {
     game,
-    stem
+    stem,
   };
 }

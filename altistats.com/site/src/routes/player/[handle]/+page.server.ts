@@ -1,7 +1,7 @@
 import { query } from "$lib/stats.js";
 
 export type QueryParams = {
-  period: string | null;
+  period: string;
 };
 
 type TimeBin = {
@@ -9,13 +9,7 @@ type TimeBin = {
   time_bin_desc: string;
 };
 
-async function getGamesForPlayer(handleKey: number, period: string | null) {
-  const periodCondition = period !== null ? "AND time_bin_desc = ?" : "";
-  const args: any[] = [handleKey];
-  if (period !== null) {
-    args.push(period);
-  }
-
+async function getGamesForPlayer(handleKey: number, period: string) {
   return query(
     `
     SELECT *
@@ -29,23 +23,23 @@ async function getGamesForPlayer(handleKey: number, period: string | null) {
       FROM players_short
       WHERE handle_key = ?
     )
-    ${periodCondition}
+    AND time_bin_desc = ?
     ORDER BY started_at
     `,
-    { args, parse: ["teams"] },
+    { args: [handleKey, period], parse: ["teams"] },
   );
 }
 
 export async function load({ parent, url }) {
   const { handleKey, handle } = await parent();
 
-  const params: QueryParams = {
-    period: url.searchParams.get("period") || null,
-  };
-
   const timeBins: TimeBin[] = await query(
     `SELECT time_bin, time_bin_desc FROM time_bin_desc ORDER BY time_bin DESC`,
   );
+
+  const params: QueryParams = {
+    period: url.searchParams.get("period") || timeBins[0].time_bin_desc,
+  };
 
   const gameCountsByMonth = await query(
     `

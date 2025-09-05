@@ -54,3 +54,11 @@ section.no-bg table {
 .team-blue {
     background-color: #eff6ff;
 }
+
+.stat-red {
+    color: indianred;
+}
+
+.stat-green {
+    color: mediumseagreen;
+}

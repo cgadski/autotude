@@ -88,8 +88,10 @@ export function formatTimeAgo(unixEpoch: number) {
 
   if (days === 0) {
     return hours === 1 ? "1h ago" : `${hours}h ago`;
-  } else {
+  } else if (days <= 2) {
     return `${days}d ${hours}h ago`;
+  } else {
+    return `${days}d ago`;
   }
 }
 
@@ -103,11 +105,33 @@ export const formatDate = (unixEpoch: number) => {
   });
 };
 
-export type NavPage = "home" | "players" | "history" | null;
+export type NavPage = "home" | "players" | "games" | null;
 
 export const planes = ["Loopy", "Bomber", "Whale", "Biplane", "Miranda"];
 
+function withCommas(s: string) {
+  const intMatch = s.match(/^\d+$/);
+  if (intMatch) {
+    return parseInt(s).toLocaleString();
+  }
+  return s;
+}
+
 const statRules: Array<(word: string) => string | null> = [
+  (part: string) => {
+    if (part.endsWith("#G")) {
+      let stat = part.slice(0, -2);
+      return `<span class="stat-green">${withCommas(stat)}</span>`;
+    }
+    return null;
+  },
+  (part: string) => {
+    if (part.endsWith("#R")) {
+      let stat = part.slice(0, -2);
+      return `<span class="stat-red">${withCommas(stat)}</span>`;
+    }
+    return null;
+  },
   // durations
   (part: string) => {
     const durationMatch = part.match(/^(\d+(?:\.\d+)?)d$/);
@@ -126,23 +150,13 @@ const statRules: Array<(word: string) => string | null> = [
   },
 ];
 
-export function statValue(stat: string | number): number | null {
-  if (typeof stat === "number") {
-    return stat;
-  }
-  const firstWord = stat.split(/\s+/)[0];
-  for (let rule of statRules) {
-    let val = rule(firstWord);
-    if (val?.value != null) {
-      return val.value;
-    }
-  }
-  return null;
-}
-
 export function renderStat(stat: string | number): string {
   if (typeof stat === "number") {
     return stat.toLocaleString();
+  }
+
+  if (stat === null) {
+    return "N/A";
   }
 
   return stat
@@ -155,13 +169,7 @@ export function renderStat(stat: string | number): string {
         }
       }
 
-      // Check if word is a number and format with commas
-      const numberMatch = word.match(/^\d+$/);
-      if (numberMatch) {
-        return parseInt(word).toLocaleString();
-      }
-
-      return word;
+      return withCommas(word);
     })
     .join(" ");
 }

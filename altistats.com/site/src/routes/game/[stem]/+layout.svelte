@@ -2,7 +2,8 @@
     import SiteHeader from "$lib/SiteHeader.svelte";
     import LinkList from "$lib/LinkList.svelte";
     import { page } from "$app/stores";
-    import { formatTimestamp } from "$lib";
+    import { formatDatetime, formatTimestamp, renderStat } from "$lib";
+    import HorizontalList from "$lib/HorizontalList.svelte";
 
     export let data;
 
@@ -34,30 +35,29 @@
         href: view.path,
         active: view.routeId === $page.route.id,
     }));
+
+    let game = data.game;
+    let gameProps = [
+        { desc: "Map", value: game.map },
+        { desc: "Duration", value: game.duration + "d" },
+        { desc: "Replay version", value: game.version },
+    ];
 </script>
 
 <SiteHeader />
 
 <section class="no-bg">
-    <div class="d-flex gap-3 mb-3 align-items-center">
-        <h3 class="mb-0">{data.game.map}</h3>
-        <div class="text-muted">
-            {new Date(data.game.started_at * 1000).toLocaleDateString("en-GB", {
-                weekday: "short",
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-            })}
-        </div>
-        <div class="text-muted ms-auto">
-            {formatTimestamp(data.game.duration)}
-        </div>
-    </div>
-
-    <a
-        href="/viewer/?f={data.game.stem}.pb"
-        class="btn btn-sm btn-outline-primary mb-3">View replay</a
-    > (desktop only)
+    <h2>
+        Ranked game on {formatDatetime(data.game.started_at)}
+        <a
+            href="/viewer/?f={data.game.stem}.pb"
+            style="float:right"
+            class="btn px-1 py-0 btn-primary">View replay</a
+        >
+    </h2>
+    <HorizontalList items={gameProps} let:item>
+        <span class="fw-medium">{item.desc}</span>: {renderStat(item.value)}
+    </HorizontalList>
 </section>
 
 <section>

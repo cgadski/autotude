@@ -18,6 +18,7 @@ load-csvs: \
 dump: load-schema load-csvs clear-errors
 	# cargo run --release --bin dump -- --db {{STATS_DB}}
 	dump --db {{STATS_DB}}
+	{{sqlite}} < tables/vapors.sql
 	{{sqlite}} < tables/handles.sql
 	{{sqlite}} < tables/replays_wide.sql
 	{{sqlite}} < tables/ladder_games.sql

@@ -1,39 +1,10 @@
 # stats database
 
-`bin/dump.rs` defines a Rust app that dumps a whole bunch of statistics from a directory of altitude replay files into an sqlite database with schema specified by `schema.sql`. After setting `$REPLAY_DIR`, you can run `just dump` to set up a table and run `dump.rs`. This doesn't process replays which are already processed, and ignores some broken replays defined in `csv/broken_replays.csv`.
 
-`views/` defines a bunch of basic views and tables in this database, and `stats/` defines a bunch of statistics that we display on [http://altistats.com].
+`bin/dump.rs` defines a Rust app that takes a directory of altitude replay files (at `$REPLAY_DIR`) and dumps a bunch of data into a sqlite database. The tables populated by `dump` are defined in `schema.sql`.
 
-The `Dockerfile` defines a container that I run on the server to periodically sync the stats database with the recording directory.
+The csv files in `csv` define tables to be loaded into the database verbatim. `csv/broken_replays.csv` defines a list of broken replays that we should not try to read, and should be loaded before running `dump.`
 
-## stats
+Once the csv tables are loaded and `dump` has populated the tables defined in `schema.sql`, the scripts in `tables/` compute some additional tables.
 
-When I say a stat is binned over (x?, y), that means it gives a value for every pair (x, y) and x can be null.
-
-Front page stats are just the numbers displayed on the front page.
-
-- `_avg_duration`
-- `_games`
-- `_goals`
-- `_kills`
-- `_messages`
-- `_players`
-- `_time`
-
-Historical stats are binned over month?.
-
-- `h_games`
-- `h_players`
-- `h_time`
-
-Historical player stats are binned over (player, month?):
-
-- `hp_games`
-- `hp_time`
-
-Player stats are binned over (player, month?, plane?):
-
-- `p_death_rate`
-- `p_goal_rate`
-- `p_kill_rate`
-- `p_win_rate`
+Some views are defined in `views/`. Per-player statistics are defined in `stats/` and pre-computed by `materialize_stats.py`.

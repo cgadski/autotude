@@ -6,6 +6,7 @@ CREATE TABLE players_short (
     time_bin,
     plane,
     team,
+    won,
     PRIMARY KEY (replay_key, handle_key)
 );
 
@@ -28,8 +29,10 @@ plane_usage_ranked AS (
 SELECT
     replay_key,
     handle_key,
-    time_bin,
+    rw.time_bin,
     plane,
-    team
+    team,
+    rw.winner = team AS won
 FROM plane_usage_ranked
+JOIN replays_wide rw USING (replay_key)
 WHERE r = 1;

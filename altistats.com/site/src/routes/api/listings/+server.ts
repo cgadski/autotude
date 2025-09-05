@@ -55,10 +55,10 @@ ORDER BY bin ASC;
 `;
 
 export async function GET({ setHeaders }) {
-  const [lastUpdateResult, listingsResult] = await Promise.all([
+  const [lastUpdate, listings, listingsSeries] = await Promise.all([
     pool.query("SELECT MAX(time) as last_update FROM listings"),
     pool.query(LISTINGS_SQL),
-    // pool.query(LISTINGS_SERIES_SQL),
+    pool.query(LISTINGS_SERIES_SQL),
   ]);
 
   setHeaders({
@@ -66,8 +66,11 @@ export async function GET({ setHeaders }) {
   });
 
   return json({
-    lastUpdate: lastUpdateResult.rows[0]?.last_update || "",
-    listings: listingsResult.rows,
-    // listingsSeries: listingsSeriesResult.rows,
+    lastUpdate: lastUpdate.rows[0]?.last_update || "",
+    listings: listings.rows,
+    listingsSeries: listingsSeries.rows.map((row) => ({
+      ...row,
+      players: parseFloat(row.players),
+    })),
   });
 }

@@ -62,7 +62,7 @@ JOIN vapors ON (ranked_nicks.vapor = vapors.vapor)
 WHERE ranked_nicks.rank = 1
 AND ranked_nicks.vapor != '';
 
-SELECT 'Assigned handles for ' || count() || ' vapors'
+SELECT 'Assigned ' || count(DISTINCT handle) || ' handles to ' || count() || ' vapors'
 FROM handles_tbl;
 
 INSERT INTO handles (handle, automatic)

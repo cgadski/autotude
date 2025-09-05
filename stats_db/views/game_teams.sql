@@ -14,6 +14,7 @@ WITH team_players AS (
             handle
         FROM players_wide
         NATURAL JOIN handles
+        ORDER BY handle
     )
     GROUP BY replay_key, team
 )

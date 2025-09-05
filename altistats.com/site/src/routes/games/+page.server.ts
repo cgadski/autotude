@@ -63,5 +63,13 @@ export async function load({ url }) {
     ).map((h) => h.handle),
     games: await getGamesForPeriod(timeBinIndex),
     gameCountsByMonth,
+    globalStats: await query(
+      `
+      SELECT query_name, description, stat
+      FROM stats
+      NATURAL JOIN global_stats
+      ORDER BY stat_order
+    `,
+    ),
   };
 }

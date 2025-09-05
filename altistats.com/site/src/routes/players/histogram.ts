@@ -7,10 +7,11 @@ const STAT_CONFIG: Record<
   { min?: number; max?: number; bandwidth?: number }
 > = {
   p_kd: { min: 0.2, max: 2, bandwidth: 0.2 },
-  p_win_rate: { min: 0, max: 1, bandwidth: 0.1 },
+  p_win_rate: { min: 0.2, max: 0.8, bandwidth: 0.1 },
   p_death_rate: { min: 9, max: 35, bandwidth: 3 },
   p_kill_rate: { min: 9, max: 35, bandwidth: 3 },
   p_goal_rate: { min: 0, max: 6, bandwidth: 0.5 },
+  p_time_played: { min: 0 },
   p_possession: { min: 0, max: 0.4, bandwidth: 0.05 },
   p_possession_goal_rate: { min: 0, max: 35, bandwidth: 3 },
 };

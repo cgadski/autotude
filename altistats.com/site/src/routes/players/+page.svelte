@@ -105,8 +105,8 @@
 
 <SiteHeader navPage="players" />
 
-<section>
-    <dl>
+<section class="no-bg">
+    <dl class="mb-0">
         <dt>Stat</dt>
         <dd>
             <LinkList items={statItems} />
@@ -171,7 +171,9 @@
                         <td class="text-muted">{index + 1}</td>
                         <td>
                             <a
-                                href="/player/{player.handle}"
+                                href="/player/{encodeURIComponent(
+                                    player.handle,
+                                )}"
                                 class={selectedHandles.includes(player.handle)
                                     ? "fw-bold"
                                     : ""}
@@ -185,12 +187,12 @@
                                 2,
                             )}
                             <td class="text-end text-nowrap align-baseline">
-                                {renderStat(mainStat)}
+                                {@html renderStat(mainStat)}
                             </td>
                             <td
                                 class="text-muted text-nowrap align-baseline small"
                             >
-                                {renderStat(details)}
+                                {@html renderStat(details)}
                             </td>
                         {:else}
                             <td

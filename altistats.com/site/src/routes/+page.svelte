@@ -4,10 +4,12 @@
     import SiteHeader from "$lib/SiteHeader.svelte";
     import { onMount } from "svelte";
     import { getGameRuns, renderScheduleChart } from "./schedule_chart";
+    import { renderChart } from "./listing_chart";
     import { renderStat } from "$lib";
 
     let secondsAgo = 0;
     let scheduleElement: HTMLElement;
+    let listingChartElement: HTMLElement;
     let refreshInterval: number;
     let listingsData: any = null;
     let loading = true;
@@ -73,12 +75,42 @@
             }
         };
     });
+
+    onMount(() => {
+        const renderListingChart = () => {
+            if (listingsData?.listingsSeries && listingChartElement) {
+                renderChart(listingsData, listingChartElement);
+            }
+        };
+
+        const interval = setInterval(() => {
+            renderListingChart();
+        }, 100);
+
+        setTimeout(() => clearInterval(interval), 5000);
+
+        const resizeObserver = new ResizeObserver(() => {
+            renderListingChart();
+        });
+
+        if (listingChartElement) {
+            resizeObserver.observe(listingChartElement);
+        }
+
+        return () => {
+            if (listingChartElement) {
+                resizeObserver.unobserve(listingChartElement);
+            }
+        };
+    });
 </script>
 
 <SiteHeader navPage="home" />
 
 <section>
-    <h2>Server listing <span class="text-muted">(live)</span></h2>
+    <h2>
+        Server listings <span class="small text-muted">(live)</span>
+    </h2>
     {#if loading}
         <div class="d-flex justify-content-center py-3">
             <div class="spinner-border text-primary" role="status">
@@ -115,24 +147,36 @@
     {/if}
 </section>
 
-<section class="narrow">
-    <h2>Ranked activity <span class="text-muted">(last 3 months)</span></h2>
+<section>
+    <h2>Recent activity <span class="small text-muted">(last 3 days)</span></h2>
 
-    <div class="w-100" bind:this={scheduleElement}></div>
+    {#if loading}
+        <div class="d-flex justify-content-center py-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    {:else if listingsData?.listingsSeries}
+        <div
+            class="w-100"
+            style="height: 200px"
+            bind:this={listingChartElement}
+        ></div>
+    {:else}
+        <div class="d-flex justify-content-center py-3">
+            <p class="text-muted">No activity data available</p>
+        </div>
+    {/if}
 </section>
 
-<section class="">
-    <h2>Game database</h2>
-    <div class="row g-2">
-        {#each data.globalStats as item}
-            <div class="col-auto">
-                <div class="card">
-                    <div class="card-body py-2 px-3">
-                        <div class="text-muted small">{item.description}</div>
-                        <div class="fw-bold">{renderStat(item.stat)}</div>
-                    </div>
-                </div>
-            </div>
-        {/each}
+<section>
+    <h2>Ladder times <span class="small text-muted">(last 3 months)</span></h2>
+
+    <div class="d-flex justify-content-center">
+        <div
+            class="w-100"
+            style="max-width: 600px"
+            bind:this={scheduleElement}
+        ></div>
     </div>
 </section>

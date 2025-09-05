@@ -3,7 +3,6 @@ import { error } from "@sveltejs/kit";
 
 export async function load({ params }) {
   const handle = params.handle;
-  console.log({ handle: handle });
   const handleKey = (
     await query(
       `
@@ -37,8 +36,24 @@ export async function load({ params }) {
     ),
     nPlayed: await queryValue(
       `
-      SELECT count()
+      SELECT
+        (count() FILTER (WHERE won))
+        || '#G won : '
+        || (count() FILTER (WHERE not won))
+        || '#R lost'
       FROM players_short
+      WHERE handle_key = ?
+      `,
+      { args: [handleKey] },
+    ),
+    nKills: await queryValue(
+      `
+      SELECT
+        sum(kills)
+        || '#G : '
+        || sum(deaths)
+        || '#R'
+      FROM players_wide
       WHERE handle_key = ?
       `,
       { args: [handleKey] },
