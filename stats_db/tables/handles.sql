@@ -1,3 +1,5 @@
+BEGIN;
+
 -- List of handles and their integer keys
 DROP TABLE IF EXISTS handles;
 CREATE TABLE handles (
@@ -92,3 +94,5 @@ FROM (
     ORDER BY handle_key, started_at DESC
 )
 GROUP BY handle_key;
+
+COMMIT;

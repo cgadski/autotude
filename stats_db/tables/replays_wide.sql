@@ -1,3 +1,5 @@
+BEGIN;
+
 -- days/months of games
 CREATE TEMP VIEW time_bins AS
 SELECT
@@ -160,3 +162,5 @@ NATURAL LEFT JOIN player_messages
 LEFT JOIN consecutive a ON (r.replay_key = a.replay_key)
 LEFT JOIN consecutive b ON (r.replay_key = b.next)
 NATURAL LEFT JOIN winner;
+
+COMMIT;

@@ -1,3 +1,5 @@
+BEGIN;
+
 DROP TABLE IF EXISTS players_short;
 
 CREATE TABLE players_short (
@@ -36,3 +38,5 @@ SELECT
 FROM plane_usage_ranked
 JOIN replays_wide rw USING (replay_key)
 WHERE r = 1;
+
+COMMIT;

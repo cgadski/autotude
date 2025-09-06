@@ -57,6 +57,7 @@ class StatMaterializer:
     def __init__(self, db_path):
         self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
+        self.conn.execute("BEGIN")
         self.cursor.executescript("""
             DROP TABLE IF EXISTS stats_raw;
             CREATE TABLE stats_raw (

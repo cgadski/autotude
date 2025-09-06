@@ -1,3 +1,5 @@
+BEGIN;
+
 -- Each row in this table corresponds to a "loadout period"
 -- during which a player had the same player key and loadout.
 CREATE TABLE IF NOT EXISTS players_wide (
@@ -138,3 +140,5 @@ SET handle_key = (
     SELECT vh.handle_key FROM vapor_handle vh
     WHERE vh.vapor_key = players_wide.vapor_key
 );
+
+COMMIT;

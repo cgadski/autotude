@@ -1,3 +1,5 @@
+BEGIN;
+
 DROP TABLE IF EXISTS ladder_games;
 CREATE TABLE ladder_games (
     replay_key INTEGER PRIMARY KEY REFERENCES replays (replay_key)
@@ -16,3 +18,5 @@ AND coalesce(next.restart_messages, 0) < 1 -- not restarted
 AND a.n_left = 4 -- 4 total vapors on left team
 AND a.n_right = 4 -- 4 total vapors on right team
 AND a.n_goals >= 0; -- at least one goal scored
+
+COMMIT;

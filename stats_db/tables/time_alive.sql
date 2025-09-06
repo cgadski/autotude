@@ -1,3 +1,5 @@
+BEGIN;
+
 DROP TABLE IF EXISTS time_alive;
 
 CREATE TABLE time_alive (
@@ -16,3 +18,5 @@ SELECT
     sum(time_alive) AS time_alive
 FROM players_wide
 GROUP BY handle_key, time_bin, plane;
+
+COMMIT;
