@@ -13,7 +13,8 @@ export async function load({ params }) {
       started_at,
       duration,
       version,
-      winner
+      winner,
+      stem IN (SELECT stem FROM broken_replays) AS broken
     FROM replays
     NATURAL JOIN replays_wide
     NATURAL JOIN game_teams

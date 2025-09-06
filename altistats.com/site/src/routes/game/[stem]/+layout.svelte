@@ -41,6 +41,7 @@
         { desc: "Map", value: game.map },
         { desc: "Duration", value: game.duration + "d" },
         { desc: "Replay version", value: game.version },
+        { desc: "Marked broken", value: game.broken ? "yes" : "no" },
     ];
 </script>
 

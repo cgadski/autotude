@@ -103,7 +103,7 @@
 </script>
 
 <div class="table-responsive">
-    <table class="table table-sm">
+    <table class="table table-sm no-bg">
         <colgroup>
             <col style="width: 4em;" />
             <col />
@@ -111,30 +111,34 @@
         <tbody>
             {#each possessionRuns as run, i}
                 {#if run.type === "goal"}
-                    <tr class="table-warning">
-                        <td class="text-nowrap text-end"
-                            >{formatTimestamp(run.startTick)}</td
-                        >
-                        <td>
-                            <strong>GOAL!</strong> by
-                            <a href="/player/{encodeURIComponent(run.handle)}">
-                                {run.handle}
+                    <tr class={run.team === 3 ? "team-red" : "team-blue"}>
+                        <td class="text-nowrap text-end">
+                            <a
+                                href="/viewer/?f={data.game
+                                    .stem}.pb&t={run.startTick}"
+                            >
+                                {formatTimestamp(run.startTick)}
                             </a>
+                        </td>
+                        <td>
+                            <strong>goal</strong> by
+                            {run.handle}
                         </td>
                     </tr>
                 {:else}
                     <tr class={run.team === 3 ? "team-red" : "team-blue"}>
-                        <td class="text-nowrap text-end"
-                            >{formatTimestamp(run.startTick)}</td
-                        >
+                        <td class="text-nowrap text-end">
+                            <a
+                                href="/viewer/?f={data.game
+                                    .stem}.pb&t={run.startTick}"
+                            >
+                                {formatTimestamp(run.startTick)}
+                            </a>
+                        </td>
                         <td>
                             {#each run.events as event, j}
                                 <span class="possession-event">
-                                    <a
-                                        href="/player/{encodeURIComponent(
-                                            event.handle,
-                                        )}">{event.handle}</a
-                                    >
+                                    {event.handle}
                                     <small class="text-muted ms-1">
                                         ({formatDurationFine(
                                             event.duration || 0,
