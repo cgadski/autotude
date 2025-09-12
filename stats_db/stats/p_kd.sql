@@ -65,5 +65,5 @@ SELECT
     ' | ' || cast(sum(kills) AS int) || '#G : ' || cast(sum(deaths) AS int)
     || '#R'
     AS repr,
-    false AS hidden
+    sum(kills) < 100 AS hidden
 FROM tbl GROUP BY handle_key, time_bin, plane
