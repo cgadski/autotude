@@ -48,11 +48,11 @@ table.no-bg {
 
 /* Team background colors */
 .team-red {
-    background-color: #fef2f2;
+    background-color: #fef2f2 !important;
 }
 
 .team-blue {
-    background-color: #eff6ff;
+    background-color: #eff6ff !important;
 }
 
 .stat-red {

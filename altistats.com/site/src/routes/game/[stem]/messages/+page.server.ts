@@ -1,8 +1,15 @@
+import { query } from "$lib/stats";
+
 export async function load({ params, parent }) {
   const { stem } = params;
   await parent();
 
   return {
-    // TODO: Add messages data queries here
+    messages: query(
+      `
+      SELECT 1
+      `,
+      { args: [stem] },
+    ),
   };
 }
