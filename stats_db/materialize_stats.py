@@ -57,75 +57,65 @@ class StatMaterializer:
     def __init__(self, db_path):
         self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
-        self.conn.execute("BEGIN")
-        self.cursor.executescript("""
-            DROP TABLE IF EXISTS stats_raw;
-            CREATE TABLE stats_raw (
-                stat_key INTEGER PRIMARY KEY,
-                query_name TEXT,
-                description TEXT,
-                attributes JSON
-            );
-
-            DROP VIEW IF EXISTS stats;
-            CREATE VIEW stats AS
-            SELECT
-                stats_raw.*,
-                coalesce(stat_order.rowid, 100) AS stat_order
-            FROM stats_raw
-            LEFT JOIN stat_order USING (query_name)
-            ORDER BY stat_order;
-
-            DROP TABLE IF EXISTS global_stats;
-            CREATE TABLE global_stats (
-                stat_key INTEGER REFERENCES stats (stat_key),
-                stat
-            );
-
-            DROP TABLE IF EXISTS player_stats;
-            CREATE TABLE player_stats (
-                stat_key INTEGER REFERENCES stats (stat_key),
-                handle_key,
-                time_bin,
-                plane,
-                stat,
-                repr,
-                hidden
-            );
-        """)
         self.next_stat_key = 1
+
+    def setup_tables(self):
+        self.cursor.execute("DROP TABLE IF EXISTS stats_raw")
+        self.cursor.execute("""CREATE TABLE stats_raw (
+            stat_key INTEGER PRIMARY KEY,
+            query_name TEXT,
+            description TEXT,
+            attributes JSON
+        )""")
+        self.cursor.execute("DROP VIEW IF EXISTS stats")
+        self.cursor.execute("""CREATE VIEW stats AS
+        SELECT
+            stats_raw.*,
+            coalesce(stat_order.rowid, 100) AS stat_order
+        FROM stats_raw
+        LEFT JOIN stat_order USING (query_name)
+        ORDER BY stat_order""")
+        self.cursor.execute("DROP TABLE IF EXISTS global_stats")
+        self.cursor.execute("""CREATE TABLE global_stats (
+            stat_key INTEGER REFERENCES stats (stat_key),
+            stat
+        )""")
+        self.cursor.execute("DROP TABLE IF EXISTS player_stats")
+        self.cursor.execute("""CREATE TABLE player_stats (
+            stat_key INTEGER REFERENCES stats (stat_key),
+            handle_key,
+            time_bin,
+            plane,
+            stat,
+            repr,
+            hidden
+        )""")
 
     def materialize(self, query_file, table_name):
         start_time = time.time()
-        try:
-            stat = read_query(query_file)
-            if stat is None:
-                print(f"skipping {query_file}")
-                return False
-            stat_key = self.next_stat_key
-            self.next_stat_key += 1
-
-            self.cursor.execute(
-                "INSERT INTO stats_raw VALUES (?, ?, ?, ?)",
-                (stat_key, stat.query_name, stat.description, json.dumps(stat.attributes))
-            )
-
-            self.cursor.execute(f"""
-                INSERT INTO {stat.stat_table}
-                SELECT {stat_key} AS stat_key, *
-                FROM ({stat.sql})
-            """)
-
-            elapsed = time.time() - start_time
-            print(f"  ✓ {query_file} ({elapsed:.2f}s)")
-            return True
-        except Exception as e:
-            elapsed = time.time() - start_time
-            print(f"  ✗ {query_file}: {e} ({elapsed:.2f}s)")
+        stat = read_query(query_file)
+        if stat is None:
+            print(f"skipping {query_file}")
             return False
+        stat_key = self.next_stat_key
+        self.next_stat_key += 1
+
+        self.cursor.execute(
+            "INSERT INTO stats_raw VALUES (?, ?, ?, ?)",
+            (stat_key, stat.query_name, stat.description, json.dumps(stat.attributes))
+        )
+
+        self.cursor.execute(f"""
+            INSERT INTO {stat.stat_table}
+            SELECT {stat_key} AS stat_key, *
+            FROM ({stat.sql})
+        """)
+
+        elapsed = time.time() - start_time
+        print(f"  ✓ {query_file} ({elapsed:.2f}s)")
+        return True
 
     def close(self):
-        self.conn.commit()
         self.conn.close()
 
 if __name__ == "__main__":
@@ -142,12 +132,24 @@ if __name__ == "__main__":
 
     sql_files = list(stats_dir.glob("*.sql"))
 
-    materializer = StatMaterializer(db_path)
-    n_success = 0
-    for f in sorted(sql_files):
-        n_success += materializer.materialize(f, f.stem)
-    materializer.close()
+    worker = StatMaterializer(db_path)
+    try:
+        worker.conn.execute("BEGIN")
+        worker.setup_tables()
 
-    print(f"Materialized {n_success}/{len(sql_files)} stat tables")
-    if n_success != len(sql_files):
+        n_success = 0
+        for f in sorted(sql_files):
+            if worker.materialize(f, f.stem):
+                n_success += 1
+
+        if n_success != len(sql_files):
+            raise Exception(f"Only {n_success}/{len(sql_files)} stats materialized successfully")
+
+        worker.conn.commit()
+        print(f"Materialized {n_success}/{len(sql_files)} stat tables")
+    except Exception as e:
+        worker.conn.rollback()
+        print(f"Error: {e}")
         sys.exit(1)
+    finally:
+        worker.close()
