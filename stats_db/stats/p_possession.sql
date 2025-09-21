@@ -17,7 +17,7 @@ SELECT
     NULL AS plane,
     sum(time_with_ball) / sum(time_alive) AS stat,
     printf('%.2f', sum(time_with_ball) / sum(time_alive))
-    || ' | ' || sum(time_with_ball) || 'd : '
+    || ' | ' || sum(time_with_ball) || 'dc / '
     || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl
@@ -32,7 +32,7 @@ SELECT
     NULL AS plane,
     sum(time_with_ball) / sum(time_alive) AS stat,
     printf('%.2f', sum(time_with_ball) / sum(time_alive))
-    || ' | ' || sum(time_with_ball) || 'd : '
+    || ' | ' || sum(time_with_ball) || 'dc / '
     || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl GROUP BY handle_key, time_bin
@@ -46,7 +46,7 @@ SELECT
     plane,
     sum(time_with_ball) / sum(time_alive) AS stat,
     printf('%.2f', sum(time_with_ball) / sum(time_alive))
-    || ' | ' || sum(time_with_ball) || 'd : '
+    || ' | ' || sum(time_with_ball) || 'dc / '
     || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl GROUP BY handle_key, plane
@@ -60,7 +60,7 @@ SELECT
     plane,
     sum(time_with_ball) / sum(time_alive) AS stat,
     printf('%.2f', sum(time_with_ball) / sum(time_alive))
-    || ' | ' || sum(time_with_ball) || 'd : '
+    || ' | ' || sum(time_with_ball) || 'dc / '
     || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl GROUP BY handle_key, time_bin, plane

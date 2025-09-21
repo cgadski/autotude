@@ -16,9 +16,8 @@ SELECT
     NULL AS plane,
     sum(kills) / sum(deaths) AS stat,
     printf('%.2f', sum(kills) / sum(deaths)) ||
-    ' | ' || cast(sum(kills) AS int) || '#G : ' || cast(sum(deaths) AS int)
-    || '#R'
-    AS repr,
+    ' | ' || cast(sum(kills) AS int) || '#G / ' || cast(sum(deaths) AS int)
+    || '#R' AS repr,
     sum(kills) < 1000 AS hidden
 FROM tbl
 GROUP BY handle_key
@@ -32,9 +31,8 @@ SELECT
     NULL AS plane,
     sum(kills) / sum(deaths) AS stat,
     printf('%.2f', sum(kills) / sum(deaths)) ||
-    ' | ' || cast(sum(kills) AS int) || '#G : ' || cast(sum(deaths) AS int)
-    || '#R'
-    AS repr,
+    ' | ' || cast(sum(kills) AS int) || '#G / ' || cast(sum(deaths) AS int)
+    || '#R' AS repr,
     sum(kills) < 100 AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
@@ -47,9 +45,8 @@ SELECT
     plane,
     sum(kills) / sum(deaths) AS stat,
     printf('%.2f', sum(kills) / sum(deaths)) ||
-    ' | ' || cast(sum(kills) AS int) || '#G : ' || cast(sum(deaths) AS int)
-    || '#R'
-    AS repr,
+    ' | ' || cast(sum(kills) AS int) || '#G / ' || cast(sum(deaths) AS int)
+    || '#R' AS repr,
     sum(kills) < 250 AS hidden
 FROM tbl GROUP BY handle_key, plane
 
@@ -62,8 +59,7 @@ SELECT
     plane,
     sum(kills) / sum(deaths) AS stat,
     printf('%.2f', sum(kills) / sum(deaths)) ||
-    ' | ' || cast(sum(kills) AS int) || '#G : ' || cast(sum(deaths) AS int)
-    || '#R'
-    AS repr,
+    ' | ' || cast(sum(kills) AS int) || '#G / ' || cast(sum(deaths) AS int)
+    || '#R' AS repr,
     sum(kills) < 100 AS hidden
 FROM tbl GROUP BY handle_key, time_bin, plane

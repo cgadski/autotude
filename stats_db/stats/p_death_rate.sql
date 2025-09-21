@@ -16,8 +16,9 @@ SELECT
     NULL AS time_bin,
     NULL AS plane,
     sum(time_alive) / (sum(deaths) * 30) AS stat,
-    (sum(time_alive) / sum(deaths)) || 'df '
-   || ' | ' || sum(time_alive) || 'dc : ' || sum(deaths) AS repr,
+    (sum(time_alive) / sum(deaths)) || 'df | '
+    || sum(deaths) || '#R in '
+    || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl
 GROUP BY handle_key
@@ -30,8 +31,9 @@ SELECT
     time_bin,
     NULL AS plane,
     sum(time_alive) / (sum(deaths) * 30) AS stat,
-    (sum(time_alive) / sum(deaths)) || 'df '
-   || ' | ' || sum(time_alive) || 'dc : ' || sum(deaths) AS repr,
+    (sum(time_alive) / sum(deaths)) || 'df | '
+    || sum(deaths) || '#R in '
+    || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl GROUP BY handle_key, time_bin
 
@@ -43,8 +45,9 @@ SELECT
     NULL AS time_bin,
     plane,
     sum(time_alive) / (sum(deaths) * 30) AS stat,
-    (sum(time_alive) / sum(deaths)) || 'df '
-   || ' | ' || sum(time_alive) || 'dc : ' || sum(deaths) AS repr,
+    (sum(time_alive) / sum(deaths)) || 'df | '
+    || sum(deaths) || '#R in '
+    || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl GROUP BY handle_key, plane
 
@@ -56,7 +59,8 @@ SELECT
     time_bin,
     plane,
     sum(time_alive) / (sum(deaths) * 30) AS stat,
-    (sum(time_alive) / sum(deaths)) || 'df '
-    || ' | ' || sum(time_alive) || 'dc : ' || sum(deaths) AS repr,
+    (sum(time_alive) / sum(deaths)) || 'df | '
+    || sum(deaths) || '#R in '
+    || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
 FROM tbl GROUP BY handle_key, time_bin, plane
