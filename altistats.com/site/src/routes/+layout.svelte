@@ -5,6 +5,14 @@
     import "$lib/styles/global.css";
 </script>
 
+<svelte:head>
+    <script
+        data-goatcounter="https://altistats.goatcounter.com/count"
+        async
+        src="//gc.zgo.at/count.js"
+    ></script>
+</svelte:head>
+
 <div class="container py-4 px-3">
     <slot />
 </div>
