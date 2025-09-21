@@ -24,7 +24,9 @@ class ReplaySummary {
 				});
 			}
 			for (object in update.objects) {
-				onObject(object);
+				onObject(object, replay.gameStates[i], (s) -> {
+					Sys.println('${showTimestamp(i)}: $s');
+				});
 			}
 			i++;
 		}
@@ -37,6 +39,7 @@ class ReplaySummary {
 	public function onEvent(event:GameEvent, state:GameState, p:(String) -> Void) {
 		if (event.hasMapLoad()) {
 			p('map load ${event.mapLoad.name}');
+			p('protocol ${event.mapLoad.protocolVersion}');
 			numMapLoads += 1;
 		}
 		if (event.hasSetPlayer()) {
@@ -68,10 +71,14 @@ class ReplaySummary {
 				p([for (k in state.players.keys()) k].toString());
 			}
 			if (kill.whoKilled != null) {
-				p('${state.getName(kill.whoKilled)} killed ${name}');
+				//p('${state.getName(kill.whoKilled)} killed ${name}');
 			} else {
-				p('${name} crashed');
+				//p('${name} crashed');
 			}
+		}
+		if (event.hasScoreUpdate()) {
+			final score = event.scoreUpdate;
+			p('team ${score.team} updated score to ${score.points}');
 		}
 	}
 
@@ -81,7 +88,10 @@ class ReplaySummary {
 	public var maxPosX:Int = 0;
 	public var maxPosY:Int = 0;
 
-	public function onObject(object:GameObject) {
+	public function onObject(object:GameObject, state:GameState, p:(String) -> Void) {
+		if (object.type == 25) {
+			p('acid cloud from ${state.getName(object.owner)}');
+		}
 		if (object.uid != null) {
 			if (object.uid > maxUid)
 				maxUid = object.uid;
