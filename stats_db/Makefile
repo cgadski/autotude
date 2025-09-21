@@ -37,7 +37,7 @@ csvs:
 	@echo "  ...done"
 
 dump:
-	dump --db $(STATS_DB)
+	dump --workers 1 --db $(STATS_DB)
 	$(SQLITE) < tables/vapors.sql
 	$(SQLITE) < tables/handles.sql
 	$(SQLITE) < tables/replays_wide.sql
