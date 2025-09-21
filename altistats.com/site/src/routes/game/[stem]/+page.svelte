@@ -1,22 +1,87 @@
 <script lang="ts">
-    import GameCard from "$lib/GameCard.svelte";
-    import SiteHeader from "$lib/SiteHeader.svelte";
-    import type { Game } from "$lib/db";
+    import { planes } from "$lib";
 
-    /* @type {import('./$types').PageData} */
-    export let data: {
-        game: Game;
-    };
+    export let data;
 
-    let game = data.game;
+    $: redTeamPlayers = data.players.filter((p: any) => p.team === 3);
+    $: blueTeamPlayers = data.players.filter((p: any) => p.team === 4);
+
+    function getPlaneName(planeIndex: number) {
+        return planes[planeIndex] || "Unknown";
+    }
 </script>
 
-<SiteHeader />
+<div class="row g-3">
+    <div class="col-12 col-md-6">
+        <div class="team-red p-3 rounded">
+            <table class="table table-sm mb-0 no-bg">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Plane</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each redTeamPlayers as player}
+                        <tr>
+                            <td>
+                                <a
+                                    href="/player/{encodeURIComponent(
+                                        player.handle,
+                                    )}"
+                                >
+                                    {player.handle}
+                                </a>
+                            </td>
+                            <td>{getPlaneName(player.plane)}</td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-<section class="no-bg">
-    <GameCard {game} />
-</section>
+    <div class="col-12 col-md-6">
+        <div class="team-blue p-3 rounded">
+            <table class="table table-sm mb-0 no-bg">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Plane</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each blueTeamPlayers as player}
+                        <tr>
+                            <td>
+                                <a
+                                    href="/player/{encodeURIComponent(
+                                        player.handle,
+                                    )}"
+                                >
+                                    {player.handle}
+                                </a>
+                            </td>
+                            <td>{getPlaneName(player.plane)}</td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-<section>
-    <a href="/viewer/?f={game.stem}.pb">View replay</a> (desktop only)
-</section>
+<style>
+    .table {
+        background-color: transparent;
+    }
+
+    .table th {
+        font-weight: 500;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .table td {
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+</style>

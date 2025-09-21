@@ -15,17 +15,17 @@
         </a>
         <a
             class="nav-link d-flex align-items-center gap-1"
-            class:active={navPage === "player"}
-            href="/index/player"
+            class:active={navPage === "players"}
+            href="/players"
         >
             <i class="bi bi-person"></i> Players
         </a>
         <a
             class="nav-link d-flex align-items-center gap-1"
-            class:active={navPage === "date"}
-            href="/index/date"
+            class:active={navPage === "games"}
+            href="/games"
         >
-            <i class="bi bi-calendar"></i> Calendar
+            <i class="bi bi-database"></i> Games
         </a>
     </nav>
 </div>

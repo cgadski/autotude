@@ -1,164 +1,92 @@
 <script lang="ts">
-    import { formatDuration } from "$lib";
+    import { formatDatetime, formatTimeAgo, formatTimestamp } from "$lib";
 
-    import type { Game } from "$lib/db";
+    import type { Game } from "$lib";
+    import HorizontalList from "./HorizontalList.svelte";
 
     export let game: Game;
-    export let linkForm;
+    export let handle: string | null = null;
+    export let handles: string[] = [];
 
-    // Format the full date for display
-    const formatFullDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        const month = new Intl.DateTimeFormat("en", { month: "short" }).format(
-            date,
-        );
-        const day = date.getDate();
-        const hours = String(date.getHours()).padStart(2, "0");
-        const minutes = String(date.getMinutes()).padStart(2, "0");
-        return `${month} ${day} ${hours}h${minutes}`;
-    };
+    // If handle is provided, add it to handles array for backward compatibility
+    $: highlightHandles = handle ? [handle, ...handles] : handles;
 </script>
 
-{#if linkForm}
-    <a
-        class="card-head d-flex justify-content-between align-items-center clickable-head"
-        href="/game/{game.stem}"
-    >
-        <div class="time-cell">
-            {formatFullDate(game.started_at)}
-        </div>
-        <div class="map-cell">
+<div class="card">
+    <div class="card-header d-flex align-items-center position-relative">
+        <div class="fw-medium me-3">
             {game.map}
         </div>
-        <div
-            class="duration-cell d-flex align-items-center justify-content-end"
+        <div class="small flex-fill">
+            {formatDatetime(game.started_at)}
+        </div>
+        <a
+            class="btn px-1 py-0 btn-primary stretched-link"
+            href="/game/{game.stem}">See game</a
         >
-            <span>{formatDuration(game.duration)}</span>
-            <i class="bi bi-chevron-right ms-2"></i>
-        </div>
-    </a>
-{:else}
-    <div class="card-head d-flex justify-content-between align-items-center">
-        <div class="time-cell">
-            {formatFullDate(game.started_at)}
-        </div>
-        <div class="map-cell">
-            {game.map}
-        </div>
-        <div
-            class="duration-cell d-flex align-items-center justify-content-end"
-        >
-            <span>{formatDuration(game.duration)}</span>
-        </div>
     </div>
-{/if}
 
-<div class="teams">
-    <div class="team">
-        {#each game.teams["3"] || [] as player}
-            <a href="/player/{player.vapor}" class="text-decoration-none">
-                <span class="badge bg-danger bg-opacity-75 player-badge">
-                    {player.nick}
-                    <i class="bi bi-person-circle ms-1 opacity-75"></i>
-                </span>
-            </a>
-        {/each}
-    </div>
-    <div class="team">
-        {#each game.teams["4"] || [] as player}
-            <a href="/player/{player.vapor}" class="text-decoration-none">
-                <span class="badge bg-primary bg-opacity-75 player-badge">
-                    {player.nick}
-                    <i class="bi bi-person-circle ms-1 opacity-75"></i>
-                </span>
-            </a>
-        {/each}
+    <div class="row g-0">
+        <div class="col-12 col-sm-6">
+            <div
+                class="p-2 team-red border-end border-danger border-opacity-25 d-flex align-items-center"
+                style="min-height: 2.5rem;"
+            >
+                <div class="flex-fill">
+                    <HorizontalList items={game.teams["3"]} let:item>
+                        <a
+                            href="/player/{encodeURIComponent(item)}"
+                            class="small"
+                            class:fw-bold={highlightHandles.includes(item)}
+                        >
+                            {item}
+                        </a>
+                    </HorizontalList>
+                </div>
+                <div class="ms-2">
+                    {#if game.winner === 3}
+                        <i class="bi bi-trophy-fill text-warning"></i>
+                    {/if}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6">
+            <div
+                class="p-2 team-blue d-flex align-items-center"
+                style="min-height: 2.5rem;"
+            >
+                <div class="flex-fill">
+                    <HorizontalList items={game.teams["4"]} let:item>
+                        <a
+                            href="/player/{encodeURIComponent(item)}"
+                            class="small"
+                            class:fw-bold={highlightHandles.includes(item)}
+                        >
+                            {item}
+                        </a>
+                    </HorizontalList>
+                </div>
+                <div class="ms-2">
+                    {#if game.winner === 4}
+                        <i class="bi bi-trophy-fill text-warning"></i>
+                    {/if}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-    .teams {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
+    /*a:hover {
+        color: #0066cc !important;
+        text-decoration: underline !important;
+    }*/
 
-    .player-badge {
-        display: inline-block;
-        margin: 0.2rem;
-        transition: opacity 0.2s;
-    }
-
-    .player-badge:hover {
-        opacity: 0.8;
-    }
-
-    .card-head {
-        text-decoration: none;
-        color: inherit;
-        padding: 0.75rem;
-        background-color: white;
-        margin-top: 1em;
-        box-sizing: border-box;
-
-        border-radius: 8px;
-        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
-        background-color: white;
-        border: 1px solid #eaeaea;
-    }
-
-    .clickable-head {
-        transition: all 0.15s ease-in-out;
-        cursor: pointer;
-    }
-
-    .clickable-head:hover {
-        background-color: #f8f9fa;
-        border-color: var(--bs-primary);
-    }
-
-    .time-cell,
-    .map-cell,
-    .duration-cell {
-        padding: 0 0.5rem;
-        overflow: hidden;
-    }
-
-    .time-cell {
-        width: 25%;
-        color: #666;
-    }
-
-    .map-cell {
-        width: 50%;
-        font-weight: 500;
-    }
-
-    .duration-cell {
-        width: 25%;
-    }
-
-    .teams {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
-    }
-
-    .team {
-        padding: 0.5rem;
-        border-radius: 4px;
-    }
-
-    @media (max-width: 576px) {
-        .time-cell {
-            width: 25%;
-        }
-        .map-cell {
-            width: 40%;
-        }
-
-        .duration-cell {
-            width: 35%;
+    @media (max-width: 575.98px) {
+        .border-end {
+            border-right: none !important;
+            border-bottom: 1px solid rgba(220, 53, 69, 0.25) !important;
         }
     }
 </style>

@@ -1,14 +1,23 @@
-import { getGame } from '$lib/db';
-import { error } from '@sveltejs/kit';
+import { query } from "$lib/stats";
 
-export async function load({ params }) {
-    const game = await getGame(params.stem);
-    
-    if (!game) {
-        throw error(404, 'Game not found');
-    }
+export async function load({ params, parent }) {
+  const { stem } = params;
+  await parent();
 
-    return {
-        game
-    };
+  return {
+    players: await query(
+      `
+      SELECT
+        handle,
+        team,
+        plane
+      FROM players_short
+      NATURAL JOIN handles
+      NATURAL JOIN replays
+      WHERE stem = ?
+      ORDER BY team, handle
+      `,
+      { args: [stem] },
+    ),
+  };
 }

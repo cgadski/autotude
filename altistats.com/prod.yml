@@ -25,10 +25,29 @@ services:
       - /root/files/:/usr/share/nginx/files/
     restart: unless-stopped
 
+  stats_db:
+    image: magneticduck/stats_db:latest
+    volumes:
+      - /root/alti_home/recordings:/app/recordings:ro
+      - /root/stats_db/:/app/stats_db/
+    deploy:
+      resources:
+        limits:
+          cpus: "0.20"
+          memory: 2G
+    environment:
+      REPLAY_DIR: /app/recordings/
+      STATS_DB: /app/stats_db/stats.db
+      STATS_INTERVAL: 60
+    restart: unless-stopped
+
   site:
     image: magneticduck/altistats:latest
+    volumes:
+      - /root/stats_db/:/app/stats_db/
     environment:
       <<: *db-env
+      STATS_DB: /app/stats_db/stats.db
       NODE_ENV: production
     ports:
       - "3000:3000"

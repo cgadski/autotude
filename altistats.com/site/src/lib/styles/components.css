@@ -29,9 +29,36 @@ section > h2:not(:first-child) {
     margin-top: 1rem;
 }
 
+section.narrow {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table.no-bg {
+    --bs-table-bg: transparent !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 576px) {
     section > h2 {
         font-size: 1.1rem;
     }
+}
+
+/* Team background colors */
+.team-red {
+    background-color: #fef2f2 !important;
+}
+
+.team-blue {
+    background-color: #eff6ff !important;
+}
+
+.stat-red {
+    color: indianred;
+}
+
+.stat-green {
+    color: mediumseagreen;
 }
