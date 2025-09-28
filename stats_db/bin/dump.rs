@@ -148,6 +148,8 @@ fn main() -> Result<()> {
                 replay_key: replay_key.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
             };
 
+            dump_listener.clear_tables().unwrap();
+
             match read_replay_file(&path, &mut dump_listener) {
                 Ok(()) => {
                     dump_listener.write_replay().expect("Error writing replay");
@@ -285,6 +287,17 @@ impl<'a> DumpListener<'a> {
             }
         }
 
+        Ok(())
+    }
+
+    fn clear_tables(&self) -> Result<()> {
+        for table in ["messages", "goals", "kills", "damage"] {
+            let mut stmt = self
+                .conn
+                .prepare(&format!("DELETE FROM {} WHERE replay_key = ?", table))?;
+            stmt.bind((1, self.replay_key))?;
+            stmt.next()?;
+        }
         Ok(())
     }
 }
