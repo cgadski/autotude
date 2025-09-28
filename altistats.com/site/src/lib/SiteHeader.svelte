@@ -4,6 +4,14 @@
     export let navPage: NavPage = null;
 </script>
 
+<svelte:head>
+    <script
+        data-goatcounter="https://altistats.goatcounter.com/count"
+        async
+        src="//gc.zgo.at/count.js"
+    ></script>
+</svelte:head>
+
 <header class="site-header mb-3">
     <a href="/"><h1 class="site-title">altistats.com</h1></a>
     <NavLinks {navPage} />
