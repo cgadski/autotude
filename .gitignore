@@ -47,3 +47,5 @@ site_src/.index.sql.swp
 __pycache__
 .ipynb_checkpoints
 .jupyter
+.vandc
+rl/models

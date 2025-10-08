@@ -9,24 +9,28 @@ import stat
 import subprocess
 import uuid
 
-from .proto.command_pb2 import ClientCmd
+from .proto.command_pb2 import Cmd
 from .proto.map_geometry_pb2 import MapGeometry
 from .proto.update_pb2 import Update
-from .client_config import ClientConfig
+from .server_config import ServerConfig
 from .paths import BIN, ALTI_HOME
 
-from .bot_server import ensure_fifo
+
+def ensure_fifo(path: Path):
+    if os.path.exists(path):
+        os.remove(path)
+    os.mkfifo(path)
 
 
-class OnlineClient:
+class BotServer:
     command_pipe: BufferedWriter
     update_pipe: BufferedReader
     runtime_path: Path
 
     map_geometry: MapGeometry
 
-    def __init__(self, config: ClientConfig):
-        client_exec = BIN / "client"
+    def __init__(self, config: ServerConfig):
+        server_exec = BIN / "bot_server"
 
         self.alti_home = ALTI_HOME
         self.runtime_path = self.alti_home / "run" / str(uuid.uuid1())
@@ -42,44 +46,32 @@ class OnlineClient:
         log_path = self.runtime_path / "log"
         with open(log_path, "w") as log:
             self.process = subprocess.Popen(
-                [client_exec],
+                [server_exec],
+                stdout=log,
+                stderr=log,
                 env={
                     **os.environ,
                     "ALTI_HOME": self.alti_home,
-                    "BOT_RUNTIME": self.runtime_path,
-                    "BOT_CONFIG": self.runtime_path / "config.xml",
+                    "SERVER_RUNTIME": self.runtime_path,
+                    "SERVER_CONFIG": self.runtime_path / "config.xml",
                 },
             )
 
-        print(f"Client started with PID {self.process.pid}")
+        print(f"Server started with PID {self.process.pid}")
         with open(self.runtime_path / "pid", "w") as pid_file:
             pid_file.write(str(self.process.pid))
 
         self.command_pipe = open(command_path, "wb")
         self.update_pipe = open(update_path, "rb")
+        map_load = self._read_update()
+        self.read_map_load(map_load)
+        print("Map loaded, server is ready to receive commands")
 
-        print("Pipes open, now polling client")
+    def update(self, cmd: Cmd) -> Update:
+        self._write_command(cmd)
+        return self._read_update()
 
-    def poll(self):
-        ct = 0
-        while True:
-            if self.process.poll() is not None:
-                print(f"Client process exited with code {self.process.returncode}")
-                raise RuntimeError(f"Client process died with return code {self.process.returncode}")
-
-            update = self._read_update()
-            for event in update.events:
-                if event.map_load is not None:
-                    self.map_geometry = event.map_load.map
-            self._write_command(self.on_update(update))
-            ct += 1
-            if ct % 100 == 0:
-                print(f"Client running: processed {ct} updates")
-
-    def on_update(self, update: Update) -> ClientCmd:
-        return ClientCmd()
-
-    def _write_command(self, cmd: ClientCmd):
+    def _write_command(self, cmd: Cmd):
         serialized = cmd.SerializeToString()
         self.command_pipe.write(_VarintBytes(len(serialized)))
         self.command_pipe.write(serialized)
@@ -103,3 +95,21 @@ class OnlineClient:
         update = Update()
         update.ParseFromString(message_buf)
         return update
+
+    def read_map_load(self, up: Update):
+        for event in up.events:
+            if event.map_load is not None:
+                self.map_geometry = event.map_load.map
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print("Shutting down server")
+        cmd = Cmd()
+        cmd.shutdown = True
+        self._write_command(cmd)
+        self.process.wait(timeout=1)
+
+        self.command_pipe.close()
+        self.update_pipe.close()

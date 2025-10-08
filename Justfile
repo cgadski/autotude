@@ -9,7 +9,7 @@ setup:
 	tar -xvf dist.tar
 	rm dist.tar
 	mkdir -p bin/
-	ln -sf $PWD/java_dist/BotServer*/bin/BotServer bin/server
+	ln -sf $PWD/java_dist/BotServer*/bin/BotServer bin/bot_server
 
 # Install dependencies through nix
 nix:
@@ -25,8 +25,8 @@ setup-from-src:
 	mkdir -p bin/
 	tar -xf $ALTI_SRC/BotServer/build/distributions/*.tar -C java_dist/
 	tar -xf $ALTI_SRC/BotClient/build/distributions/*.tar -C java_dist/
-	ln -sf $PWD/java_dist/BotServer*/bin/BotServer bin/server
-	ln -sf $PWD/java_dist/BotClient*/bin/BotClient bin/client
+	ln -sf $PWD/java_dist/BotServer*/bin/BotServer bin/bot_server
+	ln -sf $PWD/java_dist/BotClient*/bin/BotClient bin/bot_client
 	rsync -ru \
 		$ALTI_SRC/BotServer/build/alti_home/{maps,resources,data} \
 		alti_home/

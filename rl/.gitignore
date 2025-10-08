@@ -1,4 +1,5 @@
-/index.db
 *.egg-info
 .venv/
 /viewer/js
+/data
+/dist

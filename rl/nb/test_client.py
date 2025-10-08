@@ -1,6 +1,6 @@
-import altitude_rl as arl
+import alti_rl as arl
 import numpy as np
-from altitude_rl.online_client import OnlineClient
+from alti_rl.online_client import OnlineClient
 import os
 
 def wrap_180(angle):

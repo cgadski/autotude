@@ -25,10 +25,10 @@ hx_src/autotude/proto/: $(PROTO_FILES)
 
 
 # python sourcegen
-rl/lib/altitude_rl/proto/: $(PROTO_FILES)
+rl/altitude_rl/proto/: $(PROTO_FILES)
 	rm -rf $@
 	mkdir -p $@
-	cd rl/lib; uv sync
+	cd rl; uv sync
 	echo "running protoc..."
 	@PATH=$(PATH):rl/lib/.venv/bin/ \
 	   protoc -I=$(PROTO_SRC) --python_out=$@ --mypy_out=$@ $^

@@ -3,14 +3,14 @@
 # %autoreload 2
 
 # %%
-import altitude_rl as arl
+import alti_rl as arl
 from tqdm import tqdm
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 # %%
-from altitude_rl.proto.game_object_pb2 import GameObject
+from alti_rl.proto.game_object_pb2 import GameObject
 
 def make_config():
     config = arl.ServerConfig()

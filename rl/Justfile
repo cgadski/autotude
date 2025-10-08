@@ -1,7 +1,7 @@
 benchmark:
 	SERVER_CONFIG=./server_benchmark.xml \
 	SERVER_RUNTIME="" \
-		server
+		bot_server
 
 index:
 	make -C .. bin/index-lite
