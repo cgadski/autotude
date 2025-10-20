@@ -141,4 +141,7 @@ SET handle_key = (
     WHERE vh.vapor_key = players_wide.vapor_key
 );
 
+DELETE FROM players_wide
+WHERE replay_key NOT IN ladder_games;
+
 COMMIT;
