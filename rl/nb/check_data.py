@@ -3,9 +3,10 @@
 %autoreload 2
 
 # %%
+from os import POSIX_SPAWN_CLOSE
 import alti_rl as arl
 import vandc
-from alti_rl.networks import PlaneEncoder, crash_to_go, plane_features, simple_mlp
+from alti_rl.networks import PlaneEncoder, crash_to_go, plane_features, simple_mlp, sparse_pos
 import torch
 import matplotlib.pyplot as plt
 from surgeon_pytorch import Extract, get_layers, get_nodes
@@ -14,20 +15,25 @@ from surgeon_pytorch import Extract, get_layers, get_nodes
 # %%
 data = torch.load("../data/channelpark.pt")
 to_go = crash_to_go(data["reward"])
-ob = data["ob"]
+obs = data["ob"]
 
 idx = torch.arange(to_go.shape[0])
-# mask = (idx > 12 * 30) & (idx <= 24 * 30)
-mask = (idx > 1) & (idx < 60 * 30)
+mask = (idx > 1) & (idx < 60 *  30)
 plt.scatter(ob[mask, 0], data["ob"][mask, 1], c=to_go[mask], s=1)
 plt.colorbar()
-# %%
-f = plane_features(ob[mask])
-# plt.scatter(features[:, 0], features[:, 1])
 
-sparse = sparse_pos(f, 20)
-plt.matshow(sparse[100:60 * 30])
-# plt.matshow(f[:5])
+# %%
+def bin_pos(obs, res):
+    max_vals = obs.max(dim=0).values
+    binned_x = torch.bucketize(ob[:, 0], torch.linspace(0, max_vals[0], res))
+    binned_y = torch.bucketize(ob[:, 1], torch.linspace(0, max_vals[1], res))
+    return torch.stack([binned_x, binned_y], dim=-1)
+
+res = 128
+mat = torch.zeros((res, res))
+binned = bin_pos(obs, res)
+mat[res - binned[:, 1] - 1, binned[:, 0]] = 1
+plt.matshow(mat)
 
 # %%
 mlp = simple_mlp()

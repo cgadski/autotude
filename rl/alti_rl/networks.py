@@ -37,11 +37,13 @@ def plane_features(x):
     cis = torch.stack([torch.cos(angle), torch.sin(angle)], dim=-1)
     return torch.concat([pos_scaled, 0.5 * cis, 0.04 * vel], dim=-1)
 
-def sparse_pos(f, r):
-    res = torch.zeros((f.shape[0], r * r))
-    x_val = torch.minimum(torch.floor(r * (1 + f[:, 0]) / 2).to(torch.int), torch.tensor(r - 1))
-    y_val = torch.minimum(torch.floor(r * (1 + f[:, 1]) / 2).to(torch.int), torch.tensor(r - 1))
-    res[torch.arange(f.shape[0]), r * y_val + x_val] = 1
+def sparse_pos(x, res):
+    # x: b 2
+    res = torch.zeros((x.shape[0], res * res), type=torch.int8)
+    max_idx = torch.tensor(res - 1)
+    x_val = torch.minimum(torch.floor(res * (1 + x[:, 0]) / 2).to(torch.int), max_idx)
+    y_val = torch.minimum(torch.floor(res * (1 + x[:, 1]) / 2).to(torch.int), max_idx)
+    res[torch.arange(x.shape[0]), res * y_val + x_val] = 1
     return res
 
 

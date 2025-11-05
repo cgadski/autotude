@@ -22,5 +22,5 @@ def get_trajectories(steps=1000):
 
 
 # %%
-act, ob, reward = get_trajectories(5 * 60 * 60 * 30)
-t.save({"act": act, "ob": ob, "reward": reward}, "data/channelpark.pt")
+acts, obs, rewards = get_trajectories(10 * 60 * 60 * 30)
+t.save({"acts": acts, "obs": obs, "rewards": rewards}, "data/channelpark.pt")
