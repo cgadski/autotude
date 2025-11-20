@@ -19,7 +19,7 @@ SELECT
     printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
     || sum(tks) || '#R in '
     || sum(30 * 60 * 60 * hours) || 'dc' AS repr,
-    sum(hours) < 50 OR sum(tks) = 0 AS hidden
+    sum(tks) = 0 AS hidden
 FROM tbl
 GROUP BY handle_key
 
@@ -34,7 +34,7 @@ SELECT
     printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
     || sum(tks) || '#R in '
     || sum(30 * 60 * 60 * hours) || 'dc' AS repr,
-    sum(hours) < 1 OR sum(tks) = 0 AS hidden
+    sum(tks) = 0 AS hidden
 FROM tbl
 GROUP BY handle_key, plane
 
@@ -49,7 +49,7 @@ SELECT
     printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
     || sum(tks) || '#R in '
     || sum(30 * 60 * 60 * hours) || 'dc' AS repr,
-    sum(hours) < 1 OR sum(tks) = 0 AS hidden
+    sum(tks) = 0 AS hidden
 FROM tbl
 GROUP BY handle_key, time_bin
 
@@ -64,6 +64,6 @@ SELECT
     printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
     || sum(tks) || '#R in '
     || sum(30 * 60 * 60 * hours) || 'dc' AS repr,
-    sum(hours) < 1 OR sum(tks) = 0 AS hidden
+    sum(tks) = 0 AS hidden
 FROM tbl
 GROUP BY handle_key, plane, time_bin
