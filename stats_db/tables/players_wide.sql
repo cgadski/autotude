@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS players_wide (
     -- data per loadout period
     time_alive REAL, -- time player was alive
     kills INTEGER,
+    team_kills INTEGER,
     deaths INTEGER,
     goals INTEGER,
     time_with_ball INTEGER
@@ -77,13 +78,21 @@ INSERT INTO players_wide
 WITH kill_tallies AS (
     SELECT
         sg.rowid,
-        count() FILTER (WHERE kills.who_died = sg.player_key) AS deaths,
-        count() FILTER (WHERE kills.who_killed = sg.player_key) AS kills
+        count() FILTER (WHERE kills.who_killed = sg.player_key) AS kills,
+        count() FILTER (
+            WHERE kills.who_killed = sg.player_key
+            AND p_died.team = sg.team
+        ) AS team_kills,
+        count() FILTER (WHERE kills.who_died = sg.player_key) AS deaths
     FROM spawn_groups sg
     JOIN kills ON (
         kills.replay_key = sg.replay_key AND
         kills.tick >= sg.start_tick AND
         coalesce(kills.tick < sg.end_tick, true)
+    )
+    LEFT JOIN players p_died ON (
+        kills.replay_key = p_died.replay_key AND
+        kills.who_died = p_died.player_key
     )
     GROUP BY sg.rowid
 ),
@@ -125,6 +134,7 @@ SELECT
     -- now the interesting queries
     time_alive,
     coalesce(kills, 0) AS kills,
+    coalesce(team_kills, 0) AS team_kills,
     coalesce(deaths, 0) AS deaths,
     coalesce(goals, 0) AS goals,
     coalesce(time_with_ball, 0) AS time_with_ball
