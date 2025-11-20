@@ -49,3 +49,6 @@ __pycache__
 .jupyter
 .vandc
 rl/models
+stats_db/players.txt
+stats_db/goals.txt
+stats_db/tks.txt

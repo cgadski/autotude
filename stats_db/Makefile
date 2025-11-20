@@ -1,6 +1,6 @@
 SQLITE := sqlite3 $(STATS_DB)
 
-.PHONY: csvs dump views stats
+.PHONY: csvs dump views stats chat.txt goals.txt
 
 all: $(STATS_DB) \
 	views \
@@ -48,3 +48,21 @@ dump:
 
 stats:
 	python3 materialize_stats.py --db $(STATS_DB) --stats-dir stats/
+
+chat.txt:
+	$(SQLITE) -table "\
+	    select \
+			datetime(started_at + tick / 30.0, 'unixepoch') as timestamp, \
+			coalesce(handle, 'server') as handle, \
+		    chat_message as message, \
+			map, stem \
+			from messages natural join replays \
+			left join player_key_handle using (replay_key, player_key) \
+			left join handles using (handle_key) \
+			order by timestamp \
+	" > chat.txt
+	scp chat.txt root@altistats.com:/root/files/
+
+goals.txt:
+	$(SQLITE) -table < misc/longest_goals.sql > goals.txt
+	scp goals.txt root@altistats.com:/root/files/

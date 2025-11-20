@@ -1,7 +1,6 @@
 import Database from "better-sqlite3";
 import { env } from "$env/dynamic/private";
 import type { Stat, StatMeta } from ".";
-import { formatStat } from ".";
 
 let statsDb: Database.Database | null = null;
 

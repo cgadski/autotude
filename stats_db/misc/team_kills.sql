@@ -1,8 +1,10 @@
 SELECT
-    count() FILTER (WHERE team = 3) AS blue_kills,
-    count() FILTER (WHERE team = 4) AS red_kills
-FROM kills
-NATURAL JOIN ladder_games
-JOIN players ON
-    players.replay_key = kills.replay_key AND
-    players.player_key = kills.who_killed;
+    handle,
+    format('%.3f', (30 * 60 * 60) * sum(team_kills) / sum(time_alive)) AS tks_per_hour,
+    sum(team_kills) AS total_tks,
+    sum(time_alive) / (30 * 60 * 30) AS hours
+FROM players_wide
+NATURAL JOIN handles
+GROUP BY handle
+ORDER BY hours DESC
+LIMIT 50;
