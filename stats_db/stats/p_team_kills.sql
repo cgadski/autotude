@@ -31,7 +31,7 @@ SELECT
     NULL AS time_bin,
     plane,
     sum(tks) / sum(hours) AS stat,
-    format('%.3f / hour', sum(tks) / sum(hours)) || ' | '
+    printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
     || sum(tks) || '#R in '
     || sum(30 * 60 * 60 * hours) || 'dc' AS repr,
     sum(hours) < 1 OR sum(tks) = 0 AS hidden
@@ -46,7 +46,7 @@ SELECT
     time_bin,
     NULL AS plane,
     sum(tks) / sum(hours) AS stat,
-    format('%.3f / hour', sum(tks) / sum(hours)) || ' | '
+    printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
     || sum(tks) || '#R in '
     || sum(30 * 60 * 60 * hours) || 'dc' AS repr,
     sum(hours) < 1 OR sum(tks) = 0 AS hidden
@@ -61,7 +61,7 @@ SELECT
     time_bin,
     plane,
     sum(tks) / sum(hours) AS stat,
-    format('%.3f / hour', sum(tks) / sum(hours)) || ' | '
+    printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
     || sum(tks) || '#R in '
     || sum(30 * 60 * 60 * hours) || 'dc' AS repr,
     sum(hours) < 1 OR sum(tks) = 0 AS hidden
