@@ -19,7 +19,7 @@ SELECT
     printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
     || sum(tks) || '#R in '
     || sum(30 * 60 * 60 * hours) || 'dc' AS repr,
-    sum(tks) = 0 AS hidden
+    sum(hours) < 20 OR sum(tks) = 0 AS hidden
 FROM tbl
 GROUP BY handle_key
 
