@@ -1,0 +1,2 @@
+dump-parquet:
+	cargo run --release --bin dump-parquet -- -o ../rl/data/data.parquet

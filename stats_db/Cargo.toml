@@ -11,6 +11,10 @@ path = "bin/index-lite.rs"
 name = "dump"
 path = "bin/dump.rs"
 
+[[bin]]
+name = "dump-parquet"
+path = "bin/dump-parquet.rs"
+
 [dependencies]
 prost = "0.12"
 prost-types = "0.12"
@@ -26,6 +30,8 @@ sqlite = "0.36.2"
 ndarray = "0.16.1"
 ndarray-npy = "0.9.1"
 threadpool = "1.8.1"
+arrow = "53"
+parquet = "53"
 
 [build-dependencies]
 prost-build = "0.12"

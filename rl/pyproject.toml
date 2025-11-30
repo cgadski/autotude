@@ -7,6 +7,7 @@ dependencies = [
     "gymnasium>=1.0",
     "matplotlib>=3.10.6",
     "mypy-protobuf>=3.6.0",
+    "polars>=1.35.2",
     "protobuf>=5.28.3",
     "scikit-learn>=1.7.2",
     "scipy>=1.15.2",
