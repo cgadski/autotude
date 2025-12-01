@@ -60,7 +60,10 @@
                                 : ""}
                     >
                         <td class="text-nowrap text-end text-muted">
-                            <a href="/viewer/?f={data.stem}.pb&t={item.tick}">
+                            <a
+                                href="/viewer/?f={data.stem}.pb&t={item.tick -
+                                    2 * 30}"
+                            >
                                 {formatTimestamp(item.tick)}
                             </a>
                         </td>
