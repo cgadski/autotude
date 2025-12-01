@@ -55,6 +55,14 @@ table.no-bg {
     background-color: #eff6ff !important;
 }
 
+.team-red-dark {
+    background-color: #dc2626 !important;
+}
+
+.team-blue-dark {
+    background-color: #2563eb !important;
+}
+
 .stat-red {
     color: indianred;
 }
