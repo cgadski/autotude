@@ -266,6 +266,28 @@ impl IndexingListener {
 }
 
 impl ReplayListener for IndexingListener {
+    fn on_event(&mut self, event: &GameEvent) -> ReplayResult<()> {
+        match &event.event {
+            Some(Event::MapLoad(load)) => {
+                self.state.map_name = load.name.as_ref().map(|x| x.to_string());
+                self.state.server_name = load.server.clone();
+                self.state.datetime = crate::parse_datetime(load.datetime());
+                self.state.version = load.protocol_version.clone();
+            }
+            Some(Event::Chat(_chat)) => {}
+            Some(Event::Goal(_goal)) => {}
+            Some(Event::Kill(_kill)) => {}
+            Some(Event::SetPlayer(data)) => {
+                self.on_set_player(data)?;
+            }
+            Some(Event::RemovePlayer(data)) => {
+                self.on_remove_player(data)?;
+            }
+            _ => {}
+        }
+        Ok(())
+    }
+
     fn on_update(&mut self, update: &Update) -> ReplayResult<()> {
         self.state.current_tick += 1;
 
@@ -287,28 +309,6 @@ impl ReplayListener for IndexingListener {
         }
         self.state.ball.end_tick(tick);
 
-        Ok(())
-    }
-
-    fn on_event(&mut self, event: &GameEvent) -> ReplayResult<()> {
-        match &event.event {
-            Some(Event::MapLoad(load)) => {
-                self.state.map_name = load.name.as_ref().map(|x| x.to_string());
-                self.state.server_name = load.server.clone();
-                self.state.datetime = crate::parse_datetime(load.datetime());
-                self.state.version = load.protocol_version.clone();
-            }
-            Some(Event::Chat(_chat)) => {}
-            Some(Event::Goal(_goal)) => {}
-            Some(Event::Kill(_kill)) => {}
-            Some(Event::SetPlayer(data)) => {
-                self.on_set_player(data)?;
-            }
-            Some(Event::RemovePlayer(data)) => {
-                self.on_remove_player(data)?;
-            }
-            _ => {}
-        }
         Ok(())
     }
 }

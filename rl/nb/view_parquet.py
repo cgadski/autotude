@@ -7,12 +7,12 @@ df
 
 # %%
 import numpy as np
-df.write_csv("../data/ball.csv")
+# df.write_csv("../data/ball.csv")
 # np.isnan(df[:100].to_numpy())
 
 # %%
-t = 0 * 30
-s = slice(t, t + 120 * 30)
+t = 120 * 30
+s = slice(t, t + 29 * 30)
 
 fig, ax = plt.subplots()
 for i in range(8):
@@ -27,13 +27,13 @@ for i in range(8):
         alpha=0.2
     )
 
-ax.plot(df["ball_x"][s], df["ball_y"][s], c="black")
+red = np.where(df["ball_team"][s] == 3, "red", "blue")
+ax.scatter(df["ball_x"][s], df["ball_y"][s], c=red, s=1)
 
 ax.set_aspect(1)
 
 
 # %%
-
-df["team"].value_counts()
+df["ball_team"].value_counts()
 
 # %%

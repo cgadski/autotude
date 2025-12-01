@@ -35,7 +35,7 @@ struct PlayerRow {
 struct BallRow {
     x: u32,
     y: u32,
-    team: i32,
+    team: u32,
 }
 
 #[derive(Debug, Clone)]
@@ -46,9 +46,21 @@ struct GameRow {
     players: [Option<PlayerRow>; 8],
 }
 
+impl GameRow {
+    fn new() -> Self {
+        GameRow {
+            replay_key: 0,
+            tick: 0,
+            ball: None,
+            players: [None; 8],
+        }
+    }
+}
+
 struct GameTracker {
     indexer: IndexingListener,
     replay_key: u32,
+    current_row: GameRow,
     rows: Vec<GameRow>,
     player_key_to_handle: HashMap<i32, i32>,
     player_key_to_slot: HashMap<i32, usize>,
@@ -58,7 +70,7 @@ impl GameTracker {
     fn new(
         replay_key: u32,
         player_key_to_handle: HashMap<i32, i32>,
-        player_key_to_team: HashMap<i32, i32>,
+        player_key_to_team: HashMap<i32, u32>,
     ) -> Self {
         let mut player_key_to_slot = HashMap::new();
 
@@ -91,6 +103,7 @@ impl GameTracker {
         Self {
             indexer: IndexingListener::new(),
             replay_key,
+            current_row: GameRow::new(),
             rows: Vec::new(),
             player_key_to_handle,
             player_key_to_slot,
@@ -99,14 +112,14 @@ impl GameTracker {
 }
 
 impl GameTracker {
-    fn handle_plane(&mut self, record: &mut GameRow, obj: &GameObject, player_key: PlayerKey) {
+    fn handle_plane(&mut self, obj: &GameObject, player_key: PlayerKey) {
         let x = obj.position_x();
         let y = obj.position_y();
         let angle = obj.angle();
 
         if let Some(&slot) = self.player_key_to_slot.get(&player_key.0) {
             if let Some(&handle_key) = self.player_key_to_handle.get(&player_key.0) {
-                record.players[slot] = Some(PlayerRow {
+                self.current_row.players[slot] = Some(PlayerRow {
                     x,
                     y,
                     angle,
@@ -116,39 +129,50 @@ impl GameTracker {
         }
 
         if obj.powerup() == ObjectType::Ball {
-            record.ball = Some(BallRow {
+            self.current_row.ball = Some(BallRow {
                 x,
                 y,
-                team: obj.team() as i32,
+                team: obj.team() as u32,
             });
         }
     }
 }
 
 impl ReplayListener for GameTracker {
+    // fn on_start_frame(&mut self) -> ReplayResult<()> {
+    //     self.current_row = GameRow::new();
+    //     Ok(())
+    // }
+
+    fn on_event(&mut self, event: &GameEvent) -> ReplayResult<()> {
+        self.indexer.on_event(event)?;
+        Ok(())
+    }
+
     fn on_update(&mut self, update: &Update) -> ReplayResult<()> {
         self.indexer.on_update(update)?;
 
-        let mut record = GameRow {
-            replay_key: self.replay_key,
-            tick: self.indexer.state.current_tick as u32,
-            ball: None,
-            players: [None; 8],
-        };
+        {
+            let row = &mut self.current_row;
+            row.tick = self.indexer.state.current_tick as u32;
+            row.replay_key = self.replay_key;
+            row.ball = None;
+            row.players = [None; 8];
+        }
 
         for obj in update.objects.iter() {
-            let is_plane = (obj.r#type() as i32) < 5;
+            let is_plane = (obj.r#type() as u32) < 5;
             if is_plane {
                 let player_id: PlayerId = obj.owner().into();
                 if let Ok(PlayerServerPresence::Present(player_key)) =
                     self.indexer.get_player_key(player_id)
                 {
-                    self.handle_plane(&mut record, obj, player_key);
+                    self.handle_plane(obj, player_key);
                 }
             }
 
             if obj.r#type() == ObjectType::Ball {
-                record.ball = Some(BallRow {
+                self.current_row.ball = Some(BallRow {
                     x: obj.position_x(),
                     y: obj.position_y(),
                     team: 0,
@@ -156,13 +180,8 @@ impl ReplayListener for GameTracker {
             }
         }
 
-        self.rows.push(record);
+        self.rows.push(self.current_row.clone());
 
-        Ok(())
-    }
-
-    fn on_event(&mut self, event: &GameEvent) -> ReplayResult<()> {
-        self.indexer.on_event(event)?;
         Ok(())
     }
 }
@@ -187,7 +206,7 @@ fn write_batch(
         col!(UInt32Array, |r| r.tick),
         col!(UInt32Array, |r| r.ball.map(|b| b.x)),
         col!(UInt32Array, |r| r.ball.map(|b| b.y)),
-        col!(Int32Array, |r| r.ball.map(|b| b.team)),
+        col!(UInt32Array, |r| r.ball.map(|b| b.team)),
     ];
 
     for i in 0..8 {
@@ -229,7 +248,7 @@ fn main() -> Result<()> {
         Field::new("tick", DataType::UInt32, false),
         Field::new("ball_x", DataType::UInt32, true),
         Field::new("ball_y", DataType::UInt32, true),
-        Field::new("ball_team", DataType::Int32, true),
+        Field::new("ball_team", DataType::UInt32, true),
     ];
 
     for i in 0..8 {
@@ -266,7 +285,7 @@ fn main() -> Result<()> {
                 player_stmt.read::<i64, _>(2),
             ) {
                 player_key_to_handle.insert(player_key as i32, handle_key as i32);
-                player_key_to_team.insert(player_key as i32, team as i32);
+                player_key_to_team.insert(player_key as i32, team as u32);
             }
         }
 

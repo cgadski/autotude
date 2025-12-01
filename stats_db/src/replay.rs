@@ -11,8 +11,11 @@ use crate::proto::{GameEvent, Update};
 pub type Result<T> = std::result::Result<T, anyhow::Error>;
 
 pub trait ReplayListener {
-    fn on_update(&mut self, update: &Update) -> Result<()>;
+    fn on_start_frame(&mut self) -> Result<()> {
+        Ok(())
+    }
     fn on_event(&mut self, event: &GameEvent) -> Result<()>;
+    fn on_update(&mut self, update: &Update) -> Result<()>;
 }
 
 pub fn read_replay_file<P: AsRef<Path>, L: ReplayListener>(
@@ -53,6 +56,8 @@ pub fn read_replay_file<P: AsRef<Path>, L: ReplayListener>(
             let msg_bytes = &buffer[prost::length_delimiter_len(len)..total_msg_len];
             let update =
                 Update::decode(msg_bytes).with_context(|| "Error decoding protobuf update")?;
+
+            listener.on_start_frame()?;
 
             for opt_event in &update.events {
                 listener
