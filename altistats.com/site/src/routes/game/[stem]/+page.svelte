@@ -3,6 +3,7 @@
     import TeamBar from "$lib/TeamBar.svelte";
     import LinkList from "$lib/LinkList.svelte";
     import HorizontalList from "$lib/HorizontalList.svelte";
+    import TimelineBar from "$lib/TimelineBar.svelte";
 
     export let data;
 
@@ -31,6 +32,16 @@
         if (team === 4) return "team-blue";
         return "";
     }
+
+    // Extract events for the timeline bar
+    $: timelineEvents = data.timelineItems
+        .filter((item: any) => item.type === "block_end")
+        .map((item: any) => ({
+            tick: item.tick,
+            type: item.endType,
+            team: item.endTeam,
+            handle: item.endHandle,
+        }));
 </script>
 
 <div class="message-toggle">
@@ -40,6 +51,12 @@
             handleToggle(event, item.label === "Show chat")}
     />
 </div>
+
+<TimelineBar
+    events={timelineEvents}
+    duration={data.game?.duration || 0}
+    stem={data.stem}
+/>
 
 <div class="table-responsive">
     <table class="table table-sm no-bg">
