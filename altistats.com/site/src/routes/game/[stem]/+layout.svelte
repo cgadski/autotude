@@ -9,24 +9,19 @@
 
     const views = [
         {
-            name: "Player Stats",
+            name: "Timeline",
             path: `/game/${data.stem}`,
             routeId: "/game/[stem]",
         },
         {
-            name: "Timeline",
-            path: `/game/${data.stem}/timeline`,
-            routeId: "/game/[stem]/timeline",
+            name: "Loadouts",
+            path: `/game/${data.stem}/loadouts`,
+            routeId: "/game/[stem]/loadouts",
         },
         {
             name: "Kill Matrix",
             path: `/game/${data.stem}/kill-matrix`,
             routeId: "/game/[stem]/kill-matrix",
-        },
-        {
-            name: "Messages",
-            path: `/game/${data.stem}/messages`,
-            routeId: "/game/[stem]/messages",
         },
     ];
 
@@ -68,10 +63,6 @@
             <LinkList items={viewItems} />
         </dd>
     </dl>
-
-    <div class="text-center text-muted py-2">
-        <p>work in progress</p>
-    </div>
 
     <slot />
 </section>
