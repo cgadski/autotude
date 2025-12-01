@@ -5,9 +5,19 @@ export async function load({ params, parent }) {
   await parent();
 
   return {
-    messages: query(
+    messages: await query(
       `
-      SELECT 1
+      SELECT
+        tick,
+        chat_message,
+        handle,
+        player_key
+      FROM messages
+      NATURAL JOIN replays
+      LEFT JOIN player_key_handle USING (replay_key, player_key)
+      LEFT JOIN handles USING (handle_key)
+      WHERE stem = ?
+      ORDER BY tick
       `,
       { args: [stem] },
     ),
