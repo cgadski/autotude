@@ -91,6 +91,20 @@ services:
       JAVA_OPTS: -Xmx512m
       ALTI_HOME: /app
 
+  spec-bot-5:
+    <<: *bot-base
+    environment:
+      BOT_CONFIG: /app/client_configs/spectate_ladder_5.xml
+      JAVA_OPTS: -Xmx512m
+      ALTI_HOME: /app
+
+  spec-bot-6:
+    <<: *bot-base
+    environment:
+      BOT_CONFIG: /app/client_configs/spectate_ladder_6.xml
+      JAVA_OPTS: -Xmx512m
+      ALTI_HOME: /app
+
   pg:
     image: postgres:15
     deploy:

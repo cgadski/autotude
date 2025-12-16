@@ -11,7 +11,12 @@ up-bots:
 	rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
 	docker --host "ssh://root@altistats.com" compose -f prod.yml up -d
 
-up:
+restart-bots:
+	./scripts/make_configs.py
+	rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
+	docker --host "ssh://root@altistats.com" compose -f prod.yml restart spec-bot-1 spec-bot-2 spec-bot-3 spec-bot-4 spec-bot-5 spec-bot-6
+
+pull-up:
 	docker --host "ssh://root@altistats.com" compose -f prod.yml pull
 	docker --host "ssh://root@altistats.com" compose -f prod.yml up -d --build
 
