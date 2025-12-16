@@ -6,6 +6,11 @@ dev:
 
 # Docker compose
 
+up-bots:
+	./scripts/make_configs.py
+	rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
+	docker --host "ssh://root@altistats.com" compose -f prod.yml up -d
+
 up:
 	docker --host "ssh://root@altistats.com" compose -f prod.yml pull
 	docker --host "ssh://root@altistats.com" compose -f prod.yml up -d --build
@@ -27,3 +32,6 @@ upload-bot:
 	docker build {{docker_plat}} -t magneticduck/botclient:latest \
 		-f ../java_dist/botclient.Dockerfile ../java_dist
 	docker push magneticduck/botclient:latest
+
+restart-listing:
+	docker --host "ssh://root@altistats.com" compose -f prod.yml restart listing-bot

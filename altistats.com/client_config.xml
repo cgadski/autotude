@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Config
+	mode="SPECTATE"
+	record="true"
+	port="{{port}}"
+	accountName="{{email}}"
+	accountPassword="{{accountPassword}}"
+	server="{{server}}"
+	password="{{password}}"
+/>
