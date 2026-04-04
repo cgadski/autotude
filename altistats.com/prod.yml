@@ -59,7 +59,6 @@ services:
       BOT_CONFIG: /app/client_configs/get_listings.xml
       ALTI_HOME: /app
       <<: *db-env
-
     depends_on:
       - pg
 
@@ -98,12 +97,12 @@ services:
       JAVA_OPTS: -Xmx512m
       ALTI_HOME: /app
 
-  spec-bot-6:
-    <<: *bot-base
-    environment:
-      BOT_CONFIG: /app/client_configs/spectate_ladder_6.xml
-      JAVA_OPTS: -Xmx512m
-      ALTI_HOME: /app
+  # spec-bot-6:
+  #   <<: *bot-base
+  #   environment:
+  #     BOT_CONFIG: /app/client_configs/spectate_ladder_6.xml
+  #     JAVA_OPTS: -Xmx512m
+  #     ALTI_HOME: /app
 
   pg:
     image: postgres:15
