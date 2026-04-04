@@ -62,4 +62,8 @@ dist-recordings:
 # Download recordings from altistats.com
 dl:
 	mkdir -p ${REPLAY_DIR}
-	rsync --progress -av root@altistats.com:/root/alti_home/recordings/ ${REPLAY_DIR}
+	rsync --progress -avW root@altistats.com:/root/alti_home/recordings/ ${REPLAY_DIR}
+
+# Back up recordings to rsync
+backup:
+	rsync -rvu --progress ./recordings/ zh3391@zh3391.rsync.net:/data2/home/zh3391/recordings/
