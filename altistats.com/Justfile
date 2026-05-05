@@ -6,22 +6,34 @@ dev:
 
 # Docker compose
 
+COMPOSE := "docker --host \"ssh://root@altistats.com\" compose -f prod.yml"
+
+down:
+    {{ COMPOSE }} down
+
 up:
-    docker --host "ssh://root@altistats.com" compose -f prod.yml up -d --remove-orphans
+    {{ COMPOSE }} up -d --remove-orphans
+
+reset-stats:
+    {{ COMPOSE }} down stats_db
+    ssh root@altistats.com "rm -rf /root/alti_home/stats_db"
+    rsync -va ../stats_db/stats.db* root@altistats.com:/root/alti_home/stats_db/
+    {{ COMPOSE }} up stats_db
 
 up-bots:
     ./scripts/make_configs.py
     rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
-    docker --host "ssh://root@altistats.com" compose -f prod.yml up -d
+    {{ COMPOSE }} up -d
 
 restart-bots:
     ./scripts/make_configs.py
     rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
-    docker --host "ssh://root@altistats.com" compose -f prod.yml restart spec-bot-1 spec-bot-2 spec-bot-3 spec-bot-4 spec-bot-5
+    {{ COMPOSE }} restart spec-bot-1 spec-bot-2 spec-bot-3 spec-bot-4 spec-bot-5
 
-pull-up:
-    docker --host "ssh://root@altistats.com" compose -f prod.yml pull
-    docker --host "ssh://root@altistats.com" compose -f prod.yml up -d --build
+pull:
+    ./scripts/make_configs.py
+    rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
+    {{ COMPOSE }} pull
 
 docker_plat := "--platform=linux/amd64"
 
