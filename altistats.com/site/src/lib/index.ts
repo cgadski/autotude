@@ -15,6 +15,8 @@ export type Game = {
   stem: string;
   duration: number;
   winner: number;
+  points_left: number;
+  points_right: number;
   teams: {
     [key: string]: Array<string>;
   };
@@ -59,7 +61,8 @@ export function formatDatetime(unixEpoch: number): string {
   const day = date.getDate();
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
-  return `${month} ${day} ${hours}h${minutes}`;
+  const year = date.getFullYear();
+  return `${month} ${day} ${year}, ${hours}h${minutes}`;
 }
 
 export function formatTime(unixEpoch: number): string {
@@ -108,6 +111,35 @@ export const formatDate = (unixEpoch: number) => {
 export type NavPage = "home" | "players" | "games" | null;
 
 export const planes = ["Loopy", "Bomber", "Whale", "Biplane", "Miranda"];
+
+export const perkNames = [
+  // red
+  "Tracker", // 0
+  "Double Fire", // 1
+  "Acid Bomb", // 2
+  "Suppressor", // 3
+  "Bombs", // 4
+  "Flak Tailgun", // 5
+  "Director", // 6
+  "Thermobarics", // 7
+  "Remote Mine", // 8
+  "Dogfighter", // 9
+  "Recoilless Gun", // 10
+  "Heavy Cannon", // 11
+  "Trickster", // 12
+  "Laser", // 13
+  "Time Anchor", // 14
+  // green
+  "Rubberized Hull", // 15
+  "Heavy Armor", // 16
+  "Repair Drone", // 17
+  "Flexible Wings", // 18
+  // blue
+  "Turbocharger", // 19
+  "Ultracapacitor", // 20
+  "Reverse Thrust", // 21
+  "Ace Instincts", // 22
+];
 
 function withCommas(s: string) {
   const intMatch = s.match(/^\d+$/);

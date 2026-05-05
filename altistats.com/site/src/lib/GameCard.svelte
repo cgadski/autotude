@@ -43,6 +43,7 @@
                         </a>
                     </HorizontalList>
                 </div>
+                <div class="ms-2"><strong>{game.points_left}</strong></div>
                 <div class="ms-2">
                     {#if game.winner === 3}
                         <i class="bi bi-trophy-fill text-warning"></i>
@@ -67,6 +68,7 @@
                         </a>
                     </HorizontalList>
                 </div>
+                <div class="ms-2"><strong>{game.points_right}</strong></div>
                 <div class="ms-2">
                     {#if game.winner === 4}
                         <i class="bi bi-trophy-fill text-warning"></i>
