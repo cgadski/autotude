@@ -1,10 +1,13 @@
-set dotenv-load := true
+set dotenv-load
 
 dev:
     docker context use default
     docker compose -f dev.yml up -d --remove-orphans --build
 
 # Docker compose
+
+up:
+    docker --host "ssh://root@altistats.com" compose -f prod.yml up -d --remove-orphans
 
 up-bots:
     ./scripts/make_configs.py
@@ -34,9 +37,9 @@ upload-site:
 
 upload-bot:
     docker context use default
-    docker build {{ docker_plat }} -t magneticduck/botclient:latest \
+    docker build {{ docker_plat }} -t magneticduck/botclient:0.3 \
     	-f ../java_dist/botclient.Dockerfile ../java_dist
-    docker push magneticduck/botclient:latest
+    docker push magneticduck/botclient:0.3
 
 restart-listing:
     docker --host "ssh://root@altistats.com" compose -f prod.yml restart listing-bot

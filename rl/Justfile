@@ -1,16 +1,18 @@
 benchmark:
-	SERVER_CONFIG=./server_benchmark.xml \
-	SERVER_RUNTIME="" \
-		bot_server
+    SERVER_CONFIG=./server_benchmark.xml \
+    SERVER_RUNTIME="" \
+    	bot_server
+
+run-client:
+    BOT_CONFIG=./client_config.xml bot_client
 
 index:
-	make -C .. bin/index-lite
-	index-lite --path ${ALTI_HOME}/recordings \
-		--db ${ALTI_HOME}/recordings.db
+    make -C .. bin/index-lite
+    index-lite --path ${ALTI_HOME}/recordings \
+    	--db ${ALTI_HOME}/recordings.db
 
 view:
-	mkdir -p viewer/js
-	cp ../hx_src/out/viewer.js viewer/js/
-	cd viewer && \
-		DB_PATH=${ALTI_HOME}/recordings.db \
-		uv run app.py
+    mkdir -p viewer/js
+    cp ../hx_src/out/viewer.js viewer/js/
+    cd viewer && \
+    	DB_PATH=${ALTI_HOME}/recordings.db uv run app.py

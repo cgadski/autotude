@@ -8,7 +8,7 @@ x-db-env: &db-env
   POSTGRES_PORT: 5432
 
 x-bot-base: &bot-base
-  image: magneticduck/botclient:latest
+  image: magneticduck/botclient:0.3
   deploy:
     mode: global
   volumes:
@@ -53,49 +53,49 @@ services:
       - "3000:3000"
     restart: unless-stopped
 
-  listing-bot:
-    <<: *bot-base
-    environment:
-      BOT_CONFIG: /app/client_configs/get_listings.xml
-      ALTI_HOME: /app
-      <<: *db-env
-    depends_on:
-      - pg
+  # listing-bot:
+  #   <<: *bot-base
+  #   environment:
+  #     BOT_CONFIG: /app/client_configs/get_listings.xml
+  #     ALTI_HOME: /app
+  #     <<: *db-env
+  #   depends_on:
+  #     - pg
 
-  spec-bot-1:
-    <<: *bot-base
-    environment:
-      BOT_CONFIG: /app/client_configs/spectate_ladder_1.xml
-      JAVA_OPTS: -Xmx512m
-      ALTI_HOME: /app
+  # spec-bot-1:
+  #   <<: *bot-base
+  #   environment:
+  #     BOT_CONFIG: /app/client_configs/spectate_ladder_1.xml
+  #     JAVA_OPTS: -Xmx512m
+  #     ALTI_HOME: /app
 
-  spec-bot-2:
-    <<: *bot-base
-    environment:
-      BOT_CONFIG: /app/client_configs/spectate_ladder_2.xml
-      JAVA_OPTS: -Xmx512m
-      ALTI_HOME: /app
+  # spec-bot-2:
+  #   <<: *bot-base
+  #   environment:
+  #     BOT_CONFIG: /app/client_configs/spectate_ladder_2.xml
+  #     JAVA_OPTS: -Xmx512m
+  #     ALTI_HOME: /app
 
-  spec-bot-3:
-    <<: *bot-base
-    environment:
-      BOT_CONFIG: /app/client_configs/spectate_ladder_3.xml
-      JAVA_OPTS: -Xmx512m
-      ALTI_HOME: /app
+  # spec-bot-3:
+  #   <<: *bot-base
+  #   environment:
+  #     BOT_CONFIG: /app/client_configs/spectate_ladder_3.xml
+  #     JAVA_OPTS: -Xmx512m
+  #     ALTI_HOME: /app
 
-  spec-bot-4:
-    <<: *bot-base
-    environment:
-      BOT_CONFIG: /app/client_configs/spectate_ladder_4.xml
-      JAVA_OPTS: -Xmx512m
-      ALTI_HOME: /app
+  # spec-bot-4:
+  #   <<: *bot-base
+  #   environment:
+  #     BOT_CONFIG: /app/client_configs/spectate_ladder_4.xml
+  #     JAVA_OPTS: -Xmx512m
+  #     ALTI_HOME: /app
 
-  spec-bot-5:
-    <<: *bot-base
-    environment:
-      BOT_CONFIG: /app/client_configs/spectate_ladder_5.xml
-      JAVA_OPTS: -Xmx512m
-      ALTI_HOME: /app
+  # spec-bot-5:
+  #   <<: *bot-base
+  #   environment:
+  #     BOT_CONFIG: /app/client_configs/spectate_ladder_5.xml
+  #     JAVA_OPTS: -Xmx512m
+  #     ALTI_HOME: /app
 
   # spec-bot-6:
   #   <<: *bot-base

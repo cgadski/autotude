@@ -1,2 +1,11 @@
 dump-parquet:
-	cargo run --release --bin dump-parquet -- -o ../rl/data/data.parquet
+    cargo run --release --bin dump-parquet -- -o ../rl/data/data.parquet
+
+# Had to run this once to vacuum replays recorded before v0.2
+vacuum:
+    cargo run --release --bin vacuum-replays -- --workers 10 ${REPLAY_DIR} ./vacuumed
+
+# Recompile indexer, re-index all replays
+dump:
+    cd ..; make bin/dump
+    rm ${STATS_DB}*; NUM_WORKERS=10 make

@@ -20,8 +20,6 @@ INSERT INTO time_bin_desc (time_bin_desc)
 SELECT DISTINCT time_bin_desc
 FROM time_bins ORDER BY day_bin;
 
-DROP TABLE replays_wide;
-
 -- bunch of features computed for each game
 CREATE TABLE IF NOT EXISTS replays_wide (
     replay_key INTEGER PRIMARY KEY REFERENCES replays (replay_key),

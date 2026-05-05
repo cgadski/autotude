@@ -39,7 +39,7 @@ Finally, to run notebooks in `rl/notebooks`, change directories to `rl/notebooks
 Source altistats.com, including docker compose files.
 
 - `altistats.com/site`: sveltekit source
-- `altistats.com/sql`: database schemas/views for the replay database
+- `altistats.com/prod.yml`: docker compile file for the whole operation (listing bot, replay bots, website, replay indexer/stat counter)
 
 ## `proto/`
 

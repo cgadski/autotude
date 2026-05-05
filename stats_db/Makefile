@@ -36,10 +36,13 @@ csvs:
 	@$(SQLITE) ".mode csv" ".import csv/stat_order.csv stat_order"
 	@echo "  ...done"
 
+DUMP_WORKERS ?= 1
+
 dump:
-	dump --workers 1 --db $(STATS_DB)
+	dump --workers $(DUMP_WORKERS) --db $(STATS_DB)
 	$(SQLITE) < tables/vapors.sql
 	$(SQLITE) < tables/handles.sql
+	$(SQLITE) < tables/goals_wide.sql
 	$(SQLITE) < tables/replays_wide.sql
 	$(SQLITE) < tables/ladder_games.sql
 	$(SQLITE) < tables/players_wide.sql
