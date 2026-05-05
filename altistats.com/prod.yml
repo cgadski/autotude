@@ -38,7 +38,7 @@ services:
     environment:
       REPLAY_DIR: /app/recordings/
       STATS_DB: /app/stats_db/stats.db
-      STATS_INTERVAL: 60
+      STATS_INTERVAL: 10
     restart: unless-stopped
 
   site:
