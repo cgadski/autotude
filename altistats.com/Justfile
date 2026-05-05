@@ -1,57 +1,57 @@
 set dotenv-load
 
 dev:
-    docker context use default
-    docker compose -f dev.yml up -d --remove-orphans --build
+	docker context use default
+	docker compose -f dev.yml up -d --remove-orphans --build
 
 # Docker compose
 
 COMPOSE := "docker --host \"ssh://root@altistats.com\" compose -f prod.yml"
 
 down:
-    {{ COMPOSE }} down
+	{{ COMPOSE }} down
 
 up:
-    {{ COMPOSE }} up -d --remove-orphans
+	{{ COMPOSE }} up -d --remove-orphans
 
 reset-stats:
-    {{ COMPOSE }} down stats_db
-    ssh root@altistats.com "rm -rf /root/alti_home/stats_db"
-    rsync -va ../stats_db/stats.db* root@altistats.com:/root/alti_home/stats_db/
-    {{ COMPOSE }} up stats_db
+	{{ COMPOSE }} down stats_db
+	ssh root@altistats.com "rm -rf /root/alti_home/stats_db"
+	rsync -va ../stats_db/stats.db* root@altistats.com:/root/alti_home/stats_db/
+	{{ COMPOSE }} up stats_db
 
 up-bots:
-    ./scripts/make_configs.py
-    rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
-    {{ COMPOSE }} up -d
+	./scripts/make_configs.py
+	rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
+	{{ COMPOSE }} up -d
 
 restart-bots:
-    ./scripts/make_configs.py
-    rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
-    {{ COMPOSE }} restart spec-bot-1 spec-bot-2 spec-bot-3 spec-bot-4 spec-bot-5
+	./scripts/make_configs.py
+	rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
+	{{ COMPOSE }} restart spec-bot-1 spec-bot-2 spec-bot-3 spec-bot-4 spec-bot-5
 
 pull:
-    ./scripts/make_configs.py
-    rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
-    {{ COMPOSE }} pull
+	./scripts/make_configs.py
+	rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
+	{{ COMPOSE }} pull
 
 docker_plat := "--platform=linux/amd64"
 
 upload-stats:
-    docker context use default
-    docker build {{ docker_plat }} -t magneticduck/stats_db:latest ../stats_db
-    docker push magneticduck/stats_db:latest
+	docker context use default
+	docker build {{ docker_plat }} -t magneticduck/stats_db:latest ../stats_db
+	docker push magneticduck/stats_db:latest
 
 upload-site:
-    docker context use default
-    docker build {{ docker_plat }} -t magneticduck/altistats:latest site
-    docker push magneticduck/altistats:latest
+	docker context use default
+	docker build {{ docker_plat }} -t magneticduck/altistats:latest site
+	docker push magneticduck/altistats:latest
 
 upload-bot:
-    docker context use default
-    docker build {{ docker_plat }} -t magneticduck/botclient:0.3 \
-    	-f ../java_dist/botclient.Dockerfile ../java_dist
-    docker push magneticduck/botclient:0.3
+	docker context use default
+	docker build {{ docker_plat }} -t magneticduck/botclient:0.3 \
+		-f ../java_dist/botclient.Dockerfile ../java_dist
+	docker push magneticduck/botclient:0.3
 
 restart-listing:
-    docker --host "ssh://root@altistats.com" compose -f prod.yml restart listing-bot
+	docker --host "ssh://root@altistats.com" compose -f prod.yml restart listing-bot
