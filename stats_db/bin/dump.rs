@@ -289,7 +289,7 @@ impl<'a> DumpListener<'a> {
                     insert_spawn_stmt.bind((7, spawn.start_tick as i64))?;
                     insert_spawn_stmt.bind((8, spawn.end_tick as i64))?;
 
-                    // while State::Done != insert_spawn_stmt.next()? {}
+                    while State::Done != insert_spawn_stmt.next()? {}
                     insert_spawn_stmt.reset()?;
                 }
             }
