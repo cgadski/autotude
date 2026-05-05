@@ -143,9 +143,14 @@ fn main() -> Result<()> {
             let mut dump_listener =
                 DumpListener::new(&conn, replay_stem.clone(), replay_key).unwrap();
 
+            let bytes = std::fs::metadata(&path)
+                .map(|m| m.len() as i64)
+                .unwrap_or(0);
             match read_replay_file(&path, &mut dump_listener) {
-                Ok(()) => {
-                    dump_listener.write_replay().expect("Error writing replay");
+                Ok(bytes_decompressed) => {
+                    dump_listener
+                        .write_replay(bytes, bytes_decompressed as i64)
+                        .expect("Error writing replay");
                     let p: Progress = {
                         let mut p = progress.lock().unwrap();
                         p.total_chat_messages += dump_listener.chat_count;
@@ -232,11 +237,11 @@ impl<'a> DumpListener<'a> {
         })
     }
 
-    fn write_replay(&mut self) -> Result<()> {
+    fn write_replay(&mut self, bytes: i64, bytes_decompressed: i64) -> Result<()> {
         let state = &self.indexer.state;
 
         let mut insert_replay_stmt = self.conn.prepare(
-            "INSERT INTO replays (replay_key, stem, map, server, duration, started_at, version) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO replays (replay_key, stem, map, server, duration, started_at, version, bytes, bytes_decompressed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
         )?;
 
         insert_replay_stmt.bind((1, self.replay_key))?;
@@ -246,6 +251,8 @@ impl<'a> DumpListener<'a> {
         insert_replay_stmt.bind((5, state.current_tick as i64))?;
         insert_replay_stmt.bind((6, state.datetime.map(|dt| dt.timestamp()).unwrap_or(0)))?;
         insert_replay_stmt.bind((7, state.version.as_deref().unwrap_or("")))?;
+        insert_replay_stmt.bind((8, bytes))?;
+        insert_replay_stmt.bind((9, bytes_decompressed))?;
 
         while State::Done != insert_replay_stmt.next()? {}
         insert_replay_stmt.reset()?;

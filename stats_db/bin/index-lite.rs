@@ -77,7 +77,7 @@ fn main() -> Result<()> {
             n_kills: 0,
             protocol_version: String::from(""),
         };
-        if let Ok(()) = read_replay_file(&path, &mut listener) {
+        if let Ok(_) = read_replay_file(&path, &mut listener) {
             add_replay.bind((1, stem.as_str()))?;
             add_replay.bind((
                 2,

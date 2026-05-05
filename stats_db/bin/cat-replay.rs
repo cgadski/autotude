@@ -43,5 +43,6 @@ impl ReplayListener for CatListener {
 fn main() -> Result<()> {
     let args = Args::parse();
     let mut listener = CatListener::new(args.objects);
-    read_replay_file(&args.path, &mut listener)
+    read_replay_file(&args.path, &mut listener);
+    Ok(())
 }

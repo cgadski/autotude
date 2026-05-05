@@ -7,7 +7,9 @@ CREATE TABLE replays (
     server TEXT,
     duration INTEGER,
     started_at INTEGER,
-    version TEXT
+    version TEXT,
+    bytes INTEGER,
+    bytes_decompressed INTEGER
 );
 
 CREATE INDEX idx_replays_stem ON replays (stem);

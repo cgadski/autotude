@@ -292,7 +292,7 @@ fn main() -> Result<()> {
         let mut tracker =
             GameTracker::new(replay_key as u32, player_key_to_handle, player_key_to_team);
         match read_replay_file(&replay_path, &mut tracker) {
-            Ok(()) => {
+            Ok(_) => {
                 let new_rows = tracker.rows.len();
                 write_batch(&mut writer, schema.clone(), &tracker.rows)?;
                 total_rows += new_rows;

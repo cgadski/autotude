@@ -8,4 +8,4 @@ vacuum:
 # Recompile indexer, re-index all replays
 dump:
     cd ..; make bin/dump
-    rm ${STATS_DB}*; NUM_WORKERS=10 make
+    rm ${STATS_DB}*; DUMP_WORKERS=10 make

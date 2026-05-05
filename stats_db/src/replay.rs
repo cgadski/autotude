@@ -25,13 +25,14 @@ pub trait ReplayListener {
 pub fn read_replay_file<P: AsRef<Path>, L: ReplayListener>(
     path: P,
     listener: &mut L,
-) -> Result<()> {
+) -> Result<u64> {
     let file = File::open(path)?;
     let buf_reader = BufReader::new(file);
     let mut decoder = GzDecoder::new(buf_reader);
 
     let mut buffer = Vec::new();
     let mut chunk = [0u8; 8192];
+    let mut total_bytes: u64 = 0;
 
     loop {
         let bytes_read = decoder
@@ -42,6 +43,7 @@ pub fn read_replay_file<P: AsRef<Path>, L: ReplayListener>(
             break;
         }
 
+        total_bytes += bytes_read as u64;
         buffer.extend_from_slice(&chunk[..bytes_read]);
 
         while buffer.len() >= prost::length_delimiter_len(1) {
@@ -77,5 +79,5 @@ pub fn read_replay_file<P: AsRef<Path>, L: ReplayListener>(
         }
     }
 
-    Ok(())
+    Ok(total_bytes)
 }
