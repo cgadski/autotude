@@ -46,7 +46,16 @@ CREATE TABLE goals (
     team INTEGER
 );
 
-CREATE INDEX idx_goals_replay ON goals (replay_key);
+CREATE INDEX idx_goals ON goals (replay_key, tick);
+
+CREATE TABLE scores (
+    replay_key INTEGER REFERENCES replays (replay_key),
+    tick INTEGER,
+    team INTEGER,
+    points INTEGER
+);
+
+CREATE INDEX idx_scores ON scores (replay_key, tick);
 
 CREATE TABLE kills (
     replay_key INTEGER REFERENCES replays (replay_key),

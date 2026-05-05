@@ -20,6 +20,8 @@ INSERT INTO time_bin_desc (time_bin_desc)
 SELECT DISTINCT time_bin_desc
 FROM time_bins ORDER BY day_bin;
 
+DROP TABLE replays_wide;
+
 -- bunch of features computed for each game
 CREATE TABLE IF NOT EXISTS replays_wide (
     replay_key INTEGER PRIMARY KEY REFERENCES replays (replay_key),
@@ -35,7 +37,9 @@ CREATE TABLE IF NOT EXISTS replays_wide (
     player_messages,
     next_key, -- next replay on same server
     prev_key, -- previous replay on same server
-    winner -- last team that scored
+    winner, -- last team that scored
+    points_left,
+    points_right
 );
 
 CREATE TEMP TABLE replays_fresh AS
@@ -119,6 +123,15 @@ n_goals AS (
     LEFT JOIN goals USING (replay_key)
     GROUP BY replay_key
 ),
+points AS (
+    SELECT
+        replay_key,
+        sum(points) FILTER (WHERE team = 3) AS points_left,
+        sum(points) FILTER (WHERE team = 4) AS points_right
+    FROM replays_fresh
+    LEFT JOIN goals_wide USING (replay_key)
+    GROUP BY replay_key
+),
 winner AS (
     SELECT
         replay_key,
@@ -149,12 +162,15 @@ SELECT
     coalesce(player_messages, 0) AS player_messages,
     a.next AS next_key,
     b.replay_key AS prev_key,
-    winner
+    winner,
+    points_left,
+    points_right
 FROM replays_fresh r
 JOIN time_bins USING (replay_key)
 JOIN time_bin_desc USING (time_bin_desc)
 NATURAL LEFT JOIN n_players
 NATURAL JOIN n_goals
+NATURAL LEFT JOIN points
 NATURAL LEFT JOIN start_messages
 NATURAL LEFT JOIN stop_messages
 NATURAL LEFT JOIN restart_messages
