@@ -15,6 +15,14 @@ path = "bin/dump.rs"
 name = "dump-parquet"
 path = "bin/dump-parquet.rs"
 
+[[bin]]
+name = "cat-replay"
+path = "bin/cat-replay.rs"
+
+[[bin]]
+name = "vacuum-replays"
+path = "bin/vacuum-replays.rs"
+
 [dependencies]
 prost = "0.12"
 prost-types = "0.12"

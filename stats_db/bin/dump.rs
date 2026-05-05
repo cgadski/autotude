@@ -120,6 +120,8 @@ fn main() -> Result<()> {
 
     let conn = Arc::new(sqlite::Connection::open_thread_safe(&args.db)?);
     conn.execute("begin;")?;
+    conn.execute("DELETE FROM errored;")?;
+
     let paths = get_paths(&args)?;
 
     let pb = make_pb(paths.len());
@@ -137,18 +139,9 @@ fn main() -> Result<()> {
         pool.execute(move || {
             let replay_stem = get_stem(&path).expect("Error reading stem");
 
-            let listener = IndexingListener::new();
-            let mut dump_listener = DumpListener {
-                indexer: listener,
-                replay_stem: replay_stem.clone(),
-                conn: &conn,
-                chat_count: 0,
-                goal_count: 0,
-                kill_count: 0,
-                replay_key: replay_key.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
-            };
-
-            dump_listener.clear_tables().unwrap();
+            let replay_key = replay_key.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let mut dump_listener =
+                DumpListener::new(&conn, replay_stem.clone(), replay_key).unwrap();
 
             match read_replay_file(&path, &mut dump_listener) {
                 Ok(()) => {
@@ -168,12 +161,7 @@ fn main() -> Result<()> {
                 }
                 Err(e) => {
                     pb.println(format!("Error processing {}: {:#}", replay_stem, e));
-                    if let Err(db_err) = mark_errored_stem(&conn, &replay_stem) {
-                        pb.println(format!(
-                            "Failed to record error for {}: {}",
-                            replay_stem, db_err
-                        ));
-                    }
+                    mark_errored_stem(&conn, &replay_stem).expect("Error marking error");
                 }
             }
             pb.inc(1);
@@ -188,6 +176,10 @@ fn main() -> Result<()> {
         "Complete. Processed {} replays, {} chat messages, {} goals, {} kills",
         p.processed_count, p.total_chat_messages, p.total_goals, p.total_kills
     ));
+
+    for table in &["messages", "goals", "scores", "kills", "damage"] {
+        conn.execute(format!("DELETE FROM {} WHERE replay_key IN errored", table))?;
+    }
 
     Arc::try_unwrap(conn)
         .map_err(|_| anyhow!("Somehow, unwrapping Arc failed after joining all threads"))?
@@ -205,9 +197,41 @@ struct DumpListener<'a> {
     goal_count: usize,
     kill_count: usize,
     replay_key: i64,
+    message_stmt: sqlite::Statement<'a>,
+    goal_stmt: sqlite::Statement<'a>,
+    score_stmt: sqlite::Statement<'a>,
+    kill_stmt: sqlite::Statement<'a>,
+    damage_stmt: sqlite::Statement<'a>,
 }
 
 impl<'a> DumpListener<'a> {
+    fn new(conn: &'a sqlite::Connection, replay_stem: String, replay_key: i64) -> Result<Self> {
+        Ok(Self {
+            indexer: IndexingListener::new(),
+            replay_stem,
+            conn,
+            chat_count: 0,
+            goal_count: 0,
+            kill_count: 0,
+            replay_key,
+            message_stmt: conn.prepare(
+                "INSERT INTO messages (replay_key, player_key, tick, chat_message) VALUES (?, ?, ?, ?)"
+            )?,
+            goal_stmt: conn.prepare(
+                "INSERT INTO goals (replay_key, player_key, tick, team) VALUES (?, ?, ?, ?)"
+            )?,
+            score_stmt: conn.prepare(
+                "INSERT INTO scores (replay_key, tick, team, points) VALUES (?, ?, ?, ?)"
+            )?,
+            kill_stmt: conn.prepare(
+                "INSERT INTO kills (replay_key, who_killed, who_died, tick) VALUES (?, ?, ?, ?)"
+            )?,
+            damage_stmt: conn.prepare(
+                "INSERT INTO damage (replay_key, source_key, target_key, tick, amount) VALUES (?, ?, ?, ?, ?)"
+            )?,
+        })
+    }
+
     fn write_replay(&mut self) -> Result<()> {
         let state = &self.indexer.state;
 
@@ -265,7 +289,7 @@ impl<'a> DumpListener<'a> {
                     insert_spawn_stmt.bind((7, spawn.start_tick as i64))?;
                     insert_spawn_stmt.bind((8, spawn.end_tick as i64))?;
 
-                    while State::Done != insert_spawn_stmt.next()? {}
+                    // while State::Done != insert_spawn_stmt.next()? {}
                     insert_spawn_stmt.reset()?;
                 }
             }
@@ -289,17 +313,6 @@ impl<'a> DumpListener<'a> {
 
         Ok(())
     }
-
-    fn clear_tables(&self) -> Result<()> {
-        for table in ["messages", "goals", "kills", "damage"] {
-            let mut stmt = self
-                .conn
-                .prepare(&format!("DELETE FROM {} WHERE replay_key = ?", table))?;
-            stmt.bind((1, self.replay_key))?;
-            stmt.next()?;
-        }
-        Ok(())
-    }
 }
 
 impl<'a> ReplayListener for DumpListener<'a> {
@@ -312,31 +325,25 @@ impl<'a> ReplayListener for DumpListener<'a> {
         self.indexer.on_event(event)?;
 
         if let Some(Event::Chat(chat)) = &event.event {
-            let mut stmt = self.conn.prepare(
-                "INSERT INTO messages (replay_key, player_key, tick, chat_message) VALUES (?, ?, ?, ?)"
-            )?;
-
             let sender = self.indexer.get_present_player_key(PlayerId(chat.sender()));
 
-            stmt.bind((1, self.replay_key))?;
+            self.message_stmt.bind((1, self.replay_key))?;
             if let Ok(sender_key) = sender {
-                stmt.bind((2, sender_key.0 as i64))?;
+                self.message_stmt.bind((2, sender_key.0 as i64))?;
             } else {
-                stmt.bind((2, sqlite::Value::Null))?;
+                self.message_stmt.bind((2, sqlite::Value::Null))?;
             }
-            stmt.bind((3, self.indexer.state.current_tick as i64))?;
-            stmt.bind((4, chat.message()))?;
+            self.message_stmt
+                .bind((3, self.indexer.state.current_tick as i64))?;
+            self.message_stmt.bind((4, chat.message()))?;
 
-            while State::Done != stmt.next()? {}
+            while State::Done != self.message_stmt.next()? {}
+            self.message_stmt.reset()?;
             self.chat_count += 1;
         }
 
         if let Some(Event::Goal(goal)) = &event.event {
             if let Some(&scorer) = goal.who_scored.first() {
-                let mut stmt = self.conn.prepare(
-                    "INSERT INTO goals (replay_key, player_key, tick, team) VALUES (?, ?, ?, ?)",
-                )?;
-
                 let scorer_key = match self.indexer.get_player_key(PlayerId(scorer))? {
                     PlayerServerPresence::Present(k) => Some(k),
                     // players can still score shortly after leaving (in practice, absent goals seem
@@ -349,21 +356,29 @@ impl<'a> ReplayListener for DumpListener<'a> {
                     .transpose()
                     .with_context(|| format!("No player state with id {:?} for goal", scorer))?;
 
-                stmt.bind((1, self.replay_key))?;
-                stmt.bind((2, scorer_key.map(|k| k.0 as i64)))?;
-                stmt.bind((3, self.indexer.state.current_tick as i64))?;
-                stmt.bind((4, scorer.map(|p| p.team as i64)))?;
+                self.goal_stmt.bind((1, self.replay_key))?;
+                self.goal_stmt.bind((2, scorer_key.map(|k| k.0 as i64)))?;
+                self.goal_stmt
+                    .bind((3, self.indexer.state.current_tick as i64))?;
+                self.goal_stmt.bind((4, scorer.map(|p| p.team as i64)))?;
 
-                while State::Done != stmt.next()? {}
+                while State::Done != self.goal_stmt.next()? {}
+                self.goal_stmt.reset()?;
                 self.goal_count += 1;
             }
         }
 
-        if let Some(Event::Kill(kill)) = &event.event {
-            let mut stmt = self.conn.prepare(
-                "INSERT INTO kills (replay_key, who_killed, who_died, tick) VALUES (?, ?, ?, ?)",
-            )?;
+        if let Some(Event::ScoreUpdate(score)) = &event.event {
+            self.score_stmt.bind((1, self.replay_key))?;
+            self.score_stmt
+                .bind((2, self.indexer.state.current_tick as i64))?;
+            self.score_stmt.bind((3, score.team() as i64))?;
+            self.score_stmt.bind((4, score.points() as i64))?;
+            while State::Done != self.score_stmt.next()? {}
+            self.score_stmt.reset()?;
+        }
 
+        if let Some(Event::Kill(kill)) = &event.event {
             let died_key = match self.indexer.get_player_key(PlayerId(kill.who_died()))? {
                 PlayerServerPresence::Present(k) => Some(k),
                 // absent players should not have planes, but altitude sometimes bugs and retains
@@ -372,10 +387,10 @@ impl<'a> ReplayListener for DumpListener<'a> {
                 PlayerServerPresence::NullPlayer => None,
             };
             if let Some(died_key) = died_key {
-                stmt.bind((1, self.replay_key))?;
+                self.kill_stmt.bind((1, self.replay_key))?;
 
                 if kill.who_killed.is_none() {
-                    stmt.bind((2, sqlite::Value::Null))?;
+                    self.kill_stmt.bind((2, sqlite::Value::Null))?;
                 } else {
                     let killer_id = PlayerId(kill.who_killed());
                     let killer_key = match self.indexer.get_player_key(killer_id)? {
@@ -390,12 +405,14 @@ impl<'a> ReplayListener for DumpListener<'a> {
                             self.indexer.state.current_tick
                         ),
                     };
-                    stmt.bind((2, killer_key.0 as i64))?;
+                    self.kill_stmt.bind((2, killer_key.0 as i64))?;
                 }
-                stmt.bind((3, died_key.0 as i64))?;
-                stmt.bind((4, self.indexer.state.current_tick as i64))?;
+                self.kill_stmt.bind((3, died_key.0 as i64))?;
+                self.kill_stmt
+                    .bind((4, self.indexer.state.current_tick as i64))?;
 
-                while State::Done != stmt.next()? {}
+                while State::Done != self.kill_stmt.next()? {}
+                self.kill_stmt.reset()?;
                 self.kill_count += 1;
             }
         }
@@ -409,11 +426,7 @@ impl<'a> ReplayListener for DumpListener<'a> {
                 return Ok(()); // sinister damage dealt by server
             }
 
-            let mut stmt = self.conn.prepare(
-                "INSERT INTO damage (replay_key, source_key, target_key, tick, amount) VALUES (?, ?, ?, ?, ?)",
-            )?;
-
-            stmt.bind((1, self.replay_key))?;
+            self.damage_stmt.bind((1, self.replay_key))?;
 
             let target_key = match self.indexer.get_player_key(PlayerId(damage.target()))? {
                 PlayerServerPresence::Present(k) => k,
@@ -433,12 +446,14 @@ impl<'a> ReplayListener for DumpListener<'a> {
                 ),
             };
 
-            stmt.bind((2, source_key.0 as i64))?;
-            stmt.bind((3, target_key.0 as i64))?;
-            stmt.bind((4, self.indexer.state.current_tick as i64))?;
-            stmt.bind((5, damage.amount() as i64))?;
+            self.damage_stmt.bind((2, source_key.0 as i64))?;
+            self.damage_stmt.bind((3, target_key.0 as i64))?;
+            self.damage_stmt
+                .bind((4, self.indexer.state.current_tick as i64))?;
+            self.damage_stmt.bind((5, damage.amount() as i64))?;
 
-            while State::Done != stmt.next()? {}
+            while State::Done != self.damage_stmt.next()? {}
+            self.damage_stmt.reset()?;
         }
 
         Ok(())

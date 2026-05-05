@@ -83,7 +83,7 @@ impl ReplayState {
             server_name: None,
             datetime: None,
             map_name: None,
-            current_tick: 0,
+            current_tick: 1,
             player_states: HashMap::new(),
             ball: Default::default(),
             version: None,
@@ -92,6 +92,7 @@ impl ReplayState {
 }
 
 pub struct IndexingListener {
+    last_duration: u64,
     pub state: ReplayState,
 
     // mapping from altitude player IDs to our database keys
@@ -104,6 +105,7 @@ pub struct IndexingListener {
 impl IndexingListener {
     pub fn new() -> Self {
         Self {
+            last_duration: 0,
             state: ReplayState::new(),
             next_player_key: 0,
             id_to_key: HashMap::new(),
@@ -289,7 +291,8 @@ impl ReplayListener for IndexingListener {
     }
 
     fn on_update(&mut self, update: &Update) -> ReplayResult<()> {
-        self.state.current_tick += 1;
+        self.state.current_tick += self.last_duration as usize;
+        self.last_duration = update.duration();
 
         for obj in update.objects.iter() {
             let is_plane = obj.r#type.map(|v| v < 5).unwrap_or(false);

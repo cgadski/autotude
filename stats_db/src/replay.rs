@@ -14,7 +14,11 @@ pub trait ReplayListener {
     fn on_start_frame(&mut self) -> Result<()> {
         Ok(())
     }
-    fn on_event(&mut self, event: &GameEvent) -> Result<()>;
+
+    fn on_event(&mut self, _: &GameEvent) -> Result<()> {
+        Ok(())
+    }
+
     fn on_update(&mut self, update: &Update) -> Result<()>;
 }
 
