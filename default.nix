@@ -47,7 +47,10 @@ in
       version = "1.0.0";
       src = stdenv.mkDerivation {
         name = "src";
-        src = ./.;
+        src = fetchTree {
+          url = ./.;
+          type = "git";
+        };
         buildInputs = lib.lists.remove neko buildInputs;
 
         buildPhase = ''
