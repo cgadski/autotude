@@ -1,5 +1,4 @@
 version = 1
-revision = 1
 requires-python = "==3.10.*"
 
 [[package]]
@@ -29,6 +28,11 @@ dependencies = [
     { name = "vandc" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "ipykernel" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "gymnasium", specifier = ">=1.0" },
@@ -43,6 +47,9 @@ requires-dist = [
     { name = "tqdm", specifier = ">=4.67.1" },
     { name = "vandc", specifier = ">=0.1.3" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "ipykernel", specifier = ">=6.30.1" }]
 
 [[package]]
 name = "anyio"

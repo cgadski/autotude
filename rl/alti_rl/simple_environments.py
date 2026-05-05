@@ -7,7 +7,7 @@ from typing import Optional
 import numpy as np
 
 
-class SoloChannelparkEnv:
+class SoloEnv:
     """
     A bot flying solo on ffa_channelpark.
 
@@ -16,9 +16,9 @@ class SoloChannelparkEnv:
     Rewards: -1 when it takes crash damage, 0 otherwise.
     """
 
-    def __init__(self):
+    def __init__(self, *, map="ffa_channelpark"):
         config = ServerConfig()
-        config.set(map="ffa_channelpark")
+        config.set(map=map)
         config.add_bot(nick="controlled", team="3")
 
         self._server = BotServer(config)
