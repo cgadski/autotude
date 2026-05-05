@@ -48,6 +48,7 @@ dump:
 	$(SQLITE) < tables/players_wide.sql
 	$(SQLITE) < tables/players_short.sql
 	$(SQLITE) < tables/time_alive.sql
+	$(SQLITE) < tables/game_stats.sql
 
 stats:
 	python3 materialize_stats.py --db $(STATS_DB) --stats-dir stats/

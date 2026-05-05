@@ -72,7 +72,7 @@ SELECT -- ~50,000 rows
 FROM spawns_wide
 GROUP BY replay_key, vapor_key, spawn_group;
 
-SELECT 'Considering ' || count() || ' new spawn groups' FROM spawn_groups;
+SELECT 'Updating players_wide with ' || count() || ' new spawn groups' FROM spawn_groups;
 
 INSERT INTO players_wide
 WITH kill_tallies AS (
