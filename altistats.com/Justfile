@@ -45,11 +45,13 @@ upload-site:
 	docker build {{ docker_plat }} -t magneticduck/altistats:latest site
 	docker push magneticduck/altistats:latest
 
+BOT_IMAGE := "magneticduck/botclient:0.3.1"
+
 upload-bot:
 	docker context use default
-	docker build {{ docker_plat }} -t magneticduck/botclient:0.3 \
+	docker build {{ docker_plat }} -t {{ BOT_IMAGE }} \
 		-f ../java_dist/botclient.Dockerfile ../java_dist
-	docker push magneticduck/botclient:0.3
+	docker push {{ BOT_IMAGE }}
 
 restart-listing:
 	docker --host "ssh://root@altistats.com" compose -f prod.yml restart listing-bot
