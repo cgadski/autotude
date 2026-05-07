@@ -123,10 +123,15 @@ impl IndexingListener {
     }
 
     fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<()> {
-        let player_key = match self
-            .get_player_key(id)
-            .with_context(|| format!("No player key for plane: {:?}", plane))?
-        {
+        let presence = match self.get_player_key(id) {
+            Err(e) => {
+                eprintln!("Could not process plane with uid {}: {:?}", plane.uid(), e);
+                return Ok(());
+            }
+            Ok(p) => p,
+        };
+
+        let player_key = match presence {
             PlayerServerPresence::Present(k) => Some(k),
             // absent players should not have planes, but altitude sometimes bugs and retains
             // owner-less planes: ignore them
