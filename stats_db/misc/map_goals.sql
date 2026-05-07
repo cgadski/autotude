@@ -1,14 +1,14 @@
 WITH
 total_games AS (
     SELECT map, COUNT() as ct
-    FROM replays NATURAL JOIN ladder_games
+    FROM replays NATURAL JOIN games
     GROUP BY map
 )
 SELECT
     map,
     COUNT() FILTER (WHERE team = 3) AS left_goals,
     COUNT() FILTER (WHERE team = 4) AS right_goals
-FROM ladder_games
+FROM games
 NATURAL JOIN replays
 NATURAL JOIN goals
 JOIN total_games USING (map)

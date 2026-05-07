@@ -14,7 +14,7 @@ inner join player_display_names
 	on players.vapor = player_display_names.vapor
 inner join plane_names
 	on loadouts.plane = plane_names.id
-left join (select count(*) as cnt from ladder_games)
+left join (select count(*) as cnt from games)
 	on true
 group by player_display_names.name, loadouts.plane
 having games_played > 50

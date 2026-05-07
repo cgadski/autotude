@@ -1,2 +1,2 @@
 -- Total games
-SELECT count() FROM ladder_games
+SELECT count() FROM games

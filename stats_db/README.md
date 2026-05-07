@@ -40,7 +40,7 @@ Some views are defined in `views/`. Per-player statistics are defined in `stats/
 
 **replays_wide**: Various extra columns computed for each row of `replays`.
 
-**ladder_games**: `replay_keys` that count as ladder games. There's some complexity in detecting ladder games. One issue is that a replay that looks at first like a game might turn out to be cancelled if the next replay on the same server has a "game cancelled" message from the server. So, replays sometimes enter the `ladder_games` table and then get removed.
+**games**: `replay_keys` that count as proper games. Ladder games and tournaments, indicated by the the series_key. (Ladder games are 0, tournies are 1+. Description of tournaments in `series_desc`.) There's some complexity in detecting ladder games. One issue is that a replay that looks at first like a game might turn out to be cancelled if the next replay on the same server has a "game cancelled" message from the server. So, replays sometimes enter the `games` table and then get removed.
 
 **players_wide**: Metadata per player per "loadout period", meaning a period when a player was using the same perks. Used for computing a lot of aggregate statistics.
 

@@ -14,7 +14,7 @@ inner join player_display_names
 	on players.vapor = player_display_names.vapor
 inner join perk_names red_names
 	on loadouts.red_perk = red_names.id
-left join (select count(*) as cnt from ladder_games)
+left join (select count(*) as cnt from games)
 	on true
 group by player_display_names.name, loadouts.red_perk
 having games_played > 50

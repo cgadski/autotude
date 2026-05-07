@@ -1,6 +1,6 @@
 WITH games_per_player AS (
     SELECT vapor, COUNT() AS n_games
-    FROM ladder_games
+    FROM games
     NATURAL JOIN players
     WHERE team >= 3
     GROUP BY vapor

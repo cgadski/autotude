@@ -1,4 +1,4 @@
 -- Total goals
 SELECT count()
-FROM ladder_games
+FROM games
 NATURAL JOIN goals

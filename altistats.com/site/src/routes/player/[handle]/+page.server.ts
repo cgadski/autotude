@@ -13,7 +13,7 @@ async function getGamesForPlayer(handleKey: number, period: string) {
   return query(
     `
     SELECT *
-    FROM ladder_games
+    FROM games
     NATURAL JOIN replays
     NATURAL JOIN replays_wide
     NATURAL JOIN game_teams

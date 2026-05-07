@@ -20,6 +20,8 @@ INSERT INTO time_bin_desc (time_bin_desc)
 SELECT DISTINCT time_bin_desc
 FROM time_bins ORDER BY day_bin;
 
+DROP TABLE replays_wide;
+
 -- bunch of features computed for each game
 CREATE TABLE IF NOT EXISTS replays_wide (
     replay_key INTEGER PRIMARY KEY REFERENCES replays (replay_key),
@@ -51,7 +53,7 @@ WHERE (
 );
 
 INSERT OR REPLACE INTO replays_wide
-WITH
+WITH RECURSIVE
 time_bin_codes AS (
     SELECT
         replay_key,
@@ -145,6 +147,31 @@ winner AS (
         NATURAL JOIN goals
     )
     WHERE goal_idx = 1
+),
+team_players AS (
+    SELECT
+        replay_key,
+        team,
+        json_group_array(
+            handle
+        ) AS players_json
+    FROM (
+        SELECT DISTINCT
+            replay_key,
+            team,
+            handle
+        FROM players_wide
+        NATURAL JOIN handles
+        ORDER BY handle
+    )
+    GROUP BY replay_key, team
+),
+teams AS (
+    SELECT
+        replay_key,
+        json_group_object(team, json(players_json)) AS teams
+    FROM team_players
+    GROUP BY replay_key
 )
 SELECT
     r.replay_key,

@@ -34,7 +34,7 @@ CREATE INDEX IF NOT EXISTS idx_players_wide_replay
 
 CREATE TEMP TABLE replays_fresh AS
 SELECT replay_key
-FROM ladder_games
+FROM games
 WHERE replay_key NOT IN (SELECT replay_key FROM players_wide);
 
 -- Rows of spawn_groups are one-to-one with rows of players_wide:
@@ -152,6 +152,6 @@ SET handle_key = (
 );
 
 DELETE FROM players_wide
-WHERE replay_key NOT IN ladder_games;
+WHERE replay_key NOT IN (SELECT replay_key FROM games);
 
 COMMIT;

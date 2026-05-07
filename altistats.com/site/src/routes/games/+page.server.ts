@@ -17,7 +17,7 @@ async function getGamesForPeriod(timeBinIndex: number | null) {
   return query(
     `
     SELECT *
-      FROM ladder_games
+      FROM games
       NATURAL JOIN replays_wide
       NATURAL JOIN replays
       NATURAL JOIN game_teams
@@ -46,7 +46,7 @@ export async function load({ url }) {
     `
     SELECT time_bin_desc, COUNT(*) as game_count
     FROM replays_wide
-    NATURAL JOIN ladder_games
+    NATURAL JOIN games
     NATURAL JOIN time_bin_desc
     GROUP BY time_bin
     ORDER BY time_bin DESC

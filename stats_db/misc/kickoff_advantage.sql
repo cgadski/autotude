@@ -3,7 +3,7 @@ touch_ranks AS (
     SELECT
         replay_key, map, team, start_tick,
         row_number() OVER (PARTITION BY replay_key ORDER BY start_tick) AS rank
-    FROM ladder_games
+    FROM games
     NATURAL JOIN replays
     NATURAL JOIN possession
     NATURAL JOIN players
@@ -12,7 +12,7 @@ goal_ranks AS (
     SELECT
         replay_key, map, team,
         row_number() OVER (PARTITION BY replay_key ORDER BY tick) AS rank
-    FROM ladder_games
+    FROM games
     NATURAL JOIN replays
     NATURAL JOIN goals
     NATURAL JOIN players

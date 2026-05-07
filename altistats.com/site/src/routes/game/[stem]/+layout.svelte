@@ -33,6 +33,7 @@
     let gameProps = [
         { desc: "Started", value: formatDatetime(game.started_at) },
         { desc: "Map", value: game.map },
+        { desc: "Series", value: game.series },
         { desc: "Duration", value: formatDuration(game.duration) },
         { desc: "Version", value: game.version },
         ...(game.broken ? [{ desc: "Marked broken", value: "yes" }] : []),

@@ -44,7 +44,7 @@ dump:
 	$(SQLITE) < tables/handles.sql
 	$(SQLITE) < tables/goals_wide.sql
 	$(SQLITE) < tables/replays_wide.sql
-	$(SQLITE) < tables/ladder_games.sql
+	$(SQLITE) < tables/games.sql
 	$(SQLITE) < tables/players_wide.sql
 	$(SQLITE) < tables/players_short.sql
 	$(SQLITE) < tables/time_alive.sql

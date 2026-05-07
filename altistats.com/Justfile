@@ -20,8 +20,8 @@ reset-stats:
 	rsync -va ../stats_db/stats.db* root@altistats.com:/root/alti_home/stats_db/
 	{{ COMPOSE }} up stats_db
 
-log-stats:
-	{{ COMPOSE }} logs -f stats_db
+log service:
+	{{ COMPOSE }} logs --since 30m -f {{ service }}
 
 restart-bots:
 	./scripts/make_configs.py
@@ -52,6 +52,17 @@ upload-bot:
 	docker build {{ docker_plat }} -t {{ BOT_IMAGE }} \
 		-f ../java_dist/botclient.Dockerfile ../java_dist
 	docker push {{ BOT_IMAGE }}
+
+list-servers:
+	psql -P pager=off -c "\
+		SELECT * FROM (\
+			SELECT DISTINCT ON (ip) \
+				ip, map, name, players AS max_players, time AS peak_time \
+			FROM listings \
+			WHERE players > 0 AND time >= NOW() - INTERVAL '7 days' \
+			ORDER BY ip, players DESC, time DESC \
+		) sub \
+		ORDER BY max_players DESC;"
 
 restart-listing:
 	docker --host "ssh://root@altistats.com" compose -f prod.yml restart listing-bot

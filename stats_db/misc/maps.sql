@@ -1,5 +1,5 @@
 SELECT map, COUNT() as n_games
 FROM replays
-NATURAL JOIN ladder_games
+NATURAL JOIN games
 GROUP BY map
 ORDER BY n_games DESC;

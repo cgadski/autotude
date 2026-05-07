@@ -20,6 +20,7 @@ export type Game = {
   teams: {
     [key: string]: Array<string>;
   };
+  series_key: number;
 };
 
 export function formatDuration(d: number): string {

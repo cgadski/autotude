@@ -233,7 +233,7 @@ fn main() -> Result<()> {
     let conn = sqlite::Connection::open(&stats_db)?;
 
     let query =
-        "SELECT stem, replay_key FROM ladder_games NATURAL JOIN replays ORDER BY started_at DESC LIMIT 1000";
+        "SELECT stem, replay_key FROM games NATURAL JOIN replays ORDER BY started_at DESC LIMIT 1000";
     let mut stmt = conn.prepare(query)?;
 
     let mut replays = Vec::new();

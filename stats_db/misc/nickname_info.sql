@@ -1,6 +1,6 @@
 SELECT
     vapor, name, group_concat(DISTINCT nick)
-FROM ladder_games
+FROM games
 NATURAL JOIN players
 JOIN handles USING (vapor)
 WHERE vapor != ''

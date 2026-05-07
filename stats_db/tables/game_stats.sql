@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS game_stats (
 );
 
 CREATE TEMP TABLE replays_fresh AS
-SELECT replay_key FROM ladder_games
+SELECT replay_key FROM games
 WHERE replay_key NOT IN (SELECT replay_key FROM game_stats);
 
 SELECT 'Computing game_stats for ' || count() || ' replays' FROM replays_fresh;

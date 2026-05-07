@@ -9,7 +9,7 @@ WITH goal_possessions AS (
             ORDER BY p.end_tick DESC
         ) as rn
     FROM goals g
-    JOIN ladder_games ON g.replay_key = ladder_games.replay_key
+    JOIN games ON g.replay_key = games.replay_key
     JOIN possession p ON g.replay_key = p.replay_key
         AND p.end_tick - 30 <= g.tick
 )

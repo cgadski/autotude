@@ -7,7 +7,7 @@ WITH tbl AS (
         cast(count() AS real) AS n_games ,
         cast(count() FILTER (WHERE winner = team) AS real) AS n_wins
     FROM (SELECT * FROM players_wide GROUP BY replay_key, handle_key)
-    JOIN ladder_games USING (replay_key)
+    JOIN games USING (replay_key)
     JOIN replays_wide USING (replay_key)
     WHERE team > 2
     GROUP BY handle_key, replays_wide.time_bin, plane

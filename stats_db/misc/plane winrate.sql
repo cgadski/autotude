@@ -12,7 +12,7 @@ inner join players
 	on loadouts.replay_key = players.replay_key and loadouts.player_key = players.player_key
 inner join plane_names
 	on loadouts.plane = plane_names.id
-left join (select count(*) as cnt from ladder_games)
+left join (select count(*) as cnt from games)
 	on true
 group by loadouts.plane
 order by sum(iif(outcomes.winner = players.team, 1.0 * loadouts.ticks_alive / players.ticks_alive, 0.0)) / sum(1.0 * loadouts.ticks_alive / players.ticks_alive) desc -- unrounded win_rate
