@@ -33,9 +33,11 @@ struct Args {
     stem: Option<String>,
 }
 
-fn mark_errored_stem(conn: &sqlite::Connection, stem: &str) -> Result<()> {
-    let mut stmt = conn.prepare("INSERT OR IGNORE INTO errored (stem) VALUES (?)")?;
-    stmt.bind((1, stem))?;
+fn mark_errored_stem(conn: &sqlite::Connection, replay_key: i64, stem: &str) -> Result<()> {
+    let mut stmt =
+        conn.prepare("INSERT OR IGNORE INTO errored (replay_key, stem) VALUES (?, ?)")?;
+    stmt.bind((1, replay_key))?;
+    stmt.bind((2, stem))?;
     stmt.next()?;
     Ok(())
 }
@@ -166,7 +168,8 @@ fn main() -> Result<()> {
                 }
                 Err(e) => {
                     pb.println(format!("Error processing {}: {:#}", replay_stem, e));
-                    mark_errored_stem(&conn, &replay_stem).expect("Error marking error");
+                    mark_errored_stem(&conn, replay_key, &replay_stem)
+                        .expect("Error marking error");
                 }
             }
             pb.inc(1);
@@ -183,7 +186,10 @@ fn main() -> Result<()> {
     ));
 
     for table in &["messages", "goals", "scores", "kills", "damage"] {
-        conn.execute(format!("DELETE FROM {} WHERE replay_key IN errored", table))?;
+        conn.execute(format!(
+            "DELETE FROM {} WHERE replay_key IN (SELECT replay_key FROM errored)",
+            table
+        ))?;
     }
 
     Arc::try_unwrap(conn)

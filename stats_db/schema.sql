@@ -16,7 +16,7 @@ CREATE INDEX idx_replays_stem ON replays (stem);
 CREATE INDEX idx_replays_map ON replays (map);
 CREATE INDEX idx_replays_started_at ON replays (started_at);
 
-CREATE TABLE errored (stem TEXT PRIMARY KEY);
+CREATE TABLE errored (replay_key INTEGER PRIMARY KEY, stem TEXT);
 
 CREATE TABLE players (
     replay_key INTEGER REFERENCES replays (replay_key),
