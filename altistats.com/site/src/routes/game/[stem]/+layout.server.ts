@@ -16,10 +16,14 @@ export async function load({ params }) {
       winner,
       points_left,
       points_right,
-      stem IN (SELECT stem FROM broken_replays) AS broken
+      stem IN (SELECT stem FROM broken_replays) AS broken,
+      series_key,
+      series_name
     FROM replays
     NATURAL JOIN replays_wide
     NATURAL JOIN game_teams
+    NATURAL JOIN games
+    NATURAL JOIN series_desc
     WHERE stem = ?
     `,
     { args: [stem], parse: ["teams"] },

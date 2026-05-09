@@ -33,7 +33,11 @@
     let gameProps = [
         { desc: "Started", value: formatDatetime(game.started_at) },
         { desc: "Map", value: game.map },
-        { desc: "Series", value: game.series },
+        {
+            desc: "Series",
+            value: game.series_name,
+            href: `/games?series=${game.series_key}`,
+        },
         { desc: "Duration", value: formatDuration(game.duration) },
         { desc: "Version", value: game.version },
         ...(game.broken ? [{ desc: "Marked broken", value: "yes" }] : []),
@@ -47,7 +51,11 @@
         <HorizontalList items={gameProps} let:item>
             <span class="d-flex gap-1">
                 <span class="fw-medium">{item.desc}:</span>
-                <span>{item.value}</span>
+                {#if item.href}
+                    <a href={item.href}>{item.value}</a>
+                {:else}
+                    <span>{item.value}</span>
+                {/if}
             </span>
         </HorizontalList>
         <a
