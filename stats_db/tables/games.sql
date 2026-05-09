@@ -21,7 +21,9 @@ CREATE TABLE games (
     series_key INTEGER
 );
 
+--
 -- ladder games
+--
 INSERT INTO games
 SELECT a.replay_key, 0
 FROM replays_wide a NATURAL JOIN replays
@@ -37,27 +39,24 @@ AND a.n_left = 4 -- 4 total vapors on left team
 AND a.n_right = 4 -- 4 total vapors on right team
 AND a.n_goals > 0; -- at least one goal scored
 
+--
+-- top dog bowl I on 25/1/2026
+--
 INSERT INTO games
 SELECT replay_key, 1
 FROM replays_wide NATURAL JOIN replays
-WHERE
--- top dog bowl I on 25/1/2026
-server LIKE '%League%'
+WHERE server LIKE '%League%'
 AND n_left >= 4 AND n_right >= 4 AND n_goals > 0
 AND day_bin = '2026-01-25';
 
+--
+-- top dog bowl II on 14/3/2026
+--
 INSERT INTO games
 SELECT replay_key, 2
 FROM replays_wide NATURAL JOIN replays
-WHERE
--- top dog bowl II on 14/3/2026
-server LIKE '%League%'
+WHERE server LIKE '%League%'
 AND n_left >= 4 AND n_right >= 4 AND n_goals > 0
 AND day_bin = '2026-03-14';
-
-SELECT series_key, count() FROM games GROUP BY series_key;
-
-SELECT day_bin, count() FROM games NATURAL JOIN replays_wide WHERE series_key >= 1
-GROUP BY day_bin ORDER BY day_bin;
 
 COMMIT;

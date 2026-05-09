@@ -1,31 +1,50 @@
 BEGIN;
 
 -- days/months of games
-CREATE TEMP VIEW time_bins AS
+CREATE TEMP VIEW replay_time_bins AS
 SELECT
     replay_key,
     strftime('%Y-%m', started_at, 'unixepoch', '-12 hours', 'utc')
-    AS time_bin_desc,
+    AS time_bin,
     date(started_at, 'unixepoch', '-12 hours', 'utc')
     AS day_bin
 FROM replays;
 
-DROP TABLE IF EXISTS time_bin_desc;
-CREATE TABLE time_bin_desc (
-    time_bin INTEGER PRIMARY KEY,
-    time_bin_desc TEXT UNIQUE
+-- we encode time_bin (monthly periods) as an integer because we run so many
+-- queries over this variable
+DROP TABLE IF EXISTS time_bins;
+CREATE TABLE time_bins (
+    time_bin_key INTEGER PRIMARY KEY,
+    time_bin TEXT UNIQUE
 );
 
-INSERT INTO time_bin_desc (time_bin_desc)
-SELECT DISTINCT time_bin_desc
-FROM time_bins ORDER BY day_bin;
+INSERT INTO time_bins (time_bin)
+SELECT DISTINCT time_bin
+FROM replay_time_bins ORDER BY day_bin;
 
-DROP TABLE replays_wide;
+-- temporary table for efficiently looking up next/prev replays
+CREATE TEMP TABLE consecutive (
+    replay_key INTEGER PRIMARY KEY,
+    next INTEGER
+);
 
--- bunch of features computed for each game
+CREATE INDEX consecutive_idx ON consecutive (next);
+
+INSERT INTO consecutive
+SELECT
+    replay_key,
+    lead(replay_key, 1)
+    OVER (PARTITION BY server ORDER BY started_at) AS next
+FROM replays;
+
+--
+-- replays_wide should be one-to-one with the replays table, adding a bunch of
+-- helpful additional information for each game. For instance, we need replays_wide
+-- to decide what games are ladder games, in games.sql.
 CREATE TABLE IF NOT EXISTS replays_wide (
     replay_key INTEGER PRIMARY KEY REFERENCES replays (replay_key),
     time_bin, -- time bin this replay belongs to
+    time_bin_key,
     day_bin TEXT, -- day bin where each "day" starts at noon UTC
     n_left, -- number of players on each team
     n_right,
@@ -39,7 +58,8 @@ CREATE TABLE IF NOT EXISTS replays_wide (
     prev_key, -- previous replay on same server
     winner, -- last team that scored
     points_left,
-    points_right
+    points_right,
+    teams
 );
 
 CREATE TEMP TABLE replays_fresh AS
@@ -47,28 +67,14 @@ SELECT r.*
 FROM replays r
 LEFT JOIN replays_wide rw USING (replay_key)
 WHERE (
-    rw.replay_key is null
-    OR rw.next_key is null
+    (rw.replay_key is null OR rw.next_key is null)
     AND server != ''
 );
 
+SELECT 'Updating replays_wide with ' || count() || ' new replays' FROM replays_fresh;
+
 INSERT OR REPLACE INTO replays_wide
 WITH RECURSIVE
-time_bin_codes AS (
-    SELECT
-        replay_key,
-        time_bin
-    FROM replays_fresh
-    JOIN time_bins USING (replay_key)
-    JOIN time_bin_desc USING (time_bin)
-),
-consecutive AS (
-	SELECT
-		replay_key,
-		lead(replay_key, 1)
-		OVER (PARTITION BY server ORDER BY started_at) AS next
-	FROM replays
-),
 stop_messages AS (
     SELECT
         replay_key,
@@ -158,11 +164,13 @@ team_players AS (
     FROM (
         SELECT DISTINCT
             replay_key,
-            team,
-            handle
-        FROM players_wide
+            handle,
+            max(team) AS team
+        FROM players
+        NATURAL JOIN player_key_handle
         NATURAL JOIN handles
-        ORDER BY handle
+        WHERE team >= 3
+        GROUP BY replay_key, handle
     )
     GROUP BY replay_key, team
 ),
@@ -175,12 +183,13 @@ teams AS (
 )
 SELECT
     r.replay_key,
-    time_bin,
+    time_bin, -- time_bin_keys
+    time_bin_key,
     day_bin,
     coalesce(n_left, 0),
     coalesce(n_right, 0),
     coalesce(n_spec, 0),
-    n_goals,
+    coalesce(n_goals, 0),
     coalesce(start_messages, 0) AS start_messages,
     coalesce(stop_messages, 0) AS stop_messages,
     coalesce(restart_messages, 0) AS restart_messages,
@@ -189,17 +198,19 @@ SELECT
     b.replay_key AS prev_key,
     winner,
     points_left,
-    points_right
+    points_right,
+    teams
 FROM replays_fresh r
-JOIN time_bins USING (replay_key)
-JOIN time_bin_desc USING (time_bin_desc)
+JOIN replay_time_bins USING (replay_key)
+JOIN time_bins USING (time_bin)
 NATURAL LEFT JOIN n_players
-NATURAL JOIN n_goals
+NATURAL LEFT JOIN n_goals
 NATURAL LEFT JOIN points
 NATURAL LEFT JOIN start_messages
 NATURAL LEFT JOIN stop_messages
 NATURAL LEFT JOIN restart_messages
 NATURAL LEFT JOIN player_messages
+NATURAL LEFT JOIN teams
 LEFT JOIN consecutive a ON (r.replay_key = a.replay_key)
 LEFT JOIN consecutive b ON (r.replay_key = b.next)
 NATURAL LEFT JOIN winner;
