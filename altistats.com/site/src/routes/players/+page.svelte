@@ -66,10 +66,7 @@
             ? [
                   makeLinkItem({ period: null }, "All time"),
                   ...data.timeBins.map((bin: any) =>
-                      makeLinkItem(
-                          { period: bin.time_bin_desc },
-                          bin.time_bin_desc,
-                      ),
+                      makeLinkItem({ period: bin.time_bin }, bin.time_bin),
                   ),
               ]
             : [];

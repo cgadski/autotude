@@ -2,18 +2,18 @@
 WITH tbl AS (
     SELECT
         handle_key,
-        time_bin,
+        time_bin_key,
         plane,
         sum(team_kills) as tks,
         sum(time_alive) / (30 * 60 * 60) as hours
     FROM players_wide
-    GROUP BY handle_key, time_bin, plane
+    GROUP BY handle_key, time_bin_key, plane
 )
 
 -- handle
 SELECT
     handle_key,
-    NULL AS time_bin,
+    NULL AS time_bin_key,
     NULL AS plane,
     sum(tks) / sum(hours) AS stat,
     printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
@@ -28,7 +28,7 @@ UNION ALL
 -- handle, plane
 SELECT
     handle_key,
-    NULL AS time_bin,
+    NULL AS time_bin_key,
     plane,
     sum(tks) / sum(hours) AS stat,
     printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
@@ -43,7 +43,7 @@ UNION ALL
 -- handle, time
 SELECT
     handle_key,
-    time_bin,
+    time_bin_key,
     NULL AS plane,
     sum(tks) / sum(hours) AS stat,
     printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
@@ -51,14 +51,14 @@ SELECT
     || sum(30 * 60 * 60 * hours) || 'dc' AS repr,
     sum(tks) = 0 AS hidden
 FROM tbl
-GROUP BY handle_key, time_bin
+GROUP BY handle_key, time_bin_key
 
 UNION ALL
 
 -- handle, time, plane
 SELECT
     handle_key,
-    time_bin,
+    time_bin_key,
     plane,
     sum(tks) / sum(hours) AS stat,
     printf('%.3f / hour', sum(tks) / sum(hours)) || ' | '
@@ -66,4 +66,4 @@ SELECT
     || sum(30 * 60 * 60 * hours) || 'dc' AS repr,
     sum(tks) = 0 AS hidden
 FROM tbl
-GROUP BY handle_key, plane, time_bin
+GROUP BY handle_key, plane, time_bin_key

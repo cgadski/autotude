@@ -2,7 +2,7 @@
 WITH tbl AS (
     SELECT
         handle_key,
-        replays_wide.time_bin,
+        replays_wide.time_bin_key,
         plane,
         cast(count() AS real) AS n_games ,
         cast(count() FILTER (WHERE winner = team) AS real) AS n_wins
@@ -10,13 +10,13 @@ WITH tbl AS (
     JOIN games USING (replay_key)
     JOIN replays_wide USING (replay_key)
     WHERE team > 2
-    GROUP BY handle_key, replays_wide.time_bin, plane
+    GROUP BY handle_key, replays_wide.time_bin_key, plane
 )
 
 -- handle
 SELECT
     handle_key,
-    NULL AS time_bin,
+    NULL AS time_bin_key,
     NULL AS plane,
     sum(n_wins) / sum(n_games) AS stat,
     printf("%.2f", sum(n_wins) / sum(n_games))
@@ -30,20 +30,20 @@ UNION ALL
 -- handle, time
 SELECT
     handle_key,
-    time_bin,
+    time_bin_key,
     NULL AS plane,
     sum(n_wins) / sum(n_games) AS stat,
     printf("%.2f", sum(n_wins) / sum(n_games))
     || ' | ' || cast(sum(n_wins) as int) || '#G / ' || cast(sum(n_games) as int) AS repr,
     sum(n_games) < 25 AS hidden
-FROM tbl GROUP BY handle_key, time_bin
+FROM tbl GROUP BY handle_key, time_bin_key
 
 UNION ALL
 
 -- handle, plane
 SELECT
     handle_key,
-    NULL AS time_bin,
+    NULL AS time_bin_key,
     plane,
     sum(n_wins) / sum(n_games) AS stat,
     printf("%.2f", sum(n_wins) / sum(n_games))
@@ -56,10 +56,10 @@ UNION ALL
 -- handle, time, plane
 SELECT
     handle_key,
-    time_bin,
+    time_bin_key,
     plane,
     sum(n_wins) / sum(n_games) AS stat,
     printf("%.2f", sum(n_wins) / sum(n_games))
     || ' | ' || cast(sum(n_wins) as int) || '#G / ' || cast(sum(n_games) as int) AS repr,
     false AS hidden
-FROM tbl GROUP BY handle_key, time_bin, plane
+FROM tbl GROUP BY handle_key, time_bin_key, plane

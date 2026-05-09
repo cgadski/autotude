@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import os
 import sqlite3
 import sys
-from pathlib import Path
-from dataclasses import dataclass
-from typing import List
-import json
 import time
-from typing import Optional
+from dataclasses import dataclass
+from pathlib import Path
+from typing import List, Optional
+
 
 @dataclass
 class StatQuery:
@@ -19,35 +19,37 @@ class StatQuery:
     attributes: List[str]
     sql: str
 
+
 table_prefixes = [
-    ('_', 'global_stats'),
-    ('p_', 'player_stats'),
+    ("_", "global_stats"),
+    ("p_", "player_stats"),
 ]
 
+
 def read_query(sql_file: Path) -> Optional[StatQuery]:
-    with open(sql_file, 'r') as f:
+    with open(sql_file, "r") as f:
         content = f.read().strip()
 
-    lines = content.split('\n')
+    lines = content.split("\n")
     description = ""
     attributes = []
 
-    if lines and lines[0].startswith('--'):
+    if lines and lines[0].startswith("--"):
         description = lines[0][2:].strip()
 
-    if len(lines) > 1 and lines[1].startswith('--'):
+    if len(lines) > 1 and lines[1].startswith("--"):
         attributes = lines[1][2:].strip().split()
 
     stem = sql_file.stem
     for prefix, table in table_prefixes:
         if stem.startswith(prefix):
             return StatQuery(
-                key=stem[len(prefix):],
+                key=stem[len(prefix) :],
                 stat_table=table,
-                query_name = stem,
+                query_name=stem,
                 description=description,
                 attributes=attributes,
-                sql=content
+                sql=content,
             )
 
     return None
@@ -84,7 +86,7 @@ class StatMaterializer:
         self.cursor.execute("""CREATE TABLE player_stats (
             stat_key INTEGER REFERENCES stats (stat_key),
             handle_key,
-            time_bin,
+            time_bin_key,
             plane,
             stat,
             repr,
@@ -102,7 +104,7 @@ class StatMaterializer:
 
         self.cursor.execute(
             "INSERT INTO stats_raw VALUES (?, ?, ?, ?)",
-            (stat_key, stat.query_name, stat.description, json.dumps(stat.attributes))
+            (stat_key, stat.query_name, stat.description, json.dumps(stat.attributes)),
         )
 
         self.cursor.execute(f"""
@@ -117,6 +119,7 @@ class StatMaterializer:
 
     def close(self):
         self.conn.close()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -143,7 +146,9 @@ if __name__ == "__main__":
                 n_success += 1
 
         if n_success != len(sql_files):
-            raise Exception(f"Only {n_success}/{len(sql_files)} stats materialized successfully")
+            raise Exception(
+                f"Only {n_success}/{len(sql_files)} stats materialized successfully"
+            )
 
         worker.conn.commit()
         print(f"Materialized {n_success}/{len(sql_files)} stat tables")

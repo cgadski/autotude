@@ -5,12 +5,12 @@ export type QueryParams = {
 };
 
 type TimeBin = {
-  time_bin: number;
-  time_bin_desc: string;
+  time_bin_key: number;
+  time_bin: string;
 };
 
-async function getGamesForPeriod(timeBinIndex: number | null) {
-  if (timeBinIndex === null) {
+async function getGamesForPeriod(timeBinIndex: number | undefined) {
+  if (timeBinIndex === undefined) {
     return [];
   }
 
@@ -21,7 +21,7 @@ async function getGamesForPeriod(timeBinIndex: number | null) {
       NATURAL JOIN replays_wide
       NATURAL JOIN replays
       NATURAL JOIN game_teams
-      WHERE time_bin = ?
+      WHERE time_bin_key = ?
       ORDER BY started_at
     `,
     { args: [timeBinIndex], parse: ["teams"] },
@@ -30,24 +30,22 @@ async function getGamesForPeriod(timeBinIndex: number | null) {
 
 export async function load({ url }) {
   const timeBins: TimeBin[] = await query(
-    `SELECT time_bin, time_bin_desc FROM time_bin_desc ORDER BY time_bin DESC`,
+    `SELECT time_bin, time_bin_key FROM time_bins ORDER BY time_bin DESC`,
   );
 
   const params: QueryParams = {
-    period:
-      url.searchParams.get("period") || timeBins[0]?.time_bin_desc || null,
+    period: url.searchParams.get("period") || timeBins[0]?.time_bin || null,
   };
 
-  const timeBinIndex = params.period
-    ? timeBins.find((tb) => tb.time_bin_desc === params.period)?.time_bin
-    : null;
+  const timeBinIndex: number | undefined = params.period
+    ? timeBins.find((tb) => tb.time_bin === params.period)?.time_bin_key
+    : undefined;
 
   const gameCountsByMonth = await query(
     `
-    SELECT time_bin_desc, COUNT(*) as game_count
+    SELECT time_bin, COUNT(*) as game_count
     FROM replays_wide
     NATURAL JOIN games
-    NATURAL JOIN time_bin_desc
     GROUP BY time_bin
     ORDER BY time_bin DESC
     `,

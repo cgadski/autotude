@@ -2,7 +2,7 @@ BEGIN;
 
 -- Integer ids for each vapor, for use in players_wide table.
 -- (We don't use handle_keys in players_wide so that we don't have to
--- re-compute players_wide after merging handles>
+-- re-compute players_wide after merging handles)
 CREATE TABLE IF NOT EXISTS vapors (
     vapor_key INTEGER PRIMARY KEY,
     vapor TEXT

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS players_wide (
     blue_perk INTEGER,
     player_key INTEGER,
 
-    time_bin INTEGER, -- month of game, for grouping
+    time_bin_key INTEGER, -- month of game, for grouping
     team INTEGER, -- team of player, constant over loadouts
     start_tick, -- first tick of loadout
     end_tick, -- first tick NOT in loadout: time player spawns as a different plane/player_key. can be null
@@ -126,9 +126,11 @@ SELECT
     -- loadout characteristics
     replay_key, vapor_key, null AS handle_key,
     plane, red_perk, green_perk, blue_perk, player_key,
+    -- store vapor_key, write handle_key later so that we can easily update
+    -- when we merge vapors into the same handle via custom_handles.csv
 
     -- some helpful columns
-    time_bin, team,
+    time_bin_key, team,
     start_tick, end_tick,
 
     -- now the interesting queries
@@ -145,6 +147,9 @@ LEFT JOIN goal_tallies ON (sg.rowid = goal_tallies.rowid)
 LEFT JOIN time_with_ball ON (sg.rowid = time_with_ball.rowid)
 ORDER BY start_tick;
 
+SELECT 'Assigning handle_key for ' || count() || ' players_wide rows' FROM players_wide;
+
+-- write handle_keys
 UPDATE players_wide
 SET handle_key = (
     SELECT vh.handle_key FROM vapor_handle vh

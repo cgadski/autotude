@@ -5,8 +5,8 @@ export type QueryParams = {
 };
 
 type TimeBin = {
-  time_bin: number;
-  time_bin_desc: string;
+  time_bin_key: number;
+  time_bin: string;
 };
 
 async function getGamesForPlayer(handleKey: number, period: string) {
@@ -16,14 +16,12 @@ async function getGamesForPlayer(handleKey: number, period: string) {
     FROM games
     NATURAL JOIN replays
     NATURAL JOIN replays_wide
-    NATURAL JOIN game_teams
-    NATURAL JOIN time_bin_desc
     WHERE replay_key IN (
       SELECT replay_key
       FROM players_short
       WHERE handle_key = ?
     )
-    AND time_bin_desc = ?
+    AND time_bin = ?
     ORDER BY started_at
     `,
     { args: [handleKey, period], parse: ["teams"] },
@@ -34,21 +32,21 @@ export async function load({ parent, url }) {
   const { handleKey, handle } = await parent();
 
   const timeBins: TimeBin[] = await query(
-    `SELECT time_bin, time_bin_desc FROM time_bin_desc ORDER BY time_bin DESC`,
+    `SELECT time_bin_key, time_bin FROM time_bins ORDER BY time_bin DESC`,
   );
 
   const params: QueryParams = {
-    period: url.searchParams.get("period") || timeBins[0].time_bin_desc,
+    period: url.searchParams.get("period") || timeBins[0].time_bin,
   };
 
   const gameCountsByMonth = await query(
     `
-    SELECT time_bin_desc, COUNT(*) as game_count
+    SELECT time_bin, COUNT(*) as game_count
     FROM players_short
-    NATURAL JOIN time_bin_desc
+    NATURAL JOIN time_bins
     WHERE handle_key = ?
-    GROUP BY time_bin_desc
-    ORDER BY time_bin DESC
+    GROUP BY time_bin_key
+    ORDER BY time_bin_key DESC
     `,
     { args: [handleKey] },
   );

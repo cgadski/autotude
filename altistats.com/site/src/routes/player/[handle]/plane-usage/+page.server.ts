@@ -6,14 +6,14 @@ export async function load({ parent }) {
   return {
     activity: await query(
       `
-      SELECT time_bin_desc, plane, n_games, n_won
+      SELECT time_bin, plane, n_games, n_won
       FROM monthly_activity
-      NATURAL JOIN time_bin_desc
+      NATURAL JOIN time_bins
       WHERE handle_key = ?
       ORDER BY time_bin DESC, plane
       `,
       { args: [handleKey] },
     ),
-    months: await query(`SELECT time_bin_desc FROM time_bin_desc`),
+    months: await query(`SELECT time_bin FROM time_bins`),
   };
 }

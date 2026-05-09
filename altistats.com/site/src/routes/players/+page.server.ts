@@ -9,8 +9,8 @@ export type QueryParams = {
 };
 
 type TimeBin = {
-  time_bin: number;
-  time_bin_desc: string;
+  time_bin_key: number;
+  time_bin: string;
 };
 
 async function getPlayerStats(
@@ -19,7 +19,7 @@ async function getPlayerStats(
   statAttributes: string[],
 ) {
   const timeBinIndex = params.period
-    ? timeBins.find((tb) => tb.time_bin_desc === params.period)?.time_bin
+    ? timeBins.find((tb) => tb.time_bin === params.period)?.time_bin_key
     : null;
 
   const planeIndex = params.plane
@@ -28,7 +28,7 @@ async function getPlayerStats(
 
   const planeCondition = planeIndex !== null ? "plane = ?" : "plane IS NULL";
   const timeBinCondition =
-    timeBinIndex !== null ? "time_bin = ?" : "time_bin IS NULL";
+    timeBinIndex !== null ? "time_bin_key = ?" : "time_bin_key IS NULL";
 
   const statReversed = statAttributes.includes("reverse") ? "ASC" : "DESC";
 
@@ -62,14 +62,9 @@ export async function load({ url }) {
   const statMetas = await playerStats();
   const stat = statMetas.find((s) => s.query_name === params.stat);
 
-  const timeBins: Array<{ time_bin: number; time_bin_desc: string }> =
-    await query(
-      `
-        SELECT time_bin, time_bin_desc
-        FROM time_bin_desc
-        ORDER BY time_bin_desc DESC
-        `,
-    );
+  const timeBins: TimeBin[] = await query(
+    "SELECT * FROM time_bins ORDER BY time_bin DESC",
+  );
 
   const res = {
     params,

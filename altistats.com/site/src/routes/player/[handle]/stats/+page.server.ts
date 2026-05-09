@@ -21,7 +21,7 @@ export async function load({ parent }) {
         count() OVER (PARTITION BY stat_key, plane) AS total
       FROM player_stats
       JOIN stats_raw s USING (stat_key)
-      WHERE time_bin IS NULL AND NOT hidden
+      WHERE time_bin_key IS NULL AND NOT hidden
     )
     SELECT
       query_name, description, attributes, plane, stat, repr, rank, total, 0 AS hidden, stat_order
@@ -35,7 +35,7 @@ export async function load({ parent }) {
       s.query_name, s.description, s.attributes, ps.plane, NULL, NULL, NULL, NULL, 1 AS hidden, s.stat_order
     FROM player_stats ps
     NATURAL JOIN stats s
-    WHERE ps.time_bin IS NULL AND ps.hidden AND ps.handle_key = ?
+    WHERE ps.time_bin_key IS NULL AND ps.hidden AND ps.handle_key = ?
 
     ORDER BY stat_order, plane
     `,

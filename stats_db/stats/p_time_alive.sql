@@ -2,7 +2,7 @@
 WITH tbl AS (
     SELECT
         handle_key,
-        time_bin,
+        time_bin_key,
         plane,
         time_alive
     FROM time_alive
@@ -11,7 +11,7 @@ WITH tbl AS (
 -- handle
 SELECT
     handle_key,
-    NULL AS time_bin,
+    NULL AS time_bin_key,
     NULL AS plane,
     sum(time_alive) / (30 * 60 * 60) AS stat,
     sum(time_alive) || "d" AS repr,
@@ -23,19 +23,19 @@ UNION ALL
 -- handle, time
 SELECT
     handle_key,
-    time_bin,
+    time_bin_key,
     NULL AS plane,
     sum(time_alive) / (30 * 60 * 60) AS stat,
     sum(time_alive) || "d" AS repr,
     false AS hidden
-FROM tbl GROUP BY handle_key, time_bin
+FROM tbl GROUP BY handle_key, time_bin_key
 
 UNION ALL
 
 -- handle, plane
 SELECT
     handle_key,
-    NULL AS time_bin,
+    NULL AS time_bin_key,
     plane,
     sum(time_alive) / (30 * 60 * 60) AS stat,
     sum(time_alive) || "d" AS repr,
@@ -47,9 +47,9 @@ UNION ALL
 -- handle, time, plane
 SELECT
     handle_key,
-    time_bin,
+    time_bin_key,
     plane,
     sum(time_alive) / (30 * 60 * 60) AS stat,
     sum(time_alive) || "d" AS repr,
     false AS hidden
-FROM tbl GROUP BY handle_key, time_bin, plane
+FROM tbl GROUP BY handle_key, time_bin_key, plane

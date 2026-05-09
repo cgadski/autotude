@@ -5,14 +5,14 @@ DROP TABLE IF EXISTS players_short;
 CREATE TABLE players_short (
     replay_key,
     handle_key,
-    time_bin,
+    time_bin_key,
     plane,
     team,
     won,
     PRIMARY KEY (replay_key, handle_key)
 );
 
-CREATE INDEX idx_players_short_handle ON players_short (handle_key, time_bin);
+CREATE INDEX idx_players_short_handle ON players_short (handle_key, time_bin_key);
 
 INSERT INTO players_short
 WITH plane_usage AS (
@@ -31,7 +31,7 @@ plane_usage_ranked AS (
 SELECT
     replay_key,
     handle_key,
-    rw.time_bin,
+    rw.time_bin_key,
     plane,
     team,
     rw.winner = team AS won

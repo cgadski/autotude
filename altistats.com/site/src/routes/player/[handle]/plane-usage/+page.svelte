@@ -13,15 +13,15 @@
         const months = new Map();
 
         data.months.forEach((row: any) => {
-            months.set(row.time_bin_desc, {
-                month: row.time_bin_desc,
+            months.set(row.time_bin, {
+                month: row.time_bin,
                 total_games: 0,
                 planes: new Map(),
             });
         });
 
         data.activity.forEach((row: any) => {
-            const monthData = months.get(row.time_bin_desc);
+            const monthData = months.get(row.time_bin);
             monthData.total_games += row.n_games;
             monthData.planes.set(row.plane, {
                 n_games: row.n_games,

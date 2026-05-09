@@ -23,10 +23,7 @@
 
     // Create a lookup map for game counts per month
     $: gameCountsMap = new Map(
-        data.gameCountsByMonth.map((item) => [
-            item.time_bin_desc,
-            item.game_count,
-        ]),
+        data.gameCountsByMonth.map((item) => [item.time_bin, item.game_count]),
     );
 </script>
 
@@ -35,17 +32,17 @@
     <dd>
         <LinkList
             items={data.timeBins.map((row) => ({
-                label: row.time_bin_desc,
-                href: `?period=${row.time_bin_desc}`,
-                active: data.params.period === row.time_bin_desc,
-                info: gameCountsMap.get(row.time_bin_desc)?.toString() || "0",
+                label: row.time_bin,
+                href: `?period=${row.time_bin}`,
+                active: data.params.period === row.time_bin,
+                info: gameCountsMap.get(row.time_bin)?.toString() || "0",
             }))}
         />
     </dd>
 </dl>
 
 <GamePicker
-    month={data.params.period || data.timeBins[0]?.time_bin_desc || ""}
+    month={data.params.period || data.timeBins[0]?.time_bin || ""}
     games={playerGames}
     bind:selectedDay
     bind:selectedGame

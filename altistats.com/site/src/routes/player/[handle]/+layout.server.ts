@@ -65,7 +65,7 @@ export async function load({ params }) {
       NATURAL JOIN stats
       WHERE handle_key = ?
       AND plane is null
-      AND time_bin is null
+      AND time_bin_key is null
       ORDER BY stat DESC
     `,
       { args: [handleKey], parse: ["attributes"] },

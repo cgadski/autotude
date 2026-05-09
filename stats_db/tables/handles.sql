@@ -12,7 +12,7 @@ CREATE INDEX IF NOT EXISTS idx_handles_handle ON handles (handle);
 -- Map from vapor ids to handles
 DROP TABLE IF EXISTS vapor_handle;
 CREATE TABLE vapor_handle (
-    vapor_key REFERENCES vapors (vapor_key),
+    vapor_key INTEGER PRIMARY KEY REFERENCES vapors (vapor_key),
     handle_key REFERENCES handles (handle_key)
 );
 CREATE INDEX IF NOT EXISTS idx_vapor_handle_handle ON vapor_handle (handle_key);

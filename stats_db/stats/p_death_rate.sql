@@ -2,18 +2,18 @@
 WITH tbl AS (
     SELECT
         handle_key,
-        time_bin,
+        time_bin_key,
         plane,
         sum(deaths) as deaths,
         sum(time_alive) as time_alive
     FROM players_wide
-    GROUP BY handle_key, time_bin, plane
+    GROUP BY handle_key, time_bin_key, plane
 )
 
 -- handle
 SELECT
     handle_key,
-    NULL AS time_bin,
+    NULL AS time_bin_key,
     NULL AS plane,
     sum(time_alive) / (sum(deaths) * 30) AS stat,
     (sum(time_alive) / sum(deaths)) || 'df | '
@@ -28,21 +28,21 @@ UNION ALL
 -- handle, time
 SELECT
     handle_key,
-    time_bin,
+    time_bin_key,
     NULL AS plane,
     sum(time_alive) / (sum(deaths) * 30) AS stat,
     (sum(time_alive) / sum(deaths)) || 'df | '
     || sum(deaths) || '#R in '
     || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
-FROM tbl GROUP BY handle_key, time_bin
+FROM tbl GROUP BY handle_key, time_bin_key
 
 UNION ALL
 
 -- handle, plane
 SELECT
     handle_key,
-    NULL AS time_bin,
+    NULL AS time_bin_key,
     plane,
     sum(time_alive) / (sum(deaths) * 30) AS stat,
     (sum(time_alive) / sum(deaths)) || 'df | '
@@ -56,11 +56,11 @@ UNION ALL
 -- handle, time, plane
 SELECT
     handle_key,
-    time_bin,
+    time_bin_key,
     plane,
     sum(time_alive) / (sum(deaths) * 30) AS stat,
     (sum(time_alive) / sum(deaths)) || 'df | '
     || sum(deaths) || '#R in '
     || sum(time_alive) || 'dc' AS repr,
     sum(time_alive) < 30 * 60 * 60 AS hidden
-FROM tbl GROUP BY handle_key, time_bin, plane
+FROM tbl GROUP BY handle_key, time_bin_key, plane
