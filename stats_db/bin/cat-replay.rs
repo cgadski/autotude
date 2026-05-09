@@ -1,4 +1,4 @@
-use alti_reader::proto::{GameEvent, Update};
+use alti_reader::proto::Update;
 use alti_reader::replay::{read_replay_file, ReplayListener, Result};
 use clap::Parser;
 
@@ -43,6 +43,6 @@ impl ReplayListener for CatListener {
 fn main() -> Result<()> {
     let args = Args::parse();
     let mut listener = CatListener::new(args.objects);
-    read_replay_file(&args.path, &mut listener);
+    read_replay_file(&args.path, &mut listener)?;
     Ok(())
 }
