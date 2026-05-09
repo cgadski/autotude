@@ -21,7 +21,6 @@ export async function load({ params }) {
       series_name
     FROM replays
     NATURAL JOIN replays_wide
-    NATURAL JOIN game_teams
     NATURAL JOIN games
     NATURAL JOIN series_desc
     WHERE stem = ?

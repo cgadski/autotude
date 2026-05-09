@@ -13,7 +13,6 @@ $(STATS_DB):
 
 views:
 	@echo "loading views..."
-	@$(SQLITE) < views/game_teams.sql
 	@$(SQLITE) < views/last_played.sql
 	@$(SQLITE) < views/monthly_activity.sql
 	@echo "  ...done"

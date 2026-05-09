@@ -18,7 +18,6 @@ async function getGamesForPeriod(seriesKey: number, timeBinKey: number) {
       FROM games
       NATURAL JOIN replays_wide
       NATURAL JOIN replays
-      NATURAL JOIN game_teams
       WHERE series_key = ?
       AND time_bin_key = ?
       ORDER BY started_at
