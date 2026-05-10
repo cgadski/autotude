@@ -1,19 +1,18 @@
 BEGIN;
 
-DROP TABLE IF EXISTS series_desc;
-CREATE TABLE series_desc (
+DROP TABLE IF EXISTS series;
+CREATE TABLE series (
     series_key INTEGER PRIMARY KEY,
-    series_name TEXT,
-    series_desc TEXT
+    series_name TEXT
 );
 
-INSERT INTO series_desc
+INSERT INTO series
 VALUES
-    (0, '4v4 ladder', 'Ranked 4v4 games played on Van''s servers'),
+    (0, '4v4 ladder'),
     -- 25/1/2026
-    (1, 'Top Dog Bowl I', 'First top dog bowl, with rating-based limits for teams.'),
+    (1, 'Top Dog Bowl I'),
     -- 14/3/2026
-    (2, 'Top Dog Bowl II', 'Second top dog bowl, with perk restrictions decided during matches');
+    (2, 'Top Dog Bowl II');
 
 DROP TABLE IF EXISTS games;
 CREATE TABLE games (
