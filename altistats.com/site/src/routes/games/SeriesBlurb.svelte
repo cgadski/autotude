@@ -15,7 +15,9 @@
         First top dog tournament. 3 round Swiss format group stage followed by
         semi-finals and finals, all games bo3, maps fixed in advance. Teams were
         subject to limit on sum of player ratings. Organized by woofy and co,
-        visual design by lemyn.
+        visual design by lemyn. <a
+            href="https://www.youtube.com/watch?v=41xbTLsZYjU">Stream by DVD.</a
+        >
     </p>
 {/if}
 
