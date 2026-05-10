@@ -165,15 +165,13 @@ export function renderHistogram(
   data: any,
   selectedHandles: string[] = [],
 ): void {
-  if (!element || !data?.playerStats?.length) {
+  // clear everything
+  d3.select(element).selectAll("*").remove();
+  d3.selectAll(".histogram-tooltip").remove();
+
+  if (!data?.playerStats?.length) {
     return;
   }
-
-  // Clear previous chart
-  d3.select(element).selectAll("*").remove();
-
-  // Remove any existing tooltips to prevent accumulation
-  d3.selectAll(".histogram-tooltip").remove();
 
   // Create tooltip - ensure it's properly attached to body
   const tooltip = d3

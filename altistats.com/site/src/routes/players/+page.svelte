@@ -94,8 +94,7 @@
         }
     });
 
-    // Consolidated reactive rendering - triggers when any dependency changes
-    $: if (histogramElement && data.params.stat != null && data.playerStats) {
+    $: if (histogramElement) {
         renderHistogram(histogramElement, data, selectedHandles);
     }
 </script>
