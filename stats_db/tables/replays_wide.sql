@@ -74,7 +74,7 @@ WHERE (
 SELECT 'Updating replays_wide with ' || count() || ' new replays' FROM replays_fresh;
 
 INSERT OR REPLACE INTO replays_wide
-WITH RECURSIVE
+WITH
 stop_messages AS (
     SELECT
         replay_key,
@@ -153,7 +153,41 @@ winner AS (
         NATURAL JOIN goals
     )
     WHERE goal_idx = 1
-),
+)
+SELECT
+    r.replay_key,
+    time_bin, -- time_bin_keys
+    time_bin_key,
+    day_bin,
+    coalesce(n_left, 0),
+    coalesce(n_right, 0),
+    coalesce(n_spec, 0),
+    coalesce(n_goals, 0),
+    coalesce(start_messages, 0) AS start_messages,
+    coalesce(stop_messages, 0) AS stop_messages,
+    coalesce(restart_messages, 0) AS restart_messages,
+    coalesce(player_messages, 0) AS player_messages,
+    a.next AS next_key,
+    b.replay_key AS prev_key,
+    winner,
+    coalesce(points_left, 0) AS points_left,
+    coalesce(points_right, 0) AS points_right,
+    null AS teams
+FROM replays_fresh r
+JOIN replay_time_bins USING (replay_key)
+JOIN time_bins USING (time_bin)
+NATURAL LEFT JOIN n_players
+NATURAL LEFT JOIN n_goals
+NATURAL LEFT JOIN points
+NATURAL LEFT JOIN start_messages
+NATURAL LEFT JOIN stop_messages
+NATURAL LEFT JOIN restart_messages
+NATURAL LEFT JOIN player_messages
+LEFT JOIN consecutive a ON (r.replay_key = a.replay_key)
+LEFT JOIN consecutive b ON (r.replay_key = b.next)
+NATURAL LEFT JOIN winner;
+
+WITH RECURSIVE
 team_players AS (
     SELECT
         replay_key,
@@ -181,38 +215,9 @@ teams AS (
     FROM team_players
     GROUP BY replay_key
 )
-SELECT
-    r.replay_key,
-    time_bin, -- time_bin_keys
-    time_bin_key,
-    day_bin,
-    coalesce(n_left, 0),
-    coalesce(n_right, 0),
-    coalesce(n_spec, 0),
-    coalesce(n_goals, 0),
-    coalesce(start_messages, 0) AS start_messages,
-    coalesce(stop_messages, 0) AS stop_messages,
-    coalesce(restart_messages, 0) AS restart_messages,
-    coalesce(player_messages, 0) AS player_messages,
-    a.next AS next_key,
-    b.replay_key AS prev_key,
-    winner,
-    coalesce(points_left, 0) AS points_left,
-    coalesce(points_right, 0) AS points_right,
-    teams
-FROM replays_fresh r
-JOIN replay_time_bins USING (replay_key)
-JOIN time_bins USING (time_bin)
-NATURAL LEFT JOIN n_players
-NATURAL LEFT JOIN n_goals
-NATURAL LEFT JOIN points
-NATURAL LEFT JOIN start_messages
-NATURAL LEFT JOIN stop_messages
-NATURAL LEFT JOIN restart_messages
-NATURAL LEFT JOIN player_messages
-NATURAL LEFT JOIN teams
-LEFT JOIN consecutive a ON (r.replay_key = a.replay_key)
-LEFT JOIN consecutive b ON (r.replay_key = b.next)
-NATURAL LEFT JOIN winner;
+UPDATE replays_wide
+SET teams = t.teams
+FROM teams t
+WHERE replays_wide.replay_key = t.replay_key;
 
 COMMIT;
