@@ -197,8 +197,8 @@ SELECT
     a.next AS next_key,
     b.replay_key AS prev_key,
     winner,
-    points_left,
-    points_right,
+    coalesce(points_left, 0) AS points_left,
+    coalesce(points_right, 0) AS points_right,
     teams
 FROM replays_fresh r
 JOIN replay_time_bins USING (replay_key)
