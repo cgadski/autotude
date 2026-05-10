@@ -1,5 +1,7 @@
 BEGIN;
 
+-- this table needs to be dropped when handles are reassigned...
+
 -- Scorecard for each player in each game
 CREATE TABLE IF NOT EXISTS game_stats (
     replay_key INTEGER REFERENCES replays (replay_key),
