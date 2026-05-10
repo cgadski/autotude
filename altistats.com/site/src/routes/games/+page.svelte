@@ -33,19 +33,6 @@
 
 <SiteHeader navPage="games" />
 
-<section class="no-bg pt-0">
-    <div class="d-flex flex-wrap gap-1">
-        {#each data.globalStats as item}
-            <div class="card">
-                <div class="card-body py-2 px-3">
-                    <div class="text-muted small">{item.description}</div>
-                    <div class="fw-bold">{renderStat(item.stat)}</div>
-                </div>
-            </div>
-        {/each}
-    </div>
-</section>
-
 <section>
     <div class="row g-3 mb-3">
         <div class="col-12 col-md-8">
@@ -106,5 +93,19 @@
 
     <div class="mt-3">
         <HandlePicker handles={data.handles} bind:selectedHandles />
+    </div>
+</section>
+
+<section class="no-bg">
+    <h2>Database stats</h2>
+    <div class="d-flex justify-content-center flex-wrap gap-1">
+        {#each data.globalStats as item}
+            <div class="card">
+                <div class="card-body py-2 px-3">
+                    <div class="text-muted small">{item.description}</div>
+                    <div class="fw-bold">{renderStat(item.stat)}</div>
+                </div>
+            </div>
+        {/each}
     </div>
 </section>

@@ -1,2 +1,2 @@
--- Total games
+-- Games
 SELECT count() FROM games
