@@ -21,8 +21,8 @@
             {formatDatetime(game.started_at)}
         </div>
         <a
-            class="btn px-1 py-0 btn-primary stretched-link"
-            href="/game/{game.stem}">See game</a
+            class="stretched-link text-body-tertiary ms-2"
+            href="/game/{game.stem}"><i class="bi bi-chevron-right"></i></a
         >
     </div>
 
