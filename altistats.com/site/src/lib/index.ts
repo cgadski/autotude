@@ -66,6 +66,18 @@ export function formatDatetime(unixEpoch: number): string {
   return `${month} ${day} ${year}, ${hours}h${minutes}`;
 }
 
+export function formatDatetimeUTC(unixEpoch: number): string {
+  const date = new Date(unixEpoch * 1000);
+  const month = new Intl.DateTimeFormat("en", { month: "short" }).format(date);
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const localHours = String(date.getHours()).padStart(2, "0");
+  const localMinutes = String(date.getMinutes()).padStart(2, "0");
+  const utcHours = String(date.getUTCHours()).padStart(2, "0");
+  const utcMinutes = String(date.getUTCMinutes()).padStart(2, "0");
+  return `${month} ${day} ${year}, ${localHours}h${localMinutes} (${utcHours}h${utcMinutes} UTC)`;
+}
+
 export function formatTime(unixEpoch: number): string {
   const date = new Date(unixEpoch * 1000);
   const hours = String(date.getHours()).padStart(2, "0");

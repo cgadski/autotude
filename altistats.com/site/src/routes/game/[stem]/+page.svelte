@@ -27,6 +27,10 @@
         showMessages = show;
     }
 
+    function formatPoints(points: number): string {
+        return points === 1 ? `${points} point` : `${points} points`;
+    }
+
     function getMessageTeamClass(team: number | null): string {
         if (team === 3) return "team-red";
         if (team === 4) return "team-blue";
@@ -40,6 +44,7 @@
             tick: item.tick,
             type: item.endType,
             team: item.endTeam,
+            points: item.endPoints,
             handle: item.endHandle,
         }));
 </script>
@@ -73,7 +78,7 @@
                             : item.type === "block_end" && item.endTeam === 4
                               ? "team-blue"
                               : item.type === "message"
-                                ? getMessageTeamClass(item.team)
+                                ? getMessageTeamClass(item.teeram)
                                 : ""}
                     >
                         <td class="text-nowrap text-end text-muted">
@@ -101,7 +106,8 @@
                             {:else if item.type === "block_end"}
                                 <div class="block-info">
                                     {#if item.endType === "goal"}
-                                        <strong>Goal</strong> by {item.endHandle}
+                                        <strong>Goal</strong> by {item.endHandle}:
+                                        {formatPoints(item.endPoints)}
                                     {:else if item.endType === "sudden_death"}
                                         <strong>Sudden Death</strong>
                                     {/if}
@@ -123,7 +129,7 @@
                                 >
                                     <div class="block-summary">
                                         {#if statItem.type === "possession"}
-                                            Poss: {formatDurationFine(
+                                            Pos: {formatDurationFine(
                                                 statItem.team3Value,
                                             )}
                                             <TeamBar

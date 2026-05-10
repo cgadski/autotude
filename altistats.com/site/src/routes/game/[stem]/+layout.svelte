@@ -2,7 +2,12 @@
     import SiteHeader from "$lib/SiteHeader.svelte";
     import LinkList from "$lib/LinkList.svelte";
     import { page } from "$app/stores";
-    import { formatDatetime, formatDuration, perkNames } from "$lib";
+    import {
+        formatDatetime,
+        formatDatetimeUTC,
+        formatDuration,
+        perkNames,
+    } from "$lib";
     import HorizontalList from "$lib/HorizontalList.svelte";
 
     export let data;
@@ -31,7 +36,7 @@
 
     let game = data.game;
     let gameProps = [
-        { desc: "Started", value: formatDatetime(game.started_at) },
+        { desc: "Started", value: formatDatetimeUTC(game.started_at) },
         { desc: "Map", value: game.map },
         {
             desc: "Series",

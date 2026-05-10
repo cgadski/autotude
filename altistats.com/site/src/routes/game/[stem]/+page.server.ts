@@ -7,16 +7,16 @@ export async function load({ params, parent }) {
   // Get block boundaries (goals and sudden death messages)
   const blockBoundaries = await query(
     `
-    SELECT tick, 'goal' as type, team, handle
+    SELECT tick, 'goal' as type, team, handle, points
     FROM replays
-    JOIN goals USING (replay_key)
+    JOIN goals_wide USING (replay_key)
     NATURAL JOIN player_key_handle
     NATURAL JOIN handles
     WHERE stem = ?
 
     UNION ALL
 
-    SELECT tick, 'sudden_death' as type, null as team, null as handle
+    SELECT tick, 'sudden_death' as type, null as team, null as handle, null as points
     FROM replays
     JOIN messages USING (replay_key)
     WHERE stem = ?
@@ -139,6 +139,7 @@ export async function load({ params, parent }) {
       type: "block_end",
       endType: boundary.type,
       endTeam: boundary.team,
+      endPoints: boundary.points,
       endHandle: boundary.handle,
       team3Duration,
       team4Duration,

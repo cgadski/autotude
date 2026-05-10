@@ -3,9 +3,9 @@
     import GameCard from "$lib/GameCard.svelte";
     import HorizontalList from "$lib/HorizontalList.svelte";
     import type { Game } from "$lib";
-    import { onMount } from "svelte";
 
     export let month: string; // yyyy-mm format
+    export let dayPicker: boolean = true;
     export let games: Game[];
     export let selectedDay: string | null = null;
     export let selectedGame: string | null = null;
@@ -177,27 +177,29 @@
 {/snippet}
 
 <div class="row">
-    <div
-        class="d-flex col-md-auto justify-content-center justify-content-md-start"
-    >
-        <div class="calendar-grid mb-3 mb-md-0">
-            {#each weekDays as weekDay}
-                <div
-                    class="text-center align-content-center fw-bold text-muted small"
-                >
-                    {weekDay}
-                </div>
-            {/each}
+    {#if dayPicker}
+        <div
+            class="d-flex col-md-auto justify-content-center justify-content-md-start"
+        >
+            <div class="calendar-grid mb-3 mb-md-0">
+                {#each weekDays as weekDay}
+                    <div
+                        class="text-center align-content-center fw-bold text-muted small"
+                    >
+                        {weekDay}
+                    </div>
+                {/each}
 
-            {#each monthDays as day}
-                {#if day === null}
-                    <div class="square bg-transparent border-0"></div>
-                {:else}
-                    {@render daySquare(day)}
-                {/if}
-            {/each}
+                {#each monthDays as day}
+                    {#if day === null}
+                        <div class="square bg-transparent border-0"></div>
+                    {:else}
+                        {@render daySquare(day)}
+                    {/if}
+                {/each}
+            </div>
         </div>
-    </div>
+    {/if}
 
     <div class="col-12 col-md">
         {#if selectedDay}

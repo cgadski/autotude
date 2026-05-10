@@ -26,6 +26,13 @@ export async function load({ params }) {
       `,
       { args: [handleKey] },
     ),
+    vapors: await query(
+      `
+      SELECT vapor FROM vapor_handle NATURAL JOIN vapors
+      WHERE handle_key = ?
+      `,
+      { args: [handleKey] },
+    ),
     nicks: await queryValue(
       `
         SELECT nicks

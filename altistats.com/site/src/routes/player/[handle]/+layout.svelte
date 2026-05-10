@@ -37,10 +37,7 @@
 <SiteHeader />
 
 <section>
-    <div class="d-flex gap-3 mb-3">
-        <h3>{data.handle}</h3>
-        <HorizontalList items={data.nicks} let:item>{item}</HorizontalList>
-    </div>
+    <h3>{data.handle}</h3>
 
     <div class="row g-2">
         <div class="col-auto">
@@ -70,6 +67,19 @@
             </div>
         </div>
     </div>
+
+    <dl class="mt-3">
+        <dt>Nicknames</dt>
+        <dd>
+            <HorizontalList items={data.nicks} let:item>{item}</HorizontalList>
+        </dd>
+        <dt>Linked vapor IDs</dt>
+        <dd>
+            <HorizontalList items={data.vapors.map((v) => v.vapor)} let:item
+                >{item}</HorizontalList
+            >
+        </dd>
+    </dl>
 </section>
 
 <section>

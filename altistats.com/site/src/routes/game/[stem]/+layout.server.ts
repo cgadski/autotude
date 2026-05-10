@@ -22,7 +22,7 @@ export async function load({ params }) {
     FROM replays
     NATURAL JOIN replays_wide
     NATURAL JOIN games
-    NATURAL JOIN series_desc
+    NATURAL JOIN series
     WHERE stem = ?
     `,
     { args: [stem], parse: ["teams"] },

@@ -59,9 +59,7 @@ export async function load({ url }) {
   return {
     params,
     timeBins,
-    series: await query(
-      "SELECT series_key, series_name, series_desc FROM series_desc",
-    ),
+    series: await query("SELECT * FROM series"),
     handles: (
       await query(
         "SELECT DISTINCT handle FROM handles NATURAL JOIN players_wide",
