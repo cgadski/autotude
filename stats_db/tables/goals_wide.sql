@@ -1,3 +1,5 @@
+BEGIN;
+
 DROP TABLE IF EXISTS goals_valued;
 DROP TABLE IF EXISTS goals_wide;
 
@@ -17,3 +19,5 @@ SELECT g.replay_key, g.player_key, g.tick, g.team,
 FROM goals g
 LEFT JOIN scores s
     ON g.replay_key = s.replay_key AND g.tick = s.tick;
+
+COMMIT;
