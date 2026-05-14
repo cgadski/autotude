@@ -78,7 +78,7 @@
                             : item.type === "block_end" && item.endTeam === 4
                               ? "team-blue"
                               : item.type === "message"
-                                ? getMessageTeamClass(item.teeram)
+                                ? getMessageTeamClass(item.team)
                                 : ""}
                     >
                         <td class="text-nowrap text-end text-muted">
