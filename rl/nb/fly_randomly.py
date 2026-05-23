@@ -1,8 +1,9 @@
 # %%
-import alti_rl as arl
 import matplotlib.pyplot as plt
-from tqdm import tqdm
 import torch as t
+from tqdm import tqdm
+
+import alti_rl as arl
 
 
 # %%
@@ -22,8 +23,9 @@ def get_trajectories(steps=1000):
 
 
 # %%
-acts, obs, rewards = get_trajectories(1* 60 * 60 * 30)
-t.save({"acts": acts, "obs": obs, "rewards": rewards}, "data/channelpark.pt")
+acts, obs, rewards = get_trajectories(100)
+obs.shape
+# t.save({"acts": acts, "obs": obs, "rewards": rewards}, "data/channelpark.pt")
 
 # %%
 period = t.arange(0, 200)

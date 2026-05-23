@@ -3,14 +3,14 @@
 # %autoreload 2
 
 # %%
-import alti_rl as arl
-from tqdm import tqdm
-
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
+import alti_rl as arl
 
 # %%
 from alti_rl.proto.game_object_pb2 import GameObject
+
 
 def make_config():
     config = arl.ServerConfig()
@@ -19,22 +19,24 @@ def make_config():
     config.add_bot(nick="controlled", team="3")
     return config
 
+
 def wrap_180(angle):
     return (angle + 180) % 360 - 180
+
 
 class PDRadarController:
     def __init__(self):
         self.last_angle = None
         self.cmd = arl.Cmd()
 
-    def get_target(self, o:GameObject):
+    def get_target(self, o: GameObject):
         current = o.angle / 10
         options = current + np.arange(0, 360, 2)
         clears = np.array(o.clear_distances)
-        costs = 1 / (clears ** 2 + 0.1) + 1e-8 * np.abs(wrap_180(options - current))
+        costs = 1 / (clears**2 + 0.1) + 1e-8 * np.abs(wrap_180(options - current))
         return options[np.argmin(costs)]
 
-    def control(self, o:GameObject):
+    def control(self, o: GameObject):
         if o is None:
             self.last_angle = None
             return self.cmd
@@ -59,6 +61,7 @@ class PDRadarController:
         self.cmd.inputs[0].controls = controls + 4
 
         return self.cmd
+
 
 N_STEPS = 60 * 60
 pos = np.zeros((N_STEPS, 2))
