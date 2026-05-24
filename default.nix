@@ -7,6 +7,7 @@ in
       # protobuf
       protobuf
       jdk23
+      mypy-protobuf
 
       # haxe
       haxe

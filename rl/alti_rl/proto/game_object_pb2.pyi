@@ -205,8 +205,8 @@ class GameObject(google.protobuf.message.Message):
     POSITION_Y_FIELD_NUMBER: builtins.int
     ANGLE_FIELD_NUMBER: builtins.int
     SCALE_FIELD_NUMBER: builtins.int
-    FLIPX_FIELD_NUMBER: builtins.int
-    FLIPY_FIELD_NUMBER: builtins.int
+    FLIP_X_FIELD_NUMBER: builtins.int
+    FLIP_Y_FIELD_NUMBER: builtins.int
     CHARGE_FIELD_NUMBER: builtins.int
     HEAL_PERCENTAGE_FIELD_NUMBER: builtins.int
     TIME_REMAINING_FIELD_NUMBER: builtins.int
@@ -217,15 +217,19 @@ class GameObject(google.protobuf.message.Message):
     BARS_FIELD_NUMBER: builtins.int
     EMP_FOR_FIELD_NUMBER: builtins.int
     ACID_FOR_FIELD_NUMBER: builtins.int
+    EMP_SOURCE_FIELD_NUMBER: builtins.int
+    ACID_SOURCE_FIELD_NUMBER: builtins.int
     STALLED_FIELD_NUMBER: builtins.int
     SPIN_FIELD_NUMBER: builtins.int
-    CONTROLLABLE_FIELD_NUMBER: builtins.int
     CONTROLS_FIELD_NUMBER: builtins.int
     POWERUP_FIELD_NUMBER: builtins.int
-    REDPERK_FIELD_NUMBER: builtins.int
-    BLUEPERK_FIELD_NUMBER: builtins.int
-    GREENPERK_FIELD_NUMBER: builtins.int
+    RED_PERK_FIELD_NUMBER: builtins.int
+    BLUE_PERK_FIELD_NUMBER: builtins.int
+    GREEN_PERK_FIELD_NUMBER: builtins.int
+    CONTROLLABLE_FIELD_NUMBER: builtins.int
     CLEAR_DISTANCES_FIELD_NUMBER: builtins.int
+    BOT_FEATURES_FIELD_NUMBER: builtins.int
+    BOT_CONTROLS_FIELD_NUMBER: builtins.int
     uid: builtins.int
     type: global___ObjectType.ValueType
     owner: builtins.int
@@ -241,8 +245,8 @@ class GameObject(google.protobuf.message.Message):
     """## Scaling for goals and bases
     unit is 1/1000
     """
-    flipX: builtins.bool
-    flipY: builtins.bool
+    flip_x: builtins.bool
+    flip_y: builtins.bool
     charge: builtins.int
     """## Misc
     for randa shots. max is 1000
@@ -267,20 +271,28 @@ class GameObject(google.protobuf.message.Message):
     """ticks remaining"""
     acid_for: builtins.int
     """ticks remaining"""
+    emp_source: builtins.int
+    acid_source: builtins.int
     stalled: builtins.bool
     spin: builtins.int
     """degrees"""
-    controllable: builtins.bool
-    """whether plane is the "subject" or a controllable bot"""
     controls: builtins.int
     """up + down << 1 + left << 2 + right << 3"""
     powerup: global___ObjectType.ValueType
-    redPerk: global___Perk.ValueType
-    bluePerk: global___Perk.ValueType
-    greenPerk: global___Perk.ValueType
+    red_perk: global___Perk.ValueType
+    blue_perk: global___Perk.ValueType
+    green_perk: global___Perk.ValueType
+    controllable: builtins.bool
+    """# Special bot features"""
     @property
-    def clear_distances(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]:
-        """# Special bot features"""
+    def clear_distances(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]: ...
+    @property
+    def bot_features(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
+        """features computed by nimblygames bot"""
+
+    @property
+    def bot_controls(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]:
+        """controls suggested by nimblygames bot"""
 
     def __init__(
         self,
@@ -293,8 +305,8 @@ class GameObject(google.protobuf.message.Message):
         position_y: builtins.int | None = ...,
         angle: builtins.int | None = ...,
         scale: builtins.int | None = ...,
-        flipX: builtins.bool | None = ...,
-        flipY: builtins.bool | None = ...,
+        flip_x: builtins.bool | None = ...,
+        flip_y: builtins.bool | None = ...,
         charge: builtins.int | None = ...,
         heal_percentage: builtins.int | None = ...,
         time_remaining: builtins.int | None = ...,
@@ -305,17 +317,21 @@ class GameObject(google.protobuf.message.Message):
         bars: builtins.int | None = ...,
         emp_for: builtins.int | None = ...,
         acid_for: builtins.int | None = ...,
+        emp_source: builtins.int | None = ...,
+        acid_source: builtins.int | None = ...,
         stalled: builtins.bool | None = ...,
         spin: builtins.int | None = ...,
-        controllable: builtins.bool | None = ...,
         controls: builtins.int | None = ...,
         powerup: global___ObjectType.ValueType | None = ...,
-        redPerk: global___Perk.ValueType | None = ...,
-        bluePerk: global___Perk.ValueType | None = ...,
-        greenPerk: global___Perk.ValueType | None = ...,
+        red_perk: global___Perk.ValueType | None = ...,
+        blue_perk: global___Perk.ValueType | None = ...,
+        green_perk: global___Perk.ValueType | None = ...,
+        controllable: builtins.bool | None = ...,
         clear_distances: collections.abc.Iterable[builtins.int] | None = ...,
+        bot_features: collections.abc.Iterable[builtins.float] | None = ...,
+        bot_controls: collections.abc.Iterable[builtins.int] | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["acid_for", b"acid_for", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "bluePerk", b"bluePerk", "charge", b"charge", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "flipX", b"flipX", "flipY", b"flipY", "greenPerk", b"greenPerk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "redPerk", b"redPerk", "scale", b"scale", "spin", b"spin", "stalled", b"stalled", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["acid_for", b"acid_for", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "bluePerk", b"bluePerk", "charge", b"charge", "clear_distances", b"clear_distances", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "flipX", b"flipX", "flipY", b"flipY", "greenPerk", b"greenPerk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "redPerk", b"redPerk", "scale", b"scale", "spin", b"spin", "stalled", b"stalled", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["acid_for", b"acid_for", "acid_source", b"acid_source", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "blue_perk", b"blue_perk", "charge", b"charge", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "emp_source", b"emp_source", "flip_x", b"flip_x", "flip_y", b"flip_y", "green_perk", b"green_perk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "red_perk", b"red_perk", "scale", b"scale", "spin", b"spin", "stalled", b"stalled", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["acid_for", b"acid_for", "acid_source", b"acid_source", "ammo", b"ammo", "angle", b"angle", "bars", b"bars", "blue_perk", b"blue_perk", "bot_controls", b"bot_controls", "bot_features", b"bot_features", "charge", b"charge", "clear_distances", b"clear_distances", "controllable", b"controllable", "controls", b"controls", "emp_for", b"emp_for", "emp_source", b"emp_source", "flip_x", b"flip_x", "flip_y", b"flip_y", "green_perk", b"green_perk", "heal_percentage", b"heal_percentage", "health", b"health", "health_restore", b"health_restore", "owner", b"owner", "position_x", b"position_x", "position_y", b"position_y", "powerup", b"powerup", "red_perk", b"red_perk", "scale", b"scale", "spin", b"spin", "stalled", b"stalled", "team", b"team", "throttle", b"throttle", "time_remaining", b"time_remaining", "type", b"type", "uid", b"uid"]) -> None: ...
 
 global___GameObject = GameObject

@@ -194,6 +194,25 @@ class MetaEvent(google.protobuf.message.Message):
 global___MetaEvent = MetaEvent
 
 @typing.final
+class ScoreUpdateEvent(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    TEAM_FIELD_NUMBER: builtins.int
+    POINTS_FIELD_NUMBER: builtins.int
+    team: builtins.int
+    points: builtins.int
+    def __init__(
+        self,
+        *,
+        team: builtins.int | None = ...,
+        points: builtins.int | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["points", b"points", "team", b"team"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["points", b"points", "team", b"team"]) -> None: ...
+
+global___ScoreUpdateEvent = ScoreUpdateEvent
+
+@typing.final
 class GameEvent(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -205,6 +224,7 @@ class GameEvent(google.protobuf.message.Message):
     KILL_FIELD_NUMBER: builtins.int
     DAMAGE_FIELD_NUMBER: builtins.int
     META_FIELD_NUMBER: builtins.int
+    SCORE_UPDATE_FIELD_NUMBER: builtins.int
     @property
     def chat(self) -> global___ChatEvent: ...
     @property
@@ -221,6 +241,8 @@ class GameEvent(google.protobuf.message.Message):
     def damage(self) -> global___DamageEvent: ...
     @property
     def meta(self) -> global___MetaEvent: ...
+    @property
+    def score_update(self) -> global___ScoreUpdateEvent: ...
     def __init__(
         self,
         *,
@@ -232,9 +254,10 @@ class GameEvent(google.protobuf.message.Message):
         kill: global___KillEvent | None = ...,
         damage: global___DamageEvent | None = ...,
         meta: global___MetaEvent | None = ...,
+        score_update: global___ScoreUpdateEvent | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["chat", b"chat", "damage", b"damage", "event", b"event", "goal", b"goal", "kill", b"kill", "map_load", b"map_load", "meta", b"meta", "remove_player", b"remove_player", "set_player", b"set_player"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["chat", b"chat", "damage", b"damage", "event", b"event", "goal", b"goal", "kill", b"kill", "map_load", b"map_load", "meta", b"meta", "remove_player", b"remove_player", "set_player", b"set_player"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing.Literal["event", b"event"]) -> typing.Literal["chat", "map_load", "set_player", "remove_player", "goal", "kill", "damage", "meta"] | None: ...
+    def HasField(self, field_name: typing.Literal["chat", b"chat", "damage", b"damage", "event", b"event", "goal", b"goal", "kill", b"kill", "map_load", b"map_load", "meta", b"meta", "remove_player", b"remove_player", "score_update", b"score_update", "set_player", b"set_player"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["chat", b"chat", "damage", b"damage", "event", b"event", "goal", b"goal", "kill", b"kill", "map_load", b"map_load", "meta", b"meta", "remove_player", b"remove_player", "score_update", b"score_update", "set_player", b"set_player"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing.Literal["event", b"event"]) -> typing.Literal["chat", "map_load", "set_player", "remove_player", "goal", "kill", "damage", "meta", "score_update"] | None: ...
 
 global___GameEvent = GameEvent

@@ -25,7 +25,7 @@ hx_src/autotude/proto/: $(PROTO_FILES)
 
 
 # python sourcegen
-rl/altitude_rl/proto/: $(PROTO_FILES)
+rl/alti_rl/proto/: $(PROTO_FILES)
 	rm -rf $@
 	mkdir -p $@
 	cd rl; uv sync
