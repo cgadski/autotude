@@ -42,6 +42,7 @@ site_src/index.csv
 site_src/.index.sql.swp
 /viewer/bin/
 /stats_db/proto/
+/rl/alti_rl/proto/
 
 # python
 __pycache__
