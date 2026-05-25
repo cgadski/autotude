@@ -8,13 +8,14 @@ from .server_config import ServerConfig
 
 class SoloEnv:
     """
-    Flying solo on a map. Reward model: taking crash damage.
+    Flying solo on a map. Reward model: crashing.
     """
 
     def __init__(self, *, map="ffa_channelpark"):
         config = ServerConfig()
         config.set(map=map)
         config.add_bot(nick="controlled", team="3")
+        # config.set(clearDistances="true")
 
         self._server = BotServer(config)
         self._obs = np.zeros((3,), dtype=np.int16)
@@ -29,7 +30,7 @@ class SoloEnv:
 
     def _get_reward(self, up: Update):
         for e in up.events:
-            if e.HasField("damage"):
+            if e.HasField("kill"):
                 return -1
         return 0
 
