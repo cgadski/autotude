@@ -8,6 +8,7 @@ clean:
 	rm -rf poly_src/
 	rm -rf hx_src/autotude/proto/ # haxe source gen
 	rm -rf stats_db/proto/ # copies proto files
+	rm -rf rl/alti_rl/proto/
 
 PROTO_SRC = proto/
 PROTO_FILES = $(wildcard $(PROTO_SRC)*)
