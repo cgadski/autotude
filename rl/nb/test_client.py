@@ -17,7 +17,7 @@ def make_config():
     config = arl.ClientConfig(
         user="bniefnonbi@gmail.com",
         pw=pw,
-        server="Official #4 - FFA+TBD+Ball - maxPing=400",
+        server="Official #3 - TBD - maxPing=400",
     )
     config.set(port=27285)
     return config

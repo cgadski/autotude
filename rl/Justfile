@@ -1,10 +1,10 @@
 benchmark:
-    SERVER_CONFIG=./server_benchmark.xml \
+    SERVER_CONFIG=./configs/server_benchmark.xml \
     SERVER_RUNTIME="" \
     	bot_server
 
 run-client:
-    BOT_CONFIG=./client_config.xml bot_client
+    BOT_CONFIG=./configs/client_config.xml bot_client
 
 index:
     make -C .. bin/index-lite

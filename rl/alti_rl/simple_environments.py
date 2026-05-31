@@ -8,31 +8,32 @@ from .server_config import ServerConfig
 
 class SoloEnv:
     """
-    Flying solo on a map. Reward model: crashing.
+    Fly on a map. No reward model, return dict of features.
     """
 
     def __init__(self, *, map="ffa_channelpark"):
         config = ServerConfig()
         config.set(map=map)
         config.add_bot(nick="controlled", team="3")
-        # config.set(clearDistances="true")
 
         self._server = BotServer(config)
-        self._obs = np.zeros((3,), dtype=np.int16)
+        self._obs = {}
 
     def _get_obs(self, up: Update):
+        self._obs = {}
+
         for o in up.objects:
             if o.type < 5:
-                self._obs[0] = o.position_x
-                self._obs[1] = o.position_y
-                self._obs[2] = o.angle
-        return self._obs
+                self._obs["x"] = o.position_x
+                self._obs["y"] = o.position_y
+                self._obs["angle"] = o.angle
+                self._obs["stalled"] = o.stalled
 
-    def _get_reward(self, up: Update):
         for e in up.events:
             if e.HasField("kill"):
-                return -1
-        return 0
+                self._obs["kill"] = True
+            if e.HasField("damage"):
+                self._obs["damage"] = True
 
     def step(self, action):
         cmd = Cmd()
@@ -40,10 +41,9 @@ class SoloEnv:
         cmd.inputs[0].controls = np.dot(action, 2 ** np.arange(7))
         up = self._server.update(cmd)
 
-        observation = self._get_obs(up)
-        reward = self._get_reward(up)
+        self._get_obs(up)
 
-        return observation, reward
+        return self._obs
 
     def __enter__(self):
         return self
