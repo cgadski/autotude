@@ -4,6 +4,7 @@ import uuid
 from io import BufferedReader, BufferedWriter
 from pathlib import Path
 from typing import Union
+import argparse
 
 from google.protobuf.internal.decoder import _DecodeVarint  # type: ignore
 from google.protobuf.internal.encoder import _VarintBytes  # type: ignore
@@ -11,10 +12,13 @@ from loguru import logger
 
 from .bot_server import ensure_fifo
 from .client_config import ClientConfig
+from .networks import Options
 from .paths import ALTI_HOME, BIN
+from .policies import NetPolicy
 from .proto.command_pb2 import ClientCmd
 from .proto.map_geometry_pb2 import MapGeometry
 from .proto.update_pb2 import Update
+from .simple_environments import get_solo_obs
 
 
 class OnlineClient:
@@ -42,8 +46,8 @@ class OnlineClient:
         with open(log_path, "w") as log:
             self.process = subprocess.Popen(
                 [client_exec],
-                stdout=log,
-                stderr=log,
+                # stdout=log,
+                # stderr=log,
                 env={
                     **os.environ,
                     "ALTI_HOME": self.alti_home,
@@ -72,20 +76,21 @@ class OnlineClient:
                 raise RuntimeError(f"Client exited")
 
             update = self._read_update()
-            if len(update.events) > 0:
-                logger.debug(update.events.__repr__())
-
-            for event in update.events:
-                if event.WhichOneof("event") == "map_load":
-                    self.map_geometry = event.map_load.map
-                    logger.info(
-                        f"Loaded {event.map_load.name}: dimensions {self.map_geometry.max_x}x{self.map_geometry.max_y}"
-                    )
+            self._process_update(update)
             self._write_command(self.on_update(update))
+
             updates += 1
-            if updates % (300) == 0:
+            if updates % 300 == 0:
                 logger.debug(
                     f"Client running: processed {updates} updates ({updates // 30}s)"
+                )
+
+    def _process_update(self, update: Update):
+        for event in update.events:
+            if event.WhichOneof("event") == "map_load":
+                self.map_geometry = event.map_load.map
+                logger.info(
+                    f"Loaded {event.map_load.name}: dimensions {self.map_geometry.max_x}x{self.map_geometry.max_y}"
                 )
 
     def on_update(self, update: Update) -> ClientCmd:
@@ -115,3 +120,41 @@ class OnlineClient:
         update = Update()
         update.ParseFromString(message_buf)
         return update
+
+
+class ValueNetClient(OnlineClient):
+    def __init__(self, config: ClientConfig, vandc_run: str):
+        super().__init__(config)
+        self.policy = NetPolicy(vandc_run)
+
+    def on_update(self, update: Update) -> ClientCmd:
+        ob = get_solo_obs(update)
+        act = self.policy.act(ob)
+
+        cmd = ClientCmd()
+        if act[0]:
+            cmd.input.controls += 1
+        if act[1]:
+            cmd.input.controls += 2
+        return cmd
+
+
+def make_config(args: argparse.Namespace):
+    pw = os.environ["ALTI_PW"]
+    config = ClientConfig(
+        user="bniefnonbi@gmail.com",
+        pw=pw,
+        server="Official #4 - FFA+TBD+Ball - maxPing=400",
+    )
+    config.set(port=27285)
+    return config
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("run", type=str)
+    args = parser.parse_args()
+
+    config = make_config(args)
+    client = ValueNetClient(config, args.run)
+    client.poll()

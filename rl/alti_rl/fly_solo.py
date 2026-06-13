@@ -52,7 +52,7 @@ def get_trajectories(policy: Policy, steps: int):
 
 def build_policy(args: argparse.Namespace) -> Policy:
     if args.value_net:
-        return NetPolicy(args.value_net, nets.Options())
+        return NetPolicy(args.value_net)
     else:
         return TurningPolicy()
 

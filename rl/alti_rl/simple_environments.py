@@ -6,9 +6,31 @@ from .proto.update_pb2 import Update
 from .server_config import ServerConfig
 
 
+def get_solo_obs(update: Update):
+    obs = {}
+
+    for object in update.objects:
+        if object.type < 5 and object.controllable:
+            obs["alive"] = True
+            obs["x"] = object.position_x
+            obs["y"] = object.position_y
+            obs["angle"] = object.angle
+            obs["stalled"] = object.stalled
+            obs["throttle"] = object.throttle
+            obs["ammo"] = object.ammo
+
+    for e in update.events:
+        if e.HasField("kill"):
+            obs["kill"] = True
+        if e.HasField("damage"):
+            obs["damage"] = True
+
+    return obs
+
+
 class SoloEnv:
     """
-    Fly on a map. No reward model, return dict of features.
+    Fly on a map alone, return dict of features.
     """
 
     def __init__(self, *, map="ffa_channelpark"):
@@ -19,34 +41,12 @@ class SoloEnv:
         self._server = BotServer(config)
         self._obs = {}
 
-    def _get_obs(self, up: Update):
-        self._obs = {}
-
-        for o in up.objects:
-            if o.type < 5:
-                self._obs["alive"] = True
-                self._obs["x"] = o.position_x
-                self._obs["y"] = o.position_y
-                self._obs["angle"] = o.angle
-                self._obs["stalled"] = o.stalled
-                self._obs["throttle"] = o.throttle
-                self._obs["ammo"] = o.ammo
-
-        for e in up.events:
-            if e.HasField("kill"):
-                self._obs["kill"] = True
-            if e.HasField("damage"):
-                self._obs["damage"] = True
-
     def step(self, action):
         cmd = Cmd()
         action = (action > 0.5).astype(int)
         cmd.inputs[0].controls = np.dot(action, 2 ** np.arange(7))
-        up = self._server.update(cmd)
-
-        self._get_obs(up)
-
-        return self._obs
+        update = self._server.update(cmd)
+        return get_solo_obs(update)
 
     def __enter__(self):
         return self
