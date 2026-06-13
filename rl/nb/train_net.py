@@ -1,22 +1,53 @@
 # %%
+# enable autoreload
+%load_ext autoreload
+%autoreload 2
+
+# %%
 import torch
 
-from alti_rl.networks import Options, PlaneEncoder, normalize_plane
+from alti_rl.networks import encode_plane, exp_discount
 
 # %%
 data = torch.load("../data/flying.pt")
-batch = 1024
-# data["mask"].sum()
-mask = data["mask"][:batch]
-plane = data["plane"][:batch]
-_, normed = normalize_plane(data["mask"], data["plane"])
-
-enc = PlaneEncoder(Options())
-mask, x = enc(mask, plane)
-x.shape  # 1024, 64
+mask, plane = encode_plane(data)
+plane[mask].std(dim=0)
 
 # %%
 import matplotlib.pyplot as plt
 
+n = 10000
+vals = exp_discount(data["damage"], 0.98)
+mask = data["mask"]
+plane = data["plane"]
+plt.scatter(
+    x=data["plane"][:, 0][mask][:n],
+    y=data["plane"][:, 1][mask][:n],
+    c=vals[mask][:n],
+    alpha=0.1,
+)
+
+
 # %%
-plt.matshow(x[mask].data[128 : 128 + 256].T)
+
+action_index(data["acts"]).bincount()
+
+# %%
+import matplotlib.pyplot as plt
+import vandc
+
+
+def show(run: str):
+    plt.plot(vandc.fetch(run).logs[10:], alpha=0.5)
+
+
+# show("expect-add-federal-president")  # without actions
+# show("continue-hard-serious-home")  # with actions
+
+show("build-read-private-result")  # higher gamma, no actions
+show("build-might-federal-person")  # higher gamma, actions
+show("write-natural-international-student")
+plt.ylim(0, 1)
+
+# plt.plot(vandc.fetch().logs[10:])
+#

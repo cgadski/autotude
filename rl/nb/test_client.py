@@ -11,9 +11,7 @@ def wrap_180(angle):
 
 
 def make_config():
-    # pw = os.environ["ALTI_PW"]
-    # pw = "2af29Ez*xutLe@uq.Pchjri2879xu"
-    pw = "WzvSGFUBJrQXCNraTA"
+    pw = os.environ["ALTI_PW"]
     config = arl.ClientConfig(
         user="bniefnonbi@gmail.com",
         pw=pw,

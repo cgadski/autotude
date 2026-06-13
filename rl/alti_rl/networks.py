@@ -51,26 +51,43 @@ class Options:
 
 VEL_STD = 10
 POS_SCALE = 2000
+D_PLANE = 6
 
 
 def encode_plane(
-    mask: torch.Tensor, plane: torch.Tensor
+    x: torch.Tensor,
+    y: torch.Tensor,
+    angle: torch.Tensor,
+    alive: torch.Tensor,
+    **_,
 ) -> tuple[torch.Tensor, torch.Tensor]:
-    mask = mask.clone()
-    vel = torch.zeros(plane.shape[0], 2)
-    vel[1:] = (plane[1:, :2] - plane[:-1, :2]).to(torch.float32)
+    pos = torch.stack([x, y], 1)  # N 2
+    angle = angle.to(DTYPE) * 2 * torch.pi / 3600
+    N = alive.shape[0]
+
+    vel = torch.zeros(N, 2)
+    vel[1:] = (pos[1:] - pos[:-1]).to(DTYPE)
     vel_norm = torch.norm(vel, dim=1)
+    vel_scaled = vel / VEL_STD
 
-    theta = plane[:, 2] * 2 * torch.pi / 3600
-    heading = torch.stack([torch.cos(theta), torch.sin(theta)], dim=1)
-    position = plane[:, :2].float() / POS_SCALE
+    heading = torch.stack([torch.cos(angle), torch.sin(angle)], dim=1)
 
+    pos_scaled = pos[:, :2].float() / POS_SCALE
+
+    mask = alive.clone()
     mask[0] = 0
     mask[vel_norm > 50] = 0  # respawn jump
-    mask[(plane[:, 0] <= 0) & (plane[:, 1] <= 0)] = 0  # off map
+    mask[(pos[:, 0] <= 0) & (pos[:, 1] <= 0)] = 0  # off map
     mask[vel_norm == 0] = 0
 
-    return mask, torch.cat([vel / VEL_STD, heading, position], dim=1)  # T 6
+    return mask, torch.cat(
+        [
+            vel_scaled,
+            heading,
+            pos_scaled,
+        ],
+        dim=1,
+    )  # T 6
 
 
 def action_index(acts: torch.Tensor) -> torch.Tensor:
@@ -105,7 +122,7 @@ class NavNet(nn.Module):
         super().__init__()
         opts = opts
         self.mlp = build_mlp(
-            6, opts.d_embed, opts.n_layers, opts.n_actions, opts.activation
+            D_PLANE, opts.d_embed, opts.n_layers, opts.n_actions, opts.activation
         )
 
     def forward(self, plane: torch.Tensor) -> torch.Tensor:

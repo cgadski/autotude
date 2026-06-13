@@ -24,10 +24,13 @@ class SoloEnv:
 
         for o in up.objects:
             if o.type < 5:
+                self._obs["alive"] = True
                 self._obs["x"] = o.position_x
                 self._obs["y"] = o.position_y
                 self._obs["angle"] = o.angle
                 self._obs["stalled"] = o.stalled
+                self._obs["throttle"] = o.throttle
+                self._obs["ammo"] = o.ammo
 
         for e in up.events:
             if e.HasField("kill"):

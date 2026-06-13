@@ -1,4 +1,5 @@
 import random
+from typing import Any
 
 import numpy as np
 import torch
@@ -12,49 +13,54 @@ ACTIONS = [
 ]
 
 
-class TurningPolicy:
+class Policy:
+    def act(self, ob: dict[str, Any]) -> np.ndarray:
+        raise NotImplementedError()
+
+
+class TurningPolicy(Policy):
     def __init__(self, rate=3):
-        self.action = self.possible_actions[0]
+        self.action = ACTIONS[0]
         self.rate = rate
 
-    def act(self) -> np.ndarray:
+    def act(self, _: dict) -> np.ndarray:
         if np.random.rand() < self.rate / 30:
             self.action = random.choice(ACTIONS)
         return self.action
 
 
 class NetPolicy:
-    def __init__(self, model_path: str, opts: Options = None):
-        self.model = NavNet(opts or Options())
+    def __init__(self, model_path: str, opts: Options, rate: int = 3):
+        self.rate = rate
+        self.model = NavNet(opts)
         self.model.load_state_dict(torch.load(model_path, weights_only=True))
+        self.model = torch.compile(self.model)
         self.model.eval()
-        self.prev_ob: dict | None = None
+        self.ob_prev = None
 
-    @staticmethod
-    def obs_to_numpy(ob: dict) -> np.ndarray | None:
-        if not ob.get("x"):
-            return None
-        return np.array([ob["x"], ob["y"], ob["angle"]], dtype=np.int16)
+        self.action = ACTIONS[0]
 
     def act(self, ob: dict) -> np.ndarray:
-        action = ACTIONS[0]
-        ob_np = self.obs_to_numpy(ob)
+        can_act = (
+            (ob is not None)
+            and (self.ob_prev is not None)
+            and (ob.get("x") is not None)
+            and (self.ob_prev.get("x") is not None)
+        )
 
-        if ob_np is not None and self.prev_ob is not None:
-            prev = torch.tensor(
-                [self.prev_ob["x"], self.prev_ob["y"], self.prev_ob["angle"]],
-                dtype=torch.int16,
-            )
-            cur = torch.tensor(ob_np, dtype=torch.int16)
+        if can_act:
             mask, x = encode_plane(
-                torch.ones(2, dtype=torch.bool), torch.stack([prev, cur])
+                x=torch.Tensor([self.ob_prev["x"], ob["x"]]),
+                y=torch.Tensor([self.ob_prev["y"], ob["y"]]),
+                angle=torch.Tensor([self.ob_prev["angle"], ob["angle"]]),
+                alive=torch.ones(2, dtype=torch.bool),
             )
+
             if mask[1]:
                 with torch.no_grad():
-                    values = self.model(x[1:2])  # (1, n_actions)
-                action = ACTIONS[values.squeeze(0).argmin().item()]
+                    values = self.model(x[1:2]).squeeze(0)
+                self.action = ACTIONS[values.argmin()]
 
-        if ob_np is not None:
-            self.prev_ob = ob
+        self.ob_prev = ob.copy()
 
-        return action
+        return self.action

@@ -1,23 +1,24 @@
-"""Train NavNet to predict damage value from plane observations."""
-
 import argparse
 import os
 
 import torch
 import torch.nn as nn
 import vandc
+from loguru import logger
 
 from alti_rl.networks import NavNet, Options, action_index, encode_plane, exp_discount
 
 
-def prepare(
-    data: dict, opts: Options
-) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    mask, x = encode_plane(data["mask"], data["plane"])
+def prepare(data: dict[str, torch.Tensor], opts: Options) -> dict[str, torch.Tensor]:
+    mask, plane = encode_plane(**data)
     dv = exp_discount(data["damage"], gamma=opts.gamma)[mask]
     dmg_value = (dv - dv.mean()) / dv.std()
-    act_index = action_index(data["acts"][mask])
-    return x[mask], dmg_value, act_index
+    act_index = action_index(data["action"][mask])
+    return {
+        "plane": plane[mask],
+        "dmg_value": dmg_value,
+        "act_index": act_index,
+    }
 
 
 def run(
@@ -41,6 +42,7 @@ def run(
     )
 
     vandc.init(opts)
+    logger.info("Training...")
 
     for _ in range(opts.epochs):
         perm = torch.randperm(N)
@@ -56,7 +58,7 @@ def run(
             vandc.log({"loss": loss})
 
     path = f"./models/{vandc.run_name()}.pt"
-    print(f"savin to to {path}")
+    logger.info(f"Saving model to {path}")
     os.makedirs("./models", exist_ok=True)
     torch.save(model.state_dict(), path)
 
@@ -74,15 +76,15 @@ def run(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("data_path")
-    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--epochs", type=int, default=1)
     args = parser.parse_args()
 
     opts = Options(
         epochs=args.epochs,
     )
 
-    data = torch.load(args.data_path, weights_only=False)
-    plane, dmg_value, act_index = prepare(data, opts)
-    val = run(opts, plane, dmg_value, act_index)
+    fly_data = torch.load(args.data_path, weights_only=False)
+    train_data = prepare(fly_data, opts)
+    val = run(opts, **train_data)
 
-    print(f"Value: {val}")
+    logger.info(f"Train loss: {val}")
