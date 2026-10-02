@@ -53,12 +53,14 @@ data/polys: bin/write_polys.n poly_src/
 	@echo "Size of poly file (bytes): "
 	@wc -c $@
 
+.PHONY: rust_tools
+
 # indexer
-bin/dump bin/cat-replay bin/index-lite: stats_db/bin/* stats_db/src/** stats_db/Cargo.toml \
+rust_tools: stats_db/bin/* stats_db/src/** stats_db/Cargo.toml \
 	stats_db/proto/
-	mkdir -p $(@D)
-	cd stats_db && cargo build --release --bin dump --bin index-lite --bin cat-replay
-	cp stats_db/target/release/{dump,index-lite,cat-replay} bin/
+	mkdir -p bin/
+	cd stats_db && cargo build --release --bin dump --bin index-lite --bin cat-replay --bin slice-replay
+	cp stats_db/target/release/{dump,index-lite,cat-replay,slice-replay} bin/
 
 # js source for viewer
 hx_src/out/viewer.js: hx_src/autotude/proto/ hx_src/build_viewer.hxml \

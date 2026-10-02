@@ -20,6 +20,10 @@ name = "cat-replay"
 path = "bin/cat-replay.rs"
 
 [[bin]]
+name = "slice-replay"
+path = "bin/slice-replay.rs"
+
+[[bin]]
 name = "vacuum-replays"
 path = "bin/vacuum-replays.rs"
 

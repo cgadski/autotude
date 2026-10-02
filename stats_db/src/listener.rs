@@ -14,10 +14,10 @@ mod state_timeline;
 const NULL_PLAYER: PlayerId = PlayerId(u32::MAX - 1);
 
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
-pub struct PlayerId(pub u32);
+pub struct PlayerId(pub u32); // ids used by the game
 
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
-pub struct PlayerKey(pub i32);
+pub struct PlayerKey(pub i32); // ids used in our database
 
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
 pub enum PlayerServerPresence {
