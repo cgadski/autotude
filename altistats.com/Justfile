@@ -12,7 +12,7 @@ down:
 	{{ COMPOSE }} down
 
 up:
-	{{ COMPOSE }} up -d --remove-orphans
+	{{ COMPOSE }} up --build -d --remove-orphans
 
 reset-stats:
 	{{ COMPOSE }} down stats_db
@@ -47,6 +47,7 @@ upload-site:
 	docker context use default
 	docker build {{ docker_plat }} -t magneticduck/altistats:latest site
 	docker push magneticduck/altistats:latest
+
 
 BOT_IMAGE := "magneticduck/botclient:0.3.1"
 

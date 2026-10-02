@@ -62,6 +62,17 @@ services:
     depends_on:
       - pg
 
+  notifier:
+    build: notifier
+    environment:
+      <<: *db-env
+      NTFY_TOPIC: alti_pubs
+    volumes:
+      - /root/notifier/:/app/state/
+    depends_on:
+      - pg
+    restart: unless-stopped
+
   spec-bot-1:
     <<: *bot-base
     environment:
