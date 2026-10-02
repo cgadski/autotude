@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import torch
 import torch.nn as nn
+from torch.optim.optimizer import ParamsT
 
 DTYPE = torch.float32
 
@@ -47,6 +48,13 @@ class Options:
     epochs: int = 10
 
     gamma: float = 0.98  # discount rate for damage
+
+    def optimizer(self, params: ParamsT) -> torch.optim.Optimizer:
+        return torch.optim.Adam(
+            params,
+            lr=self.lr,
+            betas=(self.beta1, self.beta2),
+        )
 
 
 VEL_STD = 10
@@ -116,7 +124,7 @@ def build_mlp(
 
 
 class NavNet(nn.Module):
-    """MLP over plane state. Predicts damage value."""
+    """Predicts a value as a function of (state, action)."""
 
     def __init__(self, opts: Options):
         super().__init__()

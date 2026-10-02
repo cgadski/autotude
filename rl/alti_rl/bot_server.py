@@ -4,8 +4,7 @@ from google.protobuf.internal.encoder import _VarintBytes  # type: ignore
 from io import BufferedWriter, BufferedReader
 from pathlib import Path
 import os
-import shutil
-import stat
+from loguru import logger
 import subprocess
 import uuid
 
@@ -35,7 +34,7 @@ class BotServer:
         self.alti_home = ALTI_HOME
         self.runtime_path = self.alti_home / "run" / str(uuid.uuid1())
 
-        print(f"Creating runtime directory at {self.runtime_path}")
+        logger.info(f"Creating runtime directory at {self.runtime_path}")
         self.runtime_path.mkdir(parents=True, exist_ok=True)
         config.write(self.runtime_path / "config.xml")
         command_path = self.runtime_path / "command"
@@ -57,7 +56,7 @@ class BotServer:
                 },
             )
 
-        print(f"Server started with PID {self.process.pid}")
+        logger.info(f"Server started with PID {self.process.pid}")
         with open(self.runtime_path / "pid", "w") as pid_file:
             pid_file.write(str(self.process.pid))
 
@@ -65,7 +64,7 @@ class BotServer:
         self.update_pipe = open(update_path, "rb")
         map_load = self._read_update()
         self.read_map_load(map_load)
-        print("Map loaded, server is ready to receive commands")
+        logger.info("Map loaded, server is ready to receive commands")
 
     def update(self, cmd: Cmd) -> Update:
         self._write_command(cmd)
@@ -105,7 +104,7 @@ class BotServer:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        print("Shutting down server")
+        logger.info("Shutting down server")
         cmd = Cmd()
         cmd.shutdown = True
         self._write_command(cmd)
