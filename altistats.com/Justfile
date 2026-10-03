@@ -12,7 +12,24 @@ down:
 	{{ COMPOSE }} down
 
 up:
+	{{ COMPOSE }} up -d --remove-orphans
+
+up-build:
 	{{ COMPOSE }} up --build -d --remove-orphans
+
+init-cert:
+	{{ COMPOSE }} stop nginx
+	{{ COMPOSE }} run --rm -p 80:80 --entrypoint certbot certbot \
+		certonly --standalone --cert-name altistats.com \
+		-d altistats.com -d ntfy.altistats.com \
+		--agree-tos --register-unsafely-without-email --non-interactive
+	{{ COMPOSE }} up -d --build nginx certbot
+
+restart-ntfy:
+	ssh root@altistats.com "mkdir -p /root/ntfy_config"
+	rsync -v --checksum notifier/ntfy.yml root@altistats.com:/root/ntfy_config/server.yml
+	{{ COMPOSE }} up -d ntfy
+	{{ COMPOSE }} restart ntfy
 
 reset-stats:
 	{{ COMPOSE }} down stats_db

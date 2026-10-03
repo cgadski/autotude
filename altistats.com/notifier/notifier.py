@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Poll events.sql and push each new event to an ntfy topic."""
+"""Poll events.sql and push each new event to its ntfy topic."""
 
 import json
 import os
@@ -11,11 +11,10 @@ from pathlib import Path
 import psycopg
 
 QUERY = (Path(__file__).parent / "events.sql").read_text()
-NTFY_URL = os.environ.get("NTFY_URL", "https://ntfy.sh")
-NTFY_TOPIC = os.environ["NTFY_TOPIC"]
+NTFY_URL = os.environ.get("NTFY_URL", "http://ntfy")
 STATE_FILE = Path(os.environ.get("STATE_FILE", "/app/state/sent.json"))
 POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "20"))
-CLICK_URL = os.environ.get("CLICK_URL", "http://altistats.com")
+CLICK_URL = os.environ.get("CLICK_URL", "https://altistats.com")
 
 CONNINFO = " ".join(
     f"{k}={v}"
@@ -34,37 +33,57 @@ def log(msg):
     print(f"{datetime.now(timezone.utc).isoformat(timespec='seconds')} {msg}", flush=True)
 
 
-def load_sent():
-    """Returns {(time_iso, name): sent_at_iso}, or None if no state exists yet."""
-    if not STATE_FILE.exists():
-        return None
-    return {(t, n): s for t, n, s in json.loads(STATE_FILE.read_text())}
+class State:
+    """Which events have been sent, and which topics we've seen before.
 
+    An event's key is (time_iso, name, topic).
+    """
 
-def save_sent(sent):
-    # Events older than the query window can never reappear, so drop them.
-    cutoff = (datetime.now(timezone.utc) - timedelta(hours=26)).isoformat()
-    rows = [[t, n, s] for (t, n), s in sent.items() if t >= cutoff]
-    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    tmp = STATE_FILE.with_suffix(".tmp")
-    tmp.write_text(json.dumps(rows))
-    tmp.replace(STATE_FILE)
+    def __init__(self, topics=(), sent=None):
+        self.topics = set(topics)
+        self.sent = dict(sent or {})  # key -> sent_at_iso
+
+    @classmethod
+    def load(cls):
+        if not STATE_FILE.exists():
+            return cls()
+        data = json.loads(STATE_FILE.read_text())
+        if not isinstance(data, dict):
+            # Pre-topics format; start over (existing events get marked as sent).
+            log("old state file format; resetting")
+            return cls()
+        return cls(
+            data["topics"],
+            {(t, n, topic): s for t, n, topic, s in data["sent"]},
+        )
+
+    def save(self):
+        # Events older than the query window can never reappear, so drop them.
+        cutoff = (datetime.now(timezone.utc) - timedelta(hours=26)).isoformat()
+        data = {
+            "topics": sorted(self.topics),
+            "sent": [[*k, s] for k, s in self.sent.items() if k[0] >= cutoff],
+        }
+        STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        tmp = STATE_FILE.with_suffix(".tmp")
+        tmp.write_text(json.dumps(data))
+        tmp.replace(STATE_FILE)
 
 
 def fetch_events():
     with psycopg.connect(CONNINFO) as conn:
         rows = conn.execute(QUERY).fetchall()
     return [
-        {"key": (t.astimezone(timezone.utc).isoformat(), name), "name": name,
-         "players": players, "map": map_}
-        for t, name, players, map_ in rows
+        {"key": (t.astimezone(timezone.utc).isoformat(), name, topic),
+         "name": name, "players": players, "map": map_, "topic": topic}
+        for t, name, players, map_, topic in rows
     ]
 
 
 def notify(event):
     plural = "player" if event["players"] == 1 else "players"
     body = json.dumps({
-        "topic": NTFY_TOPIC,
+        "topic": event["topic"],
         "title": event["name"],
         "message": f"{event['players']} {plural} on {event['map']}",
         "click": CLICK_URL,
@@ -77,33 +96,39 @@ def notify(event):
         resp.read()
 
 
-def tick(sent):
+def tick(state):
     events = fetch_events()
     now = datetime.now(timezone.utc).isoformat()
 
-    if sent is None:
-        # First run: don't flood the phone with the last 24h of history.
-        log(f"no state file; marking {len(events)} existing events as sent")
-        sent = {e["key"]: now for e in events}
-        save_sent(sent)
-        return sent
+    # Topics we haven't seen before (first run, or a newly added query):
+    # mark their old events as sent instead of flooding the phone, but still
+    # send anything recent.
+    new_topics = {e["topic"] for e in events} - state.topics
+    if new_topics:
+        recent = (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat()
+        backlog = [e for e in events
+                   if e["topic"] in new_topics and e["key"][0] < recent]
+        log(f"new topics {sorted(new_topics)}; marking {len(backlog)} existing events as sent")
+        for e in backlog:
+            state.sent[e["key"]] = now
+        state.topics |= new_topics
+        state.save()
 
     for e in events:
-        if e["key"] in sent:
+        if e["key"] in state.sent:
             continue
         notify(e)
-        log(f"sent: {e['key'][0]} {e['name']!r} {e['players']} {e['map']}")
-        sent[e["key"]] = now
-        save_sent(sent)
-    return sent
+        log(f"sent [{e['topic']}]: {e['key'][0]} {e['name']!r} {e['players']} {e['map']}")
+        state.sent[e["key"]] = now
+        state.save()
 
 
 def main():
-    log(f"starting; topic={NTFY_TOPIC[:3]}..., interval={POLL_INTERVAL}s")
-    sent = load_sent()
+    log(f"starting; url={NTFY_URL} interval={POLL_INTERVAL}s")
+    state = State.load()
     while True:
         try:
-            sent = tick(sent)
+            tick(state)
         except Exception as exc:
             log(f"error: {exc!r}")
         time.sleep(POLL_INTERVAL)
