@@ -58,6 +58,7 @@ class Game extends Object {
 		mapLayer = new MapLayer(state);
 		objectLayer = new ObjectLayer(state);
 		timeline = new EffectTimeline(replay);
+		objectLayer.timeline = timeline;
 		effectsUnder = new EffectLayer(state, timeline, false);
 		effectsOver = new EffectLayer(state, timeline, true);
 

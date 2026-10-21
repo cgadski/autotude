@@ -77,6 +77,9 @@ final EXPLOSIVES:Map<Int, Float> = [
 class EffectTimeline {
 	public final effects:Array<TimedEffect> = [];
 
+	// object uid -> ticks it appeared at (uids can be reused)
+	final appeared:Map<Int, Array<Int>> = [];
+
 	final replay:Replay;
 	final maxY:Float;
 
@@ -109,6 +112,12 @@ class EffectTimeline {
 			final current:Map<Int, GameObject> = [];
 			for (o in update.objects)
 				current.set(o.uid, o);
+			for (uid in current.keys())
+				if (!previous.exists(uid)) {
+					final ticks = appeared.get(uid) ?? [];
+					ticks.push(tick);
+					appeared.set(uid, ticks);
+				}
 
 			// the first update holds everything already in the game
 			if (i > 0) {
@@ -208,6 +217,15 @@ class EffectTimeline {
 			after = before;
 		}
 		return false;
+	}
+
+	/** Ticks since an object appeared, as of `tick`. **/
+	public function age(uid:Int, tick:Int):Int {
+		var since = 0;
+		for (t in appeared.get(uid) ?? [])
+			if (t <= tick)
+				since = t;
+		return tick - since;
 	}
 
 	/** Index of the first effect at or after `tick`. **/

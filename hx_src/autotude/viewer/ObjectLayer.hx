@@ -30,11 +30,19 @@ final POWERUP_ICONS:Map<Int, String> = [
 	ObjectType.HEALTH_POWERUP => "planes/powerup/health/healthpack.animatedpoly",
 ];
 
-// Sizes relative to the game's, where the game's look too small in the viewer.
-final SPRITE_SCALES:Map<Int, Float> = [
-	ObjectType.DIRECTOR_ROCKET => 1.25,
-	ObjectType.THERMOBARIC_ROCKET => 1.25,
+// Explodet rockets, as the game's Rocket class draws them: in the shooter's
+// colour, unfolding their fins over the first 180ms, then from 450ms
+// spinning through frames 100ms apart, with a flame behind.
+final ROCKET_OPEN = "render/planes/explodet/rocket_open/0_128_5.animatedpoly";
+final ROCKET_SPIN = "render/planes/explodet/rocket_spin/0_128_5.animatedpoly";
+final ROCKET_OPEN_MS = 180;
+final ROCKET_SPIN_START_MS = 450;
+final ROCKET_SPIN_CYCLE_MS = 900;
+final ROCKET_FLAMES:Map<Int, String> = [
+	ObjectType.DIRECTOR_ROCKET => "effects/afterburner/afterburner_blue.png",
+	ObjectType.THERMOBARIC_ROCKET => "effects/afterburner/afterburner1.png",
 ];
+final ROCKET_FLAME_SCALE = 0.5;
 
 // Sprites that differ from the hitbox poly for a type.
 final SPRITE_OVERRIDES:Map<Int, String> = [
@@ -78,6 +86,9 @@ class ObjectLayer extends Graphics {
 
 	/** Game sprites, drawn instead of hitboxes once loaded. **/
 	public var sprites:Null<Sprites>;
+
+	/** For how long objects have existed (rockets animate by it). **/
+	public var timeline:Null<EffectTimeline>;
 
 	public function new(state:PlayerState) {
 		this.replay = state.replay;
@@ -135,8 +146,10 @@ class ObjectLayer extends Graphics {
 		// only planes have frames by roll; other animations are by time
 		final spin = object.type <= ObjectType.MIRANDA ? object.spin : null;
 		final polyOverride = SPRITE_OVERRIDES.get(object.type);
-		final sprite = if (object.type == ObjectType.BALL) ballSprite(sprites, object.team) else if (polyOverride != null)
-			sprites.forPoly(polyOverride, object.team, spin) else sprites.forType(object.type, object.team, spin);
+		final rocketFlame = ROCKET_FLAMES.get(object.type);
+		final sprite = if (object.type == ObjectType.BALL) ballSprite(sprites, object.team) else if (rocketFlame != null)
+			rocketSprite(sprites, object) else if (polyOverride != null) sprites.forPoly(polyOverride, object.team,
+				spin) else sprites.forType(object.type, object.team, spin);
 		if (sprite == null)
 			return false;
 
@@ -146,8 +159,10 @@ class ObjectLayer extends Graphics {
 		}
 
 		if (object.type <= ObjectType.MIRANDA && afterburning(object))
-			drawAfterburner(sprites, sprite, object);
-		drawSprite(sprite, object, SPRITE_SCALES.get(object.type) ?? 1);
+			drawFlame(sprites, sprite, object, AFTERBURNER_IMAGE, 0.9);
+		if (rocketFlame != null)
+			drawFlame(sprites, sprite, object, rocketFlame, ROCKET_FLAME_SCALE);
+		drawSprite(sprite, object);
 		// a powerup is its icon in a container (a bubble, or health's frame)
 		final icon = POWERUP_ICONS.get(object.type);
 		if (icon != null) {
@@ -161,9 +176,20 @@ class ObjectLayer extends Graphics {
 	function afterburning(plane:GameObject):Bool
 		return EffectTimeline.afterburning(replay, state.frameIdx, plane);
 
-	// The flame behind the plane's tail, its bright end at the plane.
-	function drawAfterburner(sprites:Sprites, plane:Sprite, object:GameObject) {
-		final tile = sprites.tile(AFTERBURNER_IMAGE);
+	// The rocket's frame for how long ago it was fired.
+	function rocketSprite(sprites:Sprites, rocket:GameObject):Null<Sprite> {
+		final timeline = this.timeline;
+		final ms = timeline == null ? ROCKET_SPIN_START_MS : timeline.age(rocket.uid, state.frameIdx) * 1000 / 30;
+		// frames are keyed by their time in tens of milliseconds
+		return if (ms < ROCKET_SPIN_START_MS) sprites.forPoly(ROCKET_OPEN, rocket.team, Std.int(Math.min(ms,
+			ROCKET_OPEN_MS) / 10)) else sprites.forPoly(ROCKET_SPIN, rocket.team,
+			Std.int((ROCKET_SPIN_START_MS + (ms - ROCKET_SPIN_START_MS) % ROCKET_SPIN_CYCLE_MS) / 10));
+	}
+
+	// A flame behind the object's tail (the left of its sprite), its bright
+	// end at the object.
+	function drawFlame(sprites:Sprites, plane:Sprite, object:GameObject, image:String, scale:Float) {
+		final tile = sprites.tile(image);
 		if (tile == null)
 			return;
 		final hull = plane.frame.hull;
@@ -179,7 +205,7 @@ class ObjectLayer extends Graphics {
 		final ahead = placeVertex(object, tail + 5, (minY + maxY) / 2);
 		final rotation = Math.atan2(ahead.y - at.y, ahead.x - at.x);
 		final flicker = 0.85 + 0.15 * Math.sin(state.frameIdx * 2.7 + object.uid);
-		TexturePages.drawImage(this, tile, at.x, at.y, 0.9 * flicker, rotation, 1, true, 1);
+		TexturePages.drawImage(this, tile, at.x, at.y, scale * flicker, rotation, 1, true, 1);
 	}
 
 	// The badge the game shows by a plane holding a powerup or the ball.
