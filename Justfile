@@ -53,6 +53,16 @@ dist:
 		hx_src/out/viewer.js
 	rsync -v --progress dist.tar root@cgad.ski:/www/autotude-dist.tar
 
+# Build the replay viewer with game artwork and sounds into viewer-dist.tar,
+# ready to unpack where the viewer is served. Map art comes from
+# alti_home/maps (and any maps the game downloaded); sprites and sounds need
+# an Altitude install at $ALTI_INSTALL.
+viewer-dist:
+	make hx_src/out/viewer.js hx_src/out/viewer_assets/maps/ hx_src/out/viewer_assets/sprites/
+	cp hx_src/viewer.html hx_src/out/index.html
+	tar -cf viewer-dist.tar -C hx_src/out index.html viewer.js viewer_assets
+	@echo "viewer-dist.tar: $(du -h viewer-dist.tar | cut -f1)"
+
 
 # Package and upload recordings
 dist-recordings:
