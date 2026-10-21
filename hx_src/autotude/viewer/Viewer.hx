@@ -136,6 +136,15 @@ class Viewer extends hxd.App {
 					if (timestamp != null) {
 						playerState.frameIdx = Std.parseInt(timestamp) ?? 0;
 					}
+					// optional camera: map pixels from the top-left, and zoom (1 = in game)
+					final x = Std.parseFloat(urlParams.get("x") ?? ""), y = Std.parseFloat(urlParams.get("y") ?? "");
+					final zoom = Std.parseFloat(urlParams.get("zoom") ?? "");
+					if (!Math.isNaN(x) && !Math.isNaN(y)) {
+						playerState.pos.x = x;
+						playerState.pos.y = y;
+					}
+					if (!Math.isNaN(zoom))
+						playerState.scale = Math.min(SCALE_MAX, Math.max(SCALE_MIN, zoom));
 					s2d.addChild(game = new Game(playerState));
 
 					scrubber.min = "0";

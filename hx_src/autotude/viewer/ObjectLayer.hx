@@ -80,6 +80,11 @@ final MINE_DRONE = "render/planes/explodet/drone/0_128_5.animatedpoly";
 final MINE_LINK = "planes/explodet/link.png";
 final REMOTE_MINE_DRONE_HEIGHT = 17;
 final DIRECTOR_MINE_DRONE_HEIGHT = 33;
+// The mine is smaller than its image: about 0.65x (measured against the
+// drone in game screenshots), and the game's Mine class makes remote mines
+// 1.2x that.
+final MINE_SCALE = 0.65;
+final REMOTE_MINE_SCALE = 0.65 * 1.2;
 
 class ObjectLayer extends Graphics {
 	final replay:Replay;
@@ -133,11 +138,12 @@ class ObjectLayer extends Graphics {
 			return;
 		polysDrawn += 1;
 		beginTileFill(0, 0, 1, 1, sprite.tile);
-		final hull = sprite.frame.hull;
+		// the whole image, as the game draws it (the hull is just the hitbox)
+		final corners = TexturePages.imageCorners(sprite.frame, sprite.tile);
 		var i = 0;
-		while (i + 1 < hull.length) {
-			final dest = placeVertex(object, hull[i], hull[i + 1], extraScale);
-			TexturePages.addVertex(this, sprite.frame, sprite.tile, hull[i], hull[i + 1], dest.x, dest.y);
+		while (i + 1 < corners.length) {
+			final dest = placeVertex(object, corners[i], corners[i + 1], extraScale);
+			TexturePages.addVertex(this, sprite.frame, sprite.tile, corners[i], corners[i + 1], dest.x, dest.y);
 			i += 2;
 		}
 		endFill();
@@ -235,7 +241,7 @@ class ObjectLayer extends Graphics {
 	function drawIcon(icon:Null<Sprite>, at:GameObject, size:Float) {
 		if (icon == null)
 			return;
-		final hull = icon.frame.hull;
+		final hull = TexturePages.imageCorners(icon.frame, icon.tile);
 		var minX = Math.POSITIVE_INFINITY, maxX = Math.NEGATIVE_INFINITY;
 		var minY = Math.POSITIVE_INFINITY, maxY = Math.NEGATIVE_INFINITY;
 		var i = 0;
@@ -323,17 +329,18 @@ class ObjectLayer extends Graphics {
 
 		final above = uprightAt.bind(object);
 		final remote = object.type == ObjectType.REMOTE_MINE;
+		final mineScale = remote ? REMOTE_MINE_SCALE : MINE_SCALE;
 		final droneHeight = remote ? REMOTE_MINE_DRONE_HEIGHT : DIRECTOR_MINE_DRONE_HEIGHT;
 		if (!remote) {
 			final link = sprites.forImage(MINE_LINK);
-			final top = droneHeight - drone.tile.height / 2, bottom = mine.tile.height / 2 - 2;
+			final top = droneHeight - drone.tile.height / 2, bottom = mine.tile.height * mineScale / 2 - 2;
 			var y = bottom;
 			while (link != null && y < top) {
 				drawSprite(link, above(y));
 				y += link.tile.height / 2;
 			}
 		}
-		drawSprite(mine, above(0));
+		drawSprite(mine, above(0), mineScale);
 		drawSprite(drone, above(droneHeight));
 		return true;
 	}

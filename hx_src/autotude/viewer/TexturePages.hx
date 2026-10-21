@@ -103,6 +103,29 @@ class TexturePages {
 	}
 
 	/**
+		The corners of a poly's whole image in the poly's own space (x, y
+		pairs). The game draws sprites as their whole image; the hull is only
+		their hitbox, often much smaller (shots, shields, rotor blades).
+	**/
+	public static function imageCorners(poly:TexturedPoly, tile:Tile):Array<Float> {
+		final rot = poly.textureRotation * Math.PI / 180;
+		final cos = Math.cos(rot), sin = Math.sin(rot);
+		final out = [];
+		for (corner in [[0, 0], [1, 0], [1, 1], [0, 1]]) {
+			// image space is y-up from the bottom-left corner
+			final ix = corner[0] * tile.width * poly.scale, iy = corner[1] * tile.height * poly.scale;
+			var x = ix * cos - iy * sin, y = ix * sin + iy * cos;
+			if (poly.flipX)
+				x = -x;
+			if (poly.flipY)
+				y = -y;
+			out.push(poly.tx + x);
+			out.push(poly.ty + y);
+		}
+		return out;
+	}
+
+	/**
 		Draw a whole image centred on (x, y), scaled, rotated (radians,
 		clockwise on screen), faded and optionally mirrored. `anchorX` is
 		where along the image's width (0 left, 1 right) sits on (x, y).
