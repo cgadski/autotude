@@ -19,18 +19,36 @@ import autotude.viewer.Sprites.Sprite;
 final CONTAINER_OVER = "planes/powerup/container_over.png";
 final BALL_IMAGE = "render/planes/explodet/mine/0_128_5_0000.png";
 
-// Item drawn inside a powerup's bubble, scaled to fit.
-final POWERUP_ICONS:Map<Int, {poly:String, scale:Float}> = [
-	ObjectType.MISSLE_POWERUP => {poly: "render/powerups/missile/0_128_5.animatedpoly", scale: 0.8},
-	ObjectType.SHIELD_POWERUP => {poly: "planes/powerup/shield/shield.poly", scale: 0.25},
-	ObjectType.WALL_POWERUP => {poly: "planes/powerup/wall/end_cap.poly", scale: 1.2},
-	ObjectType.BIG_BOMB_POWERUP => {poly: "render/powerups/big_bomb/0_128_5.animatedpoly", scale: 0.7},
+// A powerup's icon, as each Powerup class in the game draws it: inside the
+// powerup's container on the map, and in the badge over a plane holding it.
+// The ball's icon is the ball itself (see ballSprite).
+final POWERUP_ICONS:Map<Int, String> = [
+	ObjectType.MISSLE_POWERUP => "render/powerups/missile/0_128_5.animatedpoly",
+	ObjectType.SHIELD_POWERUP => "planes/powerup/shield/shield.poly",
+	ObjectType.WALL_POWERUP => "planes/powerup/wall.poly",
+	ObjectType.BIG_BOMB_POWERUP => "render/powerups/big_bomb/0_128_5.animatedpoly",
+	ObjectType.HEALTH_POWERUP => "planes/powerup/health/healthpack.animatedpoly",
 ];
 
 // Sprites that differ from the hitbox poly for a type.
 final SPRITE_OVERRIDES:Map<Int, String> = [
-	ObjectType.HEALTH_POWERUP => "planes/powerup/health/healthpack.animatedpoly",
+	ObjectType.HEALTH_POWERUP => "planes/powerup/container_health.poly",
 ];
+
+// Pixel sizes of icons inside a container on the map.
+final CONTAINER_ICON_SIZE = 26;
+
+// The badge beside a plane holding a powerup, and its icon. It sits right of
+// the plane's bars, which PlaneGraphics draws from 40px left to 40px right
+// of the plane, 32-56px above it.
+final BADGE_IMAGE = "hud/over_plane/powerup_container.png";
+final BADGE_SIZE = 30;
+final BADGE_ICON_SIZE = 21;
+final BADGE_X = 58;
+final BADGE_Y = 44;
+
+// The ball at its hitbox poly's size looks too big next to the game's.
+final BALL_SCALE = 0.8;
 
 // Explodet mines are a spiky mine carried by a drone: directly for remote
 // mines, on a chain for the regular (director) ones. Replays only record
@@ -114,14 +132,75 @@ class ObjectLayer extends Graphics {
 		if (sprite == null)
 			return false;
 
-		// a powerup is its item between the two halves of a bubble
-		final icon = POWERUP_ICONS.get(object.type);
+		if (object.type == ObjectType.BALL) {
+			drawSprite(sprite, object, BALL_SCALE);
+			return true;
+		}
+
 		drawSprite(sprite, object);
+		// a powerup is its icon in a container (a bubble, or health's frame)
+		final icon = POWERUP_ICONS.get(object.type);
 		if (icon != null) {
-			drawSprite(sprites.forPoly(icon.poly, null), object, icon.scale);
-			drawSprite(sprites.withImage(sprite, CONTAINER_OVER), object);
+			drawIcon(sprites.forPoly(icon, null), uprightAt(object, 0), CONTAINER_ICON_SIZE);
+			if (object.type != ObjectType.HEALTH_POWERUP)
+				drawSprite(sprites.withImage(sprite, CONTAINER_OVER), object);
 		}
 		return true;
+	}
+
+	// The badge the game shows by a plane holding a powerup or the ball.
+	function drawHeldPowerup(sprites:Sprites, plane:GameObject) {
+		final held = plane.powerup;
+		final icon = held == ObjectType.BALL ? ballSprite(sprites, plane.team) : {
+			final poly = held == null ? null : POWERUP_ICONS.get(held);
+			poly == null ? null : sprites.forPoly(poly, null);
+		};
+		final badge = sprites.forImage(BADGE_IMAGE);
+		if (icon == null || badge == null)
+			return;
+		final at = uprightAt(plane, BADGE_Y, BADGE_X);
+		drawSprite(badge, at, BADGE_SIZE / badge.tile.width);
+		drawIcon(icon, at, BADGE_ICON_SIZE);
+	}
+
+	// Draw an icon centred on `at`, scaled to fit `size` pixels. Long icons
+	// (missiles, bombs) stand upright, as in the game's badges.
+	function drawIcon(icon:Null<Sprite>, at:GameObject, size:Float) {
+		if (icon == null)
+			return;
+		final hull = icon.frame.hull;
+		var minX = Math.POSITIVE_INFINITY, maxX = Math.NEGATIVE_INFINITY;
+		var minY = Math.POSITIVE_INFINITY, maxY = Math.NEGATIVE_INFINITY;
+		var i = 0;
+		while (i + 1 < hull.length) {
+			minX = Math.min(minX, hull[i]);
+			maxX = Math.max(maxX, hull[i]);
+			minY = Math.min(minY, hull[i + 1]);
+			maxY = Math.max(maxY, hull[i + 1]);
+			i += 2;
+		}
+		final w = maxX - minX, h = maxY - minY;
+		if (w <= 0 || h <= 0)
+			return;
+		final upright = w > 1.5 * h;
+		final o = uprightAt(at, 0);
+		if (upright)
+			o.angle = 900; // a quarter turn, nose up
+		// centre the hull on `at`
+		final scale = size / Math.max(w, h);
+		final cx = (minX + maxX) / 2 * scale, cy = (minY + maxY) / 2 * scale;
+		final offX = upright ? cy : -cx, offY = upright ? -cx : -cy;
+		o.positionX += Std.int(offX * 2);
+		o.positionY += Std.int(offY * 2);
+		drawSprite(icon, o, scale);
+	}
+
+	// An upright, unflipped copy of an object's position, moved `up` and `right` pixels.
+	function uprightAt(object:GameObject, up:Float, right:Float = 0):GameObject {
+		final o = new GameObject();
+		o.positionX = object.positionX + Std.int(right * 2);
+		o.positionY = object.positionY + Std.int(up * 2); // positions are in half pixels
+		return o;
 	}
 
 	function drawMine(sprites:Sprites, object:GameObject):Bool {
@@ -130,14 +209,7 @@ class ObjectLayer extends Graphics {
 		if (mine == null || drone == null)
 			return false;
 
-		// an upright copy of the object, `up` pixels higher
-		function above(up:Float):GameObject {
-			final o = new GameObject();
-			o.positionX = object.positionX;
-			o.positionY = object.positionY + Std.int(up * 2); // positions are in half pixels
-			return o;
-		}
-
+		final above = uprightAt.bind(object);
 		final remote = object.type == ObjectType.REMOTE_MINE;
 		final droneHeight = remote ? REMOTE_MINE_DRONE_HEIGHT : DIRECTOR_MINE_DRONE_HEIGHT;
 		if (!remote) {
@@ -218,18 +290,10 @@ class ObjectLayer extends Graphics {
 		if (object.type <= 4) {
 			getPlaneGraphics(object.owner).syncObject(object);
 			planesSynced.set(object.owner, true);
-			if (object.powerup == ObjectType.BALL) {
-				final ball = sprites == null ? null : ballSprite(sprites, object.team);
-				if (ball != null) {
-					// upright on the plane
-					final carried = new GameObject();
-					carried.positionX = object.positionX;
-					carried.positionY = object.positionY;
-					drawSprite(ball, carried);
-				} else {
-					drawBallAt(object);
-				}
-			};
+			if (sprites != null)
+				drawHeldPowerup(sprites, object);
+			else if (object.powerup == ObjectType.BALL)
+				drawBallAt(object);
 		}
 	}
 

@@ -23,13 +23,19 @@ import sys.io.File;
 
 final SPRITE_OUT_DIR = "hx_src/out/viewer_assets/sprites/";
 
+// Image directories the viewer uses without a poly.
+final EXTRA_IMAGE_DIRS = [
+	"hud/over_plane", // powerup_container.png, the badge for a held powerup
+];
+
 // Polys the viewer draws besides the hitbox polys.
 final EXTRA_POLYS = [
 	"planes/powerup/health/healthpack.animatedpoly",
 	"planes/powerup/shield/shield.poly",
 	"render/powerups/missile/0_128_5.animatedpoly",
 	"render/powerups/big_bomb/0_128_5.animatedpoly",
-	"planes/powerup/wall/end_cap.poly",
+	"planes/powerup/wall.poly",
+	"planes/powerup/container_health.poly",
 	"render/planes/explodet/mine/0_128_5.animatedpoly",
 	"render/planes/explodet/drone/0_128_5.animatedpoly",
 	"render/planes/explodet/rocket_open/0_128_5.animatedpoly",
@@ -61,7 +67,7 @@ class ExtractSprites {
 		}
 
 		final polys:haxe.DynamicAccess<Array<Dynamic>> = {};
-		final imageDirs:Array<String> = [];
+		final imageDirs:Array<String> = EXTRA_IMAGE_DIRS.copy();
 		for (path in polyPaths) {
 			final frames = readPoly(dist + ".poly/" + path);
 			polys.set(path, frames);
