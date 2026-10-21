@@ -13,6 +13,10 @@ import sys.io.File;
 //
 // Usage: haxe hx_src/build_map_art.hxml [map names...]  (all maps by default)
 //
+// Reads alti_home/maps, the maps an Altitude client downloaded from servers
+// (on Windows, %LOCALAPPDATA%\NimblyGames\Altitude\maps\download) and any
+// directories listed in $ALTI_MAP_DIRS (separated like PATH).
+//
 // .altx layout (all little-endian), after LZMA decompression:
 //   u32 count, count x (u16 len, utf8 path), count x u32 size, file data...
 //
@@ -58,22 +62,55 @@ typedef ImageDef = {
 class ExtractMapArt {
 	static function main() {
 		final only = Sys.args();
-		final files = FileSystem.readDirectory(MAP_DIR).filter(f -> Path.extension(f) == "altx");
-		files.sort(Reflect.compare);
+
+		// map name -> .altx; later directories win
+		final maps:Map<String, String> = [];
+		for (dir in mapDirs()) {
+			Sys.println('reading maps in $dir');
+			for (file in FileSystem.readDirectory(dir)) {
+				if (Path.extension(file) != "altx")
+					continue;
+				final name = Path.withoutExtension(file);
+				final previous = maps.get(name);
+				if (previous != null)
+					Sys.println('$name: using ${dir + file} instead of $previous');
+				maps.set(name, dir + file);
+			}
+		}
+		final names = [for (name in maps.keys()) name];
+		names.sort(Reflect.compare);
 
 		var done = 0;
-		for (file in files) {
-			final name = Path.withoutExtension(file);
-			if (only.length > 0 && !only.contains(name))
+		for (name in names) {
+			final path = maps.get(name);
+			if (path == null || (only.length > 0 && !only.contains(name)))
 				continue;
 			try {
-				extract(name, readArchive(MAP_DIR + file));
+				extract(name, readArchive(path));
 				done++;
 			} catch (e) {
 				Sys.println('$name: FAILED: $e');
 			}
 		}
 		Sys.println('extracted $done map(s) into $OUT_DIR');
+	}
+
+	// alti_home/maps, then maps the game client downloaded from servers (custom
+	// and ladder maps), then any directories in $ALTI_MAP_DIRS.
+	static function mapDirs():Array<String> {
+		final dirs = [MAP_DIR];
+		final localAppData = Sys.getEnv("LOCALAPPDATA");
+		if (localAppData != null)
+			dirs.push(Path.join([localAppData, "NimblyGames/Altitude/maps/download"]));
+		final extra = Sys.getEnv("ALTI_MAP_DIRS");
+		if (extra != null)
+			for (dir in extra.split(Sys.systemName() == "Windows" ? ";" : ":"))
+				if (dir.length > 0)
+					dirs.push(dir);
+		return [
+			for (dir in dirs)
+				if (FileSystem.exists(dir) && FileSystem.isDirectory(dir)) Path.addTrailingSlash(dir)
+		];
 	}
 
 	static function readArchive(path:String):Archive {
