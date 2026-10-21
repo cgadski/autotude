@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Config
+	mode="GET_LISTINGS"
+	record="true"
+	port="{{port}}"
+	accountName="{{email}}"
+	accountPassword="{{accountPassword}}"
+/>
