@@ -51,7 +51,7 @@ class PlaneGraphics extends Graphics {
 		final barHeight = 8;
 		var yOffset = -40;
 
-		if (object != null) {
+		if (object != null && state.showPlaneBars) {
 			// energy
 			beginFill(0x324AD0);
 			final ammo = object.ammo / 1000;

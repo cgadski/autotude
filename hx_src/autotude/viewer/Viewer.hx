@@ -226,6 +226,9 @@ class Viewer extends hxd.App {
 		r("Toggle game artwork", [Key.M], () -> {
 			n((s) -> s.showMapArt = !s.showMapArt);
 		});
+		r("Toggle health and energy bars", [Key.E], () -> {
+			n((s) -> s.showPlaneBars = !s.showPlaneBars);
+		});
 
 		r("Add timestamp to URL", [Key.T], () -> {
 			n((s) -> s.addTimestamp());
