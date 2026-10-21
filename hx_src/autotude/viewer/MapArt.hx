@@ -9,7 +9,7 @@ import h2d.RenderContext;
 import h2d.Tile;
 import js.lib.Promise;
 
-// Format of map.json, written by autotude.ExtractMapArt.
+// Format of map.json, written by game_resources/bin/maps.rs.
 
 typedef MapArtItem = TexturedPoly & {
 	layer:Int,
@@ -34,7 +34,7 @@ typedef MapArtData = {
 	views:Array<MapArtView>
 };
 
-final MAP_ART_ROOT = "viewer_assets/maps/";
+final MAP_ART_ROOT = "game_resources/maps/";
 final GAME_VIEW = "Game";
 
 /**

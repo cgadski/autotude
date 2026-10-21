@@ -57,3 +57,7 @@ stats_db/tks.txt
 # local haxelib repo
 /.haxelib/
 /.haxelib-src/
+
+# game resources (extracted from Altitude files)
+/game_resources/target/
+/game_resources/out/

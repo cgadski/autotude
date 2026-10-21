@@ -8,8 +8,8 @@ import js.html.CanvasElement;
 import js.html.ImageElement;
 import js.lib.Promise;
 
-// Texture pages and textured polygons, as written by autotude.ExtractMapArt
-// and autotude.ExtractSprites.
+// Texture pages and textured polygons, as written by game_resources/ (see
+// game_resources/src/lib.rs).
 
 typedef PageTile = {
 	x:Int,

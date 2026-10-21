@@ -6,7 +6,7 @@ import autotude.viewer.TexturePages.TexturedPoly;
 import h2d.Tile;
 import js.lib.Promise;
 
-// Format of sprites.json, written by autotude.ExtractSprites.
+// Format of sprites.json, written by game_resources/bin/sprites.rs.
 
 typedef SpriteFrame = TexturedPoly & {
 	spin:Int
@@ -26,7 +26,7 @@ typedef Sprite = {
 	tile:Tile
 };
 
-final SPRITES_JSON = "viewer_assets/sprites/sprites.json";
+final SPRITES_JSON = "game_resources/sprites/sprites.json";
 
 // Colours (r_g_b, as in image names) of teams 3 (red) through 11 (brown),
 // from the game's em.altitude.game.model.Team. Teams 0-2 are reserved and
@@ -74,7 +74,7 @@ class Sprites {
 		if (frames == null || frames.length == 0)
 			return null;
 
-		// closest roll, like PolyManager.getPoly
+		// closest roll
 		var best = frames[0];
 		if (spin != null) {
 			var bestDiff = 360;

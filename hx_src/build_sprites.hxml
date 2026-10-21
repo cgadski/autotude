@@ -1,8 +1,0 @@
--lib format
--lib protohx
--cp hx_src
---macro nullSafety("autotude", Loose)
---macro nullSafety("autotude.proto", Off)
-
-# pass the path to an Altitude install as an extra command-line argument
---run autotude.ExtractSprites

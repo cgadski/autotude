@@ -3,7 +3,6 @@
 -lib heaps
 -cp hx_src
 -dce full
---resource data/polys@polys
 -D analyzer-optimize
 --macro nullSafety("autotude", Loose)
 --macro nullSafety("autotude.proto", Off)

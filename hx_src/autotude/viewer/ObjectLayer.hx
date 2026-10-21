@@ -3,11 +3,8 @@ package autotude.viewer;
 import js.html.TextTrackCue;
 import autotude.proto.ObjectType;
 import h2d.Text;
-import autotude.proto.Poly;
 import h3d.Matrix;
 import h3d.Vector;
-import haxe.Resource;
-import haxe.io.BytesInput;
 import autotude.proto.GameObject;
 import h2d.RenderContext;
 import autotude.proto.ConcaveObstacle;
@@ -90,7 +87,6 @@ class ObjectLayer extends Graphics {
 	final replay:Replay;
 	final geom:MapGeometry;
 	final state:PlayerState;
-	final polyManager:PolyManager;
 
 	final planeGraphics:Map<Int, PlaneGraphics> = new Map();
 
@@ -104,7 +100,6 @@ class ObjectLayer extends Graphics {
 		this.replay = state.replay;
 		this.geom = state.geom;
 		this.state = state;
-		this.polyManager = new PolyManager(new BytesInput(Resource.getBytes("polys")));
 		super();
 	}
 
@@ -352,11 +347,9 @@ class ObjectLayer extends Graphics {
 		return hitbox == null ? null : sprites.withImage(hitbox, BALL_IMAGE, team);
 	}
 
-	function showPoly(poly:Poly, object:GameObject) {
+	// Fill a hitbox (x, y pairs, from sprites.json) in the object's team colour.
+	function showHull(hull:Array<Float>, object:GameObject) {
 		polysDrawn += 1;
-
-		var x:Array<Float> = poly.verticesX;
-		var y:Array<Float> = poly.verticesY;
 
 		if (object.hasTeam()) {
 			final color = replay.teamColorPoly(object.team);
@@ -371,9 +364,11 @@ class ObjectLayer extends Graphics {
 			beginFill(Viewer.BACKGROUND, 0.5);
 		}
 
-		for (i in 0...x.length) {
-			final dest = placeVertex(object, x[i], y[i]);
+		var i = 0;
+		while (i + 1 < hull.length) {
+			final dest = placeVertex(object, hull[i], hull[i + 1]);
 			lineTo(dest.x, dest.y);
+			i += 2;
 		}
 		endFill();
 	}
@@ -416,7 +411,8 @@ class ObjectLayer extends Graphics {
 		}
 	}
 
-	// Hitboxes and simple shapes, for when there are no sprites.
+	// Hitboxes and simple shapes: the plain view (M), or without game resources
+	// (then there are no hitboxes either, as they come from sprites.json).
 	function drawPlaceholder(object:GameObject) {
 		final pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
 
@@ -425,9 +421,10 @@ class ObjectLayer extends Graphics {
 			return;
 		}
 
-		final poly = polyManager.getPoly(object.type, object.spin);
-		if (poly != null) {
-			showPoly(poly, object);
+		final sprites = this.sprites;
+		final hitbox = sprites == null ? null : sprites.forType(object.type, null, object.type <= ObjectType.MIRANDA ? object.spin : null);
+		if (hitbox != null) {
+			showHull(hitbox.frame.hull, object);
 		} else {
 			// TODO: draw marker
 		}
@@ -447,7 +444,7 @@ class ObjectLayer extends Graphics {
 			lineStyle(0, 0, 1);
 		}
 
-		if (object.type == 60 && poly != null) {
+		if (object.type == 60 && hitbox != null) {
 			// final pos = vec2(object.positionX / 2, object.positionY / 2);
 			// ctx.fillStyle = "purple";
 			// ctx.fillCircle(toScreen(pos), 5);

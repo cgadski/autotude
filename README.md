@@ -53,17 +53,22 @@ A replay (extension `.pb`) is just a gzipped sequence of length-delimited `Updat
 
 The bandwidth of a game with 8 players (like 4v4 ball) tends to be about 0.2 megabytes per minute after gzipping, or roughly 100x less than the bandwidth of 720p video.
 
-## `data/polys`
-
-Map geometry is sent in the first `Update` message when a game begins. Besides map geometry, the only additional information needed to interpret an `Update` are the relative hitboxes of game objects like planes and projectiles. `data/polys` is a gzipped sequence of length-delimited `Poly` messages (as defined in `proto/poly.proto`) giving the hixboxes of different game objects. This data is read from `poly_src`, an bunch of XML files copied from Altitude.
-
-Planes have different hitboxes depending on their "roll." The degrees of roll for which hitboxes are available are irregularly distributed.
-
 ## `hx_src/`
 
 Haxe soure. Mainly the replay viewer, written with the heaps game engine.
 
-The viewer draws each map with its real artwork when it finds it in `viewer_assets/maps/<map>/` next to the page. Run `make hx_src/out/viewer_assets/maps/` (or `haxe hx_src/build_map_art.hxml [map...]`) to extract it from the `.altx` files in `alti_home/maps/`, plus the custom and ladder maps an Altitude client has downloaded from servers (`%LOCALAPPDATA%/NimblyGames/Altitude/maps/download` on Windows) and any directories in `ALTI_MAP_DIRS`. Planes, projectiles, powerups, the ball, goals and bases are drawn with the game's (team-coloured) sprites when `viewer_assets/sprites/` exists. Those aren't in the map files, so they're extracted from an Altitude install: `ALTI_INSTALL=/path/to/Altitude make hx_src/out/viewer_assets/sprites/`. The same extraction copies the game's effect images and sounds (not music); the viewer adds afterburner flames, explosions, spawn and damage effects, and positional sound during playback. Press `M` in the viewer to switch between the game artwork and plain hitboxes and obstacles, `E` for health and energy bars, and `N` for sound. To package the viewer and its assets for hosting, run `ALTI_INSTALL=/path/to/Altitude just viewer-dist`, which writes `viewer-dist.tar`. Besides `f` and `t`, the viewer's URL takes `x`, `y` (map pixels from the top-left) and `zoom` (1 is the game's own view) to open on a particular spot.
+The viewer draws replays with the game's own artwork and sounds when it finds them in `game_resources/` next to its page. `ALTI_INSTALL=/path/to/Altitude make game_resources/out/` builds them with the Rust tools in `game_resources/` (seconds, not minutes):
+
+- `maps` extracts map artwork from the `.altx` files in `alti_home/maps/`, the custom and ladder maps an Altitude client has downloaded from servers (`%LOCALAPPDATA%/NimblyGames/Altitude/maps/download` on Windows), and any directories in `ALTI_MAP_DIRS`.
+- `sprites` extracts sprites (including object hitboxes), effect images and sounds (not music) from an Altitude install.
+
+`make hx_src/out/game_resources/` copies them next to the built viewer, and `ALTI_INSTALL=/path/to/Altitude just viewer-dist` packages the viewer and its resources for hosting as `viewer-dist.tar`. Without them, the viewer shows plain obstacles and no object outlines.
+
+In the viewer, `M` switches between the game artwork and plain hitboxes and obstacles, `E` toggles health and energy bars, and `N` toggles sound. Besides `f` and `t`, its URL takes `x`, `y` (map pixels from the top-left) and `zoom` (1 is the game's own view) to open on a particular spot.
+
+## `game_resources/`
+
+Rust tools that extract what the replay viewer needs from Altitude's files (see `hx_src/` above). Replays carry map geometry in their first `Update`, but not the shapes of game objects like planes and projectiles: those come from the game's own polys (planes have one for each roll they're drawn at) and end up in `game_resources/out/sprites/sprites.json`, along with the sprites.
 
 ## `rust_src/`
 

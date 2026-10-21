@@ -4,7 +4,6 @@ import h2d.Text;
 import h3d.Vector4;
 import h2d.HtmlText;
 import js.html.Console;
-import autotude.proto.Poly;
 import h3d.Matrix;
 import h3d.Vector;
 import haxe.Resource;

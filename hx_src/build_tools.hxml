@@ -4,12 +4,5 @@
 --macro nullSafety("autotude", Loose)
 --macro nullSafety("autotude.proto", Off)
 
---each
-
 -main autotude.ReplayTool
 -neko bin/replay_tool.n
-
---next
-
--main autotude.WritePolys
--neko bin/write_polys.n

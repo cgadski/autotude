@@ -11,7 +11,7 @@ import js.html.audio.GainNode;
 import js.html.audio.StereoPannerNode;
 import js.lib.Promise;
 
-final SOUND_ROOT = "viewer_assets/sounds/";
+final SOUND_ROOT = "game_resources/sounds/";
 
 // Sound for a projectile or other object appearing.
 final FIRE_SOUNDS:Map<Int, String> = [

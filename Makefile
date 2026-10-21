@@ -5,7 +5,6 @@ all: copy_assets
 clean:
 	rm -rf bin/
 	rm -rf java_gen/ # java source gen
-	rm -rf poly_src/
 	rm -rf hx_src/autotude/proto/ # haxe source gen
 	rm -rf stats_db/proto/ # copies proto files
 
@@ -16,7 +15,6 @@ PROTO_FILES = $(wildcard $(PROTO_SRC)*)
 java_gen/: $(PROTO_FILES)
 	mkdir -p $@
 	protoc -I=$(PROTO_SRC) --java_out=$@ $^
-	rm java_gen/PolyOuterClass.java
 
 # haxe sourcegen
 hx_src/autotude/proto/: $(PROTO_FILES)
@@ -37,20 +35,8 @@ rl/altitude_rl/proto/: $(PROTO_FILES)
 
 TOOL_SRC = $(wildcard hx_src/autotude/**)
 
-bin/write_polys.n bin/replay_tool.n: $(TOOL_SRC) hx_src/autotude/proto/
+bin/replay_tool.n: $(TOOL_SRC) hx_src/autotude/proto/
 	haxe hx_src/build_tools.hxml
-
-# polys
-poly_src/:
-	tar -xf poly_src.tar.gz
-
-data/polys: bin/write_polys.n poly_src/
-	mkdir -p $(@D)
-	neko ./bin/write_polys.n
-	gzip $@
-	mv $@.gz $@
-	@echo "Size of poly file (bytes): "
-	@wc -c $@
 
 # indexer
 bin/dump bin/cat-replay bin/index-lite: stats_db/bin/* stats_db/src/** stats_db/Cargo.toml \
@@ -62,24 +48,28 @@ bin/dump bin/cat-replay bin/index-lite: stats_db/bin/* stats_db/src/** stats_db/
 # js source for viewer
 hx_src/out/viewer.js: hx_src/autotude/proto/ hx_src/build_viewer.hxml \
 	$(wildcard hx_src/autotude/**) \
-	$(wildcard hx_src/autotude/viewer/**) \
-	data/polys
+	$(wildcard hx_src/autotude/viewer/**)
 	mkdir -p $(@D)
 	haxe hx_src/build_viewer.hxml
 
-# map artwork for viewer, extracted from alti_home/maps/*.altx
-hx_src/out/viewer_assets/maps/: hx_src/autotude/ExtractMapArt.hx hx_src/autotude/Lzma.hx \
-	$(wildcard alti_home/maps/*.altx)
-	haxe hx_src/build_map_art.hxml
+# everything the viewer loads from the game: map artwork (from alti_home/maps,
+# maps the game client downloaded and $ALTI_MAP_DIRS), and sprites, effects
+# and sounds (from an Altitude install at $ALTI_INSTALL)
+GAME_RESOURCES_SRC = game_resources/Cargo.toml $(wildcard game_resources/src/*) $(wildcard game_resources/bin/*)
 
-# object sprites for viewer, extracted from an Altitude install at $ALTI_INSTALL
-hx_src/out/viewer_assets/sprites/: hx_src/autotude/ExtractSprites.hx hx_src/autotude/ExtractMapArt.hx \
-	hx_src/autotude/WritePolys.hx
+game_resources/out/: $(GAME_RESOURCES_SRC) $(wildcard alti_home/maps/*.altx)
 	if [ -z "$(ALTI_INSTALL)" ]; then \
 		echo "ALTI_INSTALL not set"; \
 		exit 1; \
 	fi
-	haxe hx_src/build_sprites.hxml "$(ALTI_INSTALL)"
+	cd game_resources && cargo build --release
+	game_resources/target/release/maps $@maps
+	game_resources/target/release/sprites "$(ALTI_INSTALL)" $@
+
+# the viewer looks for them in game_resources/ next to its page
+hx_src/out/game_resources/: game_resources/out/
+	rm -rf $@
+	cp -r game_resources/out $@
 
 .PHONY: copy_assets
 
@@ -95,9 +85,9 @@ stats_db/proto/: $(PROTO_FILES)
 
 # js/html of viewer for altistats.com
 altistats.com/nginx/assets/: hx_src/out/viewer.js hx_src/viewer.html \
-	hx_src/out/viewer_assets/maps/
+	hx_src/out/game_resources/
 	rm -rf $@
 	mkdir -p $@
 	cp hx_src/out/viewer.js $@
 	cp hx_src/viewer.html $@/index.html
-	cp -r hx_src/out/viewer_assets $@
+	cp -r hx_src/out/game_resources $@
