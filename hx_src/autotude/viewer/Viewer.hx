@@ -53,6 +53,7 @@ class Viewer extends hxd.App {
 	final speedSelect:js.html.SelectElement = cast getElem("speed");
 	final muteButton:js.html.ButtonElement = cast getElem("mute");
 	final volumeSlider:InputElement = cast getElem("volume");
+	final fullscreenButton:js.html.ButtonElement = cast getElem("fullscreen");
 	final canvas:CanvasElement = cast getElem("webgl");
 
 	// playback speed, from the speed selector
@@ -67,6 +68,14 @@ class Viewer extends hxd.App {
 				playerState.togglePlay();
 			playButton.blur(); // keep Space for the viewer's own binding
 		};
+		fullscreenButton.onclick = () -> {
+			toggleFullscreen();
+			fullscreenButton.blur();
+		};
+		// Esc also leaves full screen, so follow the browser's state
+		Browser.document.addEventListener("fullscreenchange", () -> {
+			fullscreenButton.title = Browser.document.fullscreenElement == null ? "Full screen (Shift + F)" : "Exit full screen (Shift + F)";
+		});
 		muteButton.onclick = () -> {
 			toggleSound();
 			muteButton.blur();
@@ -226,6 +235,15 @@ class Viewer extends hxd.App {
 		}
 	}
 
+	// The whole page (map, timeline and panels) goes full screen.
+	function toggleFullscreen() {
+		final doc = Browser.document;
+		if (doc.fullscreenElement == null)
+			doc.documentElement.requestFullscreen();
+		else
+			doc.exitFullscreen();
+	}
+
 	function toggleSound() {
 		sound.enabled = !sound.enabled;
 		showSoundState();
@@ -291,6 +309,10 @@ class Viewer extends hxd.App {
 			n((s) -> s.frameIdx -= 10);
 		});
 
+		// before plain F, so Shift + F isn't taken as F
+		r("Full screen", [Key.SHIFT, Key.F], () -> {
+			toggleFullscreen();
+		});
 		r("Fit map to screen", [Key.F], () -> {
 			n((s) -> s.fitView());
 		});

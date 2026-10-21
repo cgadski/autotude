@@ -214,6 +214,7 @@
 
             #play,
             #mute,
+            #fullscreen,
             #speed {
                 font: inherit;
                 color: var(--text);
@@ -224,7 +225,8 @@
             }
 
             #play,
-            #mute {
+            #mute,
+            #fullscreen {
                 width: 34px;
                 height: 28px;
                 padding: 0;
@@ -279,6 +281,7 @@
                 </select>
                 <button id="mute" type="button" title="Sound on / off (N)">&#128266;</button>
                 <input id="volume" type="range" min="0" max="100" value="80" title="Volume" />
+                <button id="fullscreen" type="button" title="Full screen (Shift + F)">&#x26F6;</button>
                 <span class="hint">H for keys</span>
             </div>
         </div>
