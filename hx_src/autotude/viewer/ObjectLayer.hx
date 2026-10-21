@@ -17,6 +17,7 @@ import autotude.proto.MapGeometry;
 import autotude.viewer.Sprites.Sprite;
 
 final CONTAINER_OVER = "planes/powerup/container_over.png";
+final BALL_IMAGE = "render/planes/explodet/mine/0_128_5_0000.png";
 
 // Item drawn inside a powerup's bubble, scaled to fit.
 final POWERUP_ICONS:Map<Int, {poly:String, scale:Float}> = [
@@ -29,9 +30,10 @@ final POWERUP_ICONS:Map<Int, {poly:String, scale:Float}> = [
 // Sprites that differ from the hitbox poly for a type.
 final SPRITE_OVERRIDES:Map<Int, String> = [
 	ObjectType.HEALTH_POWERUP => "planes/powerup/health/healthpack.animatedpoly",
-	// mine.poly only has the chain link
-	ObjectType.REMOTE_MINE => "render/planes/explodet/mine/0_128_5.animatedpoly",
-	ObjectType.DIRECTOR_MINE => "render/planes/explodet/mine/0_128_5.animatedpoly",
+	// mine.poly only has a rope link; the game draws a drone (carrying the
+	// spiky mine on a rope, which replays don't record)
+	ObjectType.REMOTE_MINE => "render/planes/explodet/drone/0_128_5.animatedpoly",
+	ObjectType.DIRECTOR_MINE => "render/planes/explodet/drone/0_128_5.animatedpoly",
 ];
 
 class ObjectLayer extends Graphics {
@@ -98,8 +100,8 @@ class ObjectLayer extends Graphics {
 		// only planes have frames by roll; other animations are by time
 		final spin = object.type <= ObjectType.MIRANDA ? object.spin : null;
 		final polyOverride = SPRITE_OVERRIDES.get(object.type);
-		final sprite = polyOverride != null ? sprites.forPoly(polyOverride, object.team, spin) : sprites.forType(object.type,
-			object.team, spin);
+		final sprite = if (object.type == ObjectType.BALL) ballSprite(sprites, object.team) else if (polyOverride != null)
+			sprites.forPoly(polyOverride, object.team, spin) else sprites.forType(object.type, object.team, spin);
 		if (sprite == null)
 			return false;
 
@@ -110,9 +112,14 @@ class ObjectLayer extends Graphics {
 			drawSprite(sprites.forPoly(icon.poly, null), object, icon.scale);
 			drawSprite(sprites.withImage(sprite, CONTAINER_OVER), object);
 		}
-		if (object.type == ObjectType.BALL)
-			drawSprite(sprites.withImage(sprite, CONTAINER_OVER), object);
 		return true;
+	}
+
+	// The game draws the ball's hitbox with the spiky mine image, in the
+	// colour of the team that last touched it.
+	function ballSprite(sprites:Sprites, team:Null<Int>):Null<Sprite> {
+		final hitbox = sprites.forType(ObjectType.BALL, null, null);
+		return hitbox == null ? null : sprites.withImage(hitbox, BALL_IMAGE, team);
 	}
 
 	function showPoly(poly:Poly, object:GameObject) {
@@ -173,14 +180,13 @@ class ObjectLayer extends Graphics {
 			getPlaneGraphics(object.owner).syncObject(object);
 			planesSynced.set(object.owner, true);
 			if (object.powerup == ObjectType.BALL) {
-				final ball = sprites == null ? null : sprites.forType(ObjectType.BALL, null, null);
-				if (sprites != null && ball != null) {
+				final ball = sprites == null ? null : ballSprite(sprites, object.team);
+				if (ball != null) {
 					// upright on the plane
 					final carried = new GameObject();
 					carried.positionX = object.positionX;
 					carried.positionY = object.positionY;
 					drawSprite(ball, carried);
-					drawSprite(sprites.withImage(ball, CONTAINER_OVER), carried);
 				} else {
 					drawBallAt(object);
 				}

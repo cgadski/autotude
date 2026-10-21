@@ -94,15 +94,19 @@ class Sprites {
 		return tile == null ? null : {frame: best, tile: tile};
 	}
 
-	/** The same frame with a different image of the same size (e.g. an overlay). **/
-	public function withImage(sprite:Sprite, image:String):Null<Sprite> {
-		final tile = textures.get(image);
+	/**
+		The same frame with a different image (in a team's colour if it has
+		one), scaled to the width of the original image.
+	**/
+	public function withImage(sprite:Sprite, image:String, ?team:Int):Null<Sprite> {
+		final tile = textures.get(teamImage(image, team)) ?? textures.get(image);
 		if (tile == null)
 			return null;
 		final frame = Reflect.copy(sprite.frame);
 		if (frame == null)
 			return null;
 		frame.image = image;
+		frame.scale = sprite.frame.scale * sprite.tile.width / tile.width;
 		return {frame: frame, tile: tile};
 	}
 

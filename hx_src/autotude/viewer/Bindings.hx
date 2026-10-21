@@ -50,17 +50,8 @@ class Bindings {
 	public function renderCard(card:DivElement) {
 		for (b in bindings) {
 			final p = Browser.document.createParagraphElement();
-			var keyString = "";
-			var first = true;
-			for (k in b.keys) {
-				if (!first) {
-					keyString += " + ";
-				} else {
-					first = false;
-				}
-				keyString += Key.getKeyName(k) ?? "<unknown>";
-			}
-			p.innerHTML = '<b>$keyString</b>: ${b.desc}';
+			final keys = [for (k in b.keys) '<kbd>${StringTools.htmlEscape(Key.getKeyName(k) ?? "?")}</kbd>'].join(" + ");
+			p.innerHTML = '<span class="desc">${StringTools.htmlEscape(b.desc)}</span><span>$keys</span>';
 			card.appendChild(p);
 		}
 	}

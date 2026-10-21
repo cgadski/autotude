@@ -19,6 +19,8 @@ import js.Browser;
 final WIDTH = 1280;
 final HEIGHT = 720;
 final BACKGROUND = 0xA9A7A7;
+// outside the map, matching the page
+final PAGE_BACKGROUND = 0x15171C;
 final SCALE_MIN = 0.2;
 final SCALE_MAX = 1.5;
 
@@ -58,7 +60,7 @@ class Viewer extends hxd.App {
 	}
 
 	override function init() {
-		engine.backgroundColor = BACKGROUND;
+		engine.backgroundColor = PAGE_BACKGROUND;
 		s2d.scaleMode = LetterBox(WIDTH, HEIGHT, false, Center, Center);
 
 		draggable = new Interactive(s2d.width, s2d.height, s2d);
@@ -107,7 +109,8 @@ class Viewer extends hxd.App {
 		if (playerState == null)
 			return;
 
-		playerState.scale *= Math.exp(e.wheelDelta);
+		// wheel up (negative delta) zooms in
+		playerState.scale *= Math.exp(-e.wheelDelta);
 		playerState.scale = Math.max(SCALE_MIN, playerState.scale);
 		playerState.scale = Math.min(SCALE_MAX, playerState.scale);
 	}

@@ -31,6 +31,9 @@ final EXTRA_POLYS = [
 	"render/powerups/big_bomb/0_128_5.animatedpoly",
 	"planes/powerup/wall/end_cap.poly",
 	"render/planes/explodet/mine/0_128_5.animatedpoly",
+	"render/planes/explodet/drone/0_128_5.animatedpoly",
+	"render/planes/explodet/rocket_open/0_128_5.animatedpoly",
+	"render/planes/explodet/rocket_spin/0_128_5.animatedpoly",
 ];
 
 class ExtractSprites {

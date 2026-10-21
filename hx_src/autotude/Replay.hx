@@ -95,13 +95,14 @@ class Replay {
 		return null;
 	}
 
+	// Team colours (red, blue, green, yellow, orange, purple, azure, pink,
+	// brown for teams 3-11), brightened to read on the viewer's dark panels.
+	static final TEAM_TEXT_COLORS = [
+		"#ff6b6b", "#7a9bff", "#5cd36a", "#f2c94c", "#ff9a4d", "#c08bff", "#9ccbe0", "#ffa8a8", "#d09a6a"
+	];
+
 	public function teamColorText(team:Int):String {
-		if (team == teams[0]) {
-			return "#D20000";
-		} else if (team == teams[1]) {
-			return "#007200";
-		}
-		return "#000000";
+		return TEAM_TEXT_COLORS[team - 3] ?? "#b8bcc8";
 	}
 
 	public function new(bytes:BytesInput) {

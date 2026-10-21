@@ -7,9 +7,20 @@
 
         <title>Viewer</title>
         <style>
+            :root {
+                --panel: rgba(14, 16, 22, 0.78);
+                --panel-border: rgba(255, 255, 255, 0.08);
+                --text: #e8eaf0;
+                --text-dim: #8d93a3;
+                --accent: #5aa9ff;
+            }
+
             body {
                 margin: 0;
                 padding: 0;
+                background: #15171c;
+                color: var(--text);
+                font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
             }
 
             #container {
@@ -26,25 +37,44 @@
                 position: relative;
             }
 
-            #sidebar {
+            #sidebar,
+            #help {
                 position: absolute;
-                top: 0;
-                left: 0;
-                height: 100%;
-                width: 600px; /* Set a fixed width */
-                padding-left: 1em;
-                display: none;
+                top: 12px;
+                max-height: calc(100% - 24px);
                 overflow-y: auto;
-                background-color: rgba(255, 255, 255, 0.3);
                 box-sizing: border-box;
+                padding: 10px 14px;
+                display: none;
+                background: var(--panel);
+                border: 1px solid var(--panel-border);
+                border-radius: 8px;
+                backdrop-filter: blur(6px);
+                box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
             }
 
-            #sidebar.show {
+            #sidebar.show,
+            #help.show {
                 display: block;
             }
 
+            #sidebar {
+                left: 12px;
+                width: min(460px, calc(100% - 24px));
+            }
+
             #sidebar p {
-                margin: 0.2em 0;
+                margin: 0.15em 0;
+            }
+
+            #sidebar a {
+                color: var(--accent);
+                text-decoration: none;
+                font-variant-numeric: tabular-nums;
+            }
+
+            #sidebar a:hover {
+                text-decoration: underline;
             }
 
             #sidebar p i {
@@ -53,19 +83,32 @@
             }
 
             #help {
-                position: absolute;
-                right: 0;
-                top: 0;
-                padding-right: 1em;
-                display: none;
-            }
-
-            #help.show {
-                display: block;
+                right: 12px;
             }
 
             #help p {
-                margin: 0.2em 0;
+                margin: 0.3em 0;
+                display: flex;
+                gap: 12px;
+                justify-content: space-between;
+                color: var(--text-dim);
+            }
+
+            #help kbd {
+                display: inline-block;
+                min-width: 1.4em;
+                padding: 0 6px;
+                text-align: center;
+                font: 12px/20px ui-monospace, Consolas, monospace;
+                color: var(--text);
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                border-bottom-width: 2px;
+                border-radius: 4px;
+            }
+
+            #help .desc {
+                color: var(--text);
             }
 
             #debug-container {
@@ -90,30 +133,44 @@
 
             #control-panel {
                 width: 100%;
-                background-color: rgba(255, 255, 255, 0.8);
-                padding: 20px;
+                background: #0e1016;
+                border-top: 1px solid var(--panel-border);
+                padding: 12px 16px;
                 box-sizing: border-box;
-                text-align: center;
 
                 display: flex;
                 flex-direction: row;
+                align-items: center;
                 justify-content: center;
+                gap: 14px;
             }
 
             #time_before,
             #time_after {
-                padding-left: 1em;
-                padding-right: 1em;
+                font-variant-numeric: tabular-nums;
+                min-width: 5.5em;
+            }
+
+            #time_before {
+                text-align: right;
             }
 
             #scrubber {
                 flex-grow: 1;
-                max-width: 600px;
+                max-width: 900px;
+                accent-color: var(--accent);
+                cursor: pointer;
             }
 
             #control-panel i {
                 font-style: normal;
-                color: rgb(172, 172, 172);
+                color: var(--text-dim);
+            }
+
+            #control-panel .hint {
+                color: var(--text-dim);
+                font-size: 12px;
+                white-space: nowrap;
             }
         </style>
     </head>
@@ -144,6 +201,7 @@
                     disabled
                 />
                 <span id="time_after"></span>
+                <span class="hint">H for keys</span>
             </div>
         </div>
 
