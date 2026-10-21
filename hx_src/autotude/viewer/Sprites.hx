@@ -1,6 +1,5 @@
 package autotude.viewer;
 
-import autotude.proto.ObjectType;
 import autotude.viewer.TexturePages.Page;
 import autotude.viewer.TexturePages.PageImage;
 import autotude.viewer.TexturePages.TexturedPoly;
@@ -8,7 +7,7 @@ import h2d.Tile;
 import js.Browser;
 import js.lib.Promise;
 
-// Format of sprite.json, written by autotude.ExtractSprites.
+// Format of sprites.json, written by autotude.ExtractSprites.
 
 typedef SpriteFrame = TexturedPoly & {
 	spin:Int
@@ -17,70 +16,61 @@ typedef SpriteFrame = TexturedPoly & {
 typedef SpriteData = {
 	pages:Array<Page>,
 	images:haxe.DynamicAccess<PageImage>,
-	colors:haxe.DynamicAccess<Array<SpriteFrame>>
+	polys:haxe.DynamicAccess<Array<SpriteFrame>>,
+	// object type -> poly
+	types:haxe.DynamicAccess<String>
 };
 
-final SPRITE_ROOT = "viewer_assets/sprites/";
+typedef Sprite = {
+	frame:SpriteFrame,
+	tile:Tile
+};
 
-// sprite group for each object type that has one
-final SPRITE_GROUPS:Map<Int, String> = [
-	ObjectType.LOOPY => "render_planes_loopy",
-	ObjectType.BOMBER => "render_planes_bomber",
-	ObjectType.EXPLODET => "render_planes_explodet",
-	ObjectType.BIPLANE => "render_planes_biplane",
-	ObjectType.MIRANDA => "render_planes_miranda",
-	ObjectType.DOMB => "render_planes_bomber_bomb",
-	ObjectType.HOMING_MISSLE => "render_powerups_missile",
-	ObjectType.BIG_BOMB => "render_powerups_big_bomb",
-];
+final SPRITES_JSON = "viewer_assets/sprites/sprites.json";
 
-// Sprite colours (r_g_b) of teams 3 (red) through 11 (brown), from the
-// game's em.altitude.game.model.Team. Teams 0-2 are reserved and spectators.
+// Colours (r_g_b, as in image names) of teams 3 (red) through 11 (brown),
+// from the game's em.altitude.game.model.Team. Teams 0-2 are reserved and
+// spectators.
 final TEAM_COLORS = [
 	"171_5_13", "30_58_206", "0_128_5", "240_166_20", "239_95_0", "115_0_214", "93_138_168", "230_118_118", "98_38_0"
 ];
 final FIRST_TEAM = 3;
 
+final COLOR_IN_NAME = ~/[0-9]+_[0-9]+_[0-9]+/;
+
 class Sprites {
-	final frames:Map<String, Array<SpriteFrame>> = [];
-	final textures:Map<String, Tile> = [];
+	final data:SpriteData;
+	final textures:Map<String, Tile>;
 
-	function new() {}
-
-	/** Fetch and decode every sprite group. Rejects if they haven't been extracted. **/
-	public static function load():Promise<Sprites> {
-		final sprites = new Sprites();
-		final groups = [for (g in SPRITE_GROUPS) g];
-		return Promise.all([for (group in groups) loadGroup(sprites, group)]).then(_ -> sprites);
+	function new(data:SpriteData, textures:Map<String, Tile>) {
+		this.data = data;
+		this.textures = textures;
 	}
 
-	static function loadGroup(sprites:Sprites, group:String):Promise<Bool> {
-		final root = SPRITE_ROOT + group + "/";
-		return Browser.window.fetch(root + "sprite.json").then(res -> {
+	/** Fetch and decode the sprites. Rejects if they haven't been extracted. **/
+	public static function load():Promise<Sprites> {
+		final root = haxe.io.Path.directory(SPRITES_JSON) + "/";
+		return Browser.window.fetch(SPRITES_JSON).then(res -> {
 			if (!res.ok)
-				throw 'no sprites for $group (${res.status})';
+				throw 'no sprites (${res.status})';
 			return res.json();
 		}).then((data:SpriteData) -> {
-			return TexturePages.load(root, data.pages, data.images).then(textures -> {
-				for (path => tile in textures)
-					sprites.textures.set(path, tile);
-				for (color in data.colors.keys()) {
-					final frames = data.colors.get(color);
-					if (frames != null)
-						sprites.frames.set('$group/$color', frames);
-				}
-				return true;
-			});
+			return TexturePages.load(root, data.pages, data.images).then(textures -> new Sprites(data, textures));
 		});
 	}
 
-	/** The frame to draw for an object, with its texture, if there's a sprite for it. **/
-	public function get(type:Int, team:Null<Int>, spin:Null<Int>):Null<{frame:SpriteFrame, tile:Tile}> {
-		final group = SPRITE_GROUPS.get(type);
-		final color = TEAM_COLORS[(team ?? -1) - FIRST_TEAM];
-		if (group == null || color == null)
-			return null;
-		final frames = this.frames.get('$group/$color');
+	/** The sprite the game draws for an object type, if any. **/
+	public function forType(type:Int, team:Null<Int>, spin:Null<Int>):Null<Sprite> {
+		final poly = data.types.get(Std.string(type));
+		return poly == null ? null : forPoly(poly, team, spin);
+	}
+
+	/**
+		A frame of a poly (a path under the game's dist/.poly), in a team's
+		colour if it has one, at the closest roll to `spin`.
+	**/
+	public function forPoly(poly:String, team:Null<Int>, spin:Null<Int> = null):Null<Sprite> {
+		final frames = data.polys.get(poly);
 		if (frames == null || frames.length == 0)
 			return null;
 
@@ -98,7 +88,29 @@ class Sprites {
 		}
 
 		final image = best.image;
-		final tile = image == null ? null : textures.get(image);
+		if (image == null)
+			return null;
+		final tile = textures.get(teamImage(image, team)) ?? textures.get(image);
 		return tile == null ? null : {frame: best, tile: tile};
+	}
+
+	/** The same frame with a different image of the same size (e.g. an overlay). **/
+	public function withImage(sprite:Sprite, image:String):Null<Sprite> {
+		final tile = textures.get(image);
+		if (tile == null)
+			return null;
+		final frame = Reflect.copy(sprite.frame);
+		if (frame == null)
+			return null;
+		frame.image = image;
+		return {frame: frame, tile: tile};
+	}
+
+	// Team-coloured images are named by colour, e.g. render/planes/loopy/0_128_5_0070.png.
+	static function teamImage(image:String, team:Null<Int>):String {
+		final color = TEAM_COLORS[(team ?? -1) - FIRST_TEAM];
+		if (color == null)
+			return image;
+		return COLOR_IN_NAME.replace(image, color);
 	}
 }

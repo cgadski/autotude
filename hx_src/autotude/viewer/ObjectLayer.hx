@@ -14,6 +14,25 @@ import autotude.proto.ConcaveObstacle;
 import h2d.Graphics;
 import h2d.Object;
 import autotude.proto.MapGeometry;
+import autotude.viewer.Sprites.Sprite;
+
+final CONTAINER_OVER = "planes/powerup/container_over.png";
+
+// Item drawn inside a powerup's bubble, scaled to fit.
+final POWERUP_ICONS:Map<Int, {poly:String, scale:Float}> = [
+	ObjectType.MISSLE_POWERUP => {poly: "render/powerups/missile/0_128_5.animatedpoly", scale: 0.8},
+	ObjectType.SHIELD_POWERUP => {poly: "planes/powerup/shield/shield.poly", scale: 0.25},
+	ObjectType.WALL_POWERUP => {poly: "planes/powerup/wall/end_cap.poly", scale: 1.2},
+	ObjectType.BIG_BOMB_POWERUP => {poly: "render/powerups/big_bomb/0_128_5.animatedpoly", scale: 0.7},
+];
+
+// Sprites that differ from the hitbox poly for a type.
+final SPRITE_OVERRIDES:Map<Int, String> = [
+	ObjectType.HEALTH_POWERUP => "planes/powerup/health/healthpack.animatedpoly",
+	// mine.poly only has the chain link
+	ObjectType.REMOTE_MINE => "render/planes/explodet/mine/0_128_5.animatedpoly",
+	ObjectType.DIRECTOR_MINE => "render/planes/explodet/mine/0_128_5.animatedpoly",
+];
 
 class ObjectLayer extends Graphics {
 	final replay:Replay;
@@ -34,27 +53,75 @@ class ObjectLayer extends Graphics {
 		super();
 	}
 
-	function showPoly(poly:Poly, object:GameObject) {
-		polysDrawn += 1;
-
+	// Where a point of an object's poly goes on the map.
+	function placeVertex(object:GameObject, px:Float, py:Float, extraScale:Float = 1):Vector {
 		var angle:Float = 0;
 		if (object.angle != null) {
 			angle = -Math.PI * object.angle / 1800;
 		}
 
-		var pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
+		final pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
+		var relative = new Vector(px * extraScale, -py * extraScale);
+		relative.transform(Matrix.R(0, 0, angle));
+
+		if (object.flipX) {
+			relative.x *= -1;
+		}
+		if (object.flipY) {
+			relative.y *= -1;
+		}
+		if (object.scale != null) {
+			relative.x *= object.scale / 1000;
+			relative.y *= object.scale / 1000;
+		}
+
+		return pos + relative;
+	}
+
+	function drawSprite(sprite:Null<Sprite>, object:GameObject, extraScale:Float = 1) {
+		if (sprite == null)
+			return;
+		polysDrawn += 1;
+		beginTileFill(0, 0, 1, 1, sprite.tile);
+		final hull = sprite.frame.hull;
+		var i = 0;
+		while (i + 1 < hull.length) {
+			final dest = placeVertex(object, hull[i], hull[i + 1], extraScale);
+			TexturePages.addVertex(this, sprite.frame, sprite.tile, hull[i], hull[i + 1], dest.x, dest.y);
+			i += 2;
+		}
+		endFill();
+	}
+
+	// Draw an object as the game does. False if there's no sprite for it.
+	function drawGameSprite(sprites:Sprites, object:GameObject):Bool {
+		// only planes have frames by roll; other animations are by time
+		final spin = object.type <= ObjectType.MIRANDA ? object.spin : null;
+		final polyOverride = SPRITE_OVERRIDES.get(object.type);
+		final sprite = polyOverride != null ? sprites.forPoly(polyOverride, object.team, spin) : sprites.forType(object.type,
+			object.team, spin);
+		if (sprite == null)
+			return false;
+
+		// a powerup is its item between the two halves of a bubble
+		final icon = POWERUP_ICONS.get(object.type);
+		drawSprite(sprite, object);
+		if (icon != null) {
+			drawSprite(sprites.forPoly(icon.poly, null), object, icon.scale);
+			drawSprite(sprites.withImage(sprite, CONTAINER_OVER), object);
+		}
+		if (object.type == ObjectType.BALL)
+			drawSprite(sprites.withImage(sprite, CONTAINER_OVER), object);
+		return true;
+	}
+
+	function showPoly(poly:Poly, object:GameObject) {
+		polysDrawn += 1;
 
 		var x:Array<Float> = poly.verticesX;
 		var y:Array<Float> = poly.verticesY;
 
-		final sprites = this.sprites;
-		final sprite = sprites != null && state.showMapArt ? sprites.get(object.type, object.team, object.spin) : null;
-		if (sprite != null) {
-			// sprite hulls match the hitboxes, but use the sprite's own frame
-			x = [for (i in 0...sprite.frame.hull.length >> 1) sprite.frame.hull[2 * i]];
-			y = [for (i in 0...sprite.frame.hull.length >> 1) sprite.frame.hull[2 * i + 1]];
-			beginTileFill(0, 0, 1, 1, sprite.tile);
-		} else if (object.hasTeam()) {
+		if (object.hasTeam()) {
 			final color = replay.teamColorPoly(object.team);
 			if (color != null) {
 				beginFill(color);
@@ -68,25 +135,8 @@ class ObjectLayer extends Graphics {
 		}
 
 		for (i in 0...x.length) {
-			var relative = new Vector(x[i], -y[i]);
-			relative.transform(Matrix.R(0, 0, angle));
-
-			if (object.flipX) {
-				relative.x *= -1;
-			}
-			if (object.flipY) {
-				relative.y *= -1;
-			}
-			if (object.scale != null) {
-				relative.x *= object.scale / 1000;
-				relative.y *= object.scale / 1000;
-			}
-
-			final dest = pos + relative;
-			if (sprite != null)
-				TexturePages.addVertex(this, sprite.frame, sprite.tile, x[i], y[i], dest.x, dest.y);
-			else
-				lineTo(dest.x, dest.y);
+			final dest = placeVertex(object, x[i], y[i]);
+			lineTo(dest.x, dest.y);
 		}
 		endFill();
 	}
@@ -115,6 +165,31 @@ class ObjectLayer extends Graphics {
 	}
 
 	function drawObject(object:GameObject) {
+		final sprites = state.showMapArt ? this.sprites : null;
+		if (sprites == null || !drawGameSprite(sprites, object))
+			drawPlaceholder(object);
+
+		if (object.type <= 4) {
+			getPlaneGraphics(object.owner).syncObject(object);
+			planesSynced.set(object.owner, true);
+			if (object.powerup == ObjectType.BALL) {
+				final ball = sprites == null ? null : sprites.forType(ObjectType.BALL, null, null);
+				if (sprites != null && ball != null) {
+					// upright on the plane
+					final carried = new GameObject();
+					carried.positionX = object.positionX;
+					carried.positionY = object.positionY;
+					drawSprite(ball, carried);
+					drawSprite(sprites.withImage(ball, CONTAINER_OVER), carried);
+				} else {
+					drawBallAt(object);
+				}
+			};
+		}
+	}
+
+	// Hitboxes and simple shapes, for when there are no sprites.
+	function drawPlaceholder(object:GameObject) {
 		final pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
 
 		if (object.type == ObjectType.BALL) {
@@ -127,14 +202,6 @@ class ObjectLayer extends Graphics {
 			showPoly(poly, object);
 		} else {
 			// TODO: draw marker
-		}
-
-		if (object.type <= 4) {
-			getPlaneGraphics(object.owner).syncObject(object);
-			planesSynced.set(object.owner, true);
-			if (object.powerup == ObjectType.BALL) {
-				drawBallAt(object);
-			};
 		}
 
 		// TODO: cheat on biplane bullets, bomber flak

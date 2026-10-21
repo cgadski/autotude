@@ -72,8 +72,9 @@ hx_src/out/viewer_assets/maps/: hx_src/autotude/ExtractMapArt.hx hx_src/autotude
 	$(wildcard alti_home/maps/*.altx)
 	haxe hx_src/build_map_art.hxml
 
-# plane sprites for viewer, extracted from an Altitude install at $ALTI_INSTALL
-hx_src/out/viewer_assets/sprites/: hx_src/autotude/ExtractSprites.hx hx_src/autotude/ExtractMapArt.hx
+# object sprites for viewer, extracted from an Altitude install at $ALTI_INSTALL
+hx_src/out/viewer_assets/sprites/: hx_src/autotude/ExtractSprites.hx hx_src/autotude/ExtractMapArt.hx \
+	hx_src/autotude/WritePolys.hx
 	if [ -z "$(ALTI_INSTALL)" ]; then \
 		echo "ALTI_INSTALL not set"; \
 		exit 1; \

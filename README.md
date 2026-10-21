@@ -63,7 +63,7 @@ Planes have different hitboxes depending on their "roll." The degrees of roll fo
 
 Haxe soure. Mainly the replay viewer, written with the heaps game engine.
 
-The viewer draws each map with its real artwork when it finds it in `viewer_assets/maps/<map>/` next to the page. Run `make hx_src/out/viewer_assets/maps/` (or `haxe hx_src/build_map_art.hxml [map...]`) to extract it from the `.altx` files in `alti_home/maps/`. Planes and some projectiles are drawn with the game's team-coloured sprites when `viewer_assets/sprites/` exists. Those aren't in the map files, so they're extracted from an Altitude install: `ALTI_INSTALL=/path/to/Altitude make hx_src/out/viewer_assets/sprites/`. Press `M` in the viewer to switch between the game artwork and plain hitboxes and obstacles.
+The viewer draws each map with its real artwork when it finds it in `viewer_assets/maps/<map>/` next to the page. Run `make hx_src/out/viewer_assets/maps/` (or `haxe hx_src/build_map_art.hxml [map...]`) to extract it from the `.altx` files in `alti_home/maps/`. Planes, projectiles, powerups, the ball, goals and bases are drawn with the game's (team-coloured) sprites when `viewer_assets/sprites/` exists. Those aren't in the map files, so they're extracted from an Altitude install: `ALTI_INSTALL=/path/to/Altitude make hx_src/out/viewer_assets/sprites/`. Press `M` in the viewer to switch between the game artwork and plain hitboxes and obstacles.
 
 ## `rust_src/`
 
