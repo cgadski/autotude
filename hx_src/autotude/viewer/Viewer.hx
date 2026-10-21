@@ -36,6 +36,7 @@ class Viewer extends hxd.App {
 
 	var draggable:Null<Interactive>;
 	final bindings = new Bindings();
+	final sound = new Sound();
 
 	final sidebar:DivElement = cast getElem("sidebar");
 	final help:DivElement = cast getElem("help");
@@ -162,6 +163,9 @@ class Viewer extends hxd.App {
 			timeBefore.innerHTML = Replay.showTimestampHtml(playerState.frameIdx);
 			timeAfter.innerHTML = Replay.showTimestampHtml(playerState.framesRemaining);
 			scrubber.value = Std.string(playerState.frameIdx);
+			final game = this.game;
+			if (game != null)
+				sound.update(playerState, game.timeline);
 		}
 	}
 
@@ -228,6 +232,9 @@ class Viewer extends hxd.App {
 		});
 		r("Toggle health and energy bars", [Key.E], () -> {
 			n((s) -> s.showPlaneBars = !s.showPlaneBars);
+		});
+		r("Toggle sound", [Key.N], () -> {
+			sound.enabled = !sound.enabled;
 		});
 
 		r("Add timestamp to URL", [Key.T], () -> {

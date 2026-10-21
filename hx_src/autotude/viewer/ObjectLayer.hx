@@ -50,11 +50,6 @@ final BADGE_Y = 44;
 // The ball at its hitbox poly's size looks too big next to the game's.
 final BALL_SCALE = 0.8;
 
-// Replays don't record the afterburner key, but it drains a steady 60-ish
-// energy (of 1000) per tick, net of recharge, where weapons take hundreds
-// at once.
-final AFTERBURNER_DRAIN_MIN = 30;
-final AFTERBURNER_DRAIN_MAX = 100;
 final AFTERBURNER_IMAGE = "effects/afterburner/afterburner1.png";
 
 // Explodet mines are a spiky mine carried by a drone: directly for remote
@@ -157,28 +152,8 @@ class ObjectLayer extends Graphics {
 		return true;
 	}
 
-	// Whether a plane's energy fell like an afterburner's over either of the
-	// last two updates (two, so firing a weapon meanwhile doesn't hide it).
-	public function afterburning(plane:GameObject):Bool {
-		final i = replay.updateAt(state.frameIdx);
-		var after = plane;
-		for (back in 1...3) {
-			if (i - back < 0)
-				break;
-			final update = replay.updates[i - back];
-			var before:Null<GameObject> = null;
-			for (o in update.objects)
-				if (o.uid == plane.uid)
-					before = o;
-			if (before == null)
-				break;
-			final drain = (before.ammo - after.ammo) / Math.max(1, haxe.Int64.toInt(update.duration));
-			if (drain >= AFTERBURNER_DRAIN_MIN && drain <= AFTERBURNER_DRAIN_MAX)
-				return true;
-			after = before;
-		}
-		return false;
-	}
+	function afterburning(plane:GameObject):Bool
+		return EffectTimeline.afterburning(replay, state.frameIdx, plane);
 
 	// The flame behind the plane's tail, its bright end at the plane.
 	function drawAfterburner(sprites:Sprites, plane:Sprite, object:GameObject) {

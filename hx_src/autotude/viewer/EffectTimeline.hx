@@ -47,6 +47,10 @@ typedef TimedEffect = {
 	y:Float
 };
 
+// Energy drain per tick that means a plane is afterburning (see afterburning).
+final AFTERBURNER_DRAIN_MIN = 30;
+final AFTERBURNER_DRAIN_MAX = 100;
+
 // Ticks between a kill event and its plane disappearing.
 final KILL_WINDOW = 15;
 
@@ -177,6 +181,33 @@ class EffectTimeline {
 			if (o.type <= ObjectType.MIRANDA && o.owner == player)
 				return o;
 		return null;
+	}
+
+	/**
+		Whether a plane is afterburning at `tick`. Replays don't record the
+		afterburner key, but it drains a steady 60-ish energy (of 1000) per
+		tick, net of recharge, where weapons take hundreds at once. Looks at
+		the last two updates, so firing a weapon meanwhile doesn't hide it.
+	**/
+	public static function afterburning(replay:Replay, tick:Int, plane:GameObject):Bool {
+		final i = replay.updateAt(tick);
+		var after = plane;
+		for (back in 1...3) {
+			if (i - back < 0)
+				break;
+			final update = replay.updates[i - back];
+			var before:Null<GameObject> = null;
+			for (o in update.objects)
+				if (o.uid == plane.uid)
+					before = o;
+			if (before == null)
+				break;
+			final drain = (before.ammo - after.ammo) / Math.max(1, haxe.Int64.toInt(update.duration));
+			if (drain >= AFTERBURNER_DRAIN_MIN && drain <= AFTERBURNER_DRAIN_MAX)
+				return true;
+			after = before;
+		}
+		return false;
 	}
 
 	/** Index of the first effect at or after `tick`. **/
