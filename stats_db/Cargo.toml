@@ -20,6 +20,10 @@ name = "cat-replay"
 path = "bin/cat-replay.rs"
 
 [[bin]]
+name = "slice-replay"
+path = "bin/slice-replay.rs"
+
+[[bin]]
 name = "vacuum-replays"
 path = "bin/vacuum-replays.rs"
 
@@ -40,6 +44,7 @@ ndarray-npy = "0.9.1"
 threadpool = "1.8.1"
 arrow = "53"
 parquet = "53"
+base64 = "0.22.1"
 
 [build-dependencies]
 prost-build = "0.12"

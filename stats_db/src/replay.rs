@@ -1,5 +1,6 @@
 use anyhow::Context;
 
+use base64;
 use flate2::read::GzDecoder;
 use prost::Message;
 use std::fs::File;
@@ -60,8 +61,14 @@ pub fn read_replay_file<P: AsRef<Path>, L: ReplayListener>(
             }
 
             let msg_bytes = &buffer[prost::length_delimiter_len(len)..total_msg_len];
-            let update =
-                Update::decode(msg_bytes).with_context(|| "Error decoding protobuf update")?;
+
+            let update = Update::decode(msg_bytes).map_err(|e| {
+                anyhow::anyhow!(
+                    "Failed on update: {}\n with error: {}",
+                    base64::encode(msg_bytes),
+                    e
+                )
+            })?;
 
             listener.on_start_frame()?;
 
