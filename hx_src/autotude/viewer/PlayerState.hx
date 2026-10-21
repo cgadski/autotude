@@ -21,6 +21,7 @@ class PlayerState {
 	public var pos:Vector = new Vector(0, 0);
 	public var scale:Float = 1;
 	public var showBounds:Bool = false;
+	public var showMapArt:Bool = true;
 
 	// scrubber
 	public var frameIdx(default, set):Int = 0;

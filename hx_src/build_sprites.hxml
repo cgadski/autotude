@@ -1,0 +1,6 @@
+-lib format
+-cp hx_src
+--macro nullSafety("autotude", Loose)
+
+# pass the path to an Altitude install as an extra command-line argument
+--run autotude.ExtractSprites

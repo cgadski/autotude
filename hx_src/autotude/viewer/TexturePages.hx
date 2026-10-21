@@ -1,0 +1,131 @@
+package autotude.viewer;
+
+import h2d.Graphics;
+import h2d.Tile;
+import hxd.BitmapData;
+import js.Browser;
+import js.html.CanvasElement;
+import js.html.ImageElement;
+import js.lib.Promise;
+
+// Texture pages and textured polygons, as written by autotude.ExtractMapArt
+// and autotude.ExtractSprites.
+
+typedef PageTile = {
+	x:Int,
+	y:Int,
+	w:Int,
+	h:Int,
+	file:String,
+	alpha:Null<String>
+};
+
+typedef Page = {
+	w:Int,
+	h:Int,
+	tiles:Array<PageTile>
+};
+
+typedef PageImage = {
+	page:Int,
+	x:Int,
+	y:Int,
+	w:Int,
+	h:Int
+};
+
+/** A polygon (y-up) with an image placed at translate + flip(rotate(scale * imagePos)). **/
+typedef TexturedPoly = {
+	hull:Array<Float>,
+	color:Int,
+	image:Null<String>,
+	scale:Float,
+	textureRotation:Float,
+	flipX:Bool,
+	flipY:Bool,
+	tx:Float,
+	ty:Float
+};
+
+class TexturePages {
+	/** Load every page under `root` and cut out each image as its own texture. **/
+	public static function load(root:String, pages:Array<Page>, images:haxe.DynamicAccess<PageImage>):Promise<Map<String, Tile>> {
+		return Promise.all([for (page in pages) loadPage(root, page)]).then(canvases -> {
+			final textures:Map<String, Tile> = [];
+			for (path in images.keys()) {
+				final img = images.get(path);
+				if (img == null)
+					continue;
+				final bmp = BitmapData.fromNative(canvases[img.page].getContext2d()).sub(img.x, img.y, img.w, img.h);
+				textures.set(path, Tile.fromBitmap(bmp));
+			}
+			return textures;
+		});
+	}
+
+	/**
+		Add a vertex of `poly` to a tile fill on `g` (see `Graphics.beginTileFill`).
+		`px, py` is the hull point in the poly's own space, `x, y` where it goes.
+	**/
+	public static function addVertex(g:Graphics, poly:TexturedPoly, tile:Tile, px:Float, py:Float, x:Float, y:Float) {
+		// invert translate + flip(rotate(scale * imagePos)); flips mirror
+		// about the translate point
+		var qx = px - poly.tx, qy = py - poly.ty;
+		if (poly.flipX)
+			qx = -qx;
+		if (poly.flipY)
+			qy = -qy;
+		final rot = -poly.textureRotation * Math.PI / 180;
+		final cos = Math.cos(rot), sin = Math.sin(rot);
+		final ix = (qx * cos - qy * sin) / poly.scale;
+		final iy = (qx * sin + qy * cos) / poly.scale;
+		// images are y-up too
+		final tex = tile.getTexture();
+		g.addVertex(x, y, 1, 1, 1, 1, ix / tex.width, (tile.height - iy) / tex.height);
+	}
+
+	static function loadPage(root:String, page:Page):Promise<CanvasElement> {
+		final canvas = Browser.document.createCanvasElement();
+		canvas.width = page.w;
+		canvas.height = page.h;
+		final ctx = canvas.getContext2d({willReadFrequently: true});
+		return Promise.all([
+			for (tile in page.tiles)
+				loadImage(root + tile.file).then(img -> {
+					ctx.drawImage(img, tile.x, tile.y);
+					final alpha = tile.alpha;
+					return alpha == null ? Promise.resolve(true) : loadImage(root + alpha).then(mask -> {
+						applyAlpha(ctx, mask, tile);
+						return true;
+					});
+				})
+		]).then(_ -> canvas);
+	}
+
+	// Copy a greyscale mask into the alpha channel of one tile of the page.
+	static function applyAlpha(ctx:js.html.CanvasRenderingContext2D, mask:ImageElement, tile:PageTile) {
+		final maskCanvas = Browser.document.createCanvasElement();
+		maskCanvas.width = tile.w;
+		maskCanvas.height = tile.h;
+		final maskCtx = maskCanvas.getContext2d({willReadFrequently: true});
+		maskCtx.drawImage(mask, 0, 0);
+		final alpha = maskCtx.getImageData(0, 0, tile.w, tile.h).data;
+		final pixels = ctx.getImageData(tile.x, tile.y, tile.w, tile.h);
+		final data = pixels.data;
+		var i = 3;
+		while (i < data.length) {
+			data[i] = alpha[i - 3];
+			i += 4;
+		}
+		ctx.putImageData(pixels, tile.x, tile.y);
+	}
+
+	static function loadImage(src:String):Promise<ImageElement> {
+		return new Promise((resolve, reject) -> {
+			final img = Browser.document.createImageElement();
+			img.onload = () -> resolve(img);
+			img.onerror = () -> reject('failed to load $src');
+			img.src = src;
+		});
+	}
+}

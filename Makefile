@@ -67,6 +67,19 @@ hx_src/out/viewer.js: hx_src/autotude/proto/ hx_src/build_viewer.hxml \
 	mkdir -p $(@D)
 	haxe hx_src/build_viewer.hxml
 
+# map artwork for viewer, extracted from alti_home/maps/*.altx
+hx_src/out/viewer_assets/maps/: hx_src/autotude/ExtractMapArt.hx hx_src/autotude/Lzma.hx \
+	$(wildcard alti_home/maps/*.altx)
+	haxe hx_src/build_map_art.hxml
+
+# plane sprites for viewer, extracted from an Altitude install at $ALTI_INSTALL
+hx_src/out/viewer_assets/sprites/: hx_src/autotude/ExtractSprites.hx hx_src/autotude/ExtractMapArt.hx
+	if [ -z "$(ALTI_INSTALL)" ]; then \
+		echo "ALTI_INSTALL not set"; \
+		exit 1; \
+	fi
+	haxe hx_src/build_sprites.hxml "$(ALTI_INSTALL)"
+
 .PHONY: copy_assets
 
 # copy assets required to build sub-projects
@@ -80,8 +93,10 @@ stats_db/proto/: $(PROTO_FILES)
 	cp $(PROTO_SRC)/* $@
 
 # js/html of viewer for altistats.com
-altistats.com/nginx/assets/: hx_src/out/viewer.js hx_src/viewer.html
+altistats.com/nginx/assets/: hx_src/out/viewer.js hx_src/viewer.html \
+	hx_src/out/viewer_assets/maps/
 	rm -rf $@
 	mkdir -p $@
 	cp hx_src/out/viewer.js $@
 	cp hx_src/viewer.html $@/index.html
+	cp -r hx_src/out/viewer_assets $@

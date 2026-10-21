@@ -1,0 +1,6 @@
+-lib format
+-cp hx_src
+--macro nullSafety("autotude", Loose)
+
+# extra command-line arguments (map names) are passed to the tool
+--run autotude.ExtractMapArt

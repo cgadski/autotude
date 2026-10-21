@@ -23,6 +23,9 @@ class ObjectLayer extends Graphics {
 
 	final planeGraphics:Map<Int, PlaneGraphics> = new Map();
 
+	/** Game sprites, drawn instead of hitboxes once loaded. **/
+	public var sprites:Null<Sprites>;
+
 	public function new(state:PlayerState) {
 		this.replay = state.replay;
 		this.geom = state.geom;
@@ -41,10 +44,17 @@ class ObjectLayer extends Graphics {
 
 		var pos = new Vector(object.positionX / 2, geom.maxY - object.positionY / 2);
 
-		final x = poly.verticesX;
-		final y = poly.verticesY;
+		var x:Array<Float> = poly.verticesX;
+		var y:Array<Float> = poly.verticesY;
 
-		if (object.hasTeam()) {
+		final sprites = this.sprites;
+		final sprite = sprites != null && state.showMapArt ? sprites.get(object.type, object.team, object.spin) : null;
+		if (sprite != null) {
+			// sprite hulls match the hitboxes, but use the sprite's own frame
+			x = [for (i in 0...sprite.frame.hull.length >> 1) sprite.frame.hull[2 * i]];
+			y = [for (i in 0...sprite.frame.hull.length >> 1) sprite.frame.hull[2 * i + 1]];
+			beginTileFill(0, 0, 1, 1, sprite.tile);
+		} else if (object.hasTeam()) {
 			final color = replay.teamColorPoly(object.team);
 			if (color != null) {
 				beginFill(color);
@@ -73,7 +83,10 @@ class ObjectLayer extends Graphics {
 			}
 
 			final dest = pos + relative;
-			lineTo(dest.x, dest.y);
+			if (sprite != null)
+				TexturePages.addVertex(this, sprite.frame, sprite.tile, x[i], y[i], dest.x, dest.y);
+			else
+				lineTo(dest.x, dest.y);
 		}
 		endFill();
 	}

@@ -21,7 +21,14 @@ class PlaneGraphics extends Graphics {
 		var font:h2d.Font = hxd.res.DefaultFont.get();
 		nickname = new h2d.Text(font);
 		nickname.textAlign = Center;
-		nickname.textColor = 0x000000;
+		// readable on both dark map artwork and the plain white background
+		nickname.textColor = 0xFFFFFF;
+		nickname.dropShadow = {
+			dx: 1,
+			dy: 1,
+			color: 0x000000,
+			alpha: 0.9
+		};
 		nickname.scaleX = 1.5;
 		nickname.scaleY = 1.5;
 		nickname.y = 15;

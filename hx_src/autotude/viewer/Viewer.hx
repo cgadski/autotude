@@ -216,6 +216,9 @@ class Viewer extends hxd.App {
 		r("Toggle bounds", [Key.B], () -> {
 			n((s) -> s.showBounds = !s.showBounds);
 		});
+		r("Toggle game artwork", [Key.M], () -> {
+			n((s) -> s.showMapArt = !s.showMapArt);
+		});
 
 		r("Add timestamp to URL", [Key.T], () -> {
 			n((s) -> s.addTimestamp());
