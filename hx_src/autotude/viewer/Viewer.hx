@@ -26,6 +26,9 @@ final SCALE_MAX = 1.5;
 // zoom factor per mouse wheel notch
 final ZOOM_PER_NOTCH = 1.15;
 
+// where the volume slider's level is remembered (localStorage)
+final VOLUME_KEY = "autotude-viewer-volume";
+
 inline function getElem(id:String) {
 	return Browser.document.getElementById(id);
 }
@@ -48,6 +51,8 @@ class Viewer extends hxd.App {
 	final timeAfter:SpanElement = cast getElem("time_after");
 	final playButton:js.html.ButtonElement = cast getElem("play");
 	final speedSelect:js.html.SelectElement = cast getElem("speed");
+	final muteButton:js.html.ButtonElement = cast getElem("mute");
+	final volumeSlider:InputElement = cast getElem("volume");
 	final canvas:CanvasElement = cast getElem("webgl");
 
 	// playback speed, from the speed selector
@@ -62,6 +67,24 @@ class Viewer extends hxd.App {
 				playerState.togglePlay();
 			playButton.blur(); // keep Space for the viewer's own binding
 		};
+		muteButton.onclick = () -> {
+			toggleSound();
+			muteButton.blur();
+		};
+		// the volume is remembered in this browser, if it allows storage
+		try {
+			final saved = Browser.window.localStorage.getItem(VOLUME_KEY);
+			if (saved != null)
+				volumeSlider.value = saved;
+		} catch (_) {}
+		setVolume();
+		volumeSlider.oninput = () -> {
+			setVolume();
+			try {
+				Browser.window.localStorage.setItem(VOLUME_KEY, volumeSlider.value);
+			} catch (_) {}
+		};
+		volumeSlider.onchange = () -> volumeSlider.blur();
 		speedSelect.onchange = () -> {
 			speed = Std.parseFloat(speedSelect.value);
 			if (Math.isNaN(speed))
@@ -203,6 +226,24 @@ class Viewer extends hxd.App {
 		}
 	}
 
+	function toggleSound() {
+		sound.enabled = !sound.enabled;
+		showSoundState();
+	}
+
+	// Volume slider (0-100) to the sound system; moving it also unmutes.
+	function setVolume() {
+		final v = Std.parseFloat(volumeSlider.value);
+		sound.volume = Math.isNaN(v) ? 1 : v / 100;
+		if (sound.volume > 0)
+			sound.enabled = true;
+		showSoundState();
+	}
+
+	function showSoundState() {
+		muteButton.innerHTML = !sound.enabled || sound.volume == 0 ? "&#128263;" : "&#128266;";
+	}
+
 	function registerBindings() {
 		final r = bindings.register;
 		final n = (cb:(PlayerState) -> Void) -> {
@@ -268,7 +309,7 @@ class Viewer extends hxd.App {
 			n((s) -> s.showPlaneBars = !s.showPlaneBars);
 		});
 		r("Toggle sound", [Key.N], () -> {
-			sound.enabled = !sound.enabled;
+			toggleSound();
 		});
 
 		r("Add timestamp to URL", [Key.T], () -> {

@@ -206,7 +206,14 @@
                 color: var(--text-dim);
             }
 
+            #volume {
+                width: 80px;
+                accent-color: var(--accent);
+                cursor: pointer;
+            }
+
             #play,
+            #mute,
             #speed {
                 font: inherit;
                 color: var(--text);
@@ -216,7 +223,8 @@
                 cursor: pointer;
             }
 
-            #play {
+            #play,
+            #mute {
                 width: 34px;
                 height: 28px;
                 padding: 0;
@@ -269,6 +277,8 @@
                     <option value="2">2&times;</option>
                     <option value="4">4&times;</option>
                 </select>
+                <button id="mute" type="button" title="Sound on / off (N)">&#128266;</button>
+                <input id="volume" type="range" min="0" max="100" value="80" title="Volume" />
                 <span class="hint">H for keys</span>
             </div>
         </div>

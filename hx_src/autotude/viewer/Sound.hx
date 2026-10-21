@@ -91,6 +91,9 @@ typedef Loop = {
 class Sound {
 	public var enabled = true;
 
+	/** 0 to 1, from the volume slider. **/
+	public var volume = 1.0;
+
 	var ctx:Null<AudioContext>;
 	var master:Null<GainNode>;
 	final buffers:Map<String, AudioBuffer> = [];
@@ -150,7 +153,7 @@ class Sound {
 		lastTick = tick;
 		if (ctx == null || master == null)
 			return;
-		master.gain.value = enabled ? MASTER_VOLUME : 0;
+		master.gain.value = enabled ? MASTER_VOLUME * volume : 0;
 		if (!state.playing || !enabled) {
 			stopLoops();
 			return;
