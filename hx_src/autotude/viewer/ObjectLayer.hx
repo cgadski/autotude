@@ -30,11 +30,17 @@ final POWERUP_ICONS:Map<Int, {poly:String, scale:Float}> = [
 // Sprites that differ from the hitbox poly for a type.
 final SPRITE_OVERRIDES:Map<Int, String> = [
 	ObjectType.HEALTH_POWERUP => "planes/powerup/health/healthpack.animatedpoly",
-	// mine.poly only has a rope link; the game draws a drone (carrying the
-	// spiky mine on a rope, which replays don't record)
-	ObjectType.REMOTE_MINE => "render/planes/explodet/drone/0_128_5.animatedpoly",
-	ObjectType.DIRECTOR_MINE => "render/planes/explodet/drone/0_128_5.animatedpoly",
 ];
+
+// Explodet mines are a spiky mine carried by a drone: directly for remote
+// mines, on a chain for the regular (director) ones. Replays only record
+// the mine, so it hangs straight down. Distances in pixels, measured from
+// the game.
+final MINE_IMAGE = "render/planes/explodet/mine/0_128_5_0000.png";
+final MINE_DRONE = "render/planes/explodet/drone/0_128_5.animatedpoly";
+final MINE_LINK = "planes/explodet/link.png";
+final REMOTE_MINE_DRONE_HEIGHT = 17;
+final DIRECTOR_MINE_DRONE_HEIGHT = 33;
 
 class ObjectLayer extends Graphics {
 	final replay:Replay;
@@ -97,6 +103,9 @@ class ObjectLayer extends Graphics {
 
 	// Draw an object as the game does. False if there's no sprite for it.
 	function drawGameSprite(sprites:Sprites, object:GameObject):Bool {
+		if (object.type == ObjectType.REMOTE_MINE || object.type == ObjectType.DIRECTOR_MINE)
+			return drawMine(sprites, object);
+
 		// only planes have frames by roll; other animations are by time
 		final spin = object.type <= ObjectType.MIRANDA ? object.spin : null;
 		final polyOverride = SPRITE_OVERRIDES.get(object.type);
@@ -112,6 +121,36 @@ class ObjectLayer extends Graphics {
 			drawSprite(sprites.forPoly(icon.poly, null), object, icon.scale);
 			drawSprite(sprites.withImage(sprite, CONTAINER_OVER), object);
 		}
+		return true;
+	}
+
+	function drawMine(sprites:Sprites, object:GameObject):Bool {
+		final mine = sprites.forImage(MINE_IMAGE, object.team);
+		final drone = sprites.forPoly(MINE_DRONE, object.team);
+		if (mine == null || drone == null)
+			return false;
+
+		// an upright copy of the object, `up` pixels higher
+		function above(up:Float):GameObject {
+			final o = new GameObject();
+			o.positionX = object.positionX;
+			o.positionY = object.positionY + Std.int(up * 2); // positions are in half pixels
+			return o;
+		}
+
+		final remote = object.type == ObjectType.REMOTE_MINE;
+		final droneHeight = remote ? REMOTE_MINE_DRONE_HEIGHT : DIRECTOR_MINE_DRONE_HEIGHT;
+		if (!remote) {
+			final link = sprites.forImage(MINE_LINK);
+			final top = droneHeight - drone.tile.height / 2, bottom = mine.tile.height / 2 - 2;
+			var y = bottom;
+			while (link != null && y < top) {
+				drawSprite(link, above(y));
+				y += link.tile.height / 2;
+			}
+		}
+		drawSprite(mine, above(0));
+		drawSprite(drone, above(droneHeight));
 		return true;
 	}
 

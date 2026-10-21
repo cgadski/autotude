@@ -94,6 +94,29 @@ class Sprites {
 		return tile == null ? null : {frame: best, tile: tile};
 	}
 
+	/** An image on its own, centred on the origin, in a team's colour if it has one. **/
+	public function forImage(image:String, ?team:Int):Null<Sprite> {
+		final tile = textures.get(teamImage(image, team)) ?? textures.get(image);
+		if (tile == null)
+			return null;
+		final w = tile.width / 2, h = tile.height / 2;
+		return {
+			frame: {
+				hull: [-w, -h, w, -h, w, h, -w, h],
+				color: -1,
+				image: image,
+				scale: 1,
+				textureRotation: 0,
+				flipX: false,
+				flipY: false,
+				tx: -w,
+				ty: -h,
+				spin: 0
+			},
+			tile: tile
+		};
+	}
+
 	/**
 		The same frame with a different image (in a team's colour if it has
 		one), scaled to the width of the original image.
