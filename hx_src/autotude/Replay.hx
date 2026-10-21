@@ -57,6 +57,30 @@ class Replay {
 	public final updates:Array<Update> = [];
 	public final gameStates:Array<GameState> = [];
 
+	/**
+		Tick (frame, 1/30 s) at which each update takes effect. An update lasts
+		`duration` ticks (run-length encoding of unchanged frames), so
+		`updates[i]` is shown from `ticks[i]` until `ticks[i + 1]`.
+	**/
+	public final ticks:Array<Int> = [];
+
+	/** Length of the replay in ticks. **/
+	public var totalTicks(default, null):Int = 0;
+
+	/** Index of the update shown at `tick`. **/
+	public function updateAt(tick:Int):Int {
+		// last update starting at or before tick
+		var lo = 0, hi = ticks.length - 1;
+		while (lo < hi) {
+			final mid = (lo + hi + 1) >> 1;
+			if (ticks[mid] <= tick)
+				lo = mid;
+			else
+				hi = mid - 1;
+		}
+		return lo;
+	}
+
 	public var mapGeometry:MapGeometry = cast null;
 	public var mapName:String = cast null;
 
@@ -98,6 +122,8 @@ class Replay {
 			final update = new Update();
 			update.mergeDelimitedFrom(buf);
 			updates.push(update);
+			ticks.push(totalTicks);
+			totalTicks += haxe.Int64.toInt(update.duration);
 
 			for (event in update.events) {
 				if (event.hasMapLoad()) {

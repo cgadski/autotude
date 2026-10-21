@@ -42,7 +42,7 @@ class PlaneGraphics extends Graphics {
 		x = object.positionX / 2;
 		y = replay.mapGeometry.maxY - object.positionY / 2;
 
-		nickname.text = replay.gameStates[state.frameIdx].getName(object.owner);
+		nickname.text = replay.gameStates[replay.updateAt(state.frameIdx)].getName(object.owner);
 	}
 
 	override function draw(ctx:RenderContext) {

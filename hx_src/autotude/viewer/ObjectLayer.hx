@@ -237,7 +237,7 @@ class ObjectLayer extends Graphics {
 
 	override function draw(ctx:RenderContext) {
 		clear();
-		final update = replay.updates[state.frameIdx];
+		final update = replay.updates[replay.updateAt(state.frameIdx)];
 
 		// Draw objects / sync planes.
 		planesSynced.clear();

@@ -24,6 +24,7 @@ class PlayerState {
 	public var showMapArt:Bool = true;
 
 	// scrubber
+	// game tick (frame, 1/30 s) being shown, as in the "t" URL parameter
 	public var frameIdx(default, set):Int = 0;
 	public var framesRemaining(get, null):Int = 0;
 	public var playing:Bool = false;
@@ -60,12 +61,12 @@ class PlayerState {
 	}
 
 	function get_framesRemaining():Int {
-		return replay.updates.length - frameIdx - 1;
+		return replay.totalTicks - frameIdx - 1;
 	}
 
 	function boundFrame() {
-		if (frameIdx >= replay.updates.length) {
-			frameIdx = replay.updates.length - 1;
+		if (frameIdx >= replay.totalTicks) {
+			frameIdx = replay.totalTicks - 1;
 			this.playing = false;
 		}
 		if (frameIdx < 0) {

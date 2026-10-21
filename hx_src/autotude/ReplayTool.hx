@@ -20,12 +20,12 @@ class ReplaySummary {
 		for (update in replay.updates) {
 			for (event in update.events) {
 				onEvent(event, replay.gameStates[i], (s) -> {
-					Sys.println('${showTimestamp(i)}: $s');
+					Sys.println('${showTimestamp(replay.ticks[i])}: $s');
 				});
 			}
 			for (object in update.objects) {
 				onObject(object, replay.gameStates[i], (s) -> {
-					Sys.println('${showTimestamp(i)}: $s');
+					Sys.println('${showTimestamp(replay.ticks[i])}: $s');
 				});
 			}
 			i++;
@@ -107,7 +107,7 @@ class ReplaySummary {
 	}
 
 	public function show() {
-		final seconds = replay.updates.length / 30;
+		final seconds = replay.totalTicks / 30;
 		Sys.println('----');
 		Sys.println('replay statistics');
 		Sys.println('----');

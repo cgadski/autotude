@@ -83,7 +83,7 @@ class Viewer extends hxd.App {
 					s2d.addChild(game = new Game(playerState));
 
 					scrubber.min = "0";
-					scrubber.max = Std.string(replay.updates.length - 1);
+					scrubber.max = Std.string(replay.totalTicks - 1);
 					scrubber.removeAttribute("disabled");
 				}
 			});

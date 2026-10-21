@@ -53,7 +53,7 @@ class SidebarManager {
 				if (event.hasGoal()) {
 					final whoScored = gameState.getName(event.goal.whoScored[0]);
 					final color = state.replay.teamColorText(gameState.getTeam(event.goal.whoScored[0]));
-					sidebar.appendChild(sidebarEntry(idx, (span) -> {
+					sidebar.appendChild(sidebarEntry(state.replay.ticks[idx], (span) -> {
 						span.innerHTML = '<span style="color:$color">${whoScored.htmlEscape()}</span> scored goal';
 					}));
 				}
@@ -61,7 +61,7 @@ class SidebarManager {
 					final message = event.chat.message;
 					final sender = gameState.getName(event.chat.sender);
 					final color = state.replay.teamColorText(gameState.getTeam(event.chat.sender));
-					sidebar.appendChild(sidebarEntry(idx, (span) -> {
+					sidebar.appendChild(sidebarEntry(state.replay.ticks[idx], (span) -> {
 						span.innerHTML = '<span style="color:$color">${sender.htmlEscape()}</span>: ${message.htmlEscape()}';
 						span.style.opacity = "0.5";
 					}));

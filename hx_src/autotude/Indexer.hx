@@ -37,7 +37,7 @@ private class ReplayIndexer {
 			conn.request('INSERT INTO replays (path, map, ticks, time) VALUES (
 				${conn.quote(path)}, 
 				${conn.quote(replay.mapName)}, 
-				${replay.updates.length},
+				${replay.totalTicks},
 				${timestamp}
 			)');
 
@@ -68,12 +68,12 @@ private class ReplayIndexer {
 		for (update in replay.updates) {
 			final state = replay.gameStates[idx];
 			for (event in update.events) {
-				onEvent(idx, state, event);
+				onEvent(replay.ticks[idx], state, event);
 			}
 			for (object in update.objects) {
 				if (object.type < 5) {
 					final name = state.getName(object.owner);
-					playerTimes[name] = 1 + (playerTimes.get(name) ?? 0);
+					playerTimes[name] = haxe.Int64.toInt(update.duration) + (playerTimes.get(name) ?? 0);
 					playerTeams[name] = object.team;
 				}
 			}
