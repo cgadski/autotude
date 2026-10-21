@@ -23,6 +23,8 @@ final BACKGROUND = 0xA9A7A7;
 final PAGE_BACKGROUND = 0x15171C;
 final SCALE_MIN = 0.2;
 final SCALE_MAX = 1.5;
+// zoom factor per mouse wheel notch
+final ZOOM_PER_NOTCH = 1.15;
 
 inline function getElem(id:String) {
 	return Browser.document.getElementById(id);
@@ -109,8 +111,10 @@ class Viewer extends hxd.App {
 		if (playerState == null)
 			return;
 
-		// wheel up (negative delta) zooms in
-		playerState.scale *= Math.exp(-e.wheelDelta);
+		// wheel up (negative delta) zooms in. heaps gives deltaY / 120, and a
+		// wheel notch is usually 100px of deltaY.
+		final notches = e.wheelDelta * 120 / 100;
+		playerState.scale *= Math.pow(ZOOM_PER_NOTCH, -notches);
 		playerState.scale = Math.max(SCALE_MIN, playerState.scale);
 		playerState.scale = Math.min(SCALE_MAX, playerState.scale);
 	}
