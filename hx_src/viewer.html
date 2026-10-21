@@ -86,6 +86,45 @@
                 right: 12px;
             }
 
+            #scoreboard {
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: none;
+                align-items: center;
+                gap: 14px;
+                padding: 4px 16px;
+                background: var(--panel);
+                border: 1px solid var(--panel-border);
+                border-radius: 8px;
+                font-variant-numeric: tabular-nums;
+                pointer-events: none;
+                white-space: nowrap;
+            }
+
+            #scoreboard.show {
+                display: flex;
+            }
+
+            #scoreboard .score {
+                font-size: 26px;
+                font-weight: 700;
+                min-width: 1.2em;
+                text-align: center;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+            }
+
+            #scoreboard .clock {
+                font-size: 18px;
+                color: var(--text);
+            }
+
+            #scoreboard .sudden-death {
+                color: #ffb347;
+                font-weight: 600;
+            }
+
             #help p {
                 margin: 0.3em 0;
                 display: flex;

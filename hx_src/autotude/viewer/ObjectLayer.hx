@@ -30,6 +30,12 @@ final POWERUP_ICONS:Map<Int, String> = [
 	ObjectType.HEALTH_POWERUP => "planes/powerup/health/healthpack.animatedpoly",
 ];
 
+// Sizes relative to the game's, where the game's look too small in the viewer.
+final SPRITE_SCALES:Map<Int, Float> = [
+	ObjectType.DIRECTOR_ROCKET => 1.25,
+	ObjectType.THERMOBARIC_ROCKET => 1.25,
+];
+
 // Sprites that differ from the hitbox poly for a type.
 final SPRITE_OVERRIDES:Map<Int, String> = [
 	ObjectType.HEALTH_POWERUP => "planes/powerup/container_health.poly",
@@ -141,7 +147,7 @@ class ObjectLayer extends Graphics {
 
 		if (object.type <= ObjectType.MIRANDA && afterburning(object))
 			drawAfterburner(sprites, sprite, object);
-		drawSprite(sprite, object);
+		drawSprite(sprite, object, SPRITE_SCALES.get(object.type) ?? 1);
 		// a powerup is its icon in a container (a bubble, or health's frame)
 		final icon = POWERUP_ICONS.get(object.type);
 		if (icon != null) {

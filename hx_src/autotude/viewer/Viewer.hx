@@ -37,6 +37,7 @@ class Viewer extends hxd.App {
 	var draggable:Null<Interactive>;
 	final bindings = new Bindings();
 	final sound = new Sound();
+	var score:Null<Scoreboard>;
 
 	final sidebar:DivElement = cast getElem("sidebar");
 	final help:DivElement = cast getElem("help");
@@ -82,6 +83,7 @@ class Viewer extends hxd.App {
 				final replay = new Replay(new BytesInput(Bytes.ofData(buf)));
 				if (replay != null && replay.mapGeometry != null) {
 					this.playerState = new PlayerState(s2d, sidebar, canvas, replay, replay.mapGeometry);
+					score = new Scoreboard(replay, scoreboard);
 					if (timestamp != null) {
 						playerState.frameIdx = Std.parseInt(timestamp) ?? 0;
 					}
@@ -166,6 +168,9 @@ class Viewer extends hxd.App {
 			final game = this.game;
 			if (game != null)
 				sound.update(playerState, game.timeline);
+			final score = this.score;
+			if (score != null)
+				score.update(playerState.frameIdx);
 		}
 	}
 
