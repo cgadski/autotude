@@ -146,6 +146,8 @@ class ExtractMapArt {
 		final level = Xml.parse(levelEntry.data.toString()).firstElement();
 
 		final json = {
+			// changes with every extraction, so the viewer won't use stale cached images
+			version: DateTools.format(Date.now(), "%Y%m%d%H%M%S"),
 			level: Path.withoutExtension(levelPath),
 			background: Std.parseInt(level.get("backgroundColor")),
 			pages: pages,

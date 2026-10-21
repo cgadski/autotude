@@ -7,7 +7,6 @@ import h2d.Graphics;
 import h2d.Object;
 import h2d.RenderContext;
 import h2d.Tile;
-import js.Browser;
 import js.lib.Promise;
 
 // Format of map.json, written by autotude.ExtractMapArt.
@@ -27,6 +26,7 @@ typedef MapArtView = {
 };
 
 typedef MapArtData = {
+	?version:String,
 	level:String,
 	background:Int,
 	pages:Array<Page>,
@@ -132,12 +132,8 @@ class MapArt {
 	/** Fetch and decode a map's artwork. Rejects if it hasn't been extracted. **/
 	public static function load(state:PlayerState, mapName:String):Promise<MapArt> {
 		final root = MAP_ART_ROOT + mapName + "/";
-		return Browser.window.fetch(root + "map.json").then(res -> {
-			if (!res.ok)
-				throw 'no map art for $mapName (${res.status})';
-			return res.json();
-		}).then((data:MapArtData) -> {
-			return TexturePages.load(root, data.pages, data.images).then(textures -> new MapArt(state, data, textures));
+		return TexturePages.fetchJson(root + "map.json", 'map art for $mapName').then((data:MapArtData) -> {
+			return TexturePages.load(root, data.pages, data.images, data.version).then(textures -> new MapArt(state, data, textures));
 		});
 	}
 }

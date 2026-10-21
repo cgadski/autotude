@@ -48,9 +48,27 @@ typedef TexturedPoly = {
 };
 
 class TexturePages {
-	/** Load every page under `root` and cut out each image as its own texture. **/
-	public static function load(root:String, pages:Array<Page>, images:haxe.DynamicAccess<PageImage>):Promise<Map<String, Tile>> {
-		return Promise.all([for (page in pages) loadPage(root, page)]).then(canvases -> {
+	/**
+		Fetch an extractor's JSON, checking with the server rather than
+		trusting the browser's cache, so a rebuild is picked up on reload.
+	**/
+	public static function fetchJson(url:String, what:String):Promise<Dynamic> {
+		return Browser.window.fetch(url, {cache: NO_CACHE}).then(res -> {
+			if (!res.ok)
+				throw 'no $what (${res.status})';
+			return res.json();
+		});
+	}
+
+	/**
+		Load every page under `root` and cut out each image as its own texture.
+		`version` (from the extractor) is added to image URLs so cached images
+		from an older extraction aren't reused.
+	**/
+	public static function load(root:String, pages:Array<Page>, images:haxe.DynamicAccess<PageImage>,
+			?version:String):Promise<Map<String, Tile>> {
+		final query = version == null ? "" : "?v=" + StringTools.urlEncode(version);
+		return Promise.all([for (page in pages) loadPage(root, page, query)]).then(canvases -> {
 			final textures:Map<String, Tile> = [];
 			for (path in images.keys()) {
 				final img = images.get(path);
@@ -84,17 +102,17 @@ class TexturePages {
 		g.addVertex(x, y, 1, 1, 1, 1, ix / tex.width, (tile.height - iy) / tex.height);
 	}
 
-	static function loadPage(root:String, page:Page):Promise<CanvasElement> {
+	static function loadPage(root:String, page:Page, query:String):Promise<CanvasElement> {
 		final canvas = Browser.document.createCanvasElement();
 		canvas.width = page.w;
 		canvas.height = page.h;
 		final ctx = canvas.getContext2d({willReadFrequently: true});
 		return Promise.all([
 			for (tile in page.tiles)
-				loadImage(root + tile.file).then(img -> {
+				loadImage(root + tile.file + query).then(img -> {
 					ctx.drawImage(img, tile.x, tile.y);
 					final alpha = tile.alpha;
-					return alpha == null ? Promise.resolve(true) : loadImage(root + alpha).then(mask -> {
+					return alpha == null ? Promise.resolve(true) : loadImage(root + alpha + query).then(mask -> {
 						applyAlpha(ctx, mask, tile);
 						return true;
 					});

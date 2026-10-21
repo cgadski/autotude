@@ -89,6 +89,8 @@ class ExtractSprites {
 		for (type => path in types)
 			typeKeys.set(Std.string(type), path);
 		File.saveContent(SPRITE_OUT_DIR + "sprites.json", Json.stringify({
+			// changes with every extraction, so the viewer won't use stale cached images
+			version: DateTools.format(Date.now(), "%Y%m%d%H%M%S"),
 			pages: pages,
 			images: images,
 			polys: polys,

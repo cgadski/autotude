@@ -4,7 +4,6 @@ import autotude.viewer.TexturePages.Page;
 import autotude.viewer.TexturePages.PageImage;
 import autotude.viewer.TexturePages.TexturedPoly;
 import h2d.Tile;
-import js.Browser;
 import js.lib.Promise;
 
 // Format of sprites.json, written by autotude.ExtractSprites.
@@ -14,6 +13,7 @@ typedef SpriteFrame = TexturedPoly & {
 };
 
 typedef SpriteData = {
+	?version:String,
 	pages:Array<Page>,
 	images:haxe.DynamicAccess<PageImage>,
 	polys:haxe.DynamicAccess<Array<SpriteFrame>>,
@@ -50,12 +50,8 @@ class Sprites {
 	/** Fetch and decode the sprites. Rejects if they haven't been extracted. **/
 	public static function load():Promise<Sprites> {
 		final root = haxe.io.Path.directory(SPRITES_JSON) + "/";
-		return Browser.window.fetch(SPRITES_JSON).then(res -> {
-			if (!res.ok)
-				throw 'no sprites (${res.status})';
-			return res.json();
-		}).then((data:SpriteData) -> {
-			return TexturePages.load(root, data.pages, data.images).then(textures -> new Sprites(data, textures));
+		return TexturePages.fetchJson(SPRITES_JSON, "sprites").then((data:SpriteData) -> {
+			return TexturePages.load(root, data.pages, data.images, data.version).then(textures -> new Sprites(data, textures));
 		});
 	}
 
