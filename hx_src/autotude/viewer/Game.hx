@@ -28,6 +28,10 @@ class Game extends Object {
 	final boundLayer:Graphics;
 	final mapLayer:MapLayer;
 	final objectLayer:ObjectLayer;
+	final effectsUnder:EffectLayer;
+	final effectsOver:EffectLayer;
+
+	public final timeline:EffectTimeline;
 
 	final mapMask:Object;
 
@@ -53,13 +57,18 @@ class Game extends Object {
 		boundLayer = new BoundLayer(state);
 		mapLayer = new MapLayer(state);
 		objectLayer = new ObjectLayer(state);
+		timeline = new EffectTimeline(replay);
+		effectsUnder = new EffectLayer(state, timeline, false);
+		effectsOver = new EffectLayer(state, timeline, true);
 
 		mapMask = new Mask(mapGeometry.maxX, mapGeometry.maxY);
 		drawBackground(0xFFFFFF);
 		mapMask.addChild(background);
 		mapMask.addChild(artBack);
 		mapMask.addChild(mapLayer);
+		mapMask.addChild(effectsUnder);
 		mapMask.addChild(objectLayer);
+		mapMask.addChild(effectsOver);
 		mapMask.addChild(artFront);
 
 		addChild(mapMask);
@@ -80,6 +89,8 @@ class Game extends Object {
 
 	function onSpritesLoaded(sprites:Sprites) {
 		objectLayer.sprites = sprites;
+		effectsUnder.sprites = sprites;
+		effectsOver.sprites = sprites;
 	}
 
 	function drawBackground(color:Int) {

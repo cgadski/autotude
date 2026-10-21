@@ -23,13 +23,27 @@ import sys.io.File;
 
 final SPRITE_OUT_DIR = "hx_src/out/viewer_assets/sprites/";
 
+final SOUND_OUT_DIR = "hx_src/out/viewer_assets/sounds/";
+
 // Image directories the viewer uses without a poly.
 final EXTRA_IMAGE_DIRS = [
 	"hud/over_plane", // powerup_container.png, the badge for a held powerup
+	"effects", // muzzle flashes, smoke
+	"effects/afterburner",
+	"effects/explosion",
+	"effects/explosion_blue",
+	"effects/spark",
+	"effects/spawn",
+	"effects/veteran_bars",
 ];
+
+// Sound directories (under dist/.sound/sounds) copied for the viewer: game
+// sounds, not music or menus.
+final SOUND_DIRS = ["planes", "powerup", "map"];
 
 // Polys the viewer draws besides the hitbox polys.
 final EXTRA_POLYS = [
+	"effects/invuln/invuln.animatedpoly",
 	"planes/powerup/health/healthpack.animatedpoly",
 	"planes/powerup/shield/shield.poly",
 	"render/powerups/missile/0_128_5.animatedpoly",
@@ -103,6 +117,29 @@ class ExtractSprites {
 			types: typeKeys
 		}));
 		Sys.println('${polyPaths.length} polys, ${imageDirs.length} image dirs, ${pages.length} pages, ${Lambda.count(images)} images');
+
+		// sounds are plain .ogg files; keep their paths (e.g. sounds/planes/plane_explode.ogg)
+		if (FileSystem.exists(SOUND_OUT_DIR))
+			removeDir(SOUND_OUT_DIR);
+		var sounds = 0;
+		for (dir in SOUND_DIRS)
+			sounds += copyDir(dist + ".sound/sounds/" + dir, SOUND_OUT_DIR + dir);
+		Sys.println('$sounds sounds');
+	}
+
+	static function copyDir(from:String, to:String):Int {
+		FileSystem.createDirectory(to);
+		var n = 0;
+		for (f in FileSystem.readDirectory(from)) {
+			final src = Path.join([from, f]), dst = Path.join([to, f]);
+			if (FileSystem.isDirectory(src)) {
+				n += copyDir(src, dst);
+			} else {
+				File.copy(src, dst);
+				n++;
+			}
+		}
+		return n;
 	}
 
 	static function findDist(install:String):String {

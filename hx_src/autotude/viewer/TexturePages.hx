@@ -102,6 +102,30 @@ class TexturePages {
 		g.addVertex(x, y, 1, 1, 1, 1, ix / tex.width, (tile.height - iy) / tex.height);
 	}
 
+	/**
+		Draw a whole image centred on (x, y), scaled, rotated (radians,
+		clockwise on screen), faded and optionally mirrored. `anchorX` is
+		where along the image's width (0 left, 1 right) sits on (x, y).
+	**/
+	public static function drawImage(g:Graphics, tile:Tile, x:Float, y:Float, scale:Float = 1, rotation:Float = 0, alpha:Float = 1,
+			flipX = false, anchorX = 0.5) {
+		if (alpha <= 0 || scale <= 0)
+			return;
+		final w = tile.width * scale, h = tile.height * scale;
+		final cos = Math.cos(rotation), sin = Math.sin(rotation);
+		final tex = tile.getTexture();
+		final u0 = tile.x / tex.width, u1 = (tile.x + tile.width) / tex.width;
+		final v0 = tile.y / tex.height, v1 = (tile.y + tile.height) / tex.height;
+		g.beginTileFill(0, 0, 1, 1, tile);
+		final left = -anchorX * w;
+		for (corner in [[0, 0], [1, 0], [1, 1], [0, 1]]) {
+			final lx = left + corner[0] * w, ly = (corner[1] - 0.5) * h;
+			final u = (flipX ? 1 - corner[0] : corner[0]) == 0 ? u0 : u1;
+			g.addVertex(x + lx * cos - ly * sin, y + lx * sin + ly * cos, 1, 1, 1, alpha, u, corner[1] == 0 ? v0 : v1);
+		}
+		g.endFill();
+	}
+
 	static function loadPage(root:String, page:Page, query:String):Promise<CanvasElement> {
 		final canvas = Browser.document.createCanvasElement();
 		canvas.width = page.w;

@@ -50,6 +50,13 @@ final BADGE_Y = 44;
 // The ball at its hitbox poly's size looks too big next to the game's.
 final BALL_SCALE = 0.8;
 
+// Replays don't record the afterburner key, but it drains a steady 60-ish
+// energy (of 1000) per tick, net of recharge, where weapons take hundreds
+// at once.
+final AFTERBURNER_DRAIN_MIN = 30;
+final AFTERBURNER_DRAIN_MAX = 100;
+final AFTERBURNER_IMAGE = "effects/afterburner/afterburner1.png";
+
 // Explodet mines are a spiky mine carried by a drone: directly for remote
 // mines, on a chain for the regular (director) ones. Replays only record
 // the mine, so it hangs straight down. Distances in pixels, measured from
@@ -137,6 +144,8 @@ class ObjectLayer extends Graphics {
 			return true;
 		}
 
+		if (object.type <= ObjectType.MIRANDA && afterburning(object))
+			drawAfterburner(sprites, sprite, object);
 		drawSprite(sprite, object);
 		// a powerup is its icon in a container (a bubble, or health's frame)
 		final icon = POWERUP_ICONS.get(object.type);
@@ -146,6 +155,50 @@ class ObjectLayer extends Graphics {
 				drawSprite(sprites.withImage(sprite, CONTAINER_OVER), object);
 		}
 		return true;
+	}
+
+	// Whether a plane's energy fell like an afterburner's over either of the
+	// last two updates (two, so firing a weapon meanwhile doesn't hide it).
+	public function afterburning(plane:GameObject):Bool {
+		final i = replay.updateAt(state.frameIdx);
+		var after = plane;
+		for (back in 1...3) {
+			if (i - back < 0)
+				break;
+			final update = replay.updates[i - back];
+			var before:Null<GameObject> = null;
+			for (o in update.objects)
+				if (o.uid == plane.uid)
+					before = o;
+			if (before == null)
+				break;
+			final drain = (before.ammo - after.ammo) / Math.max(1, haxe.Int64.toInt(update.duration));
+			if (drain >= AFTERBURNER_DRAIN_MIN && drain <= AFTERBURNER_DRAIN_MAX)
+				return true;
+			after = before;
+		}
+		return false;
+	}
+
+	// The flame behind the plane's tail, its bright end at the plane.
+	function drawAfterburner(sprites:Sprites, plane:Sprite, object:GameObject) {
+		final tile = sprites.tile(AFTERBURNER_IMAGE);
+		if (tile == null)
+			return;
+		final hull = plane.frame.hull;
+		var tail = Math.POSITIVE_INFINITY, minY = Math.POSITIVE_INFINITY, maxY = Math.NEGATIVE_INFINITY;
+		var i = 0;
+		while (i + 1 < hull.length) {
+			tail = Math.min(tail, hull[i]);
+			minY = Math.min(minY, hull[i + 1]);
+			maxY = Math.max(maxY, hull[i + 1]);
+			i += 2;
+		}
+		final at = placeVertex(object, tail + 4, (minY + maxY) / 2);
+		final ahead = placeVertex(object, tail + 5, (minY + maxY) / 2);
+		final rotation = Math.atan2(ahead.y - at.y, ahead.x - at.x);
+		final flicker = 0.85 + 0.15 * Math.sin(state.frameIdx * 2.7 + object.uid);
+		TexturePages.drawImage(this, tile, at.x, at.y, 0.9 * flicker, rotation, 1, true, 1);
 	}
 
 	// The badge the game shows by a plane holding a powerup or the ball.

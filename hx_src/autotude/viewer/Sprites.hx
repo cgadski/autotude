@@ -55,6 +55,10 @@ class Sprites {
 		});
 	}
 
+	/** An image on its own, if it was extracted. **/
+	public function tile(image:String):Null<Tile>
+		return textures.get(image);
+
 	/** The sprite the game draws for an object type, if any. **/
 	public function forType(type:Int, team:Null<Int>, spin:Null<Int>):Null<Sprite> {
 		final poly = data.types.get(Std.string(type));
