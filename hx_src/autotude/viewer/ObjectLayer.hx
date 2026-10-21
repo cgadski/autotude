@@ -32,15 +32,15 @@ final POWERUP_ICONS:Map<Int, String> = [
 
 // Explodet rockets, as the game's Rocket class draws them: in the shooter's
 // colour, unfolding their fins over the first 180ms, then from 450ms
-// spinning through frames 100ms apart, with a flame behind.
+// spinning through frames 100ms apart, with a flame behind (blue for thermobaric rockets).
 final ROCKET_OPEN = "render/planes/explodet/rocket_open/0_128_5.animatedpoly";
 final ROCKET_SPIN = "render/planes/explodet/rocket_spin/0_128_5.animatedpoly";
 final ROCKET_OPEN_MS = 180;
 final ROCKET_SPIN_START_MS = 450;
 final ROCKET_SPIN_CYCLE_MS = 900;
 final ROCKET_FLAMES:Map<Int, String> = [
-	ObjectType.DIRECTOR_ROCKET => "effects/afterburner/afterburner_blue.png",
-	ObjectType.THERMOBARIC_ROCKET => "effects/afterburner/afterburner1.png",
+	ObjectType.DIRECTOR_ROCKET => "effects/afterburner/afterburner1.png",
+	ObjectType.THERMOBARIC_ROCKET => "effects/afterburner/afterburner_blue.png",
 ];
 final ROCKET_FLAME_SCALE = 0.5;
 
