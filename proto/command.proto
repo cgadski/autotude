@@ -3,10 +3,20 @@ syntax = "proto2";
 option java_multiple_files = true;
 option java_package = "em.altitude.game.protos";
 
+import "game_object.proto";
+
 message InputCmd {
     optional uint32 controls = 1;
     // left + right << 1 + up << 2 + down << 3
     // + f << 4 + d << 5 + s << 6
+}
+
+message SetConfigCmd {
+    optional ObjectType plane = 1;
+    optional Perk red_perk = 2;
+    optional Perk blue_perk = 3;
+    optional Perk green_perk = 4;
+    optional uint32 team = 5;
 }
 
 message Cmd {
@@ -17,4 +27,5 @@ message Cmd {
 
 message ClientCmd {
     optional InputCmd input = 1;
+    optional SetConfigCmd spawn = 2;
 }

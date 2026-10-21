@@ -19,10 +19,13 @@ class Update(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     TIME_FIELD_NUMBER: builtins.int
+    DURATION_FIELD_NUMBER: builtins.int
     OBJECTS_FIELD_NUMBER: builtins.int
     EVENTS_FIELD_NUMBER: builtins.int
     time: builtins.int
-    """ticks"""
+    """time of current frame (deprecated, unset)"""
+    duration: builtins.int
+    """number of frames until next update goes into effect"""
     @property
     def objects(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[game_object_pb2.GameObject]: ...
     @property
@@ -31,10 +34,11 @@ class Update(google.protobuf.message.Message):
         self,
         *,
         time: builtins.int | None = ...,
+        duration: builtins.int | None = ...,
         objects: collections.abc.Iterable[game_object_pb2.GameObject] | None = ...,
         events: collections.abc.Iterable[game_event_pb2.GameEvent] | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["time", b"time"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["events", b"events", "objects", b"objects", "time", b"time"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["duration", b"duration", "time", b"time"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["duration", b"duration", "events", b"events", "objects", b"objects", "time", b"time"]) -> None: ...
 
 global___Update = Update

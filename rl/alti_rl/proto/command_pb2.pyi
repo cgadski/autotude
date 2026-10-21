@@ -5,6 +5,7 @@ isort:skip_file
 
 import builtins
 import collections.abc
+import game_object_pb2
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.message
@@ -30,6 +31,34 @@ class InputCmd(google.protobuf.message.Message):
     def ClearField(self, field_name: typing.Literal["controls", b"controls"]) -> None: ...
 
 global___InputCmd = InputCmd
+
+@typing.final
+class SetConfigCmd(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PLANE_FIELD_NUMBER: builtins.int
+    RED_PERK_FIELD_NUMBER: builtins.int
+    BLUE_PERK_FIELD_NUMBER: builtins.int
+    GREEN_PERK_FIELD_NUMBER: builtins.int
+    TEAM_FIELD_NUMBER: builtins.int
+    plane: game_object_pb2.ObjectType.ValueType
+    red_perk: game_object_pb2.Perk.ValueType
+    blue_perk: game_object_pb2.Perk.ValueType
+    green_perk: game_object_pb2.Perk.ValueType
+    team: builtins.int
+    def __init__(
+        self,
+        *,
+        plane: game_object_pb2.ObjectType.ValueType | None = ...,
+        red_perk: game_object_pb2.Perk.ValueType | None = ...,
+        blue_perk: game_object_pb2.Perk.ValueType | None = ...,
+        green_perk: game_object_pb2.Perk.ValueType | None = ...,
+        team: builtins.int | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["blue_perk", b"blue_perk", "green_perk", b"green_perk", "plane", b"plane", "red_perk", b"red_perk", "team", b"team"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["blue_perk", b"blue_perk", "green_perk", b"green_perk", "plane", b"plane", "red_perk", b"red_perk", "team", b"team"]) -> None: ...
+
+global___SetConfigCmd = SetConfigCmd
 
 @typing.final
 class Cmd(google.protobuf.message.Message):
@@ -74,14 +103,18 @@ class ClientCmd(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     INPUT_FIELD_NUMBER: builtins.int
+    SPAWN_FIELD_NUMBER: builtins.int
     @property
     def input(self) -> global___InputCmd: ...
+    @property
+    def spawn(self) -> global___SetConfigCmd: ...
     def __init__(
         self,
         *,
         input: global___InputCmd | None = ...,
+        spawn: global___SetConfigCmd | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["input", b"input"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["input", b"input"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["input", b"input", "spawn", b"spawn"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["input", b"input", "spawn", b"spawn"]) -> None: ...
 
 global___ClientCmd = ClientCmd

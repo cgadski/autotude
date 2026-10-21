@@ -1,103 +1,110 @@
-import torch
-import torch.functional as f
 from dataclasses import dataclass
 
+import torch
+import torch.nn as nn
+from torch.optim.optimizer import ParamsT
 
-DTYPE = torch.float16
+from alti_rl.data import DTYPE, N_PLANE_STATE_FEATS
 
-def lag(r:torch.Tensor, t:int):
-    res = torch.zeros_like(r)
-    res[t:] = r[:-t]
-    return res
-
-def crash_to_go(r, gamma:float = 0.87):
-    # r: t
-    res = torch.zeros_like(r, dtype=DTYPE)
-    for _ in range(30 * 30):
-        res[:-1] = gamma * res[1:]
-        res[lag(r, 2) < 0] = -1
-    return 5 * res
 
 @dataclass
-class NetOptions:
-    d_embed: int
-    pos_range: int = 5000
+class Options:
+    seed: int = 42
+
+    # general params
+    n_actions: int = 3  # straight, left, right
+
+    # network params
+    d_embed: int = 512
+    n_layers: int = 3
+    activation: str = "silu"  # "relu" | "tanh" | "silu" | "gelu"
+    d_pos: int = 16  # size of position embedding
+    n_freqs: int = 10  # octaves of fourier features used for positions
+
+    # optimizer params
+    lr: float = 0.0068
+    lr_min: float = 0.0  # cosine decay target
+    beta1: float = 0.928
+    beta2: float = 0.974
+    batch_size: int = 1024
+    epochs: int = 10
+
+    gamma: float = 0.98  # discount rate
 
 
-def plane_features(x):
-    m = 2500
-    pos = x[:, :2].to(DTYPE)
-    pos_scaled = (pos - m) / m
-    vel = torch.zeros_like(pos_scaled)
-    vel[1:] = pos[1:] - pos[:-1]
-    outlier_vel = vel.norm(dim=-1) > 40
-    vel[outlier_vel] = 0
-
-    angle = (x[:, 2] * torch.pi / 1800).to(DTYPE)
-    cis = torch.stack([torch.cos(angle), torch.sin(angle)], dim=-1)
-    return torch.concat([pos_scaled, 0.5 * cis, 0.04 * vel], dim=-1)
-
-def sparse_pos(x, res):
-    # x: b 2
-    res = torch.zeros((x.shape[0], res * res), type=torch.int8)
-    max_idx = torch.tensor(res - 1)
-    x_val = torch.minimum(torch.floor(res * (1 + x[:, 0]) / 2).to(torch.int), max_idx)
-    y_val = torch.minimum(torch.floor(res * (1 + x[:, 1]) / 2).to(torch.int), max_idx)
-    res[torch.arange(x.shape[0]), res * y_val + x_val] = 1
-    return res
+    def optimizer(self, params: ParamsT) -> torch.optim.Optimizer:
+        return torch.optim.Adam(
+            params,
+            lr=self.lr,
+            betas=(self.beta1, self.beta2),
+        )
 
 
-def simple_mlp():
-    return torch.nn.Sequential(
-        torch.nn.Linear(6, 1024, dtype=DTYPE),
-        torch.nn.ReLU(),
-        torch.nn.Linear(1024, 1, dtype=DTYPE),
-        torch.nn.Sigmoid(),
-        torch.nn.Linear(1, 1, dtype=DTYPE),
-    )
+ACTIVATIONS = {"relu": nn.ReLU, "tanh": nn.Tanh, "silu": nn.SiLU, "gelu": nn.GELU}
 
-class PlaneEncoder(torch.nn.Module):
-    def __init__(self, opts:NetOptions):
+
+def build_mlp(
+    d_in: int, d_hidden: int, n_layers: int, d_out: int, activation: str = "relu"
+) -> nn.Sequential:
+    act = ACTIVATIONS[activation]
+    layers: list[nn.Module] = [nn.Linear(d_in, d_hidden, dtype=DTYPE), act()]
+    for _ in range(n_layers - 1):
+        layers += [nn.Linear(d_hidden, d_hidden, dtype=DTYPE), act()]
+    readout = nn.Linear(d_hidden, d_out, dtype=DTYPE)
+    readout.weight.data.fill_(0)
+    readout.bias.data.fill_(0)
+    layers.append(readout)
+    return nn.Sequential(*layers)
+
+
+class PositionEmbed(nn.Module):
+    """
+    Maps un-normalized map positions to d_embed-dimensional embeddings, using
+    multi-octave fourier features of the position (as a fraction of the map
+    extent) followed by a small MLP.
+
+    `extent` is the (x, y) size of the map; it is a buffer, so it is saved with
+    the model but must be set (see `NavNet.set_extent`) before training.
+    """
+
+    def __init__(self, d_embed: int, n_freqs: int, d_hidden: int = 64):
         super().__init__()
-        self.opts = opts
-        self.centers = torch.nn.Parameter(torch.rand(opts.d_embed, 2, dtype=DTYPE))
-        self.angles = torch.nn.Parameter(torch.rand(opts.d_embed, dtype=DTYPE) * 2 * torch.pi)
+        self.register_buffer("extent", torch.ones(2, dtype=DTYPE))
+        self.register_buffer("freqs", (2.0 ** torch.arange(n_freqs, dtype=DTYPE)) * torch.pi)
+        self.mlp = nn.Sequential(
+            nn.Linear(4 * n_freqs, d_hidden, dtype=DTYPE),
+            nn.SiLU(),
+            nn.Linear(d_hidden, d_embed, dtype=DTYPE),
+        )
 
-    def forward(self, x: torch.Tensor):
-        opts = self.opts
-        pos = x[:, :2].to(DTYPE) / opts.pos_range
-        angle = (x[:, 2] * torch.pi / 1800).to(DTYPE)
-
-        d_sim = torch.cdist(pos, self.centers) ** 2  # b d
-        a_sim = 1 - torch.cos(angle[:, None] - self.angles[None, :])  # b d
-        emb = torch.exp(- d_sim * 10 - a_sim * 2)
-        return emb / emb.norm(dim=-1, keepdim=True)
+    def forward(self, pos: torch.Tensor) -> torch.Tensor:
+        p = pos.to(DTYPE) / self.extent  # N 2
+        phase = p.unsqueeze(-1) * self.freqs  # N 2 n_freqs
+        feats = torch.cat([phase.sin(), phase.cos()], dim=-1).flatten(1)  # N 4*n_freqs
+        return self.mlp(feats)
 
 
-class PlaneEncoderDumb(torch.nn.Module):
-    def __init__(self, opts:NetOptions):
+class NavNet(nn.Module):
+    """
+    Predicts a vector of logits (one per action) as a function of the state.
+
+    Takes the raw map position together with the features from `encode_plane_state`.
+    """
+
+    def __init__(self, opts: Options):
         super().__init__()
-        self.opts = opts
-        self.weight = torch.nn.Linear(4, opts.d_embed, dtype=DTYPE)
+        self.pos_embed = PositionEmbed(opts.d_pos, opts.n_freqs)
+        self.mlp = build_mlp(
+            opts.d_pos + N_PLANE_STATE_FEATS,
+            opts.d_embed,
+            opts.n_layers,
+            opts.n_actions,
+            opts.activation,
+        )
 
-    def forward(self, x: torch.Tensor):
-        opts = self.opts
-        m = opts.pos_range / 2
-        pos = (x[:, :2].to(DTYPE) - m) / m
-        angle = (x[:, 2] * torch.pi / 1800).to(DTYPE)
-        vel = torch.zeros_like(pos)
-        vel[:1] = pos[1:]
-        cis = torch.stack([torch.cos(angle), torch.sin(angle)], dim=-1)
-        pre = torch.concat([pos, cis], dim=-1)
-        return torch.relu(self.weight(pre))
+    def set_extent(self, extent: torch.Tensor) -> None:
+        self.pos_embed.extent.copy_(extent.to(DTYPE))
 
-
-class PlaneRegressor(torch.nn.Module):
-    def __init__(self, opts:NetOptions):
-        super().__init__()
-        self.opts = opts
-        self.encode = PlaneEncoder(opts).requires_grad_(False)
-        self.linear = torch.nn.Linear(opts.d_embed, 1, dtype=DTYPE)
-
-    def forward(self, x):
-        return self.linear(self.encode(x)).flatten()
+    def forward(self, pos: torch.Tensor, plane_state: torch.Tensor) -> torch.Tensor:
+        # pos: N 2, plane_state: N N_PLANE_STATE_FEATS -> N n_actions
+        return self.mlp(torch.cat([self.pos_embed(pos), plane_state.to(DTYPE)], dim=1))

@@ -22,9 +22,10 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
+from . import game_object_pb2 as game__object__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rcommand.proto\"\x1c\n\x08InputCmd\x12\x10\n\x08\x63ontrols\x18\x01 \x01(\r\"s\n\x03\x43md\x12 \n\x06inputs\x18\x01 \x03(\x0b\x32\x10.Cmd.InputsEntry\x12\x10\n\x08shutdown\x18\x64 \x01(\x08\x1a\x38\n\x0bInputsEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\x18\n\x05value\x18\x02 \x01(\x0b\x32\t.InputCmd:\x02\x38\x01\"%\n\tClientCmd\x12\x18\n\x05input\x18\x01 \x01(\x0b\x32\t.InputCmdB\x1b\n\x17\x65m.altitude.game.protosP\x01')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rcommand.proto\x1a\x11game_object.proto\"\x1c\n\x08InputCmd\x12\x10\n\x08\x63ontrols\x18\x01 \x01(\r\"\x86\x01\n\x0cSetConfigCmd\x12\x1a\n\x05plane\x18\x01 \x01(\x0e\x32\x0b.ObjectType\x12\x17\n\x08red_perk\x18\x02 \x01(\x0e\x32\x05.Perk\x12\x18\n\tblue_perk\x18\x03 \x01(\x0e\x32\x05.Perk\x12\x19\n\ngreen_perk\x18\x04 \x01(\x0e\x32\x05.Perk\x12\x0c\n\x04team\x18\x05 \x01(\r\"s\n\x03\x43md\x12 \n\x06inputs\x18\x01 \x03(\x0b\x32\x10.Cmd.InputsEntry\x12\x10\n\x08shutdown\x18\x64 \x01(\x08\x1a\x38\n\x0bInputsEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\x18\n\x05value\x18\x02 \x01(\x0b\x32\t.InputCmd:\x02\x38\x01\"C\n\tClientCmd\x12\x18\n\x05input\x18\x01 \x01(\x0b\x32\t.InputCmd\x12\x1c\n\x05spawn\x18\x02 \x01(\x0b\x32\r.SetConfigCmdB\x1b\n\x17\x65m.altitude.game.protosP\x01')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,12 +35,14 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._serialized_options = b'\n\027em.altitude.game.protosP\001'
   _globals['_CMD_INPUTSENTRY']._loaded_options = None
   _globals['_CMD_INPUTSENTRY']._serialized_options = b'8\001'
-  _globals['_INPUTCMD']._serialized_start=17
-  _globals['_INPUTCMD']._serialized_end=45
-  _globals['_CMD']._serialized_start=47
-  _globals['_CMD']._serialized_end=162
-  _globals['_CMD_INPUTSENTRY']._serialized_start=106
-  _globals['_CMD_INPUTSENTRY']._serialized_end=162
-  _globals['_CLIENTCMD']._serialized_start=164
-  _globals['_CLIENTCMD']._serialized_end=201
+  _globals['_INPUTCMD']._serialized_start=36
+  _globals['_INPUTCMD']._serialized_end=64
+  _globals['_SETCONFIGCMD']._serialized_start=67
+  _globals['_SETCONFIGCMD']._serialized_end=201
+  _globals['_CMD']._serialized_start=203
+  _globals['_CMD']._serialized_end=318
+  _globals['_CMD_INPUTSENTRY']._serialized_start=262
+  _globals['_CMD_INPUTSENTRY']._serialized_end=318
+  _globals['_CLIENTCMD']._serialized_start=320
+  _globals['_CLIENTCMD']._serialized_end=387
 # @@protoc_insertion_point(module_scope)

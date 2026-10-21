@@ -1,20 +1,23 @@
-import alti_rl as arl
 import numpy as np
+
+import alti_rl as arl
 from alti_rl.online_client import OnlineClient
-import os
+from alti_rl.proto.game_object_pb2 import B_TURBOCHARGER, G_HEAVY_ARMOR, LOOPY, R_LOOPY_DOUBLE_FIRE, GameObject
+
 
 def wrap_180(angle):
     return (angle + 180) % 360 - 180
 
+
 def make_config():
-    pw = os.environ["ALTI_PW"]
     config = arl.ClientConfig(
-        user="me@cgad.ski",
-        pw=pw,
-        server="Official #4 - FFA+TBD+Ball - maxPing=400"
+        user="altistats_1",
+        pw="snowmanbomb",
+        server="only ffa_cave"
     )
-    config.set(port=27281)
+    config.set(port=27285)
     return config
+
 
 class ControlledClient(OnlineClient):
     def __init__(self):
@@ -26,7 +29,7 @@ class ControlledClient(OnlineClient):
         current = o.angle / 10
         options = current + np.arange(0, 360, 2)
         clears = np.array(o.clear_distances)
-        costs = 1 / (clears ** 2 + 0.1) + 1e-8 * np.abs(wrap_180(options - current))
+        costs = 1 / (clears**2 + 0.1) + 1e-8 * np.abs(wrap_180(options - current))
         return options[np.argmin(costs)]
 
     def control(self, o) -> int:
@@ -61,7 +64,13 @@ class ControlledClient(OnlineClient):
                 break
 
         cmd = arl.ClientCmd()
+        cmd.spawn.plane = LOOPY
+        cmd.spawn.red_perk = R_LOOPY_DOUBLE_FIRE
+        cmd.spawn.blue_perk = B_TURBOCHARGER
+        cmd.spawn.green_perk = G_HEAVY_ARMOR
+
         cmd.input.controls = self.control(my_plane)
         return cmd
+
 
 ControlledClient().poll()
