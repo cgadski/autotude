@@ -86,13 +86,12 @@ class Replay {
 
 	public final teams:Array<Int>;
 
+	// The same team colours, lightened for filling hitboxes on the plain
+	// white map.
+	static final TEAM_POLY_COLORS = [0xEC8686, 0x8FA4F0, 0xAEEBAE, 0xF2DC8C, 0xF5B98A, 0xC9A2F0, 0xB5D6E4, 0xF5C2C2, 0xC9A88A];
+
 	public function teamColorPoly(team:Int):Null<Int> {
-		if (team == teams[0]) {
-			return 0xEC8686;
-		} else if (team == teams[1]) {
-			return 0xAEEBAE;
-		}
-		return null;
+		return TEAM_POLY_COLORS[team - 3];
 	}
 
 	// Team colours (red, blue, green, yellow, orange, purple, azure, pink,
@@ -160,6 +159,7 @@ class Replay {
 		}
 
 		teams = [for (team in teamMap.keys()) team];
+		teams.sort((a, b) -> a - b);
 		if (mapGeometry == null || mapName == null) {
 			throw "No map load event found in replay";
 		}

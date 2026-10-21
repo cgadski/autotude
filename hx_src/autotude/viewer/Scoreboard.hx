@@ -53,8 +53,7 @@ class Scoreboard {
 		}
 		this.suddenDeath = suddenDeath;
 
-		teams = replay.teams.copy();
-		teams.sort((a, b) -> a - b);
+		teams = replay.teams;
 	}
 
 	public function update(tick:Int) {

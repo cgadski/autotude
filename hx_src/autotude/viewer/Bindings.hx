@@ -47,11 +47,23 @@ class Bindings {
 		});
 	}
 
+	// One row per action, with alternative keys for it joined by "or".
 	public function renderCard(card:DivElement) {
+		final descs:Array<String> = [];
+		final keysByDesc:Map<String, Array<String>> = [];
 		for (b in bindings) {
-			final p = Browser.document.createParagraphElement();
 			final keys = [for (k in b.keys) '<kbd>${StringTools.htmlEscape(Key.getKeyName(k) ?? "?")}</kbd>'].join(" + ");
-			p.innerHTML = '<span class="desc">${StringTools.htmlEscape(b.desc)}</span><span>$keys</span>';
+			final existing = keysByDesc.get(b.desc);
+			if (existing != null) {
+				existing.push(keys);
+			} else {
+				descs.push(b.desc);
+				keysByDesc.set(b.desc, [keys]);
+			}
+		}
+		for (desc in descs) {
+			final p = Browser.document.createParagraphElement();
+			p.innerHTML = '<span class="desc">${StringTools.htmlEscape(desc)}</span><span>${(keysByDesc.get(desc) ?? []).join(" or ")}</span>';
 			card.appendChild(p);
 		}
 	}

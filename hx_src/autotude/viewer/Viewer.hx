@@ -46,11 +46,28 @@ class Viewer extends hxd.App {
 	final scrubber:InputElement = cast getElem("scrubber");
 	final timeBefore:SpanElement = cast getElem("time_before");
 	final timeAfter:SpanElement = cast getElem("time_after");
+	final playButton:js.html.ButtonElement = cast getElem("play");
+	final speedSelect:js.html.SelectElement = cast getElem("speed");
 	final canvas:CanvasElement = cast getElem("webgl");
+
+	// playback speed, from the speed selector
+	var speed:Float = 1;
+	var showingPlaying:Null<Bool>;
 
 	public function new() {
 		super();
 		scrubber.oninput = onScrubberInput;
+		playButton.onclick = () -> {
+			if (playerState != null)
+				playerState.togglePlay();
+			playButton.blur(); // keep Space for the viewer's own binding
+		};
+		speedSelect.onchange = () -> {
+			speed = Std.parseFloat(speedSelect.value);
+			if (Math.isNaN(speed))
+				speed = 1;
+			speedSelect.blur();
+		};
 
 		registerBindings();
 		bindings.renderCard(help);
@@ -92,6 +109,7 @@ class Viewer extends hxd.App {
 					scrubber.min = "0";
 					scrubber.max = Std.string(replay.totalTicks - 1);
 					scrubber.removeAttribute("disabled");
+					playButton.disabled = false;
 				}
 			});
 		});
@@ -117,9 +135,16 @@ class Viewer extends hxd.App {
 		// wheel up (negative delta) zooms in. heaps gives deltaY / 120, and a
 		// wheel notch is usually 100px of deltaY.
 		final notches = e.wheelDelta * 120 / 100;
-		playerState.scale *= Math.pow(ZOOM_PER_NOTCH, -notches);
-		playerState.scale = Math.max(SCALE_MIN, playerState.scale);
-		playerState.scale = Math.min(SCALE_MAX, playerState.scale);
+		final before = playerState.scale;
+		var after = before * Math.pow(ZOOM_PER_NOTCH, -notches);
+		after = Math.min(SCALE_MAX, Math.max(SCALE_MIN, after));
+
+		// zoom toward the cursor: keep the map point under it where it is.
+		// The view centre (WIDTH / 2, HEIGHT / 2) shows playerState.pos.
+		final offX = e.relX - WIDTH / 2, offY = e.relY - HEIGHT / 2;
+		playerState.pos.x += offX / before - offX / after;
+		playerState.pos.y += offY / before - offY / after;
+		playerState.scale = after;
 	}
 
 	function onPush(e:Event) {
@@ -154,7 +179,7 @@ class Viewer extends hxd.App {
 		bindings.update();
 		if (playerState != null) {
 			if (playerState.playing) {
-				netTime += dt;
+				netTime += dt * speed;
 				final steps = Std.int(netTime / frameTime);
 				playerState.frameIdx += steps;
 				netTime -= frameTime * steps;
@@ -162,6 +187,10 @@ class Viewer extends hxd.App {
 				netTime = 0;
 			}
 
+			if (showingPlaying != playerState.playing) {
+				showingPlaying = playerState.playing;
+				playButton.innerHTML = playerState.playing ? "&#10074;&#10074;" : "&#9654;";
+			}
 			timeBefore.innerHTML = Replay.showTimestampHtml(playerState.frameIdx);
 			timeAfter.innerHTML = Replay.showTimestampHtml(playerState.framesRemaining);
 			scrubber.value = Std.string(playerState.frameIdx);
