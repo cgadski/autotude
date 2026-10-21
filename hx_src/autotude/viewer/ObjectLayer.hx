@@ -44,6 +44,11 @@ final ROCKET_FLAMES:Map<Int, String> = [
 ];
 final ROCKET_FLAME_SCALE = 0.5;
 
+// Deployed walls (see drawWall).
+final WALL_CAPS = "render/powerups/wall";
+final WALL_BEAM = "planes/powerup/wall/beam_texture.png";
+final WALL_ELECTRIC = "planes/powerup/wall/electric_";
+
 // Sprites that differ from the hitbox poly for a type.
 final SPRITE_OVERRIDES:Map<Int, String> = [
 	ObjectType.HEALTH_POWERUP => "planes/powerup/container_health.poly",
@@ -142,6 +147,8 @@ class ObjectLayer extends Graphics {
 	function drawGameSprite(sprites:Sprites, object:GameObject):Bool {
 		if (object.type == ObjectType.REMOTE_MINE || object.type == ObjectType.DIRECTOR_MINE)
 			return drawMine(sprites, object);
+		if (object.type == ObjectType.WALL)
+			return drawWall(sprites, object);
 
 		// only planes have frames by roll; other animations are by time
 		final spin = object.type <= ObjectType.MIRANDA ? object.spin : null;
@@ -261,6 +268,51 @@ class ObjectLayer extends Graphics {
 		o.positionX = object.positionX + Std.int(right * 2);
 		o.positionY = object.positionY + Std.int(up * 2); // positions are in half pixels
 		return o;
+	}
+
+	// A deployed wall, as the game's Wall and WallBeamEffect draw it: its
+	// shape filled faintly in the team's colour, a beam and crackling
+	// electricity along it, and a team-coloured cap at each end.
+	function drawWall(sprites:Sprites, wall:GameObject):Bool {
+		final timeline = this.timeline;
+		final team = timeline == null ? null : timeline.teamOf(wall);
+		final hitbox = sprites.forType(ObjectType.WALL, null, null);
+		final cap = sprites.tile('$WALL_CAPS/${Sprites.TEAM_COLORS[(team ?? -1) - Sprites.FIRST_TEAM] ?? "0_128_5"}_0000.png');
+		final beam = sprites.tile(WALL_BEAM);
+		final electric = sprites.tile('$WALL_ELECTRIC${Std.int(state.frameIdx / 2) % 3}.png');
+		if (hitbox == null || cap == null || beam == null || electric == null)
+			return false;
+
+		// the wall runs along its hitbox's y axis
+		final hull = hitbox.frame.hull;
+		var half = 0.0;
+		var i = 1;
+		while (i < hull.length) {
+			half = Math.max(half, Math.abs(hull[i]));
+			i += 2;
+		}
+		final top = placeVertex(wall, 0, half), bottom = placeVertex(wall, 0, -half);
+		final along = Math.atan2(top.y - bottom.y, top.x - bottom.x);
+		final across = along - Math.PI / 2;
+		final length = Math.sqrt((top.x - bottom.x) * (top.x - bottom.x) + (top.y - bottom.y) * (top.y - bottom.y));
+		final cx = (top.x + bottom.x) / 2, cy = (top.y + bottom.y) / 2;
+
+		final color = Sprites.teamColor(team);
+		if (color != null) {
+			beginFill(color, 0.25);
+			var i = 0;
+			while (i + 1 < hull.length) {
+				final p = placeVertex(wall, hull[i], hull[i + 1]);
+				lineTo(p.x, p.y);
+				i += 2;
+			}
+			endFill();
+		}
+		TexturePages.drawImage(this, beam, cx, cy, length / beam.width, along, 0.9, false, 0.5, 1);
+		TexturePages.drawImage(this, electric, cx, cy, length / electric.width, along, 1, state.frameIdx % 4 < 2, 0.5, 1);
+		TexturePages.drawImage(this, cap, top.x, top.y, 1, across);
+		TexturePages.drawImage(this, cap, bottom.x, bottom.y, 1, across + Math.PI);
+		return true;
 	}
 
 	function drawMine(sprites:Sprites, object:GameObject):Bool {

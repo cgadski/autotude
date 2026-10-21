@@ -80,6 +80,9 @@ class EffectTimeline {
 	// object uid -> ticks it appeared at (uids can be reused)
 	final appeared:Map<Int, Array<Int>> = [];
 
+	// wall uid -> team of the plane that deployed it
+	final wallTeams:Map<Int, Int> = [];
+
 	final replay:Replay;
 	final maxY:Float;
 
@@ -121,6 +124,25 @@ class EffectTimeline {
 
 			// the first update holds everything already in the game
 			if (i > 0) {
+				// walls are recorded without a team: credit each to the nearest
+				// plane that used a wall powerup as it appeared
+				for (uid => o in current) {
+					if (o.type != ObjectType.WALL || previous.exists(uid))
+						continue;
+					var best = Math.POSITIVE_INFINITY;
+					for (p in current) {
+						final before = previous.get(p.uid);
+						if (p.type > ObjectType.MIRANDA || before == null || before.powerup != ObjectType.WALL_POWERUP
+							|| p.powerup == ObjectType.WALL_POWERUP)
+							continue;
+						final d = Math.pow(p.positionX - o.positionX, 2) + Math.pow(p.positionY - o.positionY, 2);
+						if (d < best) {
+							best = d;
+							wallTeams.set(uid, p.team);
+						}
+					}
+				}
+
 				for (uid => o in current) {
 					final before = previous.get(uid);
 					if (before == null) {
@@ -217,6 +239,11 @@ class EffectTimeline {
 			after = before;
 		}
 		return false;
+	}
+
+	/** An object's team, or for walls (recorded without one) their deployer's. **/
+	public function teamOf(o:GameObject):Null<Int> {
+		return o.hasTeam() ? o.team : wallTeams.get(o.uid);
 	}
 
 	/** Ticks since an object appeared, as of `tick`. **/

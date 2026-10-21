@@ -133,6 +133,15 @@ class Sprites {
 		return {frame: frame, tile: tile};
 	}
 
+	/** A team's colour as 0xRRGGBB, if it's a player team. **/
+	public static function teamColor(team:Null<Int>):Null<Int> {
+		final color = TEAM_COLORS[(team ?? -1) - FIRST_TEAM];
+		if (color == null)
+			return null;
+		final rgb = color.split("_").map(Std.parseInt);
+		return ((rgb[0] ?? 0) << 16) | ((rgb[1] ?? 0) << 8) | (rgb[2] ?? 0);
+	}
+
 	// Team-coloured images are named by colour, e.g. render/planes/loopy/0_128_5_0070.png.
 	static function teamImage(image:String, team:Null<Int>):String {
 		final color = TEAM_COLORS[(team ?? -1) - FIRST_TEAM];

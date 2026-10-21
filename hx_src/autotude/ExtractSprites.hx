@@ -35,6 +35,8 @@ final EXTRA_IMAGE_DIRS = [
 	"effects/spark",
 	"effects/spawn",
 	"effects/veteran_bars",
+	"planes/powerup/wall", // beam_texture.png, electric_N.png: deployed walls
+	"render/powerups/wall", // team-coloured end caps of deployed walls
 ];
 
 // Sound directories (under dist/.sound/sounds) copied for the viewer: game

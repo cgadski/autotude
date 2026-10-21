@@ -106,12 +106,13 @@ class TexturePages {
 		Draw a whole image centred on (x, y), scaled, rotated (radians,
 		clockwise on screen), faded and optionally mirrored. `anchorX` is
 		where along the image's width (0 left, 1 right) sits on (x, y).
+		`scaleY` stretches the height separately.
 	**/
 	public static function drawImage(g:Graphics, tile:Tile, x:Float, y:Float, scale:Float = 1, rotation:Float = 0, alpha:Float = 1,
-			flipX = false, anchorX = 0.5) {
+			flipX = false, anchorX = 0.5, ?scaleY:Float) {
 		if (alpha <= 0 || scale <= 0)
 			return;
-		final w = tile.width * scale, h = tile.height * scale;
+		final w = tile.width * scale, h = tile.height * (scaleY ?? scale);
 		final cos = Math.cos(rotation), sin = Math.sin(rotation);
 		final tex = tile.getTexture();
 		final u0 = tile.x / tex.width, u1 = (tile.x + tile.width) / tex.width;
