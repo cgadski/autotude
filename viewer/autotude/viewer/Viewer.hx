@@ -131,7 +131,8 @@ class Viewer extends hxd.App {
 			res.arrayBuffer().then((buf) -> {
 				final replay = new Replay(new BytesInput(Bytes.ofData(buf)));
 				if (replay != null && replay.mapGeometry != null) {
-					this.playerState = new PlayerState(s2d, sidebar, canvas, replay, replay.mapGeometry);
+					final stem = ~/\.pb$/.replace(recordingFile ?? "", "");
+					this.playerState = new PlayerState(s2d, sidebar, canvas, stem, replay, replay.mapGeometry);
 					score = new Scoreboard(replay, scoreboard);
 					if (timestamp != null) {
 						playerState.frameIdx = Std.parseInt(timestamp) ?? 0;

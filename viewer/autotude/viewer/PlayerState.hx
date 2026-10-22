@@ -19,6 +19,8 @@ class PlayerState {
 	public final sidebar:DivElement;
 	public final canvas:CanvasElement;
 
+	public var stem:String;
+
 	// camera
 	public var pos:Vector = new Vector(0, 0);
 	public var scale:Float = 1;
@@ -33,8 +35,9 @@ class PlayerState {
 	public var framesRemaining(get, null):Int = 0;
 	public var playing:Bool = false;
 
-	public function new(s2d:Scene, sidebar:DivElement, canvas:CanvasElement, replay:Replay, geom:MapGeometry) {
+	public function new(s2d:Scene, sidebar:DivElement, canvas:CanvasElement, stem: String, replay:Replay, geom:MapGeometry) {
 		this.s2d = s2d;
+		this.stem = stem;
 		this.replay = replay;
 		this.geom = geom;
 		this.sidebar = sidebar;

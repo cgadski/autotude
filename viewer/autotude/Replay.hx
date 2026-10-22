@@ -83,6 +83,7 @@ class Replay {
 
 	public var mapGeometry:MapGeometry = cast null;
 	public var mapName:String = cast null;
+	public var datetime:String = cast null;
 
 	public final teams:Array<Int>;
 
@@ -129,6 +130,7 @@ class Replay {
 				if (event.hasMapLoad()) {
 					mapGeometry = event.mapLoad.map;
 					mapName = event.mapLoad.name;
+					datetime = event.mapLoad.datetime;
 					continue;
 				}
 				if (event.hasSetPlayer()) {

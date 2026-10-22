@@ -39,17 +39,15 @@ class SidebarManager {
 	function loadSidebar() {
 		final sidebar = state.sidebar;
 
-		sidebar.appendChild(sidebarEntry(0, (span) -> span.innerText = 'map: ${state.replay.mapName}'));
+		sidebar.appendChild(sidebarEntry(0, (span) -> {
+			final text = '${state.replay.mapName} · ${state.replay.datetime} UTC';
+			span.innerHTML = '<a href="/game/${state.stem.urlEncode()}">${text.htmlEscape()}</a>';
+		}));
 
 		var idx = 0;
 		for (update in state.replay.updates) {
 			final gameState = state.replay.gameStates[idx];
 			for (event in update.events) {
-				// final entry = sidebarEntry(update.time, event);
-				// if (entry != null) {
-				// 	sidebar.appendChild(entry);
-				// 	entries.set(update.time, entry);
-				// }
 				if (event.hasGoal()) {
 					final whoScored = gameState.getName(event.goal.whoScored[0]);
 					final color = state.replay.teamColorText(gameState.getTeam(event.goal.whoScored[0]));
@@ -66,9 +64,6 @@ class SidebarManager {
 						span.style.opacity = "0.5";
 					}));
 				}
-				// if (event.hasKill()) {
-				// 	final whoKilled = event.kill.whoKilled
-				// }
 			}
 			idx++;
 		}
