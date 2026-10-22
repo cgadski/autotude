@@ -1,0 +1,24 @@
+[package]
+name = "game-resources"
+version = "0.1.0"
+edition = "2021"
+
+# Extract what the replay viewer needs from Altitude's files: map artwork from
+# .altx maps, and sprites, effects and sounds from an Altitude install.
+
+[[bin]]
+name = "maps"
+path = "bin/maps.rs"
+
+[[bin]]
+name = "sprites"
+path = "bin/sprites.rs"
+
+[dependencies]
+anyhow = "1.0"
+clap = { version = "4.4", features = ["derive", "env"] }
+png = "0.17"
+rayon = "1.10"
+roxmltree = "0.20"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
