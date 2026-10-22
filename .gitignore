@@ -2,6 +2,7 @@
 *.db
 *.db-*
 chat.txt
+/.serve/
 
 # environment variables
 /etc/secrets.env
