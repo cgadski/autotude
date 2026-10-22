@@ -5,24 +5,24 @@ all: copy_assets
 clean:
 	rm -rf bin/
 	rm -rf java_gen/ # java source gen
-	rm -rf poly_src/
-	rm -rf hx_src/autotude/proto/ # haxe source gen
+	rm -rf viewer/autotude/proto/ # haxe source gen
 	rm -rf stats_db/proto/ # copies proto files
-	rm -rf rl/alti_rl/proto/
+	rm -rf viewer/out/
+
+# protobuf stuff
 
 PROTO_SRC = proto/
 PROTO_FILES = $(wildcard $(PROTO_SRC)*)
 
-# java sourcegen
+## java protobuf souregen
 java_gen/: $(PROTO_FILES)
 	mkdir -p $@
 	protoc -I=$(PROTO_SRC) --java_out=$@ $^
-	rm java_gen/PolyOuterClass.java
 
-# haxe sourcegen
-hx_src/autotude/proto/: $(PROTO_FILES)
-	haxelib run protohx generate hx_src/protohx.json
-	bash hx_src/clean_hxproto.sh
+## haxe protobuf sourcegen
+viewer/autotude/proto/: $(PROTO_FILES)
+	haxelib run protohx generate viewer/protohx.json
+	bash viewer/clean_hxproto.sh
 
 
 # python sourcegen
@@ -36,55 +36,45 @@ rl/alti_rl/proto/: $(PROTO_FILES)
 	find $@ -name "*.py*" -exec \
 	   sed -i 's/^import \([a-zA-Z0-9_]*_pb2\) as/from . import \1 as/g' {} \;
 
-TOOL_SRC = $(wildcard hx_src/autotude/**)
-
-bin/write_polys.n bin/replay_tool.n: $(TOOL_SRC) hx_src/autotude/proto/
-	haxe hx_src/build_tools.hxml
-
-# polys
-poly_src/:
-	tar -xf poly_src.tar.gz
-
-data/polys: bin/write_polys.n poly_src/
-	mkdir -p $(@D)
-	neko ./bin/write_polys.n
-	gzip $@
-	mv $@.gz $@
-	@echo "Size of poly file (bytes): "
-	@wc -c $@
-
-.PHONY: rust_tools
-
-# indexer
-rust_tools: stats_db/bin/* stats_db/src/** stats_db/Cargo.toml \
+# rust tools
+bin/dump bin/cat-replay bin/index: stats_db/bin/* stats_db/src/** stats_db/Cargo.toml \
 	stats_db/proto/
-	mkdir -p bin/
-	cd stats_db && cargo build --release --bin dump --bin index-lite --bin cat-replay --bin slice-replay
-	cp stats_db/target/release/{dump,index-lite,cat-replay,slice-replay} bin/
-
-# js source for viewer
-hx_src/out/viewer.js: hx_src/autotude/proto/ hx_src/build_viewer.hxml \
-	$(wildcard hx_src/autotude/**) \
-	$(wildcard hx_src/autotude/viewer/**) \
-	data/polys
 	mkdir -p $(@D)
-	haxe hx_src/build_viewer.hxml
+	cd stats_db && cargo build --release --bin dump --bin index --bin cat-replay
+	cp stats_db/target/release/{dump,index,cat-replay} bin/
+
+# replay viewer
+viewer/out/viewer.js: viewer/autotude/proto/ viewer/build_viewer.hxml \
+	$(wildcard viewer/autotude/**) \
+	$(wildcard viewer/autotude/viewer/**)
+	mkdir -p $(@D)
+	haxe viewer/build_viewer.hxml
+
+# game resources
+.PHONY: game_resources
+
+game_resources:
+	# uses ALTI_INSTALL and ALTI_MAP_PATH
+	rm -rf game_resources/out/
+	cd $@ && cargo build --release
+	cd $@ && ./target/release/maps --map-list ladder_maps.csv out/maps
+	cd $@ && ./target/release/sprites out/
 
 .PHONY: copy_assets
 
-# copy assets required to build sub-projects
+# copying files to Docker build directories
 copy_assets: altistats.com/nginx/assets/ \
 	stats_db/proto/
 
-# proto files for rust
+# protobuf files for rust
 stats_db/proto/: $(PROTO_FILES)
 	rm -rf $@
 	mkdir -p $@
 	cp $(PROTO_SRC)/* $@
 
-# js/html of viewer for altistats.com
-altistats.com/nginx/assets/: hx_src/out/viewer.js hx_src/viewer.html
+# js/html for nginx container
+altistats.com/nginx/assets/: viewer/out/viewer.js viewer/viewer.html
 	rm -rf $@
 	mkdir -p $@
-	cp hx_src/out/viewer.js $@
-	cp hx_src/viewer.html $@/index.html
+	cp viewer/out/viewer.js $@
+	cp viewer/viewer.html $@/index.html

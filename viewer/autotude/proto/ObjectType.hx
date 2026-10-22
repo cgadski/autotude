@@ -1,0 +1,44 @@
+package autotude.proto;
+import protohx.Protohx;
+class ObjectType {
+	public static /*const*/ inline var UNKNOWN_OBJECT:PT_Int = 128;
+	public static /*const*/ inline var LOOPY:PT_Int = 0;
+	public static /*const*/ inline var BOMBER:PT_Int = 1;
+	public static /*const*/ inline var EXPLODET:PT_Int = 2;
+	public static /*const*/ inline var BIPLANE:PT_Int = 3;
+	public static /*const*/ inline var MIRANDA:PT_Int = 4;
+	public static /*const*/ inline var MISSLE_POWERUP:PT_Int = 10;
+	public static /*const*/ inline var SHIELD_POWERUP:PT_Int = 11;
+	public static /*const*/ inline var WALL_POWERUP:PT_Int = 12;
+	public static /*const*/ inline var BIG_BOMB_POWERUP:PT_Int = 13;
+	public static /*const*/ inline var BALL:PT_Int = 14;
+	public static /*const*/ inline var HEALTH_POWERUP:PT_Int = 15;
+	public static /*const*/ inline var POWERUP_SPAWNER:PT_Int = 16;
+	public static /*const*/ inline var DOUBLE_FIRE_MISSLE:PT_Int = 20;
+	public static /*const*/ inline var TRACKER_MISSLE:PT_Int = 21;
+	public static /*const*/ inline var EMP_CAPSULE:PT_Int = 22;
+	public static /*const*/ inline var EMP_EXPLOSION:PT_Int = 23;
+	public static /*const*/ inline var ACID_BOMB:PT_Int = 24;
+	public static /*const*/ inline var ACID_CLOUD:PT_Int = 25;
+	public static /*const*/ inline var NADE:PT_Int = 30;
+	public static /*const*/ inline var FLAK:PT_Int = 31;
+	public static /*const*/ inline var SUPPRESSOR:PT_Int = 32;
+	public static /*const*/ inline var DOMB:PT_Int = 33;
+	public static /*const*/ inline var BIPLANE_PRIMARY:PT_Int = 40;
+	public static /*const*/ inline var BIPLANE_SECONDARY:PT_Int = 41;
+	public static /*const*/ inline var HEAVY_CANNON:PT_Int = 42;
+	public static /*const*/ inline var DIRECTOR_ROCKET:PT_Int = 50;
+	public static /*const*/ inline var THERMOBARIC_ROCKET:PT_Int = 51;
+	public static /*const*/ inline var REMOTE_MINE:PT_Int = 52;
+	public static /*const*/ inline var DIRECTOR_MINE:PT_Int = 53;
+	public static /*const*/ inline var LASER:PT_Int = 60;
+	public static /*const*/ inline var TRICKSTER_SHOT:PT_Int = 61;
+	public static /*const*/ inline var LASER_SHOT:PT_Int = 62;
+	public static /*const*/ inline var HOMING_MISSLE:PT_Int = 70;
+	public static /*const*/ inline var WALL:PT_Int = 71;
+	public static /*const*/ inline var SHIELD:PT_Int = 72;
+	public static /*const*/ inline var BIG_BOMB:PT_Int = 73;
+	public static /*const*/ inline var GOAL:PT_Int = 74;
+	public static /*const*/ inline var BASE:PT_Int = 75;
+}
+

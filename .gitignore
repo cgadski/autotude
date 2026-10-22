@@ -30,11 +30,11 @@ recordings/
 
 # build outputs
 /bin/
-/hx_src/out/
+/viewer/out/
 /java_gen/
 /java_dist/*
 !/java_dist/botclient.Dockerfile
-/hx_src/autotude/proto/
+/viewer/autotude/proto/
 /build/
 .DS_STORE
 .direnv
@@ -54,3 +54,11 @@ stats_db/players.txt
 stats_db/goals.txt
 stats_db/tks.txt
 /altistats.com/design.af~lock~
+
+# local haxelib repo
+/.haxelib/
+/.haxelib-src/
+
+# game resources (extracted from Altitude files)
+/game_resources/target/
+/game_resources/out/

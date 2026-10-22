@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>Viewer</title>
+        <style>
+            :root {
+                --panel: rgba(14, 16, 22, 0.78);
+                --panel-border: rgba(255, 255, 255, 0.08);
+                --text: #e8eaf0;
+                --text-dim: #8d93a3;
+                --accent: #5aa9ff;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                background: #15171c;
+                color: var(--text);
+                font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+            }
+
+            #container {
+                height: 100vh;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+
+            #sidebar-container {
+                flex-grow: 1;
+                overflow: hidden;
+                position: relative;
+            }
+
+            #sidebar,
+            #help {
+                position: absolute;
+                top: 12px;
+                max-height: calc(100% - 24px);
+                overflow-y: auto;
+                box-sizing: border-box;
+                padding: 10px 14px;
+                display: none;
+                background: var(--panel);
+                border: 1px solid var(--panel-border);
+                border-radius: 8px;
+                backdrop-filter: blur(6px);
+                box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+            }
+
+            #sidebar.show,
+            #help.show {
+                display: block;
+            }
+
+            #sidebar {
+                left: 12px;
+                width: min(460px, calc(100% - 24px));
+            }
+
+            #sidebar p {
+                margin: 0.15em 0;
+            }
+
+            #sidebar a {
+                color: var(--accent);
+                text-decoration: none;
+                font-variant-numeric: tabular-nums;
+            }
+
+            #sidebar a:hover {
+                text-decoration: underline;
+            }
+
+            #sidebar p i {
+                font-style: normal;
+                opacity: 0.5;
+            }
+
+            #help {
+                right: 12px;
+            }
+
+            #scoreboard {
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: none;
+                align-items: center;
+                gap: 10px;
+                padding: 2px 12px;
+                background: var(--panel);
+                border: 1px solid var(--panel-border);
+                border-radius: 8px;
+                font-variant-numeric: tabular-nums;
+                pointer-events: none;
+                white-space: nowrap;
+            }
+
+            #scoreboard.show {
+                display: flex;
+            }
+
+            #scoreboard .score {
+                font-size: 19px;
+                font-weight: 700;
+                min-width: 1.2em;
+                text-align: center;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+            }
+
+            #scoreboard .clock {
+                font-size: 14px;
+                color: var(--text);
+            }
+
+            #scoreboard .sudden-death {
+                color: #ffb347;
+                font-weight: 600;
+            }
+
+            #help p {
+                margin: 0.3em 0;
+                display: flex;
+                gap: 12px;
+                justify-content: space-between;
+                color: var(--text-dim);
+            }
+
+            #help kbd {
+                display: inline-block;
+                min-width: 1.4em;
+                padding: 0 6px;
+                text-align: center;
+                font: 12px/20px ui-monospace, Consolas, monospace;
+                color: var(--text);
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                border-bottom-width: 2px;
+                border-radius: 4px;
+            }
+
+            #help .desc {
+                color: var(--text);
+            }
+
+            #debug-container {
+                position: absolute;
+                width: 100;
+                height: 100%;
+                display: flex;
+            }
+
+            #debug {
+            }
+
+            #toggle-btn {
+                position: absolute;
+                top: 10px;
+                left: 200px;
+            }
+
+            #toggle-btn.collapsed {
+                left: 0;
+            }
+
+            #control-panel {
+                width: 100%;
+                background: #0e1016;
+                border-top: 1px solid var(--panel-border);
+                padding: 12px 16px;
+                box-sizing: border-box;
+
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 14px;
+            }
+
+            #time_before,
+            #time_after {
+                font-variant-numeric: tabular-nums;
+                min-width: 5.5em;
+            }
+
+            #time_before {
+                text-align: right;
+            }
+
+            #scrubber {
+                flex-grow: 1;
+                max-width: 900px;
+                accent-color: var(--accent);
+                cursor: pointer;
+            }
+
+            #control-panel i {
+                font-style: normal;
+                color: var(--text-dim);
+            }
+
+            #volume {
+                width: 80px;
+                accent-color: var(--accent);
+                cursor: pointer;
+            }
+
+            #play,
+            #mute,
+            #fullscreen,
+            #speed {
+                font: inherit;
+                color: var(--text);
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            #play,
+            #mute,
+            #fullscreen {
+                width: 34px;
+                height: 28px;
+                padding: 0;
+            }
+
+            #speed {
+                padding: 3px 4px;
+            }
+
+            #speed option {
+                background: #0e1016;
+            }
+
+            #play:disabled {
+                cursor: default;
+                opacity: 0.5;
+            }
+
+            #control-panel .hint {
+                color: var(--text-dim);
+                font-size: 12px;
+                white-space: nowrap;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="container">
+            <div id="sidebar-container">
+                <div id="sidebar"></div>
+                <div id="help"></div>
+                <div id="scoreboard"></div>
+
+                <!-- needs inline height and width to signal to heaps that it doesn't need to set these properties -->
+                <canvas
+                    id="webgl"
+                    globalEvents="1"
+                    style="width: 100%; height: 100%; flex-grow: 1"
+                ></canvas>
+            </div>
+            <div id="control-panel">
+                <button id="play" type="button" title="Play / pause (Space)" disabled>&#9654;</button>
+                <span id="time_before"></span>
+                <input id="scrubber" type="range" min="0" max="100" value="0" disabled />
+                <span id="time_after"></span>
+                <select id="speed" title="Playback speed">
+                    <option value="0.25">0.25&times;</option>
+                    <option value="0.5">0.5&times;</option>
+                    <option value="1" selected>1&times;</option>
+                    <option value="2">2&times;</option>
+                    <option value="4">4&times;</option>
+                </select>
+                <button id="mute" type="button" title="Sound on / off (N)">&#128266;</button>
+                <input id="volume" type="range" min="0" max="100" value="80" title="Volume" />
+                <button id="fullscreen" type="button" title="Full screen (Shift + F)">&#x26F6;</button>
+                <span class="hint">H for keys</span>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="./viewer.js"></script>
+    </body>
+</html>

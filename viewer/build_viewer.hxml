@@ -1,0 +1,11 @@
+-lib protohx
+-lib format
+-lib heaps
+-cp viewer
+-dce full
+-D analyzer-optimize
+--macro nullSafety("autotude", Loose)
+--macro nullSafety("autotude.proto", Off)
+
+-main autotude.viewer.Viewer
+--js viewer/out/viewer.js

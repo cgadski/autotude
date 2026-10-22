@@ -45,14 +45,30 @@ export-java-gen:
 	mkdir -p {{JAVA_INSTALL}}
 	cp java_gen/em/altitude/game/protos/* {{JAVA_INSTALL}}
 
+# Serve the viewer and open a recording (e.g. `just view foo` -> recordings/foo.pb)
+view name port="8000":
+	#!/usr/bin/env bash
+	set -euo pipefail
+	rm -rf .serve && mkdir -p .serve
+	ln -s $PWD/viewer/viewer.html .serve/viewer.html
+	ln -s $PWD/viewer/out/viewer.js .serve/viewer.js
+	ln -s $PWD/game_resources/out .serve/game_resources
+	ln -s $PWD/recordings .serve/recordings
+	python3 -m http.server {{port}} -d .serve &
+	server=$!
+	trap 'kill $server; rm -rf .serve' EXIT
+	sleep 1
+	url="http://localhost:{{port}}/viewer.html?f={{name}}.pb"
+	echo "$url"
+	(open "$url" || xdg-open "$url") 2>/dev/null || true
+	wait $server
+
 # Package and upload resources.
 dist:
 	tar -czf dist.tar \
 		alti_home/{maps,resources,data}/ \
-		java_dist/BotServer* \
-		hx_src/out/viewer.js
+		java_dist/BotServer*
 	rsync -v --progress dist.tar root@cgad.ski:/www/autotude-dist.tar
-
 
 # Package and upload recordings
 dist-recordings:

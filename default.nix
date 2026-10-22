@@ -55,15 +55,15 @@ in
         buildInputs = lib.lists.remove neko buildInputs;
 
         buildPhase = ''
-          make clean hx_src/autotude/proto/
+          make clean viewer/autotude/proto/
         '';
 
         installPhase = ''
           mkdir -p $out
-          rm ./hx_src/protohx.json
-          rm ./hx_src/clean_hxproto.sh
-          cp -r ./hx_src $out/
-          cp ./hx_src/haxelib.json $out/
+          rm ./viewer/protohx.json
+          rm ./viewer/clean_hxproto.sh
+          cp -r ./viewer $out/
+          cp ./viewer/haxelib.json $out/
         '';
       };
     };
