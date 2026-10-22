@@ -172,6 +172,7 @@ class Viewer extends hxd.App {
 	function onWheel(e:Event) {
 		if (playerState == null)
 			return;
+		playerState.followBall = false;
 
 		// wheel up (negative delta) zooms in. heaps gives deltaY / 120, and a
 		// wheel notch is usually 100px of deltaY.
@@ -192,6 +193,7 @@ class Viewer extends hxd.App {
 		if (draggable == null || playerState == null)
 			return;
 
+		playerState.followBall = false;
 		draggable.startCapture(onDrag);
 		dragStart = new Vector(e.relX, e.relY);
 		dragPosStart = playerState.pos.clone();
@@ -219,6 +221,7 @@ class Viewer extends hxd.App {
 	override function update(dt:Float) {
 		bindings.update();
 		if (playerState != null) {
+
 			if (playerState.playing) {
 				netTime += dt * speed;
 				final steps = Std.int(netTime / frameTime);
@@ -328,6 +331,10 @@ class Viewer extends hxd.App {
 
 		r("Zoom to in-game vision", [Key.Z], () -> {
 			n((s) -> s.scale = 1);
+		});
+
+		r("Follow the ball", [Key.C], () -> {
+			n((s) -> s.followBall = !s.followBall);
 		});
 
 		r("Toggle bounds", [Key.B], () -> {

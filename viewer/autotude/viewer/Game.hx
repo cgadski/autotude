@@ -113,6 +113,9 @@ class Game extends Object {
 	}
 
 	override function sync(ctx:RenderContext) {
+		if (state.followBall)
+			state.followBallStep();
+
 		// objective is to make trans + scale * pos = view / 2
 		// so trans = view / 2 - scale * pos
 		final tx = Viewer.WIDTH / 2 - state.scale * state.pos.x;
