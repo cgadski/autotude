@@ -40,10 +40,10 @@ const TYPES: &[(i32, &str)] = &[
     (15, "planes/powerup/container.poly"), // HEALTH_POWERUP
     (16, "planes/powerup/container.poly"), // POWERUP_SPAWNER
     // loopy
-    (20, "planes/loopy/trackingbullet.poly"), // DOUBLE_FIRE_MISSLE
-    (21, "planes/loopy/trackingbullet.poly"), // TRACKER_MISSLE
-    (22, "planes/loopy/emp_grenade.poly"),    // EMP_CAPSULE
-    (24, "planes/loopy/acid_grenade.poly"),   // ACID_BOMB
+    (20, "render/planes/loopy/missile/0_128_5.animatedpoly"), // DOUBLE_FIRE_MISSLE
+    (21, "render/planes/loopy/missile/0_128_5.animatedpoly"), // TRACKER_MISSLE
+    (22, "planes/loopy/emp_grenade.poly"),                    // EMP_CAPSULE
+    (24, "planes/loopy/acid_grenade.poly"),                   // ACID_BOMB
     // bomber
     (30, "planes/bomber/grenade.poly"),                     // NADE
     (31, "planes/bomber/big_shell.poly"),                   // FLAK

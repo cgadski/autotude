@@ -47,6 +47,9 @@ final WALL_BEAM = "planes/powerup/wall/beam_texture.png";
 final WALL_ELECTRIC = "planes/powerup/wall/electric_";
 
 // Sprites that differ from the hitbox poly for a type.
+// Length of loopy's missile animation, in tens of milliseconds (9 frames of 133 ms).
+final MISSILE_CYCLE = 120;
+
 final SPRITE_OVERRIDES:Map<Int, String> = [
 	ObjectType.HEALTH_POWERUP => "planes/powerup/container_health.poly",
 ];
@@ -151,8 +154,13 @@ class ObjectLayer extends Graphics {
 		if (object.type == ObjectType.WALL)
 			return drawWall(sprites, object);
 
-		// only planes have frames by roll; other animations are by time
-		final spin = object.type <= ObjectType.MIRANDA ? object.spin : null;
+		// planes have frames by roll; loopy's missiles animate by time (frames
+		// keyed in tens of milliseconds); other animations are not played
+		final spin = if (object.type <= ObjectType.MIRANDA) object.spin else if (object.type == ObjectType.DOUBLE_FIRE_MISSLE
+			|| object.type == ObjectType.TRACKER_MISSLE) {
+			final timeline = this.timeline;
+			timeline == null ? 0 : Std.int(timeline.age(object.uid, state.frameIdx) * 100 / 30) % MISSILE_CYCLE;
+		} else null;
 		final polyOverride = SPRITE_OVERRIDES.get(object.type);
 		final rocketFlame = ROCKET_FLAMES.get(object.type);
 		final sprite = if (object.type == ObjectType.BALL) ballSprite(sprites, object.team) else if (rocketFlame != null)
