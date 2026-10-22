@@ -50,6 +50,13 @@ final WALL_ELECTRIC = "planes/powerup/wall/electric_";
 // Length of loopy's missile animation, in tens of milliseconds (9 frames of 133 ms).
 final MISSILE_CYCLE = 120;
 
+final BULLET_TRAILS:Map<Int, String> = [
+	ObjectType.BIPLANE_PRIMARY => "planes/biplane/trail.png",
+	ObjectType.BIPLANE_SECONDARY => "planes/biplane/trail.png",
+	ObjectType.HEAVY_CANNON => "planes/biplane/trail_cannon.png",
+	ObjectType.FLAK => "planes/biplane/trail_cannon.png",
+];
+
 final SPRITE_OVERRIDES:Map<Int, String> = [
 	ObjectType.HEALTH_POWERUP => "planes/powerup/container_health.poly",
 ];
@@ -178,6 +185,9 @@ class ObjectLayer extends Graphics {
 			drawFlame(sprites, sprite, object, AFTERBURNER_IMAGE, 0.9);
 		if (rocketFlame != null)
 			drawFlame(sprites, sprite, object, rocketFlame, ROCKET_FLAME_SCALE);
+		final trail = BULLET_TRAILS.get(object.type);
+		if (trail != null)
+			drawBulletTrail(sprites, object, trail);
 		drawSprite(sprite, object);
 		// a powerup is its icon in a container (a bubble, or health's frame)
 		final icon = POWERUP_ICONS.get(object.type);
@@ -222,6 +232,19 @@ class ObjectLayer extends Graphics {
 		final rotation = Math.atan2(ahead.y - at.y, ahead.x - at.x);
 		final flicker = 0.85 + 0.15 * Math.sin(state.frameIdx * 2.7 + object.uid);
 		TexturePages.drawImage(this, tile, at.x, at.y, scale * flicker, rotation, 1, true, 1);
+	}
+
+	// as in the TrailedBullet altitude class
+	function drawBulletTrail(sprites:Sprites, bullet:GameObject, image:String) {
+		final tile = sprites.tile(image);
+		if (tile == null)
+			return;
+		final scale = bullet.scale == null ? 1 : bullet.scale / 1000;
+		final at = placeVertex(bullet, 0, 0);
+		final ahead = placeVertex(bullet, 1, 0);
+		final rotation = Math.atan2(ahead.y - at.y, ahead.x - at.x);
+		final anchor = 1 - 4 / tile.width;
+		TexturePages.drawImage(this, tile, at.x, at.y, 2 * scale, rotation, 0.3, false, anchor, scale);
 	}
 
 	// The badge the game shows by a plane holding a powerup or the ball.

@@ -46,7 +46,7 @@ const TYPES: &[(i32, &str)] = &[
     (24, "planes/loopy/acid_grenade.poly"),                   // ACID_BOMB
     // bomber
     (30, "planes/bomber/grenade.poly"),                     // NADE
-    (31, "planes/bomber/big_shell.poly"),                   // FLAK
+    (31, "planes/biplane/bullet_cannon.poly"),              // FLAK (game uses the HC cannon poly)
     (32, "planes/bomber/gun.poly"),                         // SUPPRESSOR
     (33, "render/planes/bomber/bomb/0_128_5.animatedpoly"), // DOMB
     // biplane
