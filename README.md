@@ -2,27 +2,30 @@
 
 [Altitude](https://altitudegame.com/) is a 2d multiplayer game, released in 2009 by Nimbly Games.
 
-This repository is my ongoing attempt to make Altitude a nice environment for reinforcement learning in my (super limited) free time.
+This repository is my ongoing attempt to make Altitude a nice environment for reinforcement learning in my (super limited) free time + do some other nice stuff.
 
-So far, we have:
+On the RL side, we have:
 
 - `proto/`: A protobuf schema that can stream game state at around 12 kbps (raw) or 3 kbps (gzipped).
-- `stats_db/`: Tools to extract statistics from replay files and a bunch of statistics for use on [http://altistats.com].
-- `hx_src/`: An in-browser replay viewer, written in haxe.
-- A headless Altitude client that can connect to online servers and stream game state/accept controls from an external process.
-- `altistats.com/`: An [online database](http://altistats.com) of human replays, recorded using the headless client.
 - A "bot server" that can plays externally-controlled bots against each other at faster than realtime. (With two bots on a large map, the game can run at least 8 minutes of gameplay per realtime second.)
-- `rl/`: A `gymnasium` style environment for controlling the bot server.
+- `rl/`: A `gymnasium` style environment for controlling the bot server + some ongoing experiments on reinforcement learning.
+- A headless Altitude client that can connect to online servers and stream game state/accept controls from an external process.
 
-# Quickstart
+On the nice stuff side:
+
+- `altistats.com/`: An [online database](http://altistats.com) of games played on Van1shing's 4ball servers.
+- `stats_db/`: Tools to index human replays and wrangle data, used by the site.
+- `viewer/`: An in-browser replay viewer hosted on the site.
+
+# Quickstart for RL
 
 ## Dependencies
 
 Install [direnv](https://direnv.net/) to load environment variables from `.envrc` and `rl/.envrc`. Install [just](https://github.com/casey/just) to run commands from `Justfiles`.
 
-Run `just nix` to build `etc/nix.env` if you'd like to manage Haxe, Java and protoc through nix. _However, these dependencies are not required to do reinforcement learning._
+Run `just nix` to build `etc/nix.env` if you'd like to manage Haxe, Java and protoc through nix. These dependencies are not required for RL.
 
-Run `just setup` to download game resources and a build of the in-browser replay viewer (`hx_src/out/viewer.js`) to your working tree.
+Run `just setup` to download resources (bot server, `alti_home/` contents) needed for RL.
 
 ## Using RL environment
 
@@ -53,16 +56,18 @@ A replay (extension `.pb`) is just a gzipped sequence of length-delimited `Updat
 
 The bandwidth of a game with 8 players (like 4v4 ball) tends to be about 0.2 megabytes per minute after gzipping, or roughly 100x less than the bandwidth of 720p video.
 
-## `data/polys`
+## `viewer/`
 
-Map geometry is sent in the first `Update` message when a game begins. Besides map geometry, the only additional information needed to interpret an `Update` are the relative hitboxes of game objects like planes and projectiles. `data/polys` is a gzipped sequence of length-delimited `Poly` messages (as defined in `proto/poly.proto`) giving the hixboxes of different game objects. This data is read from `poly_src`, an bunch of XML files copied from Altitude.
+Replay viewer, written in haxe with the heaps game library. Requires resources from the game. Test it out with `just view $STEM`.
 
-Planes have different hitboxes depending on their "roll." The degrees of roll for which hitboxes are available are irregularly distributed.
+## `game_resources/`
 
-## `hx_src/`
+Rust tools that extract sprites, hitboxes, sounds, and map data from altitude for use in the replay viewer. Set `ALTI_INSTALL` and `ALTI_MAP_PATH` (colon-separated) and run `make game_resources`. 
 
-Haxe soure. Mainly the replay viewer, written with the heaps game engine.
+- `out/sprites`: game assets as `.pngs` + `sprites.json`, 11M
+- `out/sounds`: sounds, 2.4M
+- `out/`: map data + graphics, about 1M per map
 
-## `rust_src/`
+## `stats_db/`
 
-Rust source for the indexers (`bin/index`, `bin/index-lite`).
+Some Rust tools for inspecting replays/dumping some of their data to a sqlite database + a bunch of sql that wrangles this data into tables used on `altistats.com`. The `Dockerfile` defines a service that periodically reads replays written by the bot clients and writes to the sqlite database. More information on `stats_db/README.md`.
