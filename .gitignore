@@ -18,8 +18,6 @@ Cargo.lock
 # generated data
 /data/*.csv
 /data/*.db*
-/data/polys
-/poly_src/
 recordings/
 
 # binaries
@@ -31,7 +29,6 @@ recordings/
 # build outputs
 /bin/
 /viewer/out/
-/java_gen/
 /java_dist/*
 !/java_dist/botclient.Dockerfile
 /viewer/autotude/proto/
@@ -44,21 +41,26 @@ site_src/.index.sql.swp
 /stats_db/proto/
 /rl/alti_rl/proto/
 
+# proto sourcegen
+/viewer/autotude/proto/
+/rl/alti_rl/proto/
+/java_gen/
+
 # python
 __pycache__
 .ipynb_checkpoints
 .jupyter
 .vandc
-rl/models
-stats_db/players.txt
-stats_db/goals.txt
-stats_db/tks.txt
+/rl/models
+/stats_db/players.txt
+/stats_db/goals.txt
+/stats_db/tks.txt
 /altistats.com/design.af~lock~
 
 # local haxelib repo
 /.haxelib/
 /.haxelib-src/
 
-# game resources (extracted from Altitude files)
+# game resources
 /game_resources/target/
 /game_resources/out/

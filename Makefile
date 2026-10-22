@@ -6,13 +6,17 @@ clean:
 	rm -rf bin/
 	rm -rf java_gen/ # java source gen
 	rm -rf viewer/autotude/proto/ # haxe source gen
-	rm -rf stats_db/proto/ # copies proto files
+	rm -rf rl/alti_rl/proto/ # python source gen
+	rm -rf stats_db/proto/ # proto files for stats_db service docker build
 	rm -rf viewer/out/
 
 # protobuf stuff
 
 PROTO_SRC = proto/
 PROTO_FILES = $(wildcard $(PROTO_SRC)*)
+.PHONY: gen_protobuf
+
+gen_protobuf: java_gen/ viewer/autotude/proto/ rl/alti_rl/proto/
 
 ## java protobuf souregen
 java_gen/: $(PROTO_FILES)
@@ -24,8 +28,7 @@ viewer/autotude/proto/: $(PROTO_FILES)
 	haxelib run protohx generate viewer/protohx.json
 	bash viewer/clean_hxproto.sh
 
-
-# python sourcegen
+## python protobuf sourcegen
 rl/alti_rl/proto/: $(PROTO_FILES)
 	rm -rf $@
 	mkdir -p $@
