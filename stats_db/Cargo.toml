@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "index-lite"
-path = "bin/index-lite.rs"
+name = "index"
+path = "bin/index.rs"
 
 [[bin]]
 name = "dump"
@@ -18,14 +18,6 @@ path = "bin/dump-parquet.rs"
 [[bin]]
 name = "cat-replay"
 path = "bin/cat-replay.rs"
-
-[[bin]]
-name = "slice-replay"
-path = "bin/slice-replay.rs"
-
-[[bin]]
-name = "vacuum-replays"
-path = "bin/vacuum-replays.rs"
 
 [dependencies]
 prost = "0.12"
