@@ -7,6 +7,12 @@ x-db-env: &db-env
   POSTGRES_HOST: pg
   POSTGRES_PORT: 5432
 
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 x-bot-base: &bot-base
   image: magneticduck/botclient:0.3.1
   deploy:
@@ -14,10 +20,12 @@ x-bot-base: &bot-base
   volumes:
     - /root/alti_home:/app
   restart: unless-stopped
+  logging: *default-logging
 
 services:
   nginx:
     build: nginx
+    logging: *default-logging
     ports:
       - "80:80"
       - "443:443"
@@ -34,6 +42,7 @@ services:
     restart: unless-stopped
 
   certbot:
+    logging: *default-logging
     image: certbot/certbot
     volumes:
       - /root/letsencrypt/:/etc/letsencrypt/
@@ -55,9 +64,11 @@ services:
       REPLAY_DIR: /app/recordings/
       STATS_DB: /app/stats_db/stats.db
       STATS_INTERVAL: 10
+    logging: *default-logging
     restart: unless-stopped
 
   site:
+    logging: *default-logging
     image: magneticduck/altistats:latest
     volumes:
       - /root/stats_db/:/app/stats_db/
@@ -79,6 +90,7 @@ services:
       - pg
 
   notifier:
+    logging: *default-logging
     build: notifier
     environment:
       <<: *db-env
@@ -134,6 +146,7 @@ services:
   #     ALTI_HOME: /app
 
   pg:
+    logging: *default-logging
     image: postgres:15
     deploy:
       mode: global
@@ -146,6 +159,7 @@ services:
     restart: unless-stopped
 
   ntfy:
+    logging: *default-logging
     image: binwiederhier/ntfy
     command:
       - serve
