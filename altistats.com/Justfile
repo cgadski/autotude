@@ -4,9 +4,31 @@ dev:
 	docker context use default
 	docker compose -f dev.yml up -d --remove-orphans --build
 
-# Docker compose
-
 COMPOSE := "docker --host \"ssh://root@altistats.com\" compose -f prod.yml"
+
+# create listing tables
+init-listings:
+	psql -v ON_ERROR_STOP=1 -f listings.sql
+
+# upload replays + assets in alti_home (on server rebuild)
+upload-home:
+	ssh root@altistats.com "mkdir -p /root/alti_home"
+	rsync -rtvhW --progress ../alti_home/data/ root@altistats.com:/root/alti_home/data/
+	rsync -rtvhW --progress ../alti_home/resources/ root@altistats.com:/root/alti_home/resources/
+	rsync -rtvhW --progress ../alti_home/maps/ root@altistats.com:/root/alti_home/maps/
+	rsync -rtvhW --progress ${REPLAY_DIR} root@altistats.com:/root/alti_home/recordings/
+
+# get bot configs and images
+pull:
+	./scripts/make_configs.py
+	rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
+	{{ COMPOSE }} pull
+
+# build/upload replay viewer + resources
+upload-viewer:
+	make -C .. viewer/out/viewer.js game_resources
+	rsync -hzv --checksum ../viewer/viewer.html ../viewer/out/viewer.js root@altistats.com:/root/viewer/
+	rsync -rhzv --delete ../game_resources/out/ root@altistats.com:/root/viewer/game_resources/
 
 down:
 	{{ COMPOSE }} down
@@ -17,13 +39,32 @@ up:
 up-build:
 	{{ COMPOSE }} up --build -d --remove-orphans
 
-init-cert:
-	{{ COMPOSE }} stop nginx
-	{{ COMPOSE }} run --rm -p 80:80 --entrypoint certbot certbot \
-		certonly --standalone --cert-name altistats.com \
-		-d altistats.com -d ntfy.altistats.com \
-		--agree-tos --register-unsafely-without-email --non-interactive
-	{{ COMPOSE }} up -d --build nginx certbot
+# uploading/building images
+
+docker_plat := "--platform=linux/amd64"
+
+# stats service image
+upload-stats:
+	docker context use default
+	docker build {{ docker_plat }} -t magneticduck/stats_db:latest ../stats_db
+	docker push magneticduck/stats_db:latest
+
+# svelte website image
+upload-site:
+	docker context use default
+	docker build {{ docker_plat }} -t magneticduck/altistats:latest site
+	docker push magneticduck/altistats:latest
+
+BOT_IMAGE := "magneticduck/botclient:0.3.1"
+
+# bot client image
+upload-bot:
+	docker context use default
+	docker build {{ docker_plat }} -t {{ BOT_IMAGE }} \
+		-f ../java_dist/botclient.Dockerfile ../java_dist
+	docker push {{ BOT_IMAGE }}
+
+# misc management stuff
 
 restart-ntfy:
 	ssh root@altistats.com "mkdir -p /root/ntfy_config"
@@ -48,32 +89,6 @@ restart-bots:
 restart-listing:
 		{{ COMPOSE }} restart listing-bot
 
-pull:
-	./scripts/make_configs.py
-	rsync -rhv build/client_configs/ root@altistats.com:/root/alti_home/client_configs/
-	{{ COMPOSE }} pull
-
-docker_plat := "--platform=linux/amd64"
-
-upload-stats:
-	docker context use default
-	docker build {{ docker_plat }} -t magneticduck/stats_db:latest ../stats_db
-	docker push magneticduck/stats_db:latest
-
-upload-site:
-	docker context use default
-	docker build {{ docker_plat }} -t magneticduck/altistats:latest site
-	docker push magneticduck/altistats:latest
-
-
-BOT_IMAGE := "magneticduck/botclient:0.3.1"
-
-upload-bot:
-	docker context use default
-	docker build {{ docker_plat }} -t {{ BOT_IMAGE }} \
-		-f ../java_dist/botclient.Dockerfile ../java_dist
-	docker push {{ BOT_IMAGE }}
-
 list-servers:
 	psql -P pager=off -c "\
 		SELECT * FROM (\
@@ -84,3 +99,13 @@ list-servers:
 			ORDER BY ip, players DESC, time DESC \
 		) sub \
 		ORDER BY max_players DESC;"
+
+# one-off init for certbot
+
+init-cert:
+	{{ COMPOSE }} stop nginx
+	{{ COMPOSE }} run --rm -p 80:80 --entrypoint certbot certbot \
+		certonly --standalone --cert-name altistats.com \
+		-d altistats.com -d ntfy.altistats.com \
+		--agree-tos --register-unsafely-without-email --non-interactive
+	{{ COMPOSE }} up -d --build nginx certbot

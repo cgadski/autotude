@@ -8,6 +8,7 @@ clean:
 	rm -rf viewer/autotude/proto/ # haxe source gen
 	rm -rf rl/alti_rl/proto/ # python source gen
 	rm -rf stats_db/proto/ # proto files for stats_db service docker build
+	rm -rf game_resources/out/ # game resources
 	rm -rf viewer/out/
 
 # protobuf stuff
