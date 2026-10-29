@@ -124,11 +124,9 @@ impl IndexingListener {
 
     fn on_plane(&mut self, id: PlayerId, plane: &GameObject) -> Result<()> {
         let presence = match self.get_player_key(id) {
-            Err(e) => {
-                // ignore garbage on first tick, problem with replay v0.3
-                if self.state.current_tick > 1 {
-                    eprintln!("Could not process plane with uid {}: {:?}", plane.uid(), e);
-                }
+            Err(_e) => {
+                // plane with no valid player key!
+                // after a lot of testing, this has never been our fault. we print no warning.
                 return Ok(());
             }
             Ok(p) => p,
