@@ -94,6 +94,23 @@ class Sprites {
 		return tile == null ? null : {frame: best, tile: tile};
 	}
 
+	/**
+		A poly's frame by its index in the poly's file, cycling. Animations
+		the game steps through in order (a health pack's tumble and bob) are
+		keyed by frame number, not by roll, so `forPoly` can't pick them.
+	**/
+	public function forFrame(poly:String, index:Int):Null<Sprite> {
+		final frames = data.polys.get(poly);
+		if (frames == null || frames.length == 0)
+			return null;
+		final frame = frames[index % frames.length];
+		final image = frame.image;
+		if (image == null)
+			return null;
+		final tile = textures.get(image);
+		return tile == null ? null : {frame: frame, tile: tile};
+	}
+
 	/** An image on its own, centred on the origin, in a team's colour if it has one. **/
 	public function forImage(image:String, ?team:Int):Null<Sprite> {
 		final tile = textures.get(teamImage(image, team)) ?? textures.get(image);

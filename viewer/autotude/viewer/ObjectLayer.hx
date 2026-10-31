@@ -27,6 +27,9 @@ final POWERUP_ICONS:Map<Int, String> = [
 	ObjectType.HEALTH_POWERUP => "planes/powerup/health/healthpack.animatedpoly",
 ];
 
+final HEALTH_FRAME_TICKS = 2;
+final HEALTH_SCALE = 0.823;
+
 // Explodet rockets, as the game's Rocket class draws them: in the shooter's
 // colour, unfolding their fins over the first 180ms, then from 450ms
 // spinning through frames 100ms apart, with a flame behind (blue for thermobaric rockets).
@@ -46,7 +49,6 @@ final WALL_CAPS = "render/powerups/wall";
 final WALL_BEAM = "planes/powerup/wall/beam_texture.png";
 final WALL_ELECTRIC = "planes/powerup/wall/electric_";
 
-// Sprites that differ from the hitbox poly for a type.
 // Length of loopy's missile animation, in tens of milliseconds (9 frames of 133 ms).
 final MISSILE_CYCLE = 120;
 
@@ -55,10 +57,6 @@ final BULLET_TRAILS:Map<Int, String> = [
 	ObjectType.BIPLANE_SECONDARY => "planes/biplane/trail.png",
 	ObjectType.HEAVY_CANNON => "planes/biplane/trail_cannon.png",
 	ObjectType.FLAK => "planes/biplane/trail_cannon.png",
-];
-
-final SPRITE_OVERRIDES:Map<Int, String> = [
-	ObjectType.HEALTH_POWERUP => "planes/powerup/container_health.poly",
 ];
 
 // Pixel sizes of icons inside a container on the map.
@@ -162,17 +160,16 @@ class ObjectLayer extends Graphics {
 			return drawWall(sprites, object);
 
 		// planes have frames by roll; loopy's missiles animate by time (frames
-		// keyed in tens of milliseconds); other animations are not played
+		// keyed in tens of milliseconds); health packs animate by age (see
+		// drawHealthPack); other animations are not played
 		final spin = if (object.type <= ObjectType.MIRANDA) object.spin else if (object.type == ObjectType.DOUBLE_FIRE_MISSLE
 			|| object.type == ObjectType.TRACKER_MISSLE) {
 			final timeline = this.timeline;
 			timeline == null ? 0 : Std.int(timeline.age(object.uid, state.frameIdx) * 100 / 30) % MISSILE_CYCLE;
 		} else null;
-		final polyOverride = SPRITE_OVERRIDES.get(object.type);
 		final rocketFlame = ROCKET_FLAMES.get(object.type);
 		final sprite = if (object.type == ObjectType.BALL) ballSprite(sprites, object.team) else if (rocketFlame != null)
-			rocketSprite(sprites, object) else if (polyOverride != null) sprites.forPoly(polyOverride, object.team,
-				spin) else sprites.forType(object.type, object.team, spin);
+			rocketSprite(sprites, object) else sprites.forType(object.type, object.team, spin);
 		if (sprite == null)
 			return false;
 
@@ -180,6 +177,9 @@ class ObjectLayer extends Graphics {
 			drawSprite(sprite, object, BALL_SCALE);
 			return true;
 		}
+
+		if (object.type == ObjectType.HEALTH_POWERUP)
+			return drawHealthPack(sprites, object, sprite);
 
 		if (object.type <= ObjectType.MIRANDA && afterburning(object))
 			drawFlame(sprites, sprite, object, AFTERBURNER_IMAGE, 0.9);
@@ -189,12 +189,11 @@ class ObjectLayer extends Graphics {
 		if (trail != null)
 			drawBulletTrail(sprites, object, trail);
 		drawSprite(sprite, object);
-		// a powerup is its icon in a container (a bubble, or health's frame)
+		// a powerup is its icon in the container bubble
 		final icon = POWERUP_ICONS.get(object.type);
 		if (icon != null) {
 			drawIcon(sprites.forPoly(icon, null), uprightAt(object, 0), CONTAINER_ICON_SIZE);
-			if (object.type != ObjectType.HEALTH_POWERUP)
-				drawSprite(sprites.withImage(sprite, CONTAINER_OVER), object);
+			drawSprite(sprites.withImage(sprite, CONTAINER_OVER), object);
 		}
 		return true;
 	}
@@ -300,6 +299,28 @@ class ObjectLayer extends Graphics {
 		o.positionX = object.positionX + Std.int(right * 2);
 		o.positionY = object.positionY + Std.int(up * 2); // positions are in half pixels
 		return o;
+	}
+
+	// A health pack, as the game's HealthPowerup renders it: the pack's own
+	// animated frames (its tumble and bob are baked into them), in the powerup
+	// bubble only while it heals the full 100 (HealthPowerup.setRenderBubble);
+	// a partial pack dropped on a plane's death is bare.
+	function drawHealthPack(sprites:Sprites, object:GameObject, bubble:Null<Sprite>):Bool {
+		final icon = POWERUP_ICONS.get(ObjectType.HEALTH_POWERUP);
+		final timeline = this.timeline;
+		final age = timeline == null ? 0 : timeline.age(object.uid, state.frameIdx);
+		final pack = icon == null ? null : sprites.forFrame(icon, Std.int(age / HEALTH_FRAME_TICKS));
+		if (pack == null)
+			return false;
+		final full = !object.hasHealPercentage() || object.healPercentage == 100;
+		if (bubble != null && full) {
+			drawSprite(bubble, object);
+			drawSprite(pack, object, HEALTH_SCALE);
+			drawSprite(sprites.withImage(bubble, CONTAINER_OVER), object);
+		} else {
+			drawSprite(pack, object, HEALTH_SCALE);
+		}
+		return true;
 	}
 
 	// A deployed wall, as the game's Wall and WallBeamEffect draw it: its
