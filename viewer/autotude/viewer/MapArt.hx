@@ -72,8 +72,7 @@ class ParallaxView extends Graphics {
 		final cos = Math.cos(rot), sin = Math.sin(rot);
 
 		if (tile != null && !wrapping) {
-			// the image at translate + flip(rotate(scale * imagePos)); the hull
-			// is only its collision shape
+			// the image at translate + flip(rotate(scale * imagePos))
 			final trot = item.textureRotation * Math.PI / 180;
 			final tcos = Math.cos(trot), tsin = Math.sin(trot);
 			for (c in [[0.0, 0.0], [tile.width, 0.0], [tile.width, tile.height], [0.0, tile.height]]) {
@@ -137,19 +136,23 @@ class ParallaxView extends Graphics {
 class MapArt {
 	public final background:Int;
 
-	/** Views drawn under the game objects, back to front. **/
 	public final back:Array<Object> = [];
-
-	/** Views drawn over the game objects, back to front. **/
+	public final game:Array<Object> = []; // covers planes and goals
 	public final front:Array<Object> = [];
 
 	function new(state:PlayerState, data:MapArtData, textures:Map<String, Tile>) {
 		background = data.background & 0xFFFFFF;
 		var inFront = false;
 		for (view in data.views) {
-			(inFront ? front : back).push(new ParallaxView(state, view, textures));
-			if (view.name == GAME_VIEW)
+			final parallaxView = new ParallaxView(state, view, textures);
+			if (inFront) {
+				front.push(parallaxView);
+			} else if (view.name == GAME_VIEW) {
+				game.push(parallaxView);
 				inFront = true;
+			} else {
+				back.push(parallaxView);
+			}
 		}
 	}
 

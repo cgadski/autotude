@@ -98,10 +98,8 @@ class ObjectLayer extends Graphics {
 
 	final planeGraphics:Map<Int, PlaneGraphics> = new Map();
 
-	/** Game sprites, drawn instead of hitboxes once loaded. **/
 	public var sprites:Null<Sprites>;
-
-	/** For how long objects have existed (rockets animate by it). **/
+	public var goalLayer:Null<Graphics>;
 	public var timeline:Null<EffectTimeline>;
 
 	public function new(state:PlayerState) {
@@ -136,20 +134,21 @@ class ObjectLayer extends Graphics {
 		return pos + relative;
 	}
 
-	function drawSprite(sprite:Null<Sprite>, object:GameObject, extraScale:Float = 1) {
+	function drawSprite(sprite:Null<Sprite>, object:GameObject, extraScale:Float = 1, ?g:Graphics) {
 		if (sprite == null)
 			return;
+		final gfx = g ?? this;
 		polysDrawn += 1;
-		beginTileFill(0, 0, 1, 1, sprite.tile);
+		gfx.beginTileFill(0, 0, 1, 1, sprite.tile);
 		// the whole image, as the game draws it (the hull is just the hitbox)
 		final corners = TexturePages.imageCorners(sprite.frame, sprite.tile);
 		var i = 0;
 		while (i + 1 < corners.length) {
 			final dest = placeVertex(object, corners[i], corners[i + 1], extraScale);
-			TexturePages.addVertex(this, sprite.frame, sprite.tile, corners[i], corners[i + 1], dest.x, dest.y);
+			TexturePages.addVertex(gfx, sprite.frame, sprite.tile, corners[i], corners[i + 1], dest.x, dest.y);
 			i += 2;
 		}
-		endFill();
+		gfx.endFill();
 	}
 
 	// Draw an object as the game does. False if there's no sprite for it.
@@ -188,8 +187,15 @@ class ObjectLayer extends Graphics {
 		final trail = BULLET_TRAILS.get(object.type);
 		if (trail != null)
 			drawBulletTrail(sprites, object, trail);
+		// a goal renders with the level, under the map geometry covering it
+		if (object.type == ObjectType.GOAL) {
+			final goals = goalLayer;
+			if (goals != null) {
+				drawSprite(sprite, object, 1, goals);
+				return true;
+			}
+		}
 		drawSprite(sprite, object);
-		// a powerup is its icon in the container bubble
 		final icon = POWERUP_ICONS.get(object.type);
 		if (icon != null) {
 			drawIcon(sprites.forPoly(icon, null), uprightAt(object, 0), CONTAINER_ICON_SIZE);
@@ -301,10 +307,6 @@ class ObjectLayer extends Graphics {
 		return o;
 	}
 
-	// A health pack, as the game's HealthPowerup renders it: the pack's own
-	// animated frames (its tumble and bob are baked into them), in the powerup
-	// bubble only while it heals the full 100 (HealthPowerup.setRenderBubble);
-	// a partial pack dropped on a plane's death is bare.
 	function drawHealthPack(sprites:Sprites, object:GameObject, bubble:Null<Sprite>):Bool {
 		final icon = POWERUP_ICONS.get(ObjectType.HEALTH_POWERUP);
 		final timeline = this.timeline;
@@ -514,6 +516,9 @@ class ObjectLayer extends Graphics {
 
 	override function draw(ctx:RenderContext) {
 		clear();
+		final goals = goalLayer;
+		if (goals != null)
+			goals.clear();
 		final update = replay.updates[replay.updateAt(state.frameIdx)];
 
 		// Draw objects / sync planes.

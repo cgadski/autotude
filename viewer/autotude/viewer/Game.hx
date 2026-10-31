@@ -38,7 +38,9 @@ class Game extends Object {
 	// map artwork, filled in once loaded
 	final background:Graphics;
 	final artBack = new Object();
+	final artGame = new Object();
 	final artFront = new Object();
+	final goalLayer = new Graphics();
 	var art:Null<MapArt>;
 	var showingArt = false;
 
@@ -64,16 +66,22 @@ class Game extends Object {
 
 		mapMask = new Mask(mapGeometry.maxX, mapGeometry.maxY);
 		drawBackground(0xFFFFFF);
+		// back to front; goals sit under the game view's geometry, which
+		// covers them as in game
 		mapMask.addChild(background);
 		mapMask.addChild(artBack);
 		mapMask.addChild(mapLayer);
 		mapMask.addChild(effectsUnder);
+		mapMask.addChild(goalLayer);
+		mapMask.addChild(artGame);
 		mapMask.addChild(objectLayer);
 		mapMask.addChild(effectsOver);
 		mapMask.addChild(artFront);
 
 		addChild(mapMask);
 		addChild(boundLayer);
+
+		objectLayer.goalLayer = goalLayer;
 
 		if (replay.mapName != null)
 			MapArt.load(state, replay.mapName).then(onArtLoaded, e -> js.html.Console.warn(e));
@@ -84,6 +92,8 @@ class Game extends Object {
 		this.art = art;
 		for (view in art.back)
 			artBack.addChild(view);
+		for (view in art.game)
+			artGame.addChild(view);
 		for (view in art.front)
 			artFront.addChild(view);
 	}
@@ -105,7 +115,7 @@ class Game extends Object {
 	function updateArtVisibility() {
 		final art = this.art;
 		final show = art != null && state.showMapArt;
-		artBack.visible = artFront.visible = show;
+		artBack.visible = artGame.visible = artFront.visible = show;
 		mapLayer.visible = !show;
 		if (show != showingArt)
 			drawBackground(art != null && show ? art.background : 0xFFFFFF);
