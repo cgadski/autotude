@@ -54,7 +54,7 @@ view name port="8000":
 	ln -s $PWD/viewer/out/viewer.js .serve/viewer.js
 	ln -s $PWD/game_resources/out .serve/game_resources
 	ln -s $PWD/recordings .serve/recordings
-	python3 -m http.server {{port}} -d .serve &
+	python3 viewer/serve.py .serve {{port}} &
 	server=$!
 	trap 'kill $server; rm -rf .serve' EXIT
 	sleep 1
