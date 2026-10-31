@@ -30,6 +30,7 @@ class Game extends Object {
 	final objectLayer:ObjectLayer;
 	final effectsUnder:EffectLayer;
 	final effectsOver:EffectLayer;
+	final smokeLayer:SmokeLayer;
 
 	public final timeline:EffectTimeline;
 
@@ -63,11 +64,10 @@ class Game extends Object {
 		objectLayer.timeline = timeline;
 		effectsUnder = new EffectLayer(state, timeline, false);
 		effectsOver = new EffectLayer(state, timeline, true);
+		smokeLayer = new SmokeLayer(state);
 
 		mapMask = new Mask(mapGeometry.maxX, mapGeometry.maxY);
 		drawBackground(0xFFFFFF);
-		// back to front; goals sit under the game view's geometry, which
-		// covers them as in game
 		mapMask.addChild(background);
 		mapMask.addChild(artBack);
 		mapMask.addChild(mapLayer);
@@ -75,6 +75,7 @@ class Game extends Object {
 		mapMask.addChild(goalLayer);
 		mapMask.addChild(artGame);
 		mapMask.addChild(objectLayer);
+		mapMask.addChild(smokeLayer);
 		mapMask.addChild(effectsOver);
 		mapMask.addChild(artFront);
 
@@ -90,6 +91,7 @@ class Game extends Object {
 
 	function onArtLoaded(art:MapArt) {
 		this.art = art;
+		smokeLayer.blackSmoke = art.blackSmoke;
 		for (view in art.back)
 			artBack.addChild(view);
 		for (view in art.game)
@@ -102,6 +104,7 @@ class Game extends Object {
 		objectLayer.sprites = sprites;
 		effectsUnder.sprites = sprites;
 		effectsOver.sprites = sprites;
+		smokeLayer.sprites = sprites;
 	}
 
 	function drawBackground(color:Int) {

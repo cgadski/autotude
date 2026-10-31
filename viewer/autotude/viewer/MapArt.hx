@@ -30,6 +30,8 @@ typedef MapArtData = {
 	?version:String,
 	level:String,
 	background:Int,
+	// the level's useBlackSmokeForPlaneDamage: white smoke when false
+	?blackSmoke:Bool,
 	pages:Array<Page>,
 	images:haxe.DynamicAccess<PageImage>,
 	views:Array<MapArtView>
@@ -136,12 +138,16 @@ class ParallaxView extends Graphics {
 class MapArt {
 	public final background:Int;
 
+	/** The level's useBlackSmokeForPlaneDamage: white smoke when false. **/
+	public final blackSmoke:Bool;
+
 	public final back:Array<Object> = [];
 	public final game:Array<Object> = []; // covers planes and goals
 	public final front:Array<Object> = [];
 
 	function new(state:PlayerState, data:MapArtData, textures:Map<String, Tile>) {
 		background = data.background & 0xFFFFFF;
+		blackSmoke = data.blackSmoke ?? true;
 		var inFront = false;
 		for (view in data.views) {
 			final parallaxView = new ParallaxView(state, view, textures);

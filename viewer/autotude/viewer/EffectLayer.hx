@@ -14,8 +14,6 @@ final EXPLOSION_SMOKE = "effects/explosion/smoke.png";
 final SPAWN_SHOCKWAVE = "effects/spawn/shockwave.png";
 final INVULN_FRAMES = [for (i in 0...8) 'effects/invuln/invuln_merged_000$i.png'];
 final SPARKS = ["effects/spark/spark1.png", "effects/spark/spark2.png", "effects/spark/spark3.png"];
-final SMOKE_LIGHT = ["effects/smoke_white1.png", "effects/smoke_white2.png"];
-final SMOKE_DARK = ["effects/smoke1.png", "effects/smoke2.png"];
 
 // Durations in ticks (1/30 s), sizes as image scales.
 final BLAST_TICKS = 12;
@@ -25,11 +23,9 @@ final SPAWN_TICKS = 16;
 final INVULN_TICKS = 60;
 final SPARK_TICKS = 8;
 
-// Damaged planes trail smoke: a puff every few ticks over the last second.
-final TRAIL_SPACING = 3;
-final TRAIL_TICKS = 30;
-final SMOKE_BELOW_HEALTH = 500; // of 1000
-final DARK_SMOKE_BELOW_HEALTH = 250;
+// as the game's BallTrailEffect: a white ribbon behind the ball, half a second long
+final BALL_TRAIL_TICKS = 15;
+final BALL_TRAIL_RADIUS = 6.0;
 
 final LONGEST_EFFECT = 60;
 
@@ -60,13 +56,88 @@ class EffectLayer extends Graphics {
 			final tick = state.frameIdx;
 			final update = state.replay.updates[state.replay.updateAt(tick)];
 			if (!over)
-				for (o in update.objects)
-					if (o.type <= ObjectType.MIRANDA && o.health < SMOKE_BELOW_HEALTH)
-						drawSmokeTrail(sprites, o, tick);
+				drawBallTrail(tick);
 			for (e in timeline.between(tick - LONGEST_EFFECT, tick))
 				drawEffect(sprites, e, tick - e.tick, update.objects);
 		}
 		super.draw(ctx);
+	}
+
+	// The ball's trail, as the game's BallTrailEffect: a white ribbon over
+	// the last half second of a loose ball's path, fading out backwards.
+	function drawBallTrail(tick:Int) {
+		final replay = state.replay;
+		final maxY = state.geom.maxY;
+
+		// the ball's recent positions, newest first (screen coordinates)
+		final pts:Array<Array<Float>> = [];
+		var i = replay.updateAt(tick);
+		var held = false;
+		while (i >= 0 && replay.ticks[i] >= tick - BALL_TRAIL_TICKS && pts.length < BALL_TRAIL_TICKS + 1) {
+			var ball:Null<GameObject> = null;
+			for (o in replay.updates[i].objects) {
+				if (o.type == ObjectType.BALL)
+					ball = o;
+				if (o.type != null && o.type <= ObjectType.MIRANDA && o.powerup == ObjectType.BALL)
+					held = true;
+			}
+			if (ball == null || held)
+				break; // the ball was held or didn't exist then
+			final x = ball.positionX / 2, y = maxY - ball.positionY / 2;
+			if (pts.length > 0) {
+				final p = pts[pts.length - 1];
+				if ((p[0] - x) * (p[0] - x) + (p[1] - y) * (p[1] - y) > 600 * 600)
+						break; // the ball wrapped across the map, as in game
+			}
+			pts.push([x, y]);
+			i--;
+		}
+		if (pts.length < 3)
+			return;
+
+		// trail points: each position offset back along its velocity, as in game
+		for (k in 0...pts.length) {
+			final from = pts[k];
+			final to = pts[k + 1 < pts.length ? k + 1 : k - 1];
+			var vx = from[0] - to[0], vy = from[1] - to[1];
+			final len = Math.sqrt(vx * vx + vy * vy);
+			if (len > 0) {
+				vx /= len;
+				vy /= len;
+			}
+			from[0] -= vx * BALL_TRAIL_RADIUS;
+			from[1] -= vy * BALL_TRAIL_RADIUS;
+		}
+
+		// as the game's quad strip: one quad per pair of points, its ends
+		// coloured and widened per point, so the fade runs smoothly along the
+		// trail (and hairpins overlap-blend exactly as in game)
+		final n = pts.length;
+		final sides = [for (k in 0...n) {
+			final before = pts[k > 0 ? k - 1 : k];
+			final after = pts[k + 1 < n ? k + 1 : k];
+			var dx = before[0] - after[0], dy = before[1] - after[1];
+			final len = Math.sqrt(dx * dx + dy * dy);
+			if (len > 0) {
+				dx /= len;
+				dy /= len;
+			}
+			// the trail's alpha falls off along its length, squared as in game
+			final fade = 0.8 * (1 - k / BALL_TRAIL_TICKS);
+			{nx: dy, ny: -dx, alpha: k == 0 ? 0.8 : fade * fade,
+				width: k == 0 ? BALL_TRAIL_RADIUS : BALL_TRAIL_RADIUS * (0.66 + fade * 0.34)};
+		}];
+		for (k in 1...n) {
+			final a = pts[k - 1], b = pts[k];
+			final sa = sides[k - 1], sb = sides[k];
+			beginFill(0xFFFFFF);
+			// around the quad: one side of the ribbon to the next point, back the other
+			addVertex(a[0] + sa.nx * sa.width, a[1] + sa.ny * sa.width, 1, 1, 1, sa.alpha, 0, 0);
+			addVertex(b[0] + sb.nx * sb.width, b[1] + sb.ny * sb.width, 1, 1, 1, sb.alpha, 0, 0);
+			addVertex(b[0] - sb.nx * sb.width, b[1] - sb.ny * sb.width, 1, 1, 1, sb.alpha, 0, 0);
+			addVertex(a[0] - sa.nx * sa.width, a[1] - sa.ny * sa.width, 1, 1, 1, sa.alpha, 0, 0);
+			endFill();
+		}
 	}
 
 	function drawEffect(sprites:Sprites, e:TimedEffect, age:Int, objects:Array<GameObject>) {
@@ -122,25 +193,6 @@ class EffectLayer extends Graphics {
 		TexturePages.drawImage(this, tile, x, y, scale0 + (scale1 - scale0) * f, rotation, alpha * (1 - f));
 	}
 
-	// Puffs left behind along the plane's path over the last second.
-	function drawSmokeTrail(sprites:Sprites, plane:GameObject, tick:Int) {
-		final replay = state.replay;
-		final images = plane.health < DARK_SMOKE_BELOW_HEALTH ? SMOKE_DARK : SMOKE_LIGHT;
-		// puffs sit on fixed ticks so they stay put as time moves
-		var t = tick - tick % TRAIL_SPACING;
-		while (t > tick - TRAIL_TICKS && t >= 0) {
-			final then = planeOf(replay.updates[replay.updateAt(t)].objects, plane.owner);
-			if (then == null)
-				break;
-			final age = (tick - t) / TRAIL_TICKS;
-			final tile = sprites.tile(images[Std.int(t / TRAIL_SPACING) % images.length]);
-			if (tile != null)
-				TexturePages.drawImage(this, tile, then.positionX / 2, state.geom.maxY - then.positionY / 2, 0.5 + age * 0.9,
-					noise(t, 3) * Math.PI, 0.55 * (1 - age));
-			t -= TRAIL_SPACING;
-		}
-	}
-
 	static function planeOf(objects:Array<GameObject>, owner:Null<Int>):Null<GameObject> {
 		if (owner == null)
 			return null;
@@ -151,7 +203,7 @@ class EffectLayer extends Graphics {
 	}
 
 	// Deterministic pseudo-random number in [0, 1) for a tick and index.
-	static function noise(tick:Int, i:Int):Float {
+	public static function noise(tick:Int, i:Int):Float {
 		var h = tick * 374761393 + i * 668265263;
 		h = (h ^ (h >>> 13)) * 1274126177;
 		return ((h ^ (h >>> 16)) & 0xFFFF) / 0x10000;

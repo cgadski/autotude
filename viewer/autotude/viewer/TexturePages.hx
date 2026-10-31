@@ -138,12 +138,12 @@ class TexturePages {
 
 	/**
 		Draw a whole image centred on (x, y), scaled, rotated (radians,
-		clockwise on screen), faded and optionally mirrored. `anchorX` is
-		where along the image's width (0 left, 1 right) sits on (x, y).
-		`scaleY` stretches the height separately.
+		clockwise on screen), faded, tinted and optionally mirrored. `anchorX` is
+		where along the image's width (0 left, 1 right) sits on (x, y). `scaleY`
+		stretches the height separately; `color` tints (ARGB).
 	**/
 	public static function drawImage(g:Graphics, tile:Tile, x:Float, y:Float, scale:Float = 1, rotation:Float = 0, alpha:Float = 1,
-			flipX = false, anchorX = 0.5, ?scaleY:Float) {
+			flipX = false, anchorX = 0.5, ?scaleY:Float, ?color:Int) {
 		if (alpha <= 0 || scale <= 0)
 			return;
 		final w = tile.width * scale, h = tile.height * (scaleY ?? scale);
@@ -153,10 +153,12 @@ class TexturePages {
 		final v0 = tile.y / tex.height, v1 = (tile.y + tile.height) / tex.height;
 		g.beginTileFill(0, 0, 1, 1, tile);
 		final left = -anchorX * w;
+		final tint = color == null ? -1 : color;
+		final r = ((tint >> 16) & 0xFF) / 255, gr = ((tint >> 8) & 0xFF) / 255, b = (tint & 0xFF) / 255;
 		for (corner in [[0, 0], [1, 0], [1, 1], [0, 1]]) {
 			final lx = left + corner[0] * w, ly = (corner[1] - 0.5) * h;
 			final u = (flipX ? 1 - corner[0] : corner[0]) == 0 ? u0 : u1;
-			g.addVertex(x + lx * cos - ly * sin, y + lx * sin + ly * cos, 1, 1, 1, alpha, u, corner[1] == 0 ? v0 : v1);
+			g.addVertex(x + lx * cos - ly * sin, y + lx * sin + ly * cos, r, gr, b, alpha, u, corner[1] == 0 ? v0 : v1);
 		}
 		g.endFill();
 	}

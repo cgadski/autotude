@@ -41,6 +41,8 @@ struct MapArt<'a> {
     version: &'a str,
     level: String,
     background: i32,
+    /// The level's useBlackSmokeForPlaneDamage: white smoke when false.
+    blackSmoke: bool,
     pages: &'a [game_resources::Page],
     images: &'a BTreeMap<String, game_resources::Image>,
     views: Vec<View>,
@@ -200,6 +202,7 @@ fn extract(archive_path: &Path, out: &Path, version: &str) -> Result<String> {
             .attribute("backgroundColor")
             .and_then(|c| c.parse().ok())
             .unwrap_or(0),
+        blackSmoke: level.attribute("useBlackSmokeForPlaneDamage") != Some("false"),
         pages: &pages.pages,
         images: &pages.images,
         views,
