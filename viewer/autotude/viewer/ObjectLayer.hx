@@ -57,6 +57,7 @@ final BULLET_TRAILS:Map<Int, String> = [
 	ObjectType.BIPLANE_SECONDARY => "planes/biplane/trail.png",
 	ObjectType.HEAVY_CANNON => "planes/biplane/trail_cannon.png",
 	ObjectType.FLAK => "planes/biplane/trail_cannon.png",
+	ObjectType.SUPPRESSOR => "planes/biplane/trail.png",
 ];
 
 // Pixel sizes of icons inside a container on the map.
