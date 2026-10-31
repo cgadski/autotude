@@ -2,6 +2,7 @@ package autotude.viewer;
 
 import h2d.Graphics;
 import h2d.Tile;
+import h3d.mat.Data.Wrap;
 import hxd.BitmapData;
 import js.Browser;
 import js.html.CanvasElement;
@@ -31,7 +32,8 @@ typedef PageImage = {
 	x:Int,
 	y:Int,
 	w:Int,
-	h:Int
+	h:Int,
+	?repeat:Bool
 };
 
 /** A polygon (y-up) with an image placed at translate + flip(rotate(scale * imagePos)). **/
@@ -63,7 +65,8 @@ class TexturePages {
 	/**
 		Load every page under `root` and cut out each image as its own texture.
 		`version` (from the extractor) is added to image URLs so cached images
-		from an older extraction aren't reused.
+		from an older extraction aren't reused. Images marked `repeat` get a
+		wrapping texture, so they tile as in game.
 	**/
 	public static function load(root:String, pages:Array<Page>, images:haxe.DynamicAccess<PageImage>,
 			?version:String):Promise<Map<String, Tile>> {
@@ -75,7 +78,10 @@ class TexturePages {
 				if (img == null)
 					continue;
 				final bmp = BitmapData.fromNative(canvases[img.page].getContext2d()).sub(img.x, img.y, img.w, img.h);
-				textures.set(path, Tile.fromBitmap(bmp));
+				final tile = Tile.fromBitmap(bmp);
+				if (img.repeat == true)
+					tile.getTexture().wrap = Repeat;
+				textures.set(path, tile);
 			}
 			return textures;
 		});
@@ -84,8 +90,11 @@ class TexturePages {
 	/**
 		Add a vertex of `poly` to a tile fill on `g` (see `Graphics.beginTileFill`).
 		`px, py` is the hull point in the poly's own space, `x, y` where it goes.
+		`color` (ARGB, the poly's colour) tints and fades the vertex, as the game
+		renders the whole geometry modulated by its colour.
 	**/
-	public static function addVertex(g:Graphics, poly:TexturedPoly, tile:Tile, px:Float, py:Float, x:Float, y:Float) {
+	public static function addVertex(g:Graphics, poly:TexturedPoly, tile:Tile, px:Float, py:Float, x:Float, y:Float,
+			?color:Int) {
 		// invert translate + flip(rotate(scale * imagePos)); flips mirror
 		// about the translate point
 		var qx = px - poly.tx, qy = py - poly.ty;
@@ -99,7 +108,9 @@ class TexturePages {
 		final iy = (qx * sin + qy * cos) / poly.scale;
 		// images are y-up too
 		final tex = tile.getTexture();
-		g.addVertex(x, y, 1, 1, 1, 1, ix / tex.width, (tile.height - iy) / tex.height);
+		final tint = color == null ? -1 : color;
+		g.addVertex(x, y, ((tint >> 16) & 0xFF) / 255, ((tint >> 8) & 0xFF) / 255, (tint & 0xFF) / 255,
+			((tint >>> 24) & 0xFF) / 255, ix / tex.width, (tile.height - iy) / tex.height);
 	}
 
 	/**

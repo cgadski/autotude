@@ -12,8 +12,8 @@ use game_resources::{
 use rayon::prelude::*;
 use serde::Serialize;
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
 use std::ffi::OsString;
+use std::path::{Path, PathBuf};
 use std::{env, fs};
 
 const IMAGE_ROOT: &str = "_derived/dist/.image/";
@@ -167,6 +167,23 @@ fn extract(archive_path: &Path, out: &Path, version: &str) -> Result<String> {
     let text = String::from_utf8_lossy(level_data);
     let doc = roxmltree::Document::parse(&text)?;
     let level = doc.root_element();
+
+    if let Some((_, descriptors)) = files
+        .iter()
+        .find(|(path, _)| path.ends_with("image-descriptors.txt"))
+    {
+        let text = String::from_utf8_lossy(descriptors).into_owned();
+        let doc = roxmltree::Document::parse(&text)?;
+        for node in doc.descendants() {
+            if node.has_tag_name("ImageDescriptor") && node.attribute("wrapMode") == Some("REPEAT")
+            {
+                if let Some(image) = node.attribute("path").and_then(|p| pages.images.get_mut(p)) {
+                    image.repeat = true;
+                }
+            }
+        }
+    }
+
     let views = children(level, "views")
         .flat_map(|vs| children(vs, "View"))
         .map(read_view)

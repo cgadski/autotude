@@ -7,6 +7,7 @@ import h2d.Graphics;
 import h2d.Object;
 import h2d.RenderContext;
 import h2d.Tile;
+import h3d.mat.Data.Wrap;
 import js.lib.Promise;
 
 // Format of map.json, written by game_resources/bin/maps.rs.
@@ -59,6 +60,7 @@ class ParallaxView extends Graphics {
 		final tile = item.image == null ? null : textures.get(item.image);
 		if (item.image != null && tile == null)
 			return; // image not in this map's pages
+		final wrapping = tile != null && tile.getTexture().wrap == Repeat;
 
 		if (tile != null) {
 			beginTileFill(0, 0, 1, 1, tile);
@@ -68,6 +70,28 @@ class ParallaxView extends Graphics {
 
 		final rot = item.rotation * Math.PI / 180;
 		final cos = Math.cos(rot), sin = Math.sin(rot);
+
+		if (tile != null && !wrapping) {
+			// the image at translate + flip(rotate(scale * imagePos)); the hull
+			// is only its collision shape
+			final trot = item.textureRotation * Math.PI / 180;
+			final tcos = Math.cos(trot), tsin = Math.sin(trot);
+			for (c in [[0.0, 0.0], [tile.width, 0.0], [tile.width, tile.height], [0.0, tile.height]]) {
+				final sx = c[0] * item.scale, sy = c[1] * item.scale;
+				var rx = sx * tcos - sy * tsin, ry = sx * tsin + sy * tcos;
+				if (item.flipX)
+					rx = -rx;
+				if (item.flipY)
+					ry = -ry;
+				final px = item.tx + rx, py = item.ty + ry;
+				// level coordinates are y-up
+				final x = item.x + px * cos - py * sin;
+				final y = h - (item.y + px * sin + py * cos);
+				TexturePages.addVertex(this, item, tile, px, py, x, y, item.color);
+			}
+			endFill();
+			return;
+		}
 
 		var i = 0;
 		while (i + 1 < item.hull.length) {
@@ -81,7 +105,7 @@ class ParallaxView extends Graphics {
 			if (tile == null)
 				lineTo(x, y);
 			else
-				TexturePages.addVertex(this, item, tile, px, py, x, y);
+				TexturePages.addVertex(this, item, tile, px, py, x, y, item.color);
 		}
 		endFill();
 	}
@@ -133,7 +157,8 @@ class MapArt {
 	public static function load(state:PlayerState, mapName:String):Promise<MapArt> {
 		final root = MAP_ART_ROOT + mapName + "/";
 		return TexturePages.fetchJson(root + "map.json", 'map art for $mapName').then((data:MapArtData) -> {
-			return TexturePages.load(root, data.pages, data.images, data.version).then(textures -> new MapArt(state, data, textures));
+			return TexturePages.load(root, data.pages, data.images, data.version)
+				.then(textures -> new MapArt(state, data, textures));
 		});
 	}
 }

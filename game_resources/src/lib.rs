@@ -51,6 +51,8 @@ pub struct Image {
     pub y: i32,
     pub w: i32,
     pub h: i32,
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    pub repeat: bool,
 }
 
 /// Pages and the images packed into them, as the viewer loads them.
@@ -123,6 +125,7 @@ impl Pages {
                 y: r.i32_le()?,
                 w: r.i32_le()?,
                 h: r.i32_le()?,
+                repeat: false,
             };
             w = w.max(img.x + img.w);
             h = h.max(img.y + img.h);
