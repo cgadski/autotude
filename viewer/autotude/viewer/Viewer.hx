@@ -29,6 +29,25 @@ final ZOOM_PER_NOTCH = 1.15;
 // where the volume slider's level is remembered (localStorage)
 final VOLUME_KEY = "autotude-viewer-volume";
 
+// a phone (or any touch screen): tap plays/pauses, dragging seeks and the
+// camera follows the ball
+final PHONE_UA = ~/Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Mobile/;
+// a full screen width of dragging seeks this many ticks (30s)
+final PHONE_SEEK_TICKS_PER_WIDTH = 900;
+// dragging this far (s2d units) seeks; less counts as a tap
+final PHONE_TAP_SLOP = 20;
+
+// the playback icons that flash over the game when it's toggled
+final PLAY_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+final PAUSE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+
+function phoneMode():Bool {
+	if (Browser.window.location.search.indexOf("phone") >= 0)
+		return true;
+	return PHONE_UA.match(Browser.navigator.userAgent)
+		|| js.Syntax.code("window.matchMedia('(pointer: coarse)').matches");
+}
+
 inline function getElem(id:String) {
 	return Browser.document.getElementById(id);
 }
@@ -59,6 +78,19 @@ class Viewer extends hxd.App {
 	// playback speed, from the speed selector
 	var speed:Float = 1;
 	var showingPlaying:Null<Bool>;
+
+	// dragging / seeking on the game (phone mode)
+	final tapAt = new Vector(0, 0);
+	var seekFrom = 0;
+	var seeking = false;
+	var scrubbing = false;
+	var seekWasPlaying = false;
+	var seekShownUntil = 0.0;
+
+	final seekBar:DivElement = cast getElem("seek");
+	final seekFill:DivElement = cast getElem("seek-fill");
+	final seekTime:SpanElement = cast getElem("seek-time");
+	final flash:DivElement = cast getElem("flash");
 
 	public function new() {
 		super();
@@ -117,9 +149,39 @@ class Viewer extends hxd.App {
 		s2d.scaleMode = LetterBox(WIDTH, HEIGHT, false, Center, Center);
 
 		draggable = new Interactive(s2d.width, s2d.height, s2d);
-		draggable.onPush = onPush;
-		draggable.onRelease = onRelease;
-		draggable.onWheel = onWheel;
+		if (phoneMode()) {
+			Browser.document.body.classList.add("phone");
+			// no page scrolling: a drag on the game doesn't scroll Safari and
+			// bring its URL bar back
+			Browser.document.addEventListener("touchmove", (e:js.html.Event) -> e.preventDefault(), {passive: false});
+			// touches on the seek bar are the bar's alone; the game's gestures
+			// listen on the window, so don't let the bar's events reach them
+			for (kind in ["mousedown", "mousemove", "mouseup", "touchstart", "touchmove", "touchend"])
+				seekBar.addEventListener(kind, (e:js.html.Event) -> e.stopPropagation());
+			// the seek bar stays open while paused; drag it to set the time
+			seekBar.addEventListener("pointerdown", (e:js.html.PointerEvent) -> {
+				if (playerState == null)
+					return;
+				scrubbing = true;
+				seekBar.setPointerCapture(e.pointerId);
+				scrubTo(e.clientX);
+			});
+			seekBar.addEventListener("pointermove", (e:js.html.PointerEvent) -> {
+				if (scrubbing)
+					scrubTo(e.clientX);
+			});
+			seekBar.addEventListener("pointerup", (e:js.html.PointerEvent) -> {
+				scrubbing = false;
+				seekBar.releasePointerCapture(e.pointerId);
+			});
+			seekBar.addEventListener("pointercancel", (_) -> scrubbing = false);
+			draggable.onPush = onPhonePush;
+			draggable.onRelease = onPhoneRelease;
+		} else {
+			draggable.onPush = onPush;
+			draggable.onRelease = onRelease;
+			draggable.onWheel = onWheel;
+		}
 
 		// load map
 		var urlParams = new URLSearchParams(Browser.window.location.search);
@@ -137,6 +199,8 @@ class Viewer extends hxd.App {
 					if (timestamp != null) {
 						playerState.frameIdx = Std.parseInt(timestamp) ?? 0;
 					}
+					if (phoneMode())
+						playerState.followBall = true;
 					// optional camera: map pixels from the top-left, and zoom (1 = in game)
 					final x = Std.parseFloat(urlParams.get("x") ?? ""), y = Std.parseFloat(urlParams.get("y") ?? "");
 					final zoom = Std.parseFloat(urlParams.get("zoom") ?? "");
@@ -206,6 +270,95 @@ class Viewer extends hxd.App {
 		draggable.stopCapture();
 	}
 
+	// Phone mode: a tap plays/pauses, a horizontal drag seeks.
+	function onPhonePush(e:Event) {
+		final draggable = this.draggable;
+		if (draggable == null)
+			return;
+		tapAt.set(e.relX, e.relY);
+		seekFrom = playerState == null ? 0 : playerState.frameIdx;
+		seekWasPlaying = playerState != null && playerState.playing;
+		seeking = false;
+		draggable.startCapture(onPhoneDrag);
+	}
+
+	function onPhoneDrag(e:Event) {
+		if (e.kind != EMove || playerState == null)
+			return;
+		final dx = e.relX - tapAt.x;
+		if (!seeking) {
+			if (Math.abs(dx) < PHONE_TAP_SLOP)
+				return;
+			seeking = true;
+			playerState.playing = false;
+			seekShownUntil = 0;
+			updateSeekVisibility();
+		}
+		playerState.frameIdx = seekFrom + Math.round(dx / s2d.width * PHONE_SEEK_TICKS_PER_WIDTH);
+		updateSeekIndicator();
+	}
+
+	function onPhoneRelease(e:Event) {
+		if (draggable == null)
+			return;
+		draggable.stopCapture();
+		final state = playerState;
+		if (state == null)
+			return;
+		if (seeking) {
+			state.playing = seekWasPlaying;
+			seeking = false;
+			if (state.playing) {
+				seekShownUntil = haxe.Timer.stamp() + 0.8;
+			} else {
+				// paused: keep the bar open
+				seekShownUntil = 0;
+				updateSeekVisibility();
+			}
+		} else if (Math.pow(e.relX - tapAt.x, 2) + Math.pow(e.relY - tapAt.y, 2) < PHONE_TAP_SLOP * PHONE_TAP_SLOP) {
+			state.togglePlay();
+			showFlash(state.playing);
+		}
+	}
+
+	// flash a play or pause icon over the game
+	function showFlash(playing:Bool) {
+		flash.innerHTML = playing ? PAUSE_ICON : PLAY_ICON;
+		flash.classList.remove("show");
+		js.Syntax.code("void {0}.offsetWidth", flash); // restart the animation
+		flash.classList.add("show");
+	}
+
+	function updateSeekIndicator() {
+		final state = playerState;
+		if (state == null)
+			return;
+		seekTime.textContent = Replay.showTimestamp(state.frameIdx) + " / " + Replay.showTimestamp(state.replay.totalTicks);
+		final total = state.replay.totalTicks - 1;
+		seekFill.style.width = (total > 0 ? 100 * state.frameIdx / total : 0) + "%";
+	}
+
+	// set the time from a touch on the seek bar
+	function scrubTo(clientX:Float) {
+		final state = playerState;
+		if (state == null)
+			return;
+		final rect = seekBar.getBoundingClientRect();
+		final total = state.replay.totalTicks - 1;
+		final fraction = Math.min(1, Math.max(0, (clientX - rect.left) / Math.max(1, rect.width)));
+		state.frameIdx = Math.round(fraction * total);
+		updateSeekIndicator();
+	}
+
+	// the seek bar shows while seeking, scrubbing, or paused
+	function updateSeekVisibility() {
+		final state = playerState;
+		final show = phoneMode() && (seeking || scrubbing || (state != null && !state.playing));
+		if (show)
+			updateSeekIndicator();
+		seekBar.classList.toggle("show", show);
+	}
+
 	function onDrag(e:Event) {
 		if (dragStart == null || dragPosStart == null || playerState == null)
 			return;
@@ -221,6 +374,11 @@ class Viewer extends hxd.App {
 
 	override function update(dt:Float) {
 		bindings.update();
+		// hide the seek bar a moment after seeking ends, unless paused
+		if (seekShownUntil > 0 && haxe.Timer.stamp() > seekShownUntil) {
+			seekShownUntil = 0;
+			updateSeekVisibility();
+		}
 		if (playerState != null) {
 
 			if (playerState.playing) {
@@ -235,6 +393,7 @@ class Viewer extends hxd.App {
 			if (showingPlaying != playerState.playing) {
 				showingPlaying = playerState.playing;
 				playButton.innerHTML = playerState.playing ? "&#10074;&#10074;" : "&#9654;";
+				updateSeekVisibility();
 			}
 			timeBefore.innerHTML = Replay.showTimestampHtml(playerState.frameIdx);
 			timeAfter.innerHTML = Replay.showTimestampHtml(playerState.framesRemaining);

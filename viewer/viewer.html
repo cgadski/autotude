@@ -3,7 +3,13 @@
     <head>
         <meta charset="utf-8" />
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+        <!-- opening from the home screen runs standalone, without Safari's
+             bars (Add to Home Screen keeps the current URL) -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
         <title>Viewer</title>
         <style>
@@ -25,6 +31,7 @@
 
             #container {
                 height: 100vh;
+                height: 100dvh; /* as Safari shows it with the URL bar */
                 width: 100%;
                 display: flex;
                 flex-direction: column;
@@ -35,6 +42,8 @@
                 flex-grow: 1;
                 overflow: hidden;
                 position: relative;
+                /* keep clear of the status bar (standalone, viewport-fit=cover) */
+                padding-top: env(safe-area-inset-top);
             }
 
             #sidebar,
@@ -107,6 +116,77 @@
                 display: flex;
             }
 
+            /* shown while seeking in phone mode */
+            #seek {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: env(safe-area-inset-bottom);
+                height: 48px;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                background: var(--panel);
+                border-top: 1px solid var(--panel-border);
+                backdrop-filter: blur(6px);
+                /* dragging it sets the time (phone mode) */
+                touch-action: none;
+                cursor: pointer;
+                user-select: none;
+                -webkit-user-select: none;
+                -webkit-touch-callout: none;
+            }
+
+            #seek.show {
+                display: flex;
+            }
+
+            #seek-fill {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 0;
+                background: rgba(90, 169, 255, 0.2);
+            }
+
+            #seek-time {
+                position: relative;
+                font-variant-numeric: tabular-nums;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+            }
+
+            /* flashes over the game when playback is toggled (phone mode) */
+            #flash {
+                position: absolute;
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            #flash.show {
+                animation: flash 0.6s ease-out;
+            }
+
+            #flash svg {
+                width: 96px;
+                height: 96px;
+                color: #fff;
+                filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.5));
+            }
+
+            @keyframes flash {
+                0% { opacity: 0.9; transform: scale(0.6); }
+                30% { opacity: 0.9; transform: scale(1); }
+                100% { opacity: 0; transform: scale(1.15); }
+            }
+
             #scoreboard .score {
                 font-size: 19px;
                 font-weight: 700;
@@ -175,6 +255,8 @@
                 background: #0e1016;
                 border-top: 1px solid var(--panel-border);
                 padding: 12px 16px;
+                /* keep clear of the home indicator (viewport-fit=cover) */
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
                 box-sizing: border-box;
 
                 display: flex;
@@ -250,6 +332,16 @@
                 font-size: 12px;
                 white-space: nowrap;
             }
+
+            /* phone mode (Viewer.hx adds this class): tap plays/pauses, a
+               drag seeks, shown by the seek indicator */
+            body.phone {
+                overscroll-behavior: none;
+            }
+
+            body.phone #control-panel {
+                display: none;
+            }
         </style>
     </head>
 
@@ -259,6 +351,11 @@
                 <div id="sidebar"></div>
                 <div id="help"></div>
                 <div id="scoreboard"></div>
+                <div id="seek">
+                    <div id="seek-fill"></div>
+                    <span id="seek-time"></span>
+                </div>
+                <div id="flash"></div>
 
                 <!-- needs inline height and width to signal to heaps that it doesn't need to set these properties -->
                 <canvas
