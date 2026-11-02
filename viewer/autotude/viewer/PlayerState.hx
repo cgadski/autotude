@@ -28,6 +28,7 @@ class PlayerState {
 	public var showBounds:Bool = false;
 	public var showMapArt:Bool = true;
 	public var showPlaneBars:Bool = true;
+	public var showControls:Bool = false;
 
 	// scrubber
 	// game tick (frame, 1/30 s) being shown, as in the "t" URL parameter

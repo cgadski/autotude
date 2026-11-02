@@ -45,6 +45,19 @@ class PlaneGraphics extends Graphics {
 		nickname.text = replay.gameStates[replay.updateAt(state.frameIdx)].getName(object.owner);
 	}
 
+	// A plane's pressed controls, drawn below it as little orange marks: an
+	// arrow per direction (left, right, up, down, as in the controls bitmask),
+	// then a dot for primary, a ring for secondary and a diamond for powerup.
+	// Slots are fixed, so a press shows up as its mark appearing in place.
+	static final CONTROL_COLOR = 0xFF8000;
+	static final CONTROL_ALPHA = 0.9;
+	static final CONTROL_SPACING = 12.0;
+	static final CONTROL_OFFSET_Y = 42.0;
+
+	// The controls bitmask's bits, in order (as ProtobufWriter.recordControls):
+	// left, right, up, down, primary, secondary, powerup.
+	static final CONTROL_ARROWS = [Math.PI, 0.0, -Math.PI / 2, Math.PI / 2];
+
 	override function draw(ctx:RenderContext) {
 		clear();
 
@@ -73,6 +86,65 @@ class PlaneGraphics extends Graphics {
 			drawRect(-40, yOffset, throttle * 80, 8);
 		}
 
+		if (object != null && state.showControls && object.controls != null)
+			drawControls(object.controls);
+
 		super.draw(ctx);
+	}
+
+	function drawControls(controls:Int) {
+		for (i in 0...7) {
+			if ((controls & (1 << i)) == 0)
+				continue;
+			final x = (i - 3) * CONTROL_SPACING, y = CONTROL_OFFSET_Y;
+			if (i < 4)
+				drawArrow(x, y, CONTROL_ARROWS[i]);
+			else if (i == 4)
+				drawDot(x, y);
+			else if (i == 5)
+				drawRing(x, y);
+			else
+				drawDiamond(x, y);
+		}
+	}
+
+	// An arrow at (x, y) pointing along `angle` from its tip.
+	function drawArrow(x:Float, y:Float, angle:Float) {
+		final pts = [5.0, 0.0, -1.0, -3.5, -1.0, -1.5, -4.5, -1.5, -4.5, 1.5, -1.0, 1.5, -1.0, 3.5];
+		final cos = Math.cos(angle), sin = Math.sin(angle);
+		beginFill(CONTROL_COLOR, CONTROL_ALPHA);
+		var i = 0;
+		while (i < pts.length) {
+			final px = pts[i], py = pts[i + 1];
+			final sx = x + px * cos - py * sin;
+			final sy = y + px * sin + py * cos;
+			if (i == 0)
+				moveTo(sx, sy)
+			else
+				lineTo(sx, sy);
+			i += 2;
+		}
+		endFill();
+	}
+
+	function drawDot(x:Float, y:Float) {
+		beginFill(CONTROL_COLOR, CONTROL_ALPHA);
+		drawCircle(x, y, 2.5);
+		endFill();
+	}
+
+	function drawRing(x:Float, y:Float) {
+		lineStyle(1.5, CONTROL_COLOR, CONTROL_ALPHA);
+		drawCircle(x, y, 2.5);
+		lineStyle(0, 0, 0);
+	}
+
+	function drawDiamond(x:Float, y:Float) {
+		beginFill(CONTROL_COLOR, CONTROL_ALPHA);
+		moveTo(x, y - 3.5);
+		lineTo(x + 3.5, y);
+		lineTo(x, y + 3.5);
+		lineTo(x - 3.5, y);
+		endFill();
 	}
 }

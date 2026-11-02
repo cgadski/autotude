@@ -506,6 +506,10 @@ class Viewer extends hxd.App {
 		r("Toggle health and energy bars", [Key.E], () -> {
 			n((s) -> s.showPlaneBars = !s.showPlaneBars);
 		});
+
+		r("Toggle plane controls", [Key.O], () -> {
+			n((s) -> s.showControls = !s.showControls);
+		});
 		r("Toggle sound", [Key.N], () -> {
 			toggleSound();
 		});
