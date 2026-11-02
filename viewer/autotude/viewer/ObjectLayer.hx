@@ -49,8 +49,9 @@ final WALL_CAPS = "render/powerups/wall";
 final WALL_BEAM = "planes/powerup/wall/beam_texture.png";
 final WALL_ELECTRIC = "planes/powerup/wall/electric_";
 
-// Length of loopy's missile animation, in tens of milliseconds (9 frames of 133 ms).
-final MISSILE_CYCLE = 120;
+final MISSILE_CYCLE = 120; // loopy missile cycle length
+
+final MIRANDA_SHOT_TYPES = [ObjectType.TRICKSTER_SHOT, ObjectType.LASER_SHOT];
 
 final BULLET_TRAILS:Map<Int, String> = [
 	ObjectType.BIPLANE_PRIMARY => "planes/biplane/trail.png",
@@ -196,7 +197,7 @@ class ObjectLayer extends Graphics {
 				return true;
 			}
 		}
-		drawSprite(sprite, object);
+		drawSprite(sprite, object, mirandaChargeScale(object));
 		final icon = POWERUP_ICONS.get(object.type);
 		if (icon != null) {
 			drawIcon(sprites.forPoly(icon, null), uprightAt(object, 0), CONTAINER_ICON_SIZE);
@@ -207,6 +208,14 @@ class ObjectLayer extends Graphics {
 
 	function afterburning(plane:GameObject):Bool
 		return EffectTimeline.afterburning(replay, state.frameIdx, plane);
+
+	function mirandaChargeScale(object:GameObject):Float {
+		if (!MIRANDA_SHOT_TYPES.contains(object.type))
+			return 1;
+		final charge = object.hasCharge() ? object.charge : 1000;
+		final tenth = Std.int(charge / 100) / 10.0;
+		return 0.18 + 1.15 * (0.12 + 0.55 * tenth);
+	}
 
 	// The rocket's frame for how long ago it was fired.
 	function rocketSprite(sprites:Sprites, rocket:GameObject):Null<Sprite> {
@@ -403,7 +412,7 @@ class ObjectLayer extends Graphics {
 	}
 
 	// Fill a hitbox (x, y pairs, from sprites.json) in the object's team colour.
-	function showHull(hull:Array<Float>, object:GameObject) {
+	function showHull(hull:Array<Float>, object:GameObject, extraScale:Float = 1) {
 		polysDrawn += 1;
 
 		if (object.hasTeam()) {
@@ -421,7 +430,7 @@ class ObjectLayer extends Graphics {
 
 		var i = 0;
 		while (i + 1 < hull.length) {
-			final dest = placeVertex(object, hull[i], hull[i + 1]);
+			final dest = placeVertex(object, hull[i], hull[i + 1], extraScale);
 			lineTo(dest.x, dest.y);
 			i += 2;
 		}
@@ -479,7 +488,7 @@ class ObjectLayer extends Graphics {
 		final sprites = this.sprites;
 		final hitbox = sprites == null ? null : sprites.forType(object.type, null, object.type <= ObjectType.MIRANDA ? object.spin : null);
 		if (hitbox != null) {
-			showHull(hitbox.frame.hull, object);
+			showHull(hitbox.frame.hull, object, mirandaChargeScale(object));
 		} else {
 			// TODO: draw marker
 		}

@@ -31,6 +31,7 @@ class Game extends Object {
 	final effectsUnder:EffectLayer;
 	final effectsOver:EffectLayer;
 	final smokeLayer:SmokeLayer;
+	final empAcidLayer:EmpAcidLayer;
 
 	public final timeline:EffectTimeline;
 
@@ -65,6 +66,10 @@ class Game extends Object {
 		effectsUnder = new EffectLayer(state, timeline, false);
 		effectsOver = new EffectLayer(state, timeline, true);
 		smokeLayer = new SmokeLayer(state);
+		// EMP lightning and acid smoke, above planes as the game draws them
+		// (EmpDisableEffect is a foreground effect, the acid smoke an
+		// over-plane one)
+		empAcidLayer = new EmpAcidLayer(state);
 
 		mapMask = new Mask(mapGeometry.maxX, mapGeometry.maxY);
 		drawBackground(0xFFFFFF);
@@ -76,6 +81,7 @@ class Game extends Object {
 		mapMask.addChild(artGame);
 		mapMask.addChild(objectLayer);
 		mapMask.addChild(smokeLayer);
+		mapMask.addChild(empAcidLayer);
 		mapMask.addChild(effectsOver);
 		mapMask.addChild(artFront);
 
@@ -105,6 +111,7 @@ class Game extends Object {
 		effectsUnder.sprites = sprites;
 		effectsOver.sprites = sprites;
 		smokeLayer.sprites = sprites;
+		empAcidLayer.sprites = sprites;
 	}
 
 	function drawBackground(color:Int) {
