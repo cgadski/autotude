@@ -14,7 +14,7 @@ x-logging: &default-logging
     max-file: "3"
 
 x-bot-base: &bot-base
-  image: magneticduck/botclient:0.3.1
+  image: magneticduck/botclient:0.3.2
   deploy:
     mode: global
   volumes:

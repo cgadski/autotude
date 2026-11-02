@@ -66,9 +66,7 @@ game_resources:
 
 .PHONY: copy_assets
 
-# copying files to Docker build directories
-copy_assets: altistats.com/nginx/assets/ \
-	stats_db/proto/
+copy_assets: stats_db/proto/
 
 # protobuf files for rust
 stats_db/proto/: $(PROTO_FILES)

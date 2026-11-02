@@ -55,7 +55,7 @@ upload-site:
 	docker build {{ docker_plat }} -t magneticduck/altistats:latest site
 	docker push magneticduck/altistats:latest
 
-BOT_IMAGE := "magneticduck/botclient:0.3.1"
+BOT_IMAGE := "magneticduck/botclient:0.3.2"
 
 # bot client image
 upload-bot:
