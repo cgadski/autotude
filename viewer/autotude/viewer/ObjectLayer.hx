@@ -53,6 +53,14 @@ final MISSILE_CYCLE = 120; // loopy missile cycle length
 
 final MIRANDA_SHOT_TYPES = [ObjectType.TRICKSTER_SHOT, ObjectType.LASER_SHOT];
 
+// A charging Miranda's ball, as Miranda.renderChargeBall: the laser's glow
+// image at its nose, pulsing and growing with the charge, red through blue
+// and white when maxed (as initializeChargeColor).
+final MIRANDA_CHARGE_IMAGE = "planes/miranda/ray.png";
+final MIRANDA_FIRE_OFFSET_X = 41.0;
+final MIRANDA_FIRE_OFFSET_Y = -4.0;
+final MIRANDA_CHARGE_PULSE_TICKS = 7.5; // SineRegulator over Const.sec(0.25)
+
 final BULLET_TRAILS:Map<Int, String> = [
 	ObjectType.BIPLANE_PRIMARY => "planes/biplane/trail.png",
 	ObjectType.BIPLANE_SECONDARY => "planes/biplane/trail.png",
@@ -468,11 +476,33 @@ class ObjectLayer extends Graphics {
 		if (object.type <= 4) {
 			getPlaneGraphics(object.owner).syncObject(object);
 			planesSynced.set(object.owner, true);
-			if (sprites != null)
+			if (sprites != null) {
+				if (object.type == ObjectType.MIRANDA && object.hasRandaCharge())
+					drawChargeBall(sprites, object);
 				drawHeldPowerup(sprites, object);
-			else if (object.powerup == ObjectType.BALL)
+			} else if (object.powerup == ObjectType.BALL)
 				drawBallAt(object);
 		}
+	}
+
+	// The ball a charging Miranda holds at its nose, as renderChargeBall.
+	function drawChargeBall(sprites:Sprites, plane:GameObject) {
+		final tile = sprites.tile(MIRANDA_CHARGE_IMAGE);
+		if (tile == null)
+			return;
+		final fraction = Math.min(1, plane.randaCharge / 1000);
+		// the nose, its offset flattened by the plane's bank (as Miranda.update)
+		final spin = plane.spin == null ? 0 : plane.spin;
+		final at = placeVertex(plane, MIRANDA_FIRE_OFFSET_X, MIRANDA_FIRE_OFFSET_Y * Math.cos(spin * Math.PI / 180));
+		// pulsing as the SineRegulator, growing with the charge (getChargeScale)
+		final pulse = 1 + 0.2 * Math.sin(2 * Math.PI * state.frameIdx / MIRANDA_CHARGE_PULSE_TICKS - Math.PI / 2);
+		final scale = pulse * (0.12 + 0.55 * fraction);
+		// initializeChargeColor: half red fading out, blue growing in, white at max
+		final full = plane.randaCharge >= 1000;
+		final r = Math.round(0.5 * (1 - fraction) * 255);
+		final g = full ? 255 : 0;
+		final b = Math.round(fraction * 255);
+		TexturePages.drawImage(this, tile, at.x, at.y, scale, 0, 1, false, 0.5, null, (r << 16) | (g << 8) | b);
 	}
 
 	// Hitboxes and simple shapes: the plain view (M), or without game resources
