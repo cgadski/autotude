@@ -56,6 +56,10 @@ A replay (extension `.pb`) is just a gzipped sequence of length-delimited `Updat
 
 The bandwidth of a game with 8 players (like 4v4 ball) tends to be about 0.2 megabytes per minute after gzipping, or roughly 100x less than the bandwidth of 720p video.
 
+### version notes
+
+- 0.3.2: Added `randa_charge`, fixed `controls`, added `pressing_afterburner`, added `NO_PERK`.
+
 ## `viewer/`
 
 Replay viewer, written in haxe with the heaps game library. Requires resources from the game. Test it out with `just view $STEM`.
