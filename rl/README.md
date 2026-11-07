@@ -23,7 +23,9 @@ At the moment, we can train a Q function network in the way described above, and
 The next things that I think would make sense are:
 
 (1) Generate position dependent-features that tell us about the geometry of the map. The first things that come to mind are just clear distances to the nearest obstacles. I'm not sure about the best way to produce this data; we could either generate it once (say with a rust program, as in `/game_resources/`) and store arrays of numbers to be interpolated, or compute clear distances on the fly from the map poly data, or do something in between (pre-process in some way). I don't want running the bots to be very expensive in memory, and of course generating these features needs to be as fast as possible for training.
+
 (2) Using the position-dependent features, train a predictive model for the plane dynamics and for the incidence of damage. This would be a good way to validate our position features. I'm curious how accurate the predictive model can be. At least as a first step, I think we could treat crashing as the end of a trajectory, so we don't have to model the collision physics.
+
 (3) Ideally, the predictive model would run faster than the bot server. Using this model, we could come up with a deep Q learning pipeline that lets us learn a Q function for navigating to an arbitrary waypoint on an arbitrary map.
 
 In reinforcement learning I think it's easy for things to go off the rails if we are making some mistake in our features/exploration policy/hyperparameters/architecture. Accomplishing (3) would validate that we're on the right track. I also think that having a predictive model would come in handy to speed up training. After (3) is working we could move to more usual methods like soft actor-critic.
