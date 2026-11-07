@@ -43,6 +43,10 @@ class EmpAcidLayer extends h2d.Graphics {
 	static final ACID_CLOUD_ALPHA = 0.775;
 	static final FRIENDLY_CLOUD_COLOR = 0x99FF99; // AcidCloud (0.6, 1, 0.6)
 	static final ENEMY_CLOUD_COLOR = 0x00E600; // AcidCloud (0, 0.9, 0)
+	static final CLOUD_SMOOTH_FACTOR = 4; // see TexturePages.smoothedTile
+
+	/** The cloud puffs' smoothed tiles, made once sprites have loaded. **/
+	var cloudTiles:Null<{one:h2d.Tile, two:h2d.Tile}>;
 
 	public function new(state:PlayerState) {
 		super();
@@ -118,10 +122,15 @@ class EmpAcidLayer extends h2d.Graphics {
 	// time nor its random per-puff orientations, so its age comes from the
 	// first update its uid appears in, and the orientations from noise.
 	function drawAcidClouds(sprites:Sprites, objects:Array<GameObject>, tick:Int) {
-		final smoke1 = sprites.tile(SMOKE_1);
-		final smoke2 = sprites.tile(SMOKE_2);
-		if (smoke1 == null || smoke2 == null)
-			return;
+		if (cloudTiles == null) {
+			// puffs are drawn magnified far past the smoke images' native
+			// size, so they are smoothed upscaled copies (see smoothedTile)
+			final one = TexturePages.smoothedTile(SMOKE_1, CLOUD_SMOOTH_FACTOR);
+			final two = TexturePages.smoothedTile(SMOKE_2, CLOUD_SMOOTH_FACTOR);
+			if (one == null || two == null)
+				return;
+			cloudTiles = {one: one, two: two};
+		}
 
 		// a spectator's view: clouds of the first allowed team are friendly.
 		// The teams playing aren't recorded as such; the lowest plane team is
@@ -141,18 +150,19 @@ class EmpAcidLayer extends h2d.Graphics {
 			if (fraction > 0.6)
 				alpha *= (1 - fraction) / 0.4;
 			final color = cloud.team == firstTeam ? FRIENDLY_CLOUD_COLOR : ENEMY_CLOUD_COLOR;
-			final scale = 2 * ACID_CLOUD_RADIUS * (0.6 + 0.6 * fraction) / smoke1.width;
 
 			// four puffs at quarter-turn offsets, as at the cloud's spawn
 			final noise = EffectLayer.noise;
 			for (i in 0...4) {
-				final tile = (i & 1) == 0 ? smoke1 : smoke2;
+				final tile = (i & 1) == 0 ? cloudTiles.one : cloudTiles.two;
 				final angle = i * Math.PI / 2;
 				final px = x + ACID_CLOUD_RADIUS / 2 * Math.cos(angle);
 				final py = y - ACID_CLOUD_RADIUS / 2 * Math.sin(angle);
 				final orientation = noise(cloud.uid, i * 2) * Math.PI * 2;
 				final velocity = 0.8 + 0.7 * noise(cloud.uid, i * 2 + 1);
 				final rotation = orientation + (noise(cloud.uid, i * 2 + 13) < 0.5 ? -velocity : velocity) * age / 180 * Math.PI;
+				// the render width, by each puff's own image's width
+				final scale = 2 * ACID_CLOUD_RADIUS * (0.6 + 0.6 * fraction) / tile.width;
 				TexturePages.drawImage(this, tile, px, py, scale, rotation, alpha, false, 0.5, null, color);
 			}
 		}

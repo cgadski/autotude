@@ -62,6 +62,10 @@ class TexturePages {
 		});
 	}
 
+	// The loaded pages, so an extracted image can be re-cut (smoothedTile).
+	static var loadedCanvases:Array<CanvasElement> = [];
+	static var loadedImages:haxe.DynamicAccess<PageImage> = {};
+
 	/**
 		Load every page under `root` and cut out each image as its own texture.
 		`version` (from the extractor) is added to image URLs so cached images
@@ -83,8 +87,34 @@ class TexturePages {
 					tile.getTexture().wrap = Repeat;
 				textures.set(path, tile);
 			}
+			loadedCanvases = canvases;
+			loadedImages = images;
 			return textures;
 		});
+	}
+
+	/**
+		An upscaled, smoothed copy of an extracted image. Some game sprites
+		are tiny and drawn magnified many times over (an acid cloud's smoke);
+		the game renders them at below-display resolution, so the extra
+		upscaling happens offscreen and is smoothed by the display, while the
+		viewer would sample the raw pixels. An upscaled copy restores the
+		same softness.
+	**/
+	public static function smoothedTile(image:String, factor:Int):Null<Tile> {
+		final img = loadedImages.get(image);
+		if (img == null)
+			return null;
+		final canvas = loadedCanvases[img.page];
+		if (canvas == null)
+			return null;
+		final out = Browser.document.createCanvasElement();
+		out.width = img.w * factor;
+		out.height = img.h * factor;
+		final ctx = out.getContext2d({willReadFrequently: true});
+		ctx.imageSmoothingEnabled = true;
+		ctx.drawImage(canvas, img.x, img.y, img.w, img.h, 0, 0, out.width, out.height);
+		return Tile.fromBitmap(BitmapData.fromNative(ctx));
 	}
 
 	/**
