@@ -1,0 +1,6 @@
+<Config map="1dm_cave" record="false" connect="false" instantRespawn="true" banditsMode="1dm" banditsTime="2">
+    <bots>
+        <BotInstance nick="Expert" team="3" type="EXPERT" plane="LOOPY" red="0" green="0" blue="0"/>
+        <BotInstance nick="Challenger" team="4" type="CONTROLLED" plane="LOOPY" red="0" green="0" blue="0" intelligenceClass="bots.DifficultyBot" useBandits="true"/>
+    </bots>
+</Config>
