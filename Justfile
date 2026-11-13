@@ -63,6 +63,34 @@ view name port="8000":
 	(open "$url" || xdg-open "$url") 2>/dev/null || true
 	wait $server
 
+client-port := env_var_or_default("BOT_PORT", "27276")
+client-user := env_var_or_default("BOT_USER", "altistats_1")
+client-password := env_var_or_default("BOT_PASSWORD", "snowmanbomb")
+
+# Record a replay of an online server with the installed bot client, as a
+# spectator. e.g. `just client "Official #3 - TBD - maxPing=400"`.
+# ctrl-C to stop recording; the replay is moved into recordings/.
+client server port=client-port:
+	#!/usr/bin/env bash
+	set -euo pipefail
+	mkdir -p .runtime alti_home/recordings recordings
+	before=$(mktemp)
+	ls alti_home/recordings > "$before" || true
+	cat > .runtime/config.xml <<EOF
+	<Config mode="SPECTATE" record="true" port="{{port}}" clearDistances="false" accountName="{{client-user}}" accountPassword="{{client-password}}" server="{{server}}" password=""/>
+	EOF
+	echo "Recording '{{server}}' with the bot client (ctrl-C to stop)"
+	ALTI_HOME="$PWD/alti_home/" \
+	  BOT_CONFIG="$PWD/.runtime/config.xml" \
+	  ./bin/bot_client
+	for f in alti_home/recordings/*; do
+		if ! grep -qxF "$(basename "$f")" "$before"; then
+			mv "$f" recordings/
+			echo "Recorded replay: recordings/$(basename "$f")"
+		fi
+	done
+	rm -f "$before"
+
 # Package and upload resources.
 dist:
 	tar -czf dist.tar \

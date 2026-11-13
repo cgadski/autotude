@@ -65,3 +65,4 @@ __pycache__
 # game resources
 /game_resources/target/
 /game_resources/out/
+/.runtime/
