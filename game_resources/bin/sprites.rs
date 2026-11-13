@@ -69,6 +69,10 @@ const TYPES: &[(i32, &str)] = &[
     (73, "render/powerups/big_bomb/0_128_5.animatedpoly"), // BIG_BOMB
     (74, "map/goal/goal.poly"),                           // GOAL
     (75, "map/base/base.poly"),                           // BASE
+    // turrets: one poly like planes (the team's colour is in the image
+    // name, swapped in by the viewer); the gun is drawn from EXTRA_POLYS
+    (76, "render/map/turret/0_128_5_base.poly"), // TURRET
+    (77, "map/turret/bullet.poly"),              // TURRET_BULLET
 ];
 
 /// Polys the viewer draws besides the ones above.
@@ -82,6 +86,7 @@ const EXTRA_POLYS: &[&str] = &[
     "render/planes/explodet/drone/0_128_5.animatedpoly",
     "render/planes/explodet/rocket_open/0_128_5.animatedpoly",
     "render/planes/explodet/rocket_spin/0_128_5.animatedpoly",
+    "render/map/turret/0_128_5_gun.poly", // a turret's gun, by its base poly
 ];
 
 /// Image directories the viewer uses without a poly.
@@ -96,6 +101,7 @@ const EXTRA_IMAGE_DIRS: &[&str] = &[
     "effects/veteran_bars",
     "planes/powerup/wall",  // beam_texture.png, electric_N.png: deployed walls
     "render/powerups/wall", // team-coloured end caps of deployed walls
+    "map/turret",           // health_bar_bg.png, health_bar_fg_texture.png: turret health bars
 ];
 
 /// Sound directories (under dist/.sound/sounds) copied for the viewer: game

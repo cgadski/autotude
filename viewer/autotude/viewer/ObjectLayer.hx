@@ -101,6 +101,19 @@ final DIRECTOR_MINE_DRONE_HEIGHT = 33;
 final MINE_SCALE = 0.65;
 final REMOTE_MINE_SCALE = 0.65 * 1.2;
 
+// Turrets, as the game draws them: a team-coloured base with a gun
+// swivelling on a pivot 5px above the base's position (as Turret renders
+// the gun at its transformed (0, 5)) and a health bar beside it, filled
+// and coloured as Base.drawHealthBar and HudRenderer.getHealthColor. The
+// base is the type's poly and the gun its own (both extracted for one
+// colour; the team's colour is swapped into the image name, as for
+// planes).
+final TURRET_GUN_POLY = "render/map/turret/0_128_5_gun.poly";
+final TURRET_GUN_PIVOT_Y = 5.0;
+final TURRET_HEALTH_BG = "map/turret/health_bar_bg.png";
+final TURRET_HEALTH_WIDTH = 40;
+final TURRET_HEALTH_HEIGHT = 8;
+
 class ObjectLayer extends Graphics {
 	final replay:Replay;
 	final geom:MapGeometry;
@@ -167,6 +180,8 @@ class ObjectLayer extends Graphics {
 			return drawMine(sprites, object);
 		if (object.type == ObjectType.WALL)
 			return drawWall(sprites, object);
+		if (object.type == ObjectType.TURRET)
+			return drawTurret(sprites, object);
 
 		// planes have frames by roll; loopy's missiles animate by time (frames
 		// keyed in tens of milliseconds); health packs animate by age (see
@@ -410,6 +425,79 @@ class ObjectLayer extends Graphics {
 		drawSprite(mine, above(0), mineScale);
 		drawSprite(drone, above(droneHeight));
 		return true;
+	}
+
+	// A deployed turret, as the game's Turret renders it: the base drawn
+	// at its position (with the transformation's scale, rotation and
+	// flips), the gun pivoting on a point above the base and swivelled by
+	// gun_angle from its mounted orientation, and a health bar beside it.
+	function drawTurret(sprites:Sprites, object:GameObject):Bool {
+		// both polys in the turret's colour, swapped in by image name
+		final base = sprites.forType(ObjectType.TURRET, object.team, null);
+		final gun = sprites.forPoly(TURRET_GUN_POLY, object.team);
+		if (base == null || gun == null)
+			return false;
+
+		// the gun: drawn as the base is, its offset from the turret's
+		// position rotated onto the pivot point (Turret translates to the
+		// transformed (0, 5) and rotates by the swivel around it)
+		final pivot = placeVertex(object, 0, TURRET_GUN_PIVOT_Y);
+		final origin = placeVertex(object, 0, 0);
+		final swivel = object.hasGunAngle() ? -Math.PI * object.gunAngle / 1800 : 0.0;
+		final cos = Math.cos(swivel), sin = Math.sin(swivel);
+		polysDrawn += 1;
+		beginTileFill(0, 0, 1, 1, gun.tile);
+		final corners = TexturePages.imageCorners(gun.frame, gun.tile);
+		var i = 0;
+		while (i + 1 < corners.length) {
+			final at = placeVertex(object, corners[i], corners[i + 1]) - origin;
+			final dest = new Vector(pivot.x + at.x * cos - at.y * sin, pivot.y + at.x * sin + at.y * cos);
+			TexturePages.addVertex(this, gun.frame, gun.tile, corners[i], corners[i + 1], dest.x, dest.y);
+			i += 2;
+		}
+		endFill();
+
+		drawSprite(base, object);
+		drawTurretHealthBar(object, base.frame.hull, pivot);
+
+		return true;
+	}
+
+	// The turret's health bar, as Base.drawHealthBar (which shares its
+	// images) beside its hull: under the base when the gun is mounted
+	// pointing up, above it otherwise.
+	function drawTurretHealthBar(object:GameObject, hull:Array<Float>, at:Vector) {
+		final sprites = this.sprites;
+		final bg = sprites == null ? null : sprites.tile(TURRET_HEALTH_BG);
+		if (bg == null)
+			return;
+
+		// the base's screen bounds
+		final pos = placeVertex(object, 0, 0);
+		var minY = Math.POSITIVE_INFINITY, maxY = Math.NEGATIVE_INFINITY;
+		var i = 0;
+		while (i + 1 < hull.length) {
+			final p = placeVertex(object, hull[i], hull[i + 1]);
+			minY = Math.min(minY, p.y);
+			maxY = Math.max(maxY, p.y);
+			i += 2;
+		}
+
+		// as Turret.render: below the base if the gun is mounted upright,
+		// above it if it hangs downwards
+		final gunUp = at.y < pos.y;
+		final left = pos.x - TURRET_HEALTH_WIDTH / 2;
+		final centerY = (gunUp ? maxY + 6 : minY - 8);
+		TexturePages.drawImage(this, bg, left, centerY, 1, 0, 1, false, 0, 1);
+
+		// the filled part, coloured as HudRenderer.getHealthColor
+		final health = object.hasHealth() ? object.health / 1000 : 1;
+		final fraction = Math.min(1, Math.max(0, (health - 0.15) / 0.75));
+		final r = Math.round(255 * Math.pow(1 - fraction, 0.3));
+		final g = Math.round(255 * Math.pow(fraction, 0.3));
+		beginFill((r << 16) | (g << 8));
+		drawRect(left + 1, centerY - 3, (TURRET_HEALTH_WIDTH - 2) * health, 6);
+		endFill();
 	}
 
 	// The game draws the ball's hitbox with the spiky mine image, in the

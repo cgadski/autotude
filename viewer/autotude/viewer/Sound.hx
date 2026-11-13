@@ -39,6 +39,7 @@ final FIRE_SOUNDS:Map<Int, String> = [
 	ObjectType.WALL => "powerup/wall_fire",
 	ObjectType.SHIELD => "powerup/shield_fire",
 	ObjectType.BIG_BOMB => "powerup/big_bomb_falling",
+	ObjectType.TURRET_BULLET => "map/turret/turret_fire",
 ];
 
 // Sound for an explosive ending.
@@ -52,6 +53,8 @@ final EXPLODE_SOUNDS:Map<Int, String> = [
 	ObjectType.DIRECTOR_MINE => "planes/explodet/mine_explode",
 	ObjectType.HOMING_MISSLE => "powerup/homing_missile_explosion",
 	ObjectType.BIG_BOMB => "powerup/big_bomb_explode",
+	ObjectType.TURRET => "map/turret/turret_explode",
+	ObjectType.TURRET_BULLET => "map/turret/turret_shot_explode",
 ];
 
 final ENGINE_SOUNDS:Map<Int, String> = [

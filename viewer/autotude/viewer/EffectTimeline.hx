@@ -67,6 +67,8 @@ final EXPLOSIVES:Map<Int, Float> = [
 	ObjectType.BIG_BOMB => 1.2,
 	ObjectType.EMP_CAPSULE => 0.3,
 	ObjectType.ACID_BOMB => 0.3,
+	ObjectType.TURRET => 1.0, // destroyed: the game blasts it like a plane
+	ObjectType.TURRET_BULLET => 0.3, // explodes like flak where it lands
 ];
 
 /**
@@ -148,7 +150,8 @@ class EffectTimeline {
 					if (before == null) {
 						if (o.type <= ObjectType.MIRANDA)
 							add(tick, Spawn, o);
-						else if (o.type >= ObjectType.DOUBLE_FIRE_MISSLE && o.type != ObjectType.GOAL && o.type != ObjectType.BASE)
+						else if (o.type >= ObjectType.DOUBLE_FIRE_MISSLE && o.type != ObjectType.GOAL && o.type != ObjectType.BASE
+							&& o.type != ObjectType.TURRET)
 							add(tick, Fire, o);
 					} else if (o.type <= ObjectType.MIRANDA && o.powerup != before.powerup) {
 						if (o.powerup != null)

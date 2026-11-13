@@ -60,6 +60,10 @@ enum ObjectType {
     BIG_BOMB = 73;
     GOAL = 74;
     BASE = 75;
+
+    // ## Turrets
+    TURRET = 76;
+    TURRET_BULLET = 77;
 }
 
 enum Perk {
@@ -148,4 +152,7 @@ message GameObject {
     repeated uint32 clear_distances = 100;
     repeated float bot_features = 101; // features computed by nimblygames bot
     repeated uint32 bot_controls = 102; // controls suggested by nimblygames bot
+
+    // # Turrets
+    optional sint32 gun_angle = 63; // 1/10 degrees, turret gun's swivel from its mounted orientation
 }
