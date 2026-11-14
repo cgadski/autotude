@@ -12,7 +12,10 @@ VALUES
     -- 25/1/2026
     (1, 'Top Dog Bowl I'),
     -- 14/3/2026
-    (2, 'Top Dog Bowl II');
+    (2, 'Top Dog Bowl II'),
+    -- 14/11/2026
+    (3, 'Rekindling Cup')
+;
 
 DROP TABLE IF EXISTS games;
 CREATE TABLE games (
@@ -57,5 +60,14 @@ FROM replays_wide NATURAL JOIN replays
 WHERE server LIKE '%League%'
 AND n_left >= 4 AND n_right >= 4 AND n_goals > 0
 AND day_bin = '2026-03-14';
+
+--
+-- rekindling cup on 14/11/2026
+--
+INSERT INTO games
+SELECT replay_key, 3
+FROM replays_wide NATURAL JOIN replays
+WHERE server LIKE '%Official%'
+AND day_bin = '2026-11-14';
 
 COMMIT;
