@@ -37,6 +37,10 @@ Finally, to run notebooks in `rl/notebooks`, change directories to `rl/notebooks
 
 # Project Structure
 
+## `docs/`
+
+Notes on working on the project, e.g. [extending the replay format](docs/extending-the-replay-format.md).
+
 ## `altistats.com/`
 
 Source altistats.com, including docker compose files.
