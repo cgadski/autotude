@@ -35,6 +35,7 @@
         Information sheet <a
             href="https://docs.google.com/spreadsheets/d/e/2PACX-1vStg3RyTIHdqLc5bcmQFAGZwycQ0MPjPh6n7mtsC5eRIDyDz37otfaUAr6Yaj7I15OPb9lYibH3Wmo2/pubhtml?gid=0&single=true">
             here
-        </a>
+        </a>. Also see the live-updating <a href="/chat">chat log</a> and
+        <a href="/game-results">series results</a> (~ 2 minute delay after games end).
     </p>
 {/if}
