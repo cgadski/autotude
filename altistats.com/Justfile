@@ -45,6 +45,7 @@ docker_plat := "--platform=linux/amd64"
 
 # stats service image
 upload-stats:
+	make -c .. copy_assets
 	docker context use default
 	docker build {{ docker_plat }} -t magneticduck/stats_db:latest ../stats_db
 	docker push magneticduck/stats_db:latest
@@ -55,7 +56,7 @@ upload-site:
 	docker build {{ docker_plat }} -t magneticduck/altistats:latest site
 	docker push magneticduck/altistats:latest
 
-BOT_IMAGE := "magneticduck/botclient:0.3.2"
+BOT_IMAGE := "magneticduck/botclient:0.3.4"
 
 # bot client image
 upload-bot:
