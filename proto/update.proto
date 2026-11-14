@@ -12,4 +12,7 @@ message Update {
 
   repeated GameObject objects = 2;
   repeated GameEvent events = 3;
+
+  optional uint32 camera_x = 5;
+  optional uint32 camera_y = 6;
 }

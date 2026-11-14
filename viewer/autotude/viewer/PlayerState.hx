@@ -58,8 +58,19 @@ class PlayerState {
 		}
 	}
 
-	public function followBallStep() {
+	public function followCamera() {
 		final update = replay.updates[replay.updateAt(frameIdx)];
+
+		// replays since 0.3.4 record where the recorder's camera was
+		// centered (the position the server scoped its updates around):
+		// show exactly what the recording saw
+		if (update.hasCameraX() && update.hasCameraY()) {
+			scale = 1;
+			pos.x = clampCenter(update.cameraX / 2, Viewer.WIDTH / 2 / scale, geom.maxX);
+			pos.y = clampCenter(geom.maxY - update.cameraY / 2, Viewer.HEIGHT / 2 / scale, geom.maxY);
+			return;
+		}
+
 		var holder:Null<GameObject> = null, ball:Null<GameObject> = null;
 		for (o in update.objects) {
 			if (o.type == ObjectType.BALL)

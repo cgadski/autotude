@@ -493,7 +493,7 @@ class Viewer extends hxd.App {
 			n((s) -> s.scale = 1);
 		});
 
-		r("Follow the ball", [Key.C], () -> {
+		r("Follow the spectated camera", [Key.C], () -> {
 			n((s) -> s.followBall = !s.followBall);
 		});
 

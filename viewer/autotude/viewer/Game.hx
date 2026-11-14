@@ -134,7 +134,7 @@ class Game extends Object {
 
 	override function sync(ctx:RenderContext) {
 		if (state.followBall)
-			state.followBallStep();
+			state.followCamera();
 
 		// objective is to make trans + scale * pos = view / 2
 		// so trans = view / 2 - scale * pos
