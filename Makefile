@@ -61,7 +61,7 @@ game_resources:
 	# uses ALTI_INSTALL and ALTI_MAP_PATH
 	rm -rf game_resources/out/
 	cd $@ && cargo build --release
-	cd $@ && ./target/release/maps --map-list ladder_maps.csv out/maps
+	cd $@ && ./target/release/maps --map-list maps.csv out/maps
 	cd $@ && ./target/release/sprites out/
 
 .PHONY: copy_assets
