@@ -14,6 +14,7 @@ import autotude.proto.MapGeometry;
 import autotude.viewer.Sprites.Sprite;
 
 final CONTAINER_OVER = "planes/powerup/container_over.png";
+final CONTAINER_OUTLINE = "planes/powerup/container_outline.png";
 final BALL_IMAGE = "render/planes/explodet/mine/0_128_5_0000.png";
 
 // A powerup's icon, as each Powerup class in the game draws it: inside the
@@ -60,6 +61,17 @@ final MIRANDA_CHARGE_IMAGE = "planes/miranda/ray.png";
 final MIRANDA_FIRE_OFFSET_X = 41.0;
 final MIRANDA_FIRE_OFFSET_Y = -4.0;
 final MIRANDA_CHARGE_PULSE_TICKS = 7.5; // SineRegulator over Const.sec(0.25)
+
+// Where each plane type carries the big bomb, from the game's per-plane
+// BOMB_OFFSET (Plane.BigBombRenderer translates by it inside the plane's
+// rotated frame).
+final CARRIED_BOMB_OFFSETS:Map<Int, {x:Float, y:Float}> = [
+	ObjectType.LOOPY => {x: 10.0, y: -15.0},
+	ObjectType.BOMBER => {x: 6.0, y: -19.0},
+	ObjectType.EXPLODET => {x: 4.0, y: -21.0},
+	ObjectType.BIPLANE => {x: 1.0, y: -16.0},
+	ObjectType.MIRANDA => {x: 5.0, y: -13.0},
+];
 
 final BULLET_TRAILS:Map<Int, String> = [
 	ObjectType.BIPLANE_PRIMARY => "planes/biplane/trail.png",
@@ -221,6 +233,9 @@ class ObjectLayer extends Graphics {
 		if (object.type == ObjectType.HEALTH_POWERUP)
 			return drawHealthPack(sprites, object, sprite);
 
+		if (object.type == ObjectType.BIG_BOMB_POWERUP)
+			return drawBigBombPowerup(sprites, object, sprite);
+
 		if (object.type <= ObjectType.MIRANDA && afterburning(object))
 			drawFlame(sprites, sprite, object, AFTERBURNER_IMAGE, afterburnerScale(object));
 		if (rocketFlame != null)
@@ -310,9 +325,37 @@ class ObjectLayer extends Graphics {
 		TexturePages.drawImage(this, tile, at.x, at.y, 2 * scale, rotation, 0.3, false, anchor, scale);
 	}
 
+	// The big bomb hanging underneath a plane carrying it, as the game's
+	// Plane.BigBombRenderer: at the plane type's bomb offset, inside the
+	// plane's rotated frame, in the carrying plane's team's colours
+	// (BigBomb.initializeGraphics resolves the team's poly). The offset's y
+	// rolls the bomb around the plane (updateGraphicalOffsets foreshortens
+	// it by the roll), and the bomb's image is framed to the roll like the
+	// plane's frames (setFrameToMatchSpinOrientation).
+	function drawCarriedBomb(sprites:Sprites, plane:GameObject) {
+		final offset = CARRIED_BOMB_OFFSETS.get(plane.type);
+		final bomb = sprites.forType(ObjectType.BIG_BOMB, plane.team, plane.spin);
+		if (offset == null || bomb == null)
+			return;
+
+		final roll = (plane.spin == null ? 0 : plane.spin) * Math.PI / 180;
+		final offY = offset.y * Math.cos(roll);
+		final corners = TexturePages.imageCorners(bomb.frame, bomb.tile);
+		beginTileFill(0, 0, 1, 1, bomb.tile);
+		var i = 0;
+		while (i + 1 < corners.length) {
+			final dest = placeVertex(plane, offset.x + corners[i], offY + corners[i + 1]);
+			TexturePages.addVertex(this, bomb.frame, bomb.tile, corners[i], corners[i + 1], dest.x, dest.y);
+			i += 2;
+		}
+		endFill();
+	}
+
 	// The badge the game shows by a plane holding a powerup or the ball.
 	function drawHeldPowerup(sprites:Sprites, plane:GameObject) {
 		final held = plane.powerup;
+		if (held == ObjectType.BIG_BOMB_POWERUP)
+			return;
 		final icon = held == ObjectType.BALL ? ballSprite(sprites, plane.team) : {
 			final poly = held == null ? null : POWERUP_ICONS.get(held);
 			poly == null ? null : sprites.forPoly(poly, null);
@@ -363,6 +406,47 @@ class ObjectLayer extends Graphics {
 		o.positionX = object.positionX + Std.int(right * 2);
 		o.positionY = object.positionY + Std.int(up * 2); // positions are in half pixels
 		return o;
+	}
+
+	// The big bomb powerup, as Powerup.render draws it: the container's
+	// under image, the bomb image itself in the powerup's team's colours,
+	// rotated with the powerup and scaled to fit the container
+	// (renderImageScale = (RADIUS - 3) / imageRadius, RADIUS = 15), then
+	// the container's over image, and its outline tinted with the team's
+	// colour when the powerup has one.
+	function drawBigBombPowerup(sprites:Sprites, object:GameObject, under:Null<Sprite>):Bool {
+		if (under == null)
+			return false;
+		final poly = POWERUP_ICONS.get(ObjectType.BIG_BOMB_POWERUP);
+		final bomb = (poly == null ? null : sprites.forPoly(poly, object.team)) ?? sprites.forType(ObjectType.BIG_BOMB, object.team, null);
+		if (bomb == null)
+			return false;
+
+		drawSprite(under, object);
+
+		// the frame's radius, as the Powerup constructor measures imageRadius
+		var squared = 0.0;
+		final hull = bomb.frame.hull;
+		var i = 0;
+		while (i + 1 < hull.length) {
+			final d = hull[i] * hull[i] + hull[i + 1] * hull[i + 1];
+			if (d > squared)
+				squared = d;
+			i += 2;
+		}
+		drawSprite(bomb, object, (15 - 3) / Math.sqrt(squared));
+
+		drawSprite(sprites.withImage(under, CONTAINER_OVER), object);
+
+		if (object.hasTeam() && object.team >= Sprites.FIRST_TEAM) {
+			final outline = sprites.forImage(CONTAINER_OUTLINE);
+			final tint = Sprites.teamColor(object.team);
+			if (outline != null && tint != null) {
+				final at = placeVertex(object, 0, 0);
+				TexturePages.drawImage(this, outline.tile, at.x, at.y, 1, 0, 1, false, 0.5, null, tint);
+			}
+		}
+		return true;
 	}
 
 	function drawHealthPack(sprites:Sprites, object:GameObject, bubble:Null<Sprite>):Bool {
@@ -583,6 +667,13 @@ class ObjectLayer extends Graphics {
 
 	function drawObject(object:GameObject) {
 		final sprites = state.showMapArt ? this.sprites : null;
+		// as Plane.shouldBombRenderUnderPlane: the carried bomb is under
+		// the plane while its roll is negative, over it otherwise (drawn
+		// before or after the plane's own sprite, below)
+		final bombUnder = object.type <= ObjectType.MIRANDA
+			&& object.powerup == ObjectType.BIG_BOMB_POWERUP && (object.spin ?? 0) < 0;
+		if (bombUnder && sprites != null)
+			drawCarriedBomb(sprites, object);
 		if (sprites == null || !drawGameSprite(sprites, object))
 			drawPlaceholder(object);
 
@@ -592,6 +683,8 @@ class ObjectLayer extends Graphics {
 			if (sprites != null) {
 				if (object.type == ObjectType.MIRANDA && object.hasRandaCharge())
 					drawChargeBall(sprites, object);
+				if (object.powerup == ObjectType.BIG_BOMB_POWERUP && !bombUnder)
+					drawCarriedBomb(sprites, object);
 				drawHeldPowerup(sprites, object);
 			} else if (object.powerup == ObjectType.BALL)
 				drawBallAt(object);

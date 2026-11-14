@@ -4,9 +4,10 @@ import autotude.proto.GameObject;
 import autotude.proto.ObjectType;
 import h2d.RenderContext;
 
-// A plane's EMP and acid states, as the game draws them: lightning arcs
-// crackling around an EMPed plane (EmpDisableEffect, from Miranda's
-// renderLightning) and green smoke rising off an acid-covered plane
+// A plane's or turret's EMP and acid states, as the game draws them
+// (EmpDisableEffect/AcidDisableEffect are attached to both): lightning
+// arcs crackling around an EMPed object (EmpDisableEffect, from Miranda's
+// renderLightning) and green smoke rising off an acid-covered object
 // (AcidDisableEffect's SimpleSmokeEffect in AcidCloud's enemy colour). The
 // smoke puffs are rebuilt from the replay each frame, so scrubbing (even
 // backwards) stays right; the lightning is redrawn (deterministically
@@ -96,6 +97,12 @@ class EmpAcidLayer extends h2d.Graphics {
 		return Math.sqrt(radius);
 	}
 
+	// Whether the game can attach its EMP/acid disable effects to an object
+	// of this type: planes and turrets.
+	static function affected(o:GameObject):Bool {
+		return o.type != null && (o.type <= ObjectType.MIRANDA || o.type == ObjectType.TURRET);
+	}
+
 	override function draw(ctx:RenderContext) {
 		clear();
 		final sprites = this.sprites;
@@ -110,7 +117,7 @@ class EmpAcidLayer extends h2d.Graphics {
 			drawAcidSmoke(sprites, tick);
 
 		for (object in update.objects)
-			if (object.type != null && object.type <= ObjectType.MIRANDA && object.hasEmpFor() && object.empFor > 0)
+			if (affected(object) && object.hasEmpFor() && object.empFor > 0)
 				drawLightning(object, tick);
 
 		super.draw(ctx);
@@ -191,9 +198,9 @@ class EmpAcidLayer extends h2d.Graphics {
 		return tick - first;
 	}
 
-	// Lightning around an EMPed plane, as EmpDisableEffect.render: two bolts
-	// between opposite points of its hull, each a midpoint-displaced line
-	// from EMP blue to white.
+	// Lightning around an EMPed plane or turret, as EmpDisableEffect.render:
+	// two bolts between opposite points of its hull, each a
+	// midpoint-displaced line from EMP blue to white.
 	function drawLightning(plane:GameObject, tick:Int) {
 		final hull = planeHull(plane);
 		if (hull == null)
@@ -268,10 +275,10 @@ class EmpAcidLayer extends h2d.Graphics {
 		return first.concat(reversed);
 	}
 
-	// Green smoke rising off acid-covered planes, as AcidDisableEffect: every
-	// update a puff from a random point of the plane's hull, inheriting its
-	// velocity plus an upward drift, decaying, rising, growing and fading (as
-	// SimpleSmokeEffect).
+	// Green smoke rising off acid-covered planes and turrets, as
+	// AcidDisableEffect: every update a puff from a random point of the
+	// object's hull, inheriting its velocity plus an upward drift, decaying,
+	// rising, growing and fading (as SimpleSmokeEffect).
 	function drawAcidSmoke(sprites:Sprites, tick:Int) {
 		final replay = state.replay;
 		final maxY = state.geom.maxY;
@@ -287,7 +294,7 @@ class EmpAcidLayer extends h2d.Graphics {
 		while (i >= 0 && replay.ticks[i] >= minTick) {
 			final t = replay.ticks[i];
 			for (o in replay.updates[i].objects) {
-				if (o.type == null || o.type > ObjectType.MIRANDA || !o.hasAcidFor() || o.acidFor <= 0)
+				if (!affected(o) || !o.hasAcidFor() || o.acidFor <= 0)
 					continue;
 				final ticks = states[o.uid ?? -1] ?? [];
 				ticks.push({x: o.positionX, y: o.positionY, angle: o.angle ?? 0, tick: t, type: o.type});
