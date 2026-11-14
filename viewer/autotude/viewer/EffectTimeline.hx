@@ -126,8 +126,9 @@ class EffectTimeline {
 
 			// the first update holds everything already in the game
 			if (i > 0) {
-				// walls are recorded without a team: credit each to the nearest
-				// plane that used a wall powerup as it appeared
+				// replays from before walls were recorded with a team:
+				// credit each to the nearest plane that used a wall powerup
+				// as it appeared
 				for (uid => o in current) {
 					if (o.type != ObjectType.WALL || previous.exists(uid))
 						continue;
@@ -244,7 +245,8 @@ class EffectTimeline {
 		return false;
 	}
 
-	/** An object's team, or for walls (recorded without one) their deployer's. **/
+	/** An object's team, or for walls from replays recorded before they had
+	 ** one, their deployer's inferred team. **/
 	public function teamOf(o:GameObject):Null<Int> {
 		return o.hasTeam() ? o.team : wallTeams.get(o.uid);
 	}
