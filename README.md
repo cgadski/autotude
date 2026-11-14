@@ -62,7 +62,7 @@ The bandwidth of a game with 8 players (like 4v4 ball) tends to be about 0.2 meg
 
 ### version notes
 
-- 0.3.4: Added `camera_x`/`camera_y`, improved logic for camera position of spectator bot
+- 0.3.4: Added `camera_x`/`camera_y`, improved logic for camera position of spectator bot. Added `DEMOLITION_CHARGE` objects, `defuse_in_progress` on bomb powerups, and `bomb_landing_ticks_initial`/`bomb_landing_ticks_left` attributes on planes
 - 0.3.3: Added `TURRET` and `TURRET_BULLET` objects, recorded turrets' `gun_angle` (swivel from the mounted orientation), recorded walls' `team` (the deploying plane's team at spawn).
 - 0.3.2: Added `randa_charge`, fixed `controls`, added `pressing_afterburner`, added `NO_PERK`.
 

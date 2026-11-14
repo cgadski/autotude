@@ -64,6 +64,7 @@ enum ObjectType {
     // ## Turrets
     TURRET = 76;
     TURRET_BULLET = 77;
+    DEMOLITION_CHARGE = 78;
 }
 
 enum Perk {
@@ -123,6 +124,7 @@ message GameObject {
     optional uint32 charge = 30; // for randa shots. max is 1000
     optional uint32 heal_percentage = 31; // for health packs. max is 100
     optional uint32 time_remaining = 32; // ticks (1/30 second)
+    optional bool defuse_in_progress = 58;
 
     // # Planes
     optional uint32 ammo = 40; // max is 1000 for all loadouts
@@ -138,6 +140,8 @@ message GameObject {
     optional bool stalled = 54;
     optional uint32 randa_charge = 60; // shot charge, max is 1000
     optional bool pressing_afterburner = 55;
+    optional uint32 bomb_landing_ticks_initial = 56;
+    optional uint32 bomb_landing_ticks_left = 57;
 
     optional sint32 spin = 46; // degrees
     optional uint32 controls = 48; // left + right << 1 + up << 2 + down << 3 + primary << 4 + secondary << 5 + powerup << 6 (same order as Controls enum in Plane.java)
