@@ -221,6 +221,9 @@ export function renderStat(stat: string | number): string {
 
 export function generateCalendarDays(period: string) {
   // period is yyyy-mm
+  if (!period) {
+    return [];
+  }
   const [year, monthNum] = period.split("-").map(Number);
   const firstDay = new Date(year, monthNum - 1, 1);
   const daysCount = new Date(year, monthNum, 0).getDate();

@@ -12,8 +12,16 @@
     let selectedDay: string | null = null;
     let selectedHandles: string[] = [];
 
-    // Clear selected day when month changes
-    $: if (data.params.period) {
+    // Clear selections when the series or period changes — including when
+    // the new period is null (a series with no games yet)
+    let lastSeries: number | null = null;
+    let lastPeriod: string | null = null;
+    $: if (
+        data.params.series !== lastSeries ||
+        data.params.period !== lastPeriod
+    ) {
+        lastSeries = data.params.series;
+        lastPeriod = data.params.period;
         selectedDay = null;
         selectedGame = null;
     }
@@ -53,11 +61,13 @@
             <p>{seriesRow.series_desc}</p>
         </div>
         <div class="col-12 col-md-4 text-center">
-            <img
-                src="/images/{seriesImg}"
-                alt={seriesRow.series_name}
-                class="img-fluid"
-            />
+            {#if seriesImg}
+                <img
+                    src="/images/{seriesImg}"
+                    alt={seriesRow.series_name}
+                    class="img-fluid"
+                />
+            {/if}
         </div>
     </div>
 

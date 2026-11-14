@@ -52,7 +52,7 @@ export async function load({ url }) {
     ? timeBins.find((tb) => tb.time_bin === params.period)?.time_bin_key
     : undefined;
 
-  if (timeBinKey === undefined) {
+  if (timeBinKey === undefined && timeBins.length > 0) {
     error(404, { message: `No period found for ${params.period}` });
   }
 
@@ -65,7 +65,10 @@ export async function load({ url }) {
         "SELECT DISTINCT handle FROM handles NATURAL JOIN players_wide",
       )
     ).map((h: any) => h.handle),
-    games: await getGamesForPeriod(params.series, timeBinKey),
+    games:
+      timeBinKey === undefined
+        ? []
+        : await getGamesForPeriod(params.series, timeBinKey),
     gameCountsByMonth: await query(
       `
       SELECT time_bin, COUNT(*) as game_count
