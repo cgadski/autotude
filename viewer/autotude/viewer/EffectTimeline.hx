@@ -219,12 +219,18 @@ class EffectTimeline {
 	}
 
 	/**
-		Whether a plane is afterburning at `tick`. Replays don't record the
-		afterburner key, but it drains a steady 60-ish energy (of 1000) per
-		tick, net of recharge, where weapons take hundreds at once. Looks at
-		the last two updates, so firing a weapon meanwhile doesn't hide it.
+		Whether a plane is afterburning at `tick`. Replays since 0.3.2 record
+		the afterburner key (`pressing_afterburner`): like the game, it stays
+		held while throttle is maxed, even once the plane is out of energy.
+		Replays from before that don't record it, but while held it drains a
+		steady 60-ish energy (of 1000) per tick, net of recharge, where
+		weapons take hundreds at once. Looks at the last two updates, so
+		firing a weapon meanwhile doesn't hide it.
 	**/
 	public static function afterburning(replay:Replay, tick:Int, plane:GameObject):Bool {
+		if (plane.hasPressingAfterburner())
+			return plane.pressingAfterburner;
+
 		final i = replay.updateAt(tick);
 		var after = plane;
 		for (back in 1...3) {

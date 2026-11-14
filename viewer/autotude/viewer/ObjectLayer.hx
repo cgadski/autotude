@@ -86,6 +86,22 @@ final BALL_SCALE = 0.8;
 
 final AFTERBURNER_IMAGE = "effects/afterburner/afterburner1.png";
 
+// The game sizes the afterburner flash by the energy the plane has
+// available to burn (`Plane.afterburner`, which draws a full-size flash
+// reset every tick while energy covers the cost, and a smaller continuous
+// flicker once it doesn't -- including at zero energy, while the key is
+// still held). Recorded energy is on a ~1000 scale.
+final AFTERBURNER_COSTS:Map<Int, Int> = [
+	ObjectType.LOOPY => 50 + 2 * 20, // per Plane.setAfterburner
+	ObjectType.BIPLANE => 36 + 2 * 20,
+	ObjectType.EXPLODET => 50 + 2 * 13,
+	ObjectType.BOMBER => 50 + 2 * 15,
+	ObjectType.MIRANDA => 90, // Plane's default cost
+];
+final AFTERBURNER_FULL_SCALE = 0.9;
+// Average of the flicker the game's ~40-76%-scale loop settles into.
+final AFTERBURNER_STARVED_SCALE = 0.6;
+
 // Explodet mines are a spiky mine carried by a drone: directly for remote
 // mines, on a chain for the regular (director) ones. Replays only record
 // the mine, so it hangs straight down. Distances in pixels, measured from
@@ -206,7 +222,7 @@ class ObjectLayer extends Graphics {
 			return drawHealthPack(sprites, object, sprite);
 
 		if (object.type <= ObjectType.MIRANDA && afterburning(object))
-			drawFlame(sprites, sprite, object, AFTERBURNER_IMAGE, 0.9);
+			drawFlame(sprites, sprite, object, AFTERBURNER_IMAGE, afterburnerScale(object));
 		if (rocketFlame != null)
 			drawFlame(sprites, sprite, object, rocketFlame, ROCKET_FLAME_SCALE);
 		final trail = BULLET_TRAILS.get(object.type);
@@ -231,6 +247,15 @@ class ObjectLayer extends Graphics {
 
 	function afterburning(plane:GameObject):Bool
 		return EffectTimeline.afterburning(replay, state.frameIdx, plane);
+
+	// The flame the game draws shrinks once the plane's energy no longer
+	// covers its plane type's afterburner cost (see AFTERBURNER_COSTS).
+	function afterburnerScale(plane:GameObject):Float {
+		final cost = AFTERBURNER_COSTS.get(plane.type);
+		if (cost == null || !plane.hasAmmo() || plane.ammo >= cost)
+			return AFTERBURNER_FULL_SCALE;
+		return AFTERBURNER_STARVED_SCALE;
+	}
 
 	function mirandaChargeScale(object:GameObject):Float {
 		if (!MIRANDA_SHOT_TYPES.contains(object.type))
