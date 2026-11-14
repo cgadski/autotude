@@ -67,7 +67,8 @@ AND day_bin = '2026-03-14';
 INSERT INTO games
 SELECT replay_key, 3
 FROM replays_wide NATURAL JOIN replays
-WHERE server LIKE '%Official%'
+WHERE server LIKE '%The Re-Kindling%'
+AND n_left >= 4 AND n_right >= 4 AND n_goals > 0
 AND day_bin = '2026-11-14';
 
 COMMIT;

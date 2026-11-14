@@ -45,7 +45,7 @@ docker_plat := "--platform=linux/amd64"
 
 # stats service image
 upload-stats:
-	make -c .. copy_assets
+	cd .. && make copy_assets
 	docker context use default
 	docker build {{ docker_plat }} -t magneticduck/stats_db:latest ../stats_db
 	docker push magneticduck/stats_db:latest
