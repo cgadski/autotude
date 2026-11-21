@@ -4,6 +4,7 @@ ball_4arrow
 ball_4asteroids
 ball_4carpia
 ball_4cave
+ball_4cavehoop
 ball_4cliff
 ball_4coal
 ball_4core
@@ -13,8 +14,11 @@ ball_4den
 ball_4doodle
 ball_4empire
 ball_4firepark
+ball_4fireparkhoop
+ball_4fireparkturrets
 ball_4galatea
 ball_4greycomb
+ball_4greycomblaser
 ball_4grotto
 ball_4ice
 ball_4illumination
@@ -26,6 +30,7 @@ ball_4miro
 ball_4pegglies
 ball_4perseus
 ball_4planepark
+ball_4prism
 ball_4reef
 ball_4sanctum
 ball_4skylands
@@ -47,5 +52,3 @@ tbd_5assembly
 tbd_5focus
 tbd_5grotto
 tbd_5scrapyard
-tbd_underpark
-tbd_asteriods
