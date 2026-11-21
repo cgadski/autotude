@@ -63,8 +63,12 @@ class PlayerState {
 
 		// replays since 0.3.4 record where the recorder's camera was
 		// centered (the position the server scoped its updates around):
-		// show exactly what the recording saw
-		if (update.hasCameraX() && update.hasCameraY()) {
+		// show exactly what the recording saw. In ball maps, though, the
+		// recorded camera jumps around when the ball is passed, so just
+		// track the ball (or its carrier) as before.
+		final ballMap = replay.mapName != null && StringTools.startsWith(replay.mapName, "ball");
+
+		if (!ballMap && update.hasCameraX() && update.hasCameraY()) {
 			scale = 1;
 			pos.x = clampCenter(update.cameraX / 2, Viewer.WIDTH / 2 / scale, geom.maxX);
 			pos.y = clampCenter(geom.maxY - update.cameraY / 2, Viewer.HEIGHT / 2 / scale, geom.maxY);
