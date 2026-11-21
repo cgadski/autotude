@@ -51,6 +51,10 @@ typedef TimedEffect = {
 final AFTERBURNER_DRAIN_MIN = 30;
 final AFTERBURNER_DRAIN_MAX = 100;
 
+// Ticks holding the afterburner charges a Miranda's teleport (the game's
+// TELEPORT_CHARGEUP_TIME, Const.sec(0.2)).
+final MIRANDA_TELEPORT_CHARGE_TICKS = 6;
+
 // Ticks between a kill event and its plane disappearing.
 final KILL_WINDOW = 15;
 
@@ -72,9 +76,7 @@ final EXPLOSIVES:Map<Int, Float> = [
 ];
 
 /**
-	Effects (and sounds) a replay implies but doesn't record directly,
-	worked out once from how objects appear, change and disappear. Effects
-	are keyed by tick, so they stay right when scrubbing.
+	Effects (and sounds) implied by a replay.
 **/
 class EffectTimeline {
 	public final effects:Array<TimedEffect> = [];
@@ -219,17 +221,11 @@ class EffectTimeline {
 	}
 
 	/**
-		Whether a plane is afterburning at `tick`. Replays since 0.3.2 record
-		the afterburner key (`pressing_afterburner`): like the game, it stays
-		held while throttle is maxed, even once the plane is out of energy.
-		Replays from before that don't record it, but while held it drains a
-		steady 60-ish energy (of 1000) per tick, net of recharge, where
-		weapons take hundreds at once. Looks at the last two updates, so
-		firing a weapon meanwhile doesn't hide it.
+		Whether a plane is afterburning at `tick`.
 	**/
 	public static function afterburning(replay:Replay, tick:Int, plane:GameObject):Bool {
 		if (plane.hasPressingAfterburner())
-			return plane.pressingAfterburner;
+			return plane.pressingAfterburner; // since version 0.3.2
 
 		final i = replay.updateAt(tick);
 		var after = plane;
@@ -249,6 +245,36 @@ class EffectTimeline {
 			after = before;
 		}
 		return false;
+	}
+
+	/**
+		Ticks the afterburner key has been held, for miranda.
+	**/
+	public static function teleportChargeFraction(replay:Replay, tick:Int, plane:GameObject):Float {
+		if (!afterburning(replay, tick, plane))
+			return 0;
+
+		final uid = plane.uid;
+		final i = replay.updateAt(tick);
+		var held = tick + 1 - replay.ticks[i];
+		var j = i;
+		while (j > 0 && held < MIRANDA_TELEPORT_CHARGE_TICKS) {
+			final earlier = planeAt(replay.updates[j - 1], uid);
+			if (earlier == null)
+				break;
+			if (!afterburning(replay, replay.ticks[j - 1], earlier))
+				break;
+			held += replay.ticks[j] - replay.ticks[j - 1];
+			j--;
+		}
+		return Math.min(1, held / MIRANDA_TELEPORT_CHARGE_TICKS);
+	}
+
+	static function planeAt(update:autotude.proto.Update, uid:Int):Null<GameObject> {
+		for (o in update.objects)
+			if (o.uid == uid)
+				return o;
+		return null;
 	}
 
 	/** An object's team, or for walls from replays recorded before they had

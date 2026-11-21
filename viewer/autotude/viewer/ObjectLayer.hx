@@ -62,6 +62,11 @@ final MIRANDA_FIRE_OFFSET_X = 41.0;
 final MIRANDA_FIRE_OFFSET_Y = -4.0;
 final MIRANDA_CHARGE_PULSE_TICKS = 7.5; // SineRegulator over Const.sec(0.25)
 
+// A charging teleport, as Miranda.renderTeleportCharge: the teleport shell
+// under the plane, its alpha the charge (EffectTimeline.teleportChargeFraction).
+// The game draws Miranda no afterburner flame (Miranda.afterburner is empty).
+final MIRANDA_TELEPORT_SHELL = "planes/miranda/teleport_shell.png";
+
 // Where each plane type carries the big bomb, from the game's per-plane
 // BOMB_OFFSET (Plane.BigBombRenderer translates by it inside the plane's
 // rotated frame).
@@ -102,13 +107,13 @@ final AFTERBURNER_IMAGE = "effects/afterburner/afterburner1.png";
 // available to burn (`Plane.afterburner`, which draws a full-size flash
 // reset every tick while energy covers the cost, and a smaller continuous
 // flicker once it doesn't -- including at zero energy, while the key is
-// still held). Recorded energy is on a ~1000 scale.
+// still held). Recorded energy is on a ~1000 scale. A Miranda never shows
+// the flash (see MIRANDA_TELEPORT_SHELL).
 final AFTERBURNER_COSTS:Map<Int, Int> = [
 	ObjectType.LOOPY => 50 + 2 * 20, // per Plane.setAfterburner
 	ObjectType.BIPLANE => 36 + 2 * 20,
 	ObjectType.EXPLODET => 50 + 2 * 13,
 	ObjectType.BOMBER => 50 + 2 * 15,
-	ObjectType.MIRANDA => 90, // Plane's default cost
 ];
 final AFTERBURNER_FULL_SCALE = 0.9;
 // Average of the flicker the game's ~40-76%-scale loop settles into.
@@ -236,7 +241,9 @@ class ObjectLayer extends Graphics {
 		if (object.type == ObjectType.BIG_BOMB_POWERUP)
 			return drawBigBombPowerup(sprites, object, sprite);
 
-		if (object.type <= ObjectType.MIRANDA && afterburning(object))
+		if (object.type == ObjectType.MIRANDA)
+			drawTeleportCharge(sprites, object);
+		else if (object.type <= ObjectType.MIRANDA && afterburning(object))
 			drawFlame(sprites, sprite, object, AFTERBURNER_IMAGE, afterburnerScale(object));
 		if (rocketFlame != null)
 			drawFlame(sprites, sprite, object, rocketFlame, ROCKET_FLAME_SCALE);
@@ -288,6 +295,25 @@ class ObjectLayer extends Graphics {
 		return if (ms < ROCKET_SPIN_START_MS) sprites.forPoly(ROCKET_OPEN, rocket.team, Std.int(Math.min(ms,
 			ROCKET_OPEN_MS) / 10)) else sprites.forPoly(ROCKET_SPIN, rocket.team,
 			Std.int((ROCKET_SPIN_START_MS + (ms - ROCKET_SPIN_START_MS) % ROCKET_SPIN_CYCLE_MS) / 10));
+	}
+
+	// The teleport shell centred on the plane, its alpha the charge. Turned
+	// over with the plane when it flies rolled past vertical (the game's
+	// isSpinFlipped): the upside-down half of the hull's roll frames.
+	function drawTeleportCharge(sprites:Sprites, object:GameObject) {
+		final charge = EffectTimeline.teleportChargeFraction(replay, state.frameIdx, object);
+		if (charge <= 0)
+			return;
+		final tile = sprites.tile(MIRANDA_TELEPORT_SHELL);
+		if (tile == null)
+			return;
+		final at = placeVertex(object, 0, 0);
+		final ahead = placeVertex(object, 1, 0);
+		final rotation = Math.atan2(ahead.y - at.y, ahead.x - at.x);
+		final scale = object.scale == null ? 1 : object.scale / 1000;
+		final spin = object.spin == null ? 0 : object.spin;
+		final over = Math.cos(spin * Math.PI / 180) < 0 ? -1.0 : 1.0;
+		TexturePages.drawImage(this, tile, at.x, at.y, scale, rotation, charge, false, 0.5, scale * over);
 	}
 
 	// A flame behind the object's tail (the left of its sprite), its bright
