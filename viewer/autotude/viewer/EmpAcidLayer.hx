@@ -34,6 +34,7 @@ class EmpAcidLayer extends h2d.Graphics {
 	static final ACID_RISE = 0.01; // game units per tick, upward
 	static final ACID_SPAWN_RISE = 2.0; // game units per tick added to the plane's velocity
 	static final ACID_COLOR = 0x00E600; // AcidCloud.ENEMY_CLOUD_COLOR (0, 0.9, 0)
+	static final MAX_EMISSION_SPEED = 50.0; // half pixels per tick, as SmokeLayer
 
 	static final SMOKE_1 = "effects/smoke_white1.png";
 	static final SMOKE_2 = "effects/smoke_white2.png";
@@ -331,7 +332,13 @@ class EmpAcidLayer extends h2d.Graphics {
 				var y = emitted.y + 2 * (offX * sin + offY * cos);
 				final dt = Math.max(1, emitted.tick - before.tick);
 				var vx = (emitted.x - before.x) / dt;
-				var vy = (emitted.y - before.y) / dt + 2 * ACID_SPAWN_RISE;
+				var vy = (emitted.y - before.y) / dt;
+				final speed = Math.sqrt(vx * vx + vy * vy);
+				if (speed > MAX_EMISSION_SPEED) {
+					vx *= MAX_EMISSION_SPEED / speed;
+					vy *= MAX_EMISSION_SPEED / speed;
+				}
+				vy += 2 * ACID_SPAWN_RISE;
 
 				// drift for the puff's age: decay, rise
 				for (_ in 0...age) {

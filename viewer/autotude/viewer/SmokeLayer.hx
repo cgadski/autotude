@@ -49,6 +49,9 @@ class SmokeLayer extends h2d.Graphics {
 	// the longest a puff lives: its strongest alpha over the slowest fade
 	static final MAX_AGE = Math.ceil(SMOKE_ALPHA_MAX / FADE_MIN);
 
+	// above any real flying speed, so only warps and respawns are capped
+	static final MAX_EMISSION_SPEED = 50.0; // half pixels per tick
+
 	// each plane type's smoke offset (x, y), as its SMOKE_OFFSET
 	static final SMOKE_OFFSETS = [
 		[2.0, 5.0], // loopy
@@ -146,8 +149,13 @@ class SmokeLayer extends h2d.Graphics {
 				var y = emitted.y + 2 * (offX * sin + offY * cos);
 				final eTick = emitted.tick;
 				final dt = Math.max(1, eTick - before.tick);
-				final velX = (emitted.x - before.x) / dt, velY = (emitted.y - before.y) / dt;
-				final speed = Math.sqrt(velX * velX + velY * velY);
+				var velX = (emitted.x - before.x) / dt, velY = (emitted.y - before.y) / dt;
+				var speed = Math.sqrt(velX * velX + velY * velY);
+				if (speed > MAX_EMISSION_SPEED) {
+					velX *= MAX_EMISSION_SPEED / speed;
+					velY *= MAX_EMISSION_SPEED / speed;
+					speed = MAX_EMISSION_SPEED;
+				}
 				var vx = velX + (noise(eTick, owner) * 2 - 1) * 0.1 * speed;
 				var vy = velY + (noise(eTick, owner + 1) * 2 - 1) * 0.1 * speed;
 
