@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS replays_wide (
     player_messages,
     next_key, -- next replay on same server
     prev_key, -- previous replay on same server
-    winner, -- last team that scored
+    winner, -- team with more points, null on a tie
     points_left,
     points_right,
     teams
@@ -132,8 +132,8 @@ n_goals AS (
 points AS (
     SELECT
         replay_key,
-        sum(points) FILTER (WHERE team = 3) AS points_left,
-        sum(points) FILTER (WHERE team = 4) AS points_right
+        coalesce(sum(points) FILTER (WHERE team = 3), 0) AS points_left,
+        coalesce(sum(points) FILTER (WHERE team = 4), 0) AS points_right
     FROM replays_fresh
     LEFT JOIN goals_wide USING (replay_key)
     GROUP BY replay_key
@@ -141,18 +141,11 @@ points AS (
 winner AS (
     SELECT
         replay_key,
-        team as winner
-    FROM (
-        SELECT
-            replay_key,
-            team,
-            row_number() OVER (
-                PARTITION BY replay_key ORDER BY tick DESC
-            ) AS goal_idx
-        FROM replays_fresh
-        NATURAL JOIN goals
-    )
-    WHERE goal_idx = 1
+        CASE
+            WHEN points_left > points_right THEN 3
+            WHEN points_right > points_left THEN 4
+        END AS winner
+    FROM points
 )
 SELECT
     r.replay_key,
