@@ -69,6 +69,11 @@ SELECT replay_key, 3
 FROM replays_wide NATURAL JOIN replays
 WHERE server LIKE '%The Re-Kindling%'
 AND n_left >= 4 AND n_right >= 4 AND n_goals > 0
-AND day_bin = '2026-11-14';
+AND day_bin = '2026-11-14'
+AND duration >= 6 * 60 * 30 -- at least 6 minutes
+AND started_at <= (
+    SELECT started_at FROM replays
+    WHERE stem = 'e444a2f9-c86a-42d1-b7b7-ce9625bdb9fc' -- last game
+);
 
 COMMIT;
