@@ -2,68 +2,91 @@ package autotude.viewer;
 
 import js.html.DivElement;
 
-typedef ScoredGoal = {
+typedef ScoreFrame = {
 	tick:Int,
-	team:Int,
-	points:Int
+	pointsLeft:Int,
+	pointsRight:Int
 };
 
-// Server message announcing sudden death, which ends the timed part of a game.
 final SUDDEN_DEATH = "Sudden Death";
 
-/**
-	The score and game clock shown at the top of the viewer, like the
-	game's HUD.
-
-	Goal events don't say how many points a goal was worth. Like
-	altistats.com, a goal is worth 2 if the replay has a score update on the
-	same tick and 1 otherwise.
-**/
 class Scoreboard {
 	final replay:Replay;
 	final element:DivElement;
-	final goals:Array<ScoredGoal> = [];
+	final frames:Array<ScoreFrame> = []; // score changes
 	final teams:Array<Int>;
 
-	/** Tick sudden death starts, if the server announced it. **/
-	final suddenDeath:Null<Int>;
+	final suddenDeath:Null<Int>; // sudden death start
 
 	var shown = "";
 
 	public function new(replay:Replay, element:DivElement) {
 		this.replay = replay;
 		this.element = element;
+		teams = replay.teams;
 
 		var suddenDeath:Null<Int> = null;
+		var pointsLeft = 0;
+		var pointsRight = 0;
+
 		for (i in 0...replay.updates.length) {
 			final tick = replay.ticks[i];
 			final events = replay.updates[i].events;
-			var twoPoints = false;
-			for (e in events)
-				if (e.hasScoreUpdate())
-					twoPoints = true;
+			var touched = false;
+
 			for (e in events) {
 				if (e.hasGoal() && e.goal.whoScored.length > 0) {
 					final team = replay.gameStates[i + 1].getTeam(e.goal.whoScored[0]);
-					goals.push({tick: tick, team: team, points: twoPoints ? 2 : 1});
+					if (team == teams[0]) {
+						pointsLeft += 1;
+						touched = true;
+					} else if (teams.length > 1 && team == teams[1]) {
+						pointsRight += 1;
+						touched = true;
+					}
+				}
+				if (e.hasScoreUpdate() && e.scoreUpdate.hasTeam() && e.scoreUpdate.hasPoints()) {
+					final team = e.scoreUpdate.team;
+					if (team == teams[0]) {
+						pointsLeft = e.scoreUpdate.points;
+						touched = true;
+					} else if (teams.length > 1 && team == teams[1]) {
+						pointsRight = e.scoreUpdate.points;
+						touched = true;
+					}
 				}
 				if (e.hasChat() && suddenDeath == null && e.chat.message.indexOf(SUDDEN_DEATH) >= 0)
 					suddenDeath = tick;
 			}
+
+			if (touched) {
+				final frame:ScoreFrame = {
+					tick: tick,
+					pointsLeft: pointsLeft,
+					pointsRight: pointsRight
+				};
+				if (frames.length > 0 && frames[frames.length - 1].tick == tick)
+					frames[frames.length - 1] = frame;
+				else
+					frames.push(frame);
+			}
 		}
 		this.suddenDeath = suddenDeath;
-
-		teams = replay.teams;
 	}
 
 	public function update(tick:Int) {
-		final scores = [for (_ in teams) 0];
-		for (g in goals)
-			if (g.tick <= tick) {
-				final i = teams.indexOf(g.team);
-				if (i >= 0)
-					scores[i] += g.points;
-			}
+		var pointsLeft = 0;
+		var pointsRight = 0;
+
+		var f = frames.length - 1;
+		while (f >= 0 && frames[f].tick > tick)
+			--f;
+		if (f >= 0) {
+			pointsLeft = frames[f].pointsLeft;
+			pointsRight = frames[f].pointsRight;
+		}
+
+		final scores = [for (i in 0...teams.length) i == 0 ? pointsLeft : pointsRight];
 
 		final clock = if (suddenDeath == null) clockText(tick) else if (tick < suddenDeath) clockText(suddenDeath - tick) else
 			'<span class="sudden-death">Sudden death</span>';
